@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+repo=$(git rev-parse --show-toplevel)
+cd "$repo"
+if [ -x "$repo/.tools/security/gitleaks/gitleaks.exe" ]; then
+  scanner="$repo/.tools/security/gitleaks/gitleaks.exe"
+elif command -v gitleaks >/dev/null 2>&1; then
+  scanner=gitleaks
+else
+  echo "Falta Gitleaks. Instalarlo antes de crear commits; ver SECURITY.md." >&2
+  exit 1
+fi
+exec "$scanner" git --pre-commit --staged --redact --no-banner --ignore-gitleaks-allow

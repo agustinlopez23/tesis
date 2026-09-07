@@ -1,0 +1,87 @@
+schema: spec-driven
+
+context: |
+  Proyecto de tesis: prototipo de marketplace hiperlocal para comercios
+  de Córdoba.
+  La arquitectura aceptada está documentada en
+  Doc/architecture/ADR-001-layered-architecture.md.
+  Backend: monolito ASP.NET Core en proyectos tradicionales
+  Marketplace.Api, Marketplace.BLL, Marketplace.DAL, Marketplace.IoC,
+  Marketplace.DTOs y Marketplace.Models. Marketplace.Utility se crea
+  únicamente cuando exista una utilidad concreta.
+  Frontend: Next.js con TypeScript.
+  Persistencia: PostgreSQL con PostGIS.
+
+  Alcance funcional futuro: catálogo y stock por comercio,
+  descubrimiento geoespacial, exposición equitativa y borradores
+  opcionales asistidos por IA. Toda sugerencia de IA requiere confirmación
+  y alternativa manual; la IA no participa en el ranking.
+
+  Primer slice técnico: generar backend y frontend compilables, con
+  conectividad mínima y sin funcionalidad de negocio. App/ permanece sin
+  implementación durante la fase init.
+
+  Idioma: documentación en español; identificadores técnicos de código en
+  inglés.
+  Método: strict TDD. Cada comportamiento se define con una prueba que
+  falla antes de escribir su implementación, seguida por el mínimo cambio
+  para pasar y una refactorización segura.
+
+  Toolchain observado al inicializar: .NET SDK 9.0.311, Node.js 24.20.0 y
+  npm 11.19.0. Revalidar y fijar versiones compatibles antes del scaffold,
+  incluida la versión estable de Next.js y su requisito de Node. No inferir
+  una versión objetivo de .NET solo del SDK instalado.
+
+  Runners previstos: backend con xUnit mediante `dotnet test`; frontend con
+  Vitest y Testing Library mediante `npm test`; validación de producción
+  con `npm run build`. Las versiones y scripts definitivos se fijan en el
+  diseño del primer slice. Las pruebas DAL futuras usan una instancia real
+  aislada de PostgreSQL/PostGIS, nunca EF Core InMemory.
+
+rules:
+  proposal:
+    - Escribir en español y abrir con el resultado esperado.
+    - >-
+      Delimitar explícitamente alcance, fuera de alcance, dependencias y
+      criterios de éxito.
+    - >-
+      Para el primer slice no incluir funcionalidades de negocio ni crear
+      archivos en App/ durante init.
+    - Revalidar versiones externas antes de proponerlas como fijas.
+  specs:
+    - Expresar requisitos observables con escenarios verificables.
+    - >-
+      Incluir happy path, errores relevantes y límites entre frontend, API
+      y base de datos.
+    - >-
+      Mantener la IA fuera del ranking y exigir confirmación y fallback
+      manual cuando corresponda.
+    - >-
+      No convertir decisiones pendientes de proveedor o versión en
+      requisitos confirmados.
+  design:
+    - >-
+      Respetar ADR-001 y mantener dependencias acíclicas; BLL no referencia
+      DAL.
+    - >-
+      Justificar cada proyecto, paquete e integración; no crear Utility ni
+      Integrations sin uso real.
+    - >-
+      Definir estrategia de configuración, conectividad, pruebas y rollback
+      sin secretos.
+    - >-
+      Mantener cada cambio dentro del presupuesto de revisión de 400 líneas
+      o dividirlo en PRs encadenados.
+  tasks:
+    - >-
+      Ordenar trabajo en ciclos strict TDD: prueba roja, implementación
+      mínima, refactorización.
+    - >-
+      Asociar cada tarea a un requisito y a un comando de verificación
+      reproducible.
+    - >-
+      Mantener cambios pequeños y no mezclar scaffold con funcionalidades
+      de negocio.
+    - >-
+      Incluir pruebas y documentación en la misma unidad de trabajo que el
+      comportamiento.

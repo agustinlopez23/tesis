@@ -1,0 +1,51 @@
+# Local Pi runtime state
+.atl/
+.tools/
+**/bin/
+**/obj/
+**/node_modules/
+**/.next/
+**/.env.local
+
+# Credenciales y configuración privada (solo ejemplos explícitos se versionan)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*.keystore
+*.jks
+id_rsa*
+id_ed25519*
+credentials.json
+secrets.json
+appsettings.Local.json
+appsettings.*.Local.json
+.npmrc
+.pypirc
+
+# Estado de agentes, IDE, logs y resultados locales
+.engram/
+.codex/
+.agents/
+.vs/
+.idea/
+*.user
+*.suo
+*.log
+*.tsbuildinfo
+**/TestResults/
+**/coverage/
+**/playwright-report/
+**/test-results/
+*.db
+*.db-shm
+*.db-wal
+*.sqlite*
+.DS_Store
+Thumbs.db
+
+# Originales académicos con identidad y metadatos personales: conservar localmente
+/Doc/Seminario1 entrega/
