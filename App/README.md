@@ -1,8 +1,10 @@
 # Scaffold del marketplace local
 
 Backend ASP.NET Core en seis proyectos y frontend Next.js. La página inicial
-comprueba la API desde el servidor Next y muestra su disponibilidad. No requiere
-PostgreSQL/PostGIS ni implementa funcionalidades del marketplace.
+comprueba la API desde el servidor Next y muestra su disponibilidad. El backend
+ya incluye el primer corte de negocio: registro, ingreso y sesión revocable del
+responsable y alta/edición de negocios, persistidos en PostgreSQL/PostGIS. El
+panel web permite completar el recorrido desde el navegador.
 
 ## Entorno
 
@@ -34,10 +36,30 @@ El perfil HTTP seguro de ejemplo fija `http://localhost:5080`, sin credenciales.
 `GET http://localhost:5080/health/live` responde HTTP 200 y `{"status":"ok"}`.
 Esta señal indica liveness del proceso HTTP; no verifica servicios de datos.
 
-Los proyectos productivos son Api, BLL, DAL, IoC, DTOs y Models. En este slice no
-necesitan referencias entre sí; el proyecto de pruebas referencia Api para
-probar el contrato HTTP. BLL nunca referencia DAL ni IoC. No hay Utility,
-integraciones, persistencia ni capas de negocio implementadas todavía.
+Los proyectos productivos son Api, BLL, DAL, IoC, DTOs y Models. BLL declara los
+contratos de persistencia y no referencia DAL ni IoC; DAL implementa esos contratos
+con EF Core y Npgsql. No hay proyectos Utility o Integrations.
+
+## Base de datos y autenticación
+
+Preparar PostGIS y aplicar la migración de forma explícita:
+
+```powershell
+cd App
+.\tools\setup-local.ps1
+docker compose --env-file .env.local up -d database
+$localPassword = (Get-Content .env.local) -replace '^POSTGRES_PASSWORD=', ''
+$env:ConnectionStrings__Marketplace = "Host=127.0.0.1;Port=55432;Database=marketplace;Username=marketplace;Password=$localPassword"
+dotnet run --project backend/src/Marketplace.Api -- --migrate
+```
+
+La API ofrece `POST /auth/register`, `POST /auth/login`, `GET /auth/session` y
+`POST /auth/logout`. Las mutaciones exigen el origen configurado y el encabezado
+`X-Requested-With: marketplace`. El token sólo viaja en una cookie HttpOnly y se
+guarda como hash; cerrar sesión lo revoca en el servidor.
+
+Las pruebas crean una base temporal y la eliminan al terminar. Para ejecutarlas,
+establecer `TEST_DATABASE_CONNECTION` con la misma conexión pero base `postgres`.
 
 ## Frontend
 
@@ -58,10 +80,11 @@ Detener la API y recargar: debe mostrar `API no disponible`. La consulta aborta
 a los 3 segundos; solo acepta HTTP 200, JSON y el objeto exacto de liveness.
 Para desarrollo usar `npm run dev` en lugar de build/start.
 
-`NEXT_PUBLIC_API_URL` debe establecerse antes de compilar. Tras cambiarla,
-reconstruir y reiniciar producción, o reiniciar el servidor de desarrollo.
-No colocar secretos en esa variable. `.env.local` está ignorado; `.env.example`
-contiene únicamente la dirección local de ejemplo.
+`NEXT_PUBLIC_API_URL` se usa para la señal de disponibilidad. `API_BASE_URL` es la
+dirección privada que usa el proxy del panel y `APP_ORIGIN` fija el origen web
+permitido. Deben establecerse antes de compilar; tras cambiarlas, reconstruir y
+reiniciar producción, o reiniciar el servidor de desarrollo. Ninguna debe contener
+credenciales. `.env.local` está ignorado y `.env.example` contiene valores locales.
 
 El navegador recibe HTML; la consulta a la API la hace el servidor Next.
 Por eso no se configura CORS en este slice.
@@ -73,10 +96,20 @@ del backend; usa los puertos libres 3000, 5080 y 5081, inicia con URL B (5081),
 comprueba que se usa A (5080), detiene A y verifica el estado no disponible.
 Cierra sus procesos y guarda el resultado en `.tools/smoke-result.json`.
 
+Para verificar el onboarding completo con una base temporal, después del build
+Release del backend y del build del frontend ejecutar desde la raíz:
+
+```powershell
+node App/tools/verify-onboarding.mjs
+```
+
+El script aplica migraciones, atraviesa el proxy, registra una cuenta, crea y
+edita un negocio, revoca la sesión y elimina la base temporal al terminar.
+
 ## Evidencia y mantenimiento
 
-Las tareas y resultados están en
-`../openspec/changes/scaffold-backend-frontend/`. Conservar tests y documentación
-en la misma unidad que el comportamiento. Los cuatro cortes de revisión son
-estructura backend, liveness, toolchain frontend y conectividad.
-No se inicializa Git ni se publica o contrata hosting desde este scaffold.
+El scaffold archivado está en
+`../openspec/changes/archive/2026-09-08-scaffold-backend-frontend/`; el onboarding
+y su evidencia están en
+`../openspec/changes/archive/2026-09-08-business-owner-onboarding/`.
+No se publica ni se contrata hosting desde este prototipo.

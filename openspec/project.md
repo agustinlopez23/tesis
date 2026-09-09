@@ -58,3 +58,12 @@ Crear una propuesta OpenSpec para el primer slice, manteniendo `App/` intacto ha
 El primer scaffold está implementado en App/ y verificado. El estado inicial y el camino inmediato anteriores son históricos. Backend: siete proyectos compilados y una prueba HTTP aprobada. Frontend: 20 pruebas, lint y build aprobados. Verificación HTTP integrada y experimento de URL de build completados sin base de datos. SDK local 10.0.400 en .tools/dotnet. Instrucciones: App/README.md. Evidencia: openspec/changes/scaffold-backend-frontend/tdd-evidence.md.
 
 Próximo paso: definir y especificar el primer caso de uso de negocio antes de implementarlo. No se inicializó Git ni se eligió hosting.
+
+## Estado actualizado — 2026-09-08
+
+El primer caso de negocio `business-owner-onboarding` está implementado y
+verificado. Incluye registro e ingreso del responsable, sesión opaca revocable,
+categorías semilla y alta/listado/consulta/edición de negocios propios con
+`geography(Point,4326)`. El frontend incorpora proxy de mismo origen y panel en
+español. Verificación: backend 10/10, frontend 25/25, lint y build aprobados, más
+recorrido integrado sobre base temporal. No hay despliegue público configurado.

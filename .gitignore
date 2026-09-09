@@ -30,6 +30,7 @@ appsettings.*.Local.json
 .engram/
 .codex/
 .agents/
+.pi/
 .vs/
 .idea/
 *.user
