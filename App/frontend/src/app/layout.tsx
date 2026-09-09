@@ -3,8 +3,8 @@ import type { ReactNode } from "react";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Marketplace local",
-  description: "Verificación de conectividad del prototipo de tesis",
+  title: "Marketplace Córdoba",
+  description: "Panel para comerciantes del marketplace hiperlocal",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
