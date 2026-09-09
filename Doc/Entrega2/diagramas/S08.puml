@@ -1,0 +1,28 @@
+@startuml S08
+title S08 — Anular venta y registrar devolución
+' Trazabilidad: CU-14
+actor "Responsable" as B
+participant "Panel de ventas" as UI
+participant "Sales API" as API
+participant "SaleService (BLL)" as BLL
+participant "Repositorio transaccional (DAL)" as DAL
+database "PostgreSQL" as DB
+B -> UI : Elegir anulación o devolución física
+UI -> API : Venta, motivo y clave de operación
+API -> BLL : Autorizar propietario
+BLL -> DAL : Consultar venta y unidades devueltas
+DAL -> DB : Iniciar transacción y verificar estado
+alt Anulación
+DAL -> DB : Guardar estado y auditoría sin cambiar saldo
+DAL -> DB : Confirmar transacción
+else Devolución dentro de unidades vendidas
+DAL -> DB : Registrar movimiento positivo y saldo
+DAL -> DB : Confirmar transacción
+else Devolución excesiva o inválida
+DAL -> DB : Revertir sin cambios
+end
+DAL --> BLL : Resultado consistente
+BLL --> API : Resultado
+API --> UI : Historial actualizado
+note over UI, DB : No hay reembolso monetario dentro del prototipo.
+@enduml

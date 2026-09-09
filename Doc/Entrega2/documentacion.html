@@ -1,0 +1,5246 @@
+<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Documentación del prototipo</title><style>body{font:16px/1.65 Arial,sans-serif;color:#23382d;background:#f5f3ed;margin:0}main{max-width:1200px;margin:auto;padding:40px;background:white}h1,h2,h3{line-height:1.25;color:#183d2d}h1{margin-top:50px}h2{margin-top:36px}a{color:#23674b}nav{display:grid;gap:8px;padding:20px;background:#e7eee8}table{border-collapse:collapse;width:100%;font-size:14px;margin:24px 0}td,th{border:1px solid #c7d1c9;padding:9px;text-align:left;vertical-align:top;overflow-wrap:anywhere}th{background:#e7eee8}img{max-width:100%;height:auto;border:1px solid #e5e9e5}pre{white-space:pre-wrap}section{padding-top:10px}@media print{body{background:white}main{max-width:none;padding:0}nav{display:none}section{break-before:page}tr{break-inside:avoid}h1,h2,h3{break-after:avoid}img{max-height:240mm;object-fit:contain}}</style><main><h1>Documentación del prototipo</h1><p>Revista hiperlocal y SaaS para comercios de Córdoba · Borrador académico 1.0 · 2026-09-07.</p><p>Fuentes editables, figuras y maquetas. No acredita implementación ni resultados de evaluación.</p><p><a href="Entrega2-documentacion.docx">Descargar Word editable</a> · <a href="pantallas/index.html">Explorar maquetas</a></p><nav><a href="#chapter-0">01-diagnostico-y-alcance</a><a href="#chapter-1">02-requerimientos</a><a href="#chapter-2">03-casos-de-uso</a><a href="#chapter-3">04-diagramas</a><a href="#chapter-4">Modelo: classes</a><a href="#chapter-5">Modelo: ER</a><a href="#chapter-6">Modelo: data-dictionary</a><a href="#chapter-7">Modelo: field-dictionary</a><a href="#chapter-8">05-pantallas</a><a href="#chapter-9">06-trazabilidad</a><a href="#chapter-10">07-decisiones-y-validacion</a></nav><section id="chapter-0"><h1>Diagnóstico y propuesta</h1>
+<p>Versión 1.0 · 2026-09-07 · Borrador académico para revisión.</p>
+<p>El diagnóstico se elabora a partir del relevamiento funcional de la organización modelada presentado en la primera entrega. Se conservan los nombres de sus tres procesos y se identifican problemas y causas operativas. Las relaciones causales son interpretaciones del relevamiento documental; no se agregan entrevistas, frecuencias ni mediciones de campo que no estén acreditadas. La numeración de tablas es local a este apartado y deberá ajustarse al integrar el trabajo final.</p>
+<p><strong>Tabla 1. Diagnóstico del proceso incorporación y publicación de productos</strong></p>
+<p>Nombre del proceso: <strong>incorporación y publicación de productos</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Problemas</th>
+<th>Causas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. La oferta publicada contiene información heterogénea e incompleta que dificulta identificar y comparar los productos.</td>
+<td>1. Las publicaciones se preparan mediante fotografías ocasionales y texto libre, sin una pauta común para registrar nombre, descripción, categoría y disponibilidad.</td>
+</tr>
+<tr>
+<td>2. La preparación de publicaciones exige repetir tareas de registro de información.</td>
+<td>2. El precio se anota primero en papel o planilla y luego se transcribe al elaborar la publicación. El dueño concentra estas tareas junto con la atención del local y la reposición.</td>
+</tr>
+<tr>
+<td>3. Las publicaciones ofrecen escaso contexto para descubrir productos pertinentes de comercios cercanos.</td>
+<td>3. La oferta se distribuye en redes sociales y estados de WhatsApp sin una clasificación uniforme que relacione producto, rubro y ubicación del comercio.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia a partir del relevamiento funcional de la primera entrega.</p>
+<p><strong>Tabla 2. Diagnóstico del proceso actualización de precios y disponibilidad</strong></p>
+<p>Nombre del proceso: <strong>actualización de precios y disponibilidad</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Problemas</th>
+<th>Causas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Los precios de publicaciones anteriores pueden diferir del precio vigente.</td>
+<td>1. La corrección se realiza en la lista de precios, mientras que las publicaciones difundidas conservan los valores anteriores. Cada soporte exige una actualización independiente.</td>
+</tr>
+<tr>
+<td>2. El consumidor puede consultar productos que ya no están disponibles.</td>
+<td>2. Los faltantes se comunican verbalmente o por mensajería cuando llega una consulta, sin actualizar sistemáticamente la oferta publicada.</td>
+</tr>
+<tr>
+<td>3. La disponibilidad depende de verificaciones reiteradas del comerciante.</td>
+<td>3. Se comprueba visualmente la góndola o el depósito; el proceso relevado no registra entradas, ventas y ajustes en una secuencia vinculada al producto.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia a partir del relevamiento funcional de la primera entrega.</p>
+<p><strong>Tabla 3. Diagnóstico del proceso atención de consultas y venta</strong></p>
+<p>Nombre del proceso: <strong>atención de consultas y venta</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Problemas</th>
+<th>Causas</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. La atención exige volver a confirmar precio y existencia para cada consulta.</td>
+<td>1. El consumidor consulta sobre publicaciones potencialmente incompletas o desactualizadas y el comerciante verifica físicamente la disponibilidad antes de responder.</td>
+</tr>
+<tr>
+<td>2. La consulta inicial y la venta concretada no quedan relacionadas explícitamente.</td>
+<td>2. La conversación transcurre en el local o en WhatsApp y la venta se anota en un cuaderno, sin una referencia compartida que conserve lo consultado y lo vendido.</td>
+</tr>
+<tr>
+<td>3. Resulta difícil atribuir ventas al interés generado por la oferta digital.</td>
+<td>3. Los registros descritos no vinculan canal de origen, consulta y venta, por lo que una anotación de venta aislada no permite reconstruir ese recorrido.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia a partir del relevamiento funcional de la primera entrega.</p>
+<p>El diagnóstico no introduce «ranking» ni «suscripciones» como procesos relevados: son elementos de la solución propuesta. La asimetría de visibilidad se retoma del área problemática de la primera entrega y se aborda mediante el descubrimiento de la oferta, sin afirmar que se haya medido su magnitud en comercios reales.</p>
+<h2>Propuesta</h2>
+<p>Se propone desarrollar una plataforma web hiperlocal para pequeños comercios y PyMEs de Córdoba. El consumidor accederá a una revista digital que presente negocios de su zona ordenados mediante un algoritmo de relevancia, proximidad y exposición equitativa. Podrá consultar perfiles, novedades y promociones y, cuando el negocio disponga de catálogo, encontrar productos y generar una solicitud para continuar la conversación por WhatsApp.</p>
+<p>Para la incorporación y publicación de productos, la solución ofrecerá un catálogo estructurado y asistencia opcional de inteligencia artificial para sugerir nombre, descripción y categoría a partir de una imagen y datos mínimos. Las sugerencias se presentarán como borradores editables y ninguna se publicará sin confirmación del responsable. La carga manual estará siempre disponible. Esta función mantiene coherencia con los objetivos específicos de la primera entrega.</p>
+<p>Para la actualización de precios y disponibilidad, el negocio podrá mantener la oferta vigente y registrar movimientos básicos de inventario. Para la atención de consultas y venta, cada solicitud conservará una referencia y el detalle original. El comerciante podrá registrar lo efectivamente vendido, vinculándolo con la solicitud y actualizando el stock en una misma operación. Se distinguirán el clic de contacto, la recepción reportada y la venta informada: abrir WhatsApp no demostrará que se envió un mensaje ni que se concretó una compra.</p>
+<p>La plataforma adoptará un modelo SaaS freemium: Presencia ofrecerá perfil y contacto, mientras que Impulso habilitará catálogo, pedidos, stock y métricas de conversión. Las campañas publicitarias se contratarán por separado y se identificarán como patrocinadas, sin modificar el puntaje orgánico. Los precios comerciales no forman parte de esta documentación. El prototipo utilizará habilitación manual de suscripciones y campañas para demostrar su funcionamiento sin integrar cobros recurrentes.</p>
+<p>El algoritmo se evaluará mediante simulaciones con datos sintéticos, comparando distribución de exposición, cobertura y relevancia con variantes de referencia. La asistencia de catálogo se evaluará mediante calidad de las sugerencias y tiempo de carga. Estos son resultados esperados a verificar, no beneficios cuantificados ya obtenidos.</p>
+<h1>Objetivo, límites y alcances del prototipo</h1>
+<h2>Objetivo del prototipo</h2>
+<p><strong>OP-01.</strong> Implementar y validar un prototipo web que permita a comercios de proximidad de Córdoba publicar y actualizar su oferta, a consumidores descubrir negocios y productos cercanos mediante un ranking de exposición equitativa, y a responsables de negocios relacionar solicitudes para WhatsApp con ventas reportadas y movimientos de inventario, incorporando asistencia opcional para la creación de catálogo.</p>
+<p>Objetivos operativos para vincular los casos de uso:</p>
+<ul>
+<li><strong>OP-02:</strong> reducir tareas repetidas de publicación mediante información estructurada y borradores asistidos sujetos a revisión.</li>
+<li><strong>OP-03:</strong> mantener trazabilidad entre solicitudes, ventas e inventario y diferenciar contacto de conversión reportada.</li>
+<li><strong>OP-04:</strong> medir la distribución de visibilidad y la relevancia del descubrimiento local mediante experimentos reproducibles.</li>
+<li><strong>OP-05:</strong> demostrar acceso por roles y capacidades del SaaS, publicidad identificada y administración del prototipo.</li>
+</ul>
+<h2>Límites</h2>
+<p>El prototipo comprende desde el registro del negocio y la preparación de su oferta hasta el descubrimiento por zona, la creación de solicitudes y el registro de su eventual conversión en venta, con actualización del stock y consulta de métricas. La conversación, el acuerdo comercial, el pago del comprador y la entrega ocurren fuera de la plataforma. Se modela una ubicación y un responsable por negocio, productos por unidad y un negocio por solicitud.</p>
+<p>La habilitación comercial de suscripciones y campañas se registra manualmente. La evaluación sintética permite estudiar el ranking, pero no demostrar incremento real de facturación ni adopción sin un estudio adicional.</p>
+<h2>Alcances</h2>
+<ol>
+<li>Registro y acceso de cuentas con roles de consumidor, responsable de negocio y administrador de plataforma; exploración pública sin cuenta.</li>
+<li>Perfiles, ubicación, rubros, publicaciones y promociones de negocios.</li>
+<li>Catálogo, precios, disponibilidad y asistencia opcional para borradores con alternativa manual.</li>
+<li>Entradas, ventas, ajustes y devoluciones físicas de inventario, con responsable y motivo.</li>
+<li>Revista de negocios ordenados desde el ingreso, selección manual o asistida de zona y búsqueda de productos.</li>
+<li>Registro de candidatos y exposición orgánica para medir equidad, separado de publicidad.</li>
+<li>Solicitudes identificadas y resumen para WhatsApp, seguimiento y registro de venta.</li>
+<li>Planes Presencia e Impulso y habilitación manual de períodos de suscripción.</li>
+<li>Campañas para promociones o productos, revisión y visualización como patrocinadas.</li>
+<li>Métricas de visitas, contactos y ventas reportadas; configuración y evaluación reproducible del ranking y evaluación de asistencia de catálogo.</li>
+</ol>
+<p>Se excluyen pagos y logística del comprador, facturación fiscal, integración con cajas externas, lectura automática de WhatsApp, sucursales, variantes, fraccionamiento, reseñas, chat interno y personalización avanzada. Las devoluciones físicas no incluyen reembolsos monetarios. No se reservan unidades al crear una solicitud.</p>
+<h2>Metodología y coherencia</h2>
+<p>Se mantiene UML y el desarrollo iterativo e incremental de la primera entrega. Los requisitos se representan mediante casos de uso, fichas, secuencias, clases y despliegue. El DER complementa el modelo orientado a objetos porque la persistencia será relacional. OpenSpec y TDD organizan la implementación técnica, sin sustituir estos entregables académicos por Scrum.</p>
+<p>Las interfaces son maquetas estáticas sin lógica de negocio. Las decisiones propuestas y los parámetros todavía no calibrados se identifican en <a href="07-decisiones-y-validacion.md">decisiones y validación</a>. El documento no certifica aprobación del tutor ni implementación de las funciones.</p>
+</section><section id="chapter-1"><h1>Requerimientos del prototipo</h1>
+<p>Versión 1.0 · 2026-09-07 · Requisitos propuestos para revisión y posterior implementación. Derivan del alcance de <a href="01-diagnostico-y-alcance.md">diagnóstico y prototipo</a>. No son evidencia de funcionalidad existente.</p>
+<h2>Requerimientos funcionales</h2>
+<p>El sistema deberá:</p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Requerimiento</th>
+<th>Caso de uso</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RF-01</td>
+<td>Registrar cuentas, iniciar y cerrar sesión y rechazar el acceso a cuentas suspendidas. Los permisos se comprobarán en servidor.</td>
+<td>CU-01</td>
+</tr>
+<tr>
+<td>RF-02</td>
+<td>Crear, editar y archivar el perfil propio con nombre, descripción, rubro, ubicación y WhatsApp, validando los datos antes de publicarlo.</td>
+<td>CU-02</td>
+</tr>
+<tr>
+<td>RF-03</td>
+<td>Crear, editar, publicar y archivar novedades o promociones propias con condiciones y vigencia; vincular productos solo cuando el plan habilite catálogo.</td>
+<td>CU-03</td>
+</tr>
+<tr>
+<td>RF-04</td>
+<td>Crear, editar, publicar y archivar productos con nombre, descripción, categoría, imagen, precio, moneda y disponibilidad, preservando los valores históricos de pedidos y ventas.</td>
+<td>CU-04</td>
+</tr>
+<tr>
+<td>RF-05</td>
+<td>Solicitar sugerencias de nombre, descripción y categoría desde una imagen y datos mínimos, editarlas o descartarlas, sin publicar automáticamente y permitiendo carga manual ante fallos.</td>
+<td>CU-05</td>
+</tr>
+<tr>
+<td>RF-06</td>
+<td>Registrar entradas y ajustes de stock por producto con cantidad, motivo y responsable, mantener historial y rechazar saldos negativos y operaciones duplicadas.</td>
+<td>CU-06</td>
+</tr>
+<tr>
+<td>RF-07</td>
+<td>Mostrar al ingresar una revista de negocios ordenados por el ranking hiperlocal, con ubicación manual o del dispositivo, filtros de rubro y búsqueda textual opcional, incluyendo negocios gratuitos elegibles.</td>
+<td>CU-07</td>
+</tr>
+<tr>
+<td>RF-08</td>
+<td>Buscar productos de catálogos habilitados por texto, categoría y zona, ordenando con la fórmula de productos y sus límites de exposición por negocio.</td>
+<td>CU-08</td>
+</tr>
+<tr>
+<td>RF-09</td>
+<td>Consultar perfil, catálogo o promoción vigente y abrir WhatsApp con contexto del negocio, registrando intención de contacto sin considerarla mensaje recibido ni venta.</td>
+<td>CU-09</td>
+</tr>
+<tr>
+<td>RF-10</td>
+<td>Crear una solicitud de productos de un solo negocio con referencia única, copia de cantidades y precios y resumen para WhatsApp, sin reservar stock y sin duplicar la solicitud al reintentar.</td>
+<td>CU-10</td>
+</tr>
+<tr>
+<td>RF-11</td>
+<td>Permitir consultar el resumen y estado de una solicitud mediante acceso privado autorizado, sin permitir acceso por la referencia pública aislada.</td>
+<td>CU-11</td>
+</tr>
+<tr>
+<td>RF-12</td>
+<td>Listar y localizar solicitudes propias por referencia, confirmar recepción del contacto, pasar a atención o cancelar, preservando el contenido original.</td>
+<td>CU-12</td>
+</tr>
+<tr>
+<td>RF-13</td>
+<td>Registrar una venta vinculada a solicitud o presencial, conservar artículos finales y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo.</td>
+<td>CU-13</td>
+</tr>
+<tr>
+<td>RF-14</td>
+<td>Anular una venta con motivo y auditoría sin reponer stock automáticamente; registrar devoluciones físicas relacionadas con líneas vendidas sin exceder las cantidades originales.</td>
+<td>CU-14</td>
+</tr>
+<tr>
+<td>RF-15</td>
+<td>Mostrar ventajas de Presencia e Impulso sin precios, permitir al administrador habilitar períodos no superpuestos y aplicar capacidades según vigencia, conservando historial al vencer.</td>
+<td>CU-15</td>
+</tr>
+<tr>
+<td>RF-16</td>
+<td>Crear y consultar campañas para una promoción o un producto propio elegible con zona y fechas, enviarlas a revisión y pausarlas; la suscripción no compra posición orgánica.</td>
+<td>CU-16</td>
+</tr>
+<tr>
+<td>RF-17</td>
+<td>Aprobar o rechazar campañas, registrar confirmación manual del pago y habilitar entrega solo con fechas, zona, negocio y destino válidos, identificándola como patrocinada.</td>
+<td>CU-17</td>
+</tr>
+<tr>
+<td>RF-18</td>
+<td>Mostrar métricas por período y capacidades: visitas y clics para Presencia y además solicitudes, ventas reportadas y atribución por producto o campaña para Impulso, separando exposición orgánica y paga.</td>
+<td>CU-18</td>
+</tr>
+<tr>
+<td>RF-19</td>
+<td>Gestionar categorías y suspender o rehabilitar cuentas, negocios y publicaciones con motivo y auditoría, preservando historial comercial.</td>
+<td>CU-19</td>
+</tr>
+<tr>
+<td>RF-20</td>
+<td>Versionar parámetros y ejecutar evaluación reproducible del ranking con datos sintéticos y de la asistencia de catálogo con una muestra documentada, exportando métricas sin alterar evidencia de producción.</td>
+<td>CU-20</td>
+</tr>
+<tr>
+<td>RF-21</td>
+<td>Registrar candidatos elegibles, versión del ranking e impresiones visibles deduplicadas; conservar exposición orgánica y patrocinada en registros separados.</td>
+<td>CU-07, CU-08, CU-17, CU-20</td>
+</tr>
+<tr>
+<td>RF-22</td>
+<td>Registrar actividad sustantiva del negocio con fecha y deduplicación y aplicar su aporte acotado según la configuración; una edición repetida no podrá acumular ventaja ilimitada.</td>
+<td>CU-02, CU-03, CU-07</td>
+</tr>
+<tr>
+<td>RF-23</td>
+<td>Registrar cambios sensibles de estado, plan, moderación y venta con actor, instante y motivo, sin reemplazar el historial comercial ni registrar secretos.</td>
+<td>CU-12, CU-14, CU-15, CU-17, CU-19</td>
+</tr>
+</tbody>
+</table>
+<h2>Requerimientos no funcionales</h2>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Atributo</th>
+<th>Requerimiento verificable</th>
+<th>Verificación prevista</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RNF-01</td>
+<td>Autorización</td>
+<td>Toda operación privada comprueba identidad, rol, propietario y capacidad en servidor.</td>
+<td>Pruebas de acceso cruzado con dos negocios; las operaciones ajenas deben rechazarse sin modificar ni revelar sus datos.</td>
+</tr>
+<tr>
+<td>RNF-02</td>
+<td>Integridad y concurrencia</td>
+<td>Venta, líneas, movimientos y saldo se confirman juntos; nunca stock negativo ni doble conversión.</td>
+<td>Dos ventas simultáneas sobre la última unidad: solo una descuenta. Un fallo intermedio revierte toda la operación.</td>
+</tr>
+<tr>
+<td>RNF-03</td>
+<td>Idempotencia</td>
+<td>Repetir una misma operación de solicitud, venta o ajuste con la misma clave conserva un único efecto.</td>
+<td>Reenviar tres veces la misma petición y comprobar una solicitud, venta o movimiento respectivamente.</td>
+</tr>
+<tr>
+<td>RNF-04</td>
+<td>Usabilidad y accesibilidad</td>
+<td>Recorridos principales utilizables a 360 y 1280 píxeles, con teclado, etiquetas y mensajes de error asociados.</td>
+<td>Revisión de todas las maquetas y prueba posterior sin ratón; evitar desplazamiento horizontal de formularios y ofrecer alternativa legible a tablas.</td>
+</tr>
+<tr>
+<td>RNF-05</td>
+<td>Tiempo de búsqueda</td>
+<td>Objetivo propuesto: p95 de la API de descubrimiento inferior a 1 s con 200 negocios y 3000 productos, carga de 10 consultas concurrentes durante 5 min tras calentamiento.</td>
+<td>Registrar hardware, versión, errores y latencias; no declarar cumplimiento antes de medir. El objetivo está sujeto a validación de infraestructura.</td>
+</tr>
+<tr>
+<td>RNF-06</td>
+<td>Fallos externos</td>
+<td>La geolocalización denegada admite zona manual; WhatsApp fallido conserva la solicitud; IA fallida admite formulario manual.</td>
+<td>Escenarios de permiso denegado, enlace no abierto y proveedor simulado con error o timeout de 15 s propuesto.</td>
+</tr>
+<tr>
+<td>RNF-07</td>
+<td>Privacidad</td>
+<td>La referencia pública no autoriza acceso a solicitudes. Guardar hash del token privado y excluir secretos, mensajes completos y coordenadas de logs generales.</td>
+<td>Pruebas de referencia enumerada, token inválido y revisión de logs. Política de retención de datos reales pendiente antes de piloto.</td>
+</tr>
+<tr>
+<td>RNF-08</td>
+<td>Reproducibilidad</td>
+<td>Mismo conjunto, secuencia temporal, versión y semilla producen el mismo experimento de ranking.</td>
+<td>Dos corridas aisladas deben coincidir en orden y métricas dentro de tolerancia numérica documentada.</td>
+</tr>
+<tr>
+<td>RNF-09</td>
+<td>Auditabilidad</td>
+<td>Cambios sensibles conservan actor, fecha UTC, transición y motivo; no pueden editarse desde los paneles ordinarios.</td>
+<td>Inspeccionar auditoría de suspensión, activación de plan y anulación de venta; verificar rechazo de modificación de eventos.</td>
+</tr>
+<tr>
+<td>RNF-10</td>
+<td>Compatibilidad</td>
+<td>Interfaz web responsiva, sin app obligatoria; validar al menos Chromium y Firefox en las versiones registradas en el acta de pruebas.</td>
+<td>Ejecutar recorridos de aceptación en ambos motores y registrar versiones, dispositivo y limitaciones.</td>
+</tr>
+<tr>
+<td>RNF-11</td>
+<td>Recuperación</td>
+<td>Conservar respaldo de datos de demostración y procedimiento de restauración; no prometer disponibilidad comercial 24×7.</td>
+<td>Restaurar copia en una instancia aislada y verificar conteos e integridad de una venta; registrar duración.</td>
+</tr>
+<tr>
+<td>RNF-12</td>
+<td>Mantenibilidad</td>
+<td>Mantener separación API/BLL/DAL e inversión de dependencias; reglas de ranking y ventas verificables sin proveedores externos.</td>
+<td>Revisar referencias de proyectos y ejecutar pruebas unitarias BLL e integración DAL con PostgreSQL/PostGIS real.</td>
+</tr>
+<tr>
+<td>RNF-13</td>
+<td>Seguridad de entradas</td>
+<td>Validar longitudes, cantidades, imágenes y destinos externos; no aceptar HTML ejecutable ni enlaces arbitrarios como destino de contacto.</td>
+<td>Casos de valores fuera de límite, contenido malicioso y archivo no admitido; construir enlace de WhatsApp desde número validado.</td>
+</tr>
+</tbody>
+</table>
+<p>Los valores de rendimiento y timeout son objetivos de diseño propuestos, no resultados observados. Las decisiones pendientes se reúnen en <a href="07-decisiones-y-validacion.md">decisiones y validación</a>.</p>
+<p>Fuente: elaboración propia.</p>
+</section><section id="chapter-2"><h1>Descripción de casos de uso</h1>
+<p>Versión 1.0 · 2026-09-07. Actores: consumidor, responsable de negocio y administrador de plataforma. «Usuario» en CU-01 comprende los roles que ingresan; el consumidor puede explorar anónimamente. WhatsApp y el proveedor de IA son participantes externos. El evaluador utiliza autorización de administrador y ejecuta herramientas de evaluación separadas de producción.</p>
+<p>Cada caso mostrado en el diagrama general tiene una ficha. El diagrama general no constituye un caso adicional. Las frecuencias son <strong>a relevar</strong>, no cifras inventadas.</p>
+<h2>CU-01 — Registrar cuenta y gestionar sesión</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-05; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-01</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Usuario</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Registrar cuentas, iniciar y cerrar sesión y rechazar el acceso a cuentas suspendidas. Los permisos se comprobarán en servidor.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Para iniciar sesión debe existir una cuenta habilitada; el registro no requiere sesión.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P01.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Cuenta o sesión gestionada; ningún fallo concede permisos.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P01.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El usuario elige registrarse o ingresar e introduce los datos requeridos.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>El sistema valida formato y unicidad del correo al registrar, o credenciales al ingresar.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El sistema asigna el rol solicitado permitido; nunca permite autoconcederse administrador.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Se establece una sesión y se muestran las funciones autorizadas.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Al cerrar sesión se invalida el acceso de esa sesión.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Correo duplicado o datos inválidos: informar el campo y conservar datos no sensibles.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Credenciales inválidas o cuenta suspendida: rechazar sin revelar datos de otra cuenta.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-02 — Gestionar perfil del negocio</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-02; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-02</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Crear, editar y archivar el perfil propio con nombre, descripción, rubro, ubicación y WhatsApp, validando los datos antes de publicarlo.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Responsable autenticado; para editar debe ser propietario.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P02.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Perfil persistido con estado y actividad correspondientes.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P02.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El responsable abre su perfil o solicita crear un negocio.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Ingresa nombre, rubro, descripción, dirección, ubicación y WhatsApp.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El sistema valida los campos y la propiedad del recurso.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Guarda el perfil como borrador o publicado y registra el cambio.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>La oferta pública refleja únicamente perfiles habilitados.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Ubicación o WhatsApp inválidos: conservar borrador e indicar corrección.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Recurso de otro negocio: denegar acceso sin modificarlo.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-03 — Gestionar novedades y promociones</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-02; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-03</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Crear, editar, publicar y archivar novedades o promociones propias con condiciones y vigencia; vincular productos solo cuando el plan habilite catálogo.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Responsable autenticado con negocio habilitado.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P03.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Publicación guardada y disponible según estado y vigencia.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P03.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Abre publicaciones y selecciona novedad o promoción.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Completa contenido y, si es promoción, condiciones y fechas.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Opcionalmente vincula un producto propio si tiene capacidad de catálogo.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>El sistema valida vigencia y guarda o publica el contenido.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Registra actividad sustantiva deduplicada; los contenidos vencidos dejan de ofrecerse como vigentes.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Fechas inconsistentes o producto ajeno: rechazar guardado.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Plan sin catálogo: permitir promoción independiente y rechazar vínculo de producto.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-04 — Gestionar catálogo y precios</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-02; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-04</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Crear, editar, publicar y archivar productos con nombre, descripción, categoría, imagen, precio, moneda y disponibilidad, preservando los valores históricos de pedidos y ventas.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Responsable autenticado con catálogo habilitado.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P04.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Oferta vigente actualizada; stock cambia únicamente mediante movimientos.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P04.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Abre su catálogo y elige un producto o una nueva carga.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Completa los datos comerciales y la categoría.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Revisa y confirma guardar o publicar.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>El sistema valida propiedad, capacidad y valores no negativos.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Persiste el producto; en el alta crea saldo cero y conserva históricos existentes.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Plan vencido: bloquear nuevas publicaciones sin borrar datos.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Precio inválido o categoría inexistente: informar el campo y no publicar.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-05 — Generar borrador asistido de producto</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-02; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-05</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Solicitar sugerencias de nombre, descripción y categoría desde una imagen y datos mínimos, editarlas o descartarlas, sin publicar automáticamente y permitiendo carga manual ante fallos.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Sesión y catálogo habilitados; imagen válida seleccionada.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P05.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Borrador revisable; no existe publicación sin confirmación.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P05.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El responsable selecciona una imagen y solicita asistencia.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>El sistema envía solo la imagen y los datos mínimos al proveedor de IA.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Valida que la respuesta estructurada incluya una categoría admitida.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Presenta las sugerencias como borrador editable.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>El responsable acepta, corrige o descarta y continúa con CU-04 para guardar.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Proveedor falla, demora o devuelve formato inválido: ofrecer formulario manual sin bloqueo.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Sugerencia incorrecta: permitir editar o descartar sin publicación.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-06 — Registrar movimientos de inventario</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-03; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-06</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Registrar entradas y ajustes de stock por producto con cantidad, motivo y responsable, mantener historial y rechazar saldos negativos y operaciones duplicadas.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Sesión y gestión de inventario habilitadas; producto propio existente.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P06.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Saldo conciliable con movimientos; no hay stock negativo.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P06.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Consulta saldo e historial de un producto.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Selecciona entrada o ajuste e indica cantidad y motivo.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El sistema valida la clave de operación y la disponibilidad si el ajuste resta.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Registra movimiento y saldo en una transacción con control concurrente.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Muestra el nuevo saldo y el historial.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Operación repetida: devolver el resultado previo sin aplicar otra vez.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Saldo insuficiente o conflicto concurrente: no modificar parcialmente e informar.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-07 — Descubrir negocios de la zona</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-04; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-07</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Consumidor</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Mostrar al ingresar una revista de negocios ordenados por el ranking hiperlocal, con ubicación manual o del dispositivo, filtros de rubro y búsqueda textual opcional, incluyendo negocios gratuitos elegibles.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>No requiere cuenta; debe obtenerse o elegirse una zona antes de consultar resultados locales.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P07.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Resultados correspondientes a la zona, contexto y versión; exposición sin confundir anuncios.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Crítica</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P07.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El consumidor abre la revista y elige zona o permite geolocalización.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Opcionalmente selecciona rubro o escribe una búsqueda.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El sistema filtra negocios publicados de la zona y calcula factores con configuración versionada.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Presenta una tarjeta por negocio en orden orgánico y espacios patrocinados separados.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Registra candidatos y, al cumplirse la regla de visibilidad, impresiones orgánicas.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Ubicación denegada: ofrecer selección manual sin bloquear exploración.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Sin negocios elegibles: mostrar estado vacío y permitir cambiar zona o filtros.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-08 — Buscar productos cercanos</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-04; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-08</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Consumidor</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Buscar productos de catálogos habilitados por texto, categoría y zona, ordenando con la fórmula de productos y sus límites de exposición por negocio.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Zona seleccionada; no requiere cuenta.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P08.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Resultados trazables al contexto de búsqueda.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P08.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El consumidor selecciona búsqueda de productos e ingresa texto o categoría.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>El sistema filtra productos publicados, disponibles y de negocios con catálogo habilitado.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Calcula relevancia, proximidad, disponibilidad y equidad con versión registrada.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Presenta resultados respetando el máximo de dos productos por negocio en los primeros diez.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Permite abrir el producto y registra exposición visible.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Sin coincidencias: ofrecer corregir texto o ampliar zona.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Producto pierde disponibilidad al abrirlo: mostrar estado actualizado e impedir solicitar unidades inexistentes.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-09 — Consultar oferta y contactar al negocio</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-03; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-09</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Consumidor</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Consultar perfil, catálogo o promoción vigente y abrir WhatsApp con contexto del negocio, registrando intención de contacto sin considerarla mensaje recibido ni venta.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Destino público habilitado.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P09.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Visita o intención registrada; no se crea venta.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P09.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Abre una tarjeta de negocio, producto o promoción.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>El sistema muestra información vigente y registra la visita con su origen disponible.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El consumidor elige contactar al negocio.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Se registra el clic y se prepara el enlace a WhatsApp.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>El consumidor decide si envía el mensaje en WhatsApp.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Destino archivado: informar que ya no está disponible.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>WhatsApp no abre: ofrecer copiar número y resumen; no simular envío exitoso.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-10 — Crear solicitud para WhatsApp</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-03; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-10</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Consumidor</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Crear una solicitud de productos de un solo negocio con referencia única, copia de cantidades y precios y resumen para WhatsApp, sin reservar stock y sin duplicar la solicitud al reintentar.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Productos publicados de un negocio con catálogo; nombre de contacto y cantidades válidas.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P10.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Solicitud pendiente persistida con origen disponible y stock intacto.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Crítica</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P10.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El consumidor agrega productos de un negocio y revisa el resumen.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Confirma nombre de contacto y cantidades; el teléfono es opcional.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El sistema revalida productos, precios y capacidad del negocio.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Guarda solicitud y líneas con clave de idempotencia y acceso privado.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Entrega referencia y resumen y ofrece abrir WhatsApp.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Cambió el precio o disponibilidad: solicitar nueva revisión antes de confirmar.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Reintento: devolver la solicitud existente; si falla WhatsApp conservarla.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-11 — Consultar estado de una solicitud</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-03; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-11</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Consumidor</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Permitir consultar el resumen y estado de una solicitud mediante acceso privado autorizado, sin permitir acceso por la referencia pública aislada.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Enlace privado válido o cuenta propietaria de la solicitud.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P11.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Estado consultado sin alterar stock ni venta.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P11.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El consumidor abre el acceso privado recibido al crear la solicitud.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>El sistema valida credencial y asociación con la solicitud.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Muestra referencia, detalle original y estado reportado.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Distingue solicitud creada de contacto confirmado por el negocio.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Permite recuperar el resumen para WhatsApp sin generar otra solicitud.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Referencia sin credencial o token inválido: denegar datos privados.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Solicitud cancelada o convertida: mostrar su estado sin permitir duplicar conversión.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-12 — Atender solicitudes del negocio</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-03; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-12</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Listar y localizar solicitudes propias por referencia, confirmar recepción del contacto, pasar a atención o cancelar, preservando el contenido original.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Responsable autenticado; solicitud del propio negocio.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P12.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Estado y recepción reportada actualizados con auditoría.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P12.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Abre la bandeja y busca una referencia.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Consulta el detalle original y su estado.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Confirma si recibió el contacto y pasa a atención.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Puede cancelar con motivo o continuar al registro de venta.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>El sistema valida la transición y registra actor e instante.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Solicitud ya convertida: no permitir cancelarla como pendiente; usar corrección de venta.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Suscripción vencida: permitir resolver solicitudes anteriores sin admitir nuevas.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-13 — Registrar venta y descontar stock</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-03; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-13</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Registrar una venta vinculada a solicitud o presencial, conservar artículos finales y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Sesión autorizada; productos propios; solicitud no cancelada ni convertida cuando corresponda.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P13.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Venta reportada y saldo consistentes; como máximo una venta por solicitud.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Crítica</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P13.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Abre una solicitud o inicia una venta presencial.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Confirma productos, cantidades y precios efectivamente acordados.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El sistema valida idempotencia, propiedad y disponibilidad con control concurrente.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Guarda venta, líneas, movimientos y saldo dentro de una transacción.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Si existe solicitud la marca convertida y conserva la relación de origen.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Stock insuficiente: rechazar toda la operación y permitir ajustar cantidades.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Solicitud ya convertida o reintento: recuperar venta existente sin nuevo descuento.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-14 — Corregir venta y registrar devolución física</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-03; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-14</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Anular una venta con motivo y auditoría sin reponer stock automáticamente; registrar devoluciones físicas relacionadas con líneas vendidas sin exceder las cantidades originales.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Venta propia registrada y responsable autorizado.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P14.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Corrección trazable; no se gestiona reintegro monetario.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P14.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Abre la venta y elige anular o registrar devolución física.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Indica motivo y, para devolución, líneas y unidades recibidas.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El sistema valida estado, cantidades acumuladas y clave de operación.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Guarda la auditoría y, solo si hay devolución física, movimiento y saldo atómicos.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Muestra el historial sin borrar la venta original.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Devolución excede lo vendido: rechazar.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Anulación o devolución repetida: no duplicar cambio ni unidades.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-15 — Consultar y habilitar suscripción</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-05; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-15</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio; Administrador</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Mostrar ventajas de Presencia e Impulso sin precios, permitir al administrador habilitar períodos no superpuestos y aplicar capacidades según vigencia, conservando historial al vencer.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Responsable autenticado para consultar; administrador autenticado para habilitar.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P15.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Período auditable y permisos derivados de la vigencia.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P15.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El responsable consulta su plan y las capacidades disponibles.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>La contratación se acuerda fuera del prototipo.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El administrador selecciona negocio, plan e intervalo de vigencia.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>El sistema valida que no exista superposición y registra la activación.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Durante el período aplica Impulso; al vencer aplica Presencia preservando datos y resolución de pedidos anteriores.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Intervalos superpuestos: rechazar activación.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Actor no administrador: rechazar cambio de suscripción.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-16 — Gestionar campañas publicitarias</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-05; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-16</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Crear y consultar campañas para una promoción o un producto propio elegible con zona y fechas, enviarlas a revisión y pausarlas; la suscripción no compra posición orgánica.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Negocio habilitado y capacidad según destino; producto o promoción vigente.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P16.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Campaña registrada; no se entrega publicidad sin revisión y pago confirmado.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P16.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El responsable elige promocionar una promoción o producto propio.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Define título, zona y fechas de la campaña.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>El sistema comprueba que haya exactamente un destino y las capacidades del plan.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Guarda borrador o envía a revisión.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>El responsable consulta estado y puede pausar la campaña.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Producto sin catálogo habilitado: rechazar destino y ofrecer promoción independiente.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Fechas inválidas o destino ajeno: indicar corrección sin activar.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-17 — Revisar y activar publicidad</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-05; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-17</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Administrador</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Aprobar o rechazar campañas, registrar confirmación manual del pago y habilitar entrega solo con fechas, zona, negocio y destino válidos, identificándola como patrocinada.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Administrador autenticado; campaña presentada.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P17.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Campaña con decisión auditable; ningún anuncio modifica exposición orgánica.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P17.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Consulta la campaña y su destino.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Aprueba o rechaza con motivo.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Si corresponde registra confirmación del pago acordado externamente.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Programa o activa según fechas y elegibilidad.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>La entrega vuelve a verificar condiciones y registra impresiones patrocinadas separadas.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Sin pago confirmado: mantener pendiente aunque esté aprobada.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Destino suspendido, sin stock o plan vencido: suspender entrega; registrar motivo para resolución comercial externa.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-18 — Consultar métricas del negocio</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-03; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-18</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Responsable del negocio</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Mostrar métricas por período y capacidades: visitas y clics para Presencia y además solicitudes, ventas reportadas y atribución por producto o campaña para Impulso, separando exposición orgánica y paga.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Responsable autenticado y propietario.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P18.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Reporte reproducible por período, sin inferir ventas desde clics.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P18.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Selecciona período y, si está habilitado, producto o campaña.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>El sistema determina métricas autorizadas por plan.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Agrega eventos deduplicados y solicitudes de una misma cohorte.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Calcula conversión e importe de ventas reportadas excluyendo anuladas y explicando devoluciones físicas.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Muestra resultados y definiciones, incluyendo estados sin datos.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Sin eventos: mostrar cero o no aplicable cuando el denominador sea cero.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Filtro ajeno o métrica no habilitada: rechazar sin exponer datos.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-19 — Administrar cuentas, contenido y categorías</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-05; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-19</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Administrador</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Gestionar categorías y suspender o rehabilitar cuentas, negocios y publicaciones con motivo y auditoría, preservando historial comercial.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Administrador autenticado.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P19.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Recursos moderados con autor, instante y motivo.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P19.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Selecciona cuenta, negocio, contenido o categoría.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Consulta su estado y referencias relevantes.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Elige modificación permitida e indica motivo.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>El sistema valida dependencias y registra cambio y auditoría.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Las consultas públicas aplican el nuevo estado sin eliminar historial.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Categoría referenciada: impedir borrado destructivo y permitir corrección de nombre.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Intento de quitar el último administrador habilitado: rechazar.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>CU-20 — Configurar y evaluar el prototipo</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Versión</td>
+<td>1.0 — 2026-09-07</td>
+</tr>
+<tr>
+<td>Objetivos asociados</td>
+<td>OP-04; OP-01</td>
+</tr>
+<tr>
+<td>Requerimiento principal</td>
+<td>RF-20</td>
+</tr>
+<tr>
+<td>Actor principal</td>
+<td>Administrador / evaluador académico</td>
+</tr>
+<tr>
+<td>Descripción</td>
+<td>Versionar parámetros y ejecutar evaluación reproducible del ranking con datos sintéticos y de la asistencia de catálogo con una muestra documentada, exportando métricas sin alterar evidencia de producción.</td>
+</tr>
+<tr>
+<td>Precondiciones</td>
+<td>Evaluador autorizado; conjunto, juicios de relevancia y configuración preparados.</td>
+</tr>
+<tr>
+<td>Disparador</td>
+<td>El actor inicia la función desde P20 o la herramienta de evaluación.</td>
+</tr>
+<tr>
+<td>Postcondiciones</td>
+<td>Artefactos experimentales separados de datos operativos; sin afirmaciones de mejora anticipadas.</td>
+</tr>
+<tr>
+<td>Frecuencia esperada</td>
+<td>A relevar en piloto; ejecución según demanda del actor.</td>
+</tr>
+<tr>
+<td>Importancia</td>
+<td>Crítica</td>
+</tr>
+<tr>
+<td>Comentarios</td>
+<td>Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P20.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Secuencia normal</strong></p>
+<table>
+<thead>
+<tr>
+<th>Paso</th>
+<th>Acción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>El evaluador selecciona contexto, configuración y conjunto de datos.</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Registra semilla, versión y parámetros de las variantes de referencia.</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Ejecuta consultas en el mismo orden y registra candidatos y exposición según protocolo.</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Calcula equidad, cobertura y nDCG; en la muestra de IA registra aceptación, correcciones y tiempos.</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Exporta informe y archivos de evidencia con limitaciones y resultados observados.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cursos alternativos</strong></p>
+<table>
+<thead>
+<tr>
+<th>Código</th>
+<th>Condición y respuesta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A1</td>
+<td>Configuración inválida o juicios ausentes: no presentar métricas como válidas.</td>
+</tr>
+<tr>
+<td>A2</td>
+<td>Proveedor IA indisponible: registrar fallo de asistencia y evaluar la alternativa manual.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+</section><section id="chapter-3"><h1>Diagramas UML, estructura de datos y despliegue</h1>
+<p>Versión 1.0 · Fuentes editables y figuras propuestas. Las imágenes SVG/PNG se generan localmente desde definiciones controladas: Graphviz para relaciones y un generador SVG para secuencias. Se conserva código PlantUML equivalente, sin afirmar que las imágenes hayan sido renderizadas por PlantUML. Los diagramas de secuencia representan interacción temporal; las flechas discontinuas son respuestas y los marcos <code>alt</code> muestran alternativas.</p>
+<h2>Casos de uso</h2>
+<p>El límite representa el prototipo completo, no WhatsApp ni el proveedor de IA. Los actores se muestran como clasificadores con estereotipo «actor», una forma rectangular de representar su rol. No se fuerza una relación include/extend cuando el vínculo es simplemente un recorrido entre funciones.</p>
+<p><img src="figuras/casos-de-uso.svg" alt="Casos de uso general"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/casos-de-uso.puml">Código PlantUML</a>. Las fichas están en <a href="03-casos-de-uso.md">casos de uso</a>.</p>
+<h3>Vista por actor: Consumidor</h3>
+<p><img src="figuras/casos-consumidor.svg" alt="Casos Consumidor"></p>
+<p>Fuente: elaboración propia. Es un desglose del mismo conjunto de casos, no funciones adicionales.</p>
+<h3>Vista por actor: Responsable del negocio</h3>
+<p><img src="figuras/casos-negocio.svg" alt="Casos Responsable del negocio"></p>
+<p>Fuente: elaboración propia. Es un desglose del mismo conjunto de casos, no funciones adicionales.</p>
+<h3>Vista por actor: Administrador y evaluación</h3>
+<p><img src="figuras/casos-administrador.svg" alt="Casos Administrador y evaluación"></p>
+<p>Fuente: elaboración propia. Es un desglose del mismo conjunto de casos, no funciones adicionales.</p>
+<h2>Diagramas de secuencia</h2>
+<p>Se seleccionan los recorridos que concentran el aporte técnico y las integraciones. No se interpreta que todos los casos de uso deban tener una secuencia independiente; todos sí tienen ficha.</p>
+<h3>S01 — Descubrir negocios y registrar exposición</h3>
+<p>Trazabilidad: CU-07, RF-21, RF-22.</p>
+<p><img src="figuras/S01.svg" alt="S01 Descubrir negocios y registrar exposición"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/S01.puml">Código PlantUML</a>.</p>
+<h3>S02 — Buscar productos disponibles</h3>
+<p>Trazabilidad: CU-08.</p>
+<p><img src="figuras/S02.svg" alt="S02 Buscar productos disponibles"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/S02.puml">Código PlantUML</a>.</p>
+<h3>S03 — Crear solicitud y preparar WhatsApp</h3>
+<p>Trazabilidad: CU-09, CU-10, CU-11.</p>
+<p><img src="figuras/S03.svg" alt="S03 Crear solicitud y preparar WhatsApp"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/S03.puml">Código PlantUML</a>.</p>
+<h3>S04 — Registrar venta con integridad</h3>
+<p>Trazabilidad: CU-13, RNF-02, RNF-03.</p>
+<p><img src="figuras/S04.svg" alt="S04 Registrar venta con integridad"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/S04.puml">Código PlantUML</a>.</p>
+<h3>S05 — Asistencia de catálogo con revisión humana</h3>
+<p>Trazabilidad: CU-04, CU-05.</p>
+<p><img src="figuras/S05.svg" alt="S05 Asistencia de catálogo con revisión humana"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/S05.puml">Código PlantUML</a>.</p>
+<h3>S06 — Habilitar suscripción y verificar capacidades</h3>
+<p>Trazabilidad: CU-15.</p>
+<p><img src="figuras/S06.svg" alt="S06 Habilitar suscripción y verificar capacidades"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/S06.puml">Código PlantUML</a>.</p>
+<h3>S07 — Solicitar y activar campaña</h3>
+<p>Trazabilidad: CU-16, CU-17.</p>
+<p><img src="figuras/S07.svg" alt="S07 Solicitar y activar campaña"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/S07.puml">Código PlantUML</a>.</p>
+<h3>S08 — Anular venta y registrar devolución</h3>
+<p>Trazabilidad: CU-14.</p>
+<p><img src="figuras/S08.svg" alt="S08 Anular venta y registrar devolución"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/S08.puml">Código PlantUML</a>.</p>
+<h2>Estructura de datos</h2>
+<p>Se utilizan <strong>clases y DER</strong> porque el sistema se diseña orientado a objetos y almacena datos relacionales. El diagrama de clases representa atributos, operaciones de dominio y asociaciones. El DER representa entidades persistentes, claves y cardinalidades. No son intercambiables: por ejemplo, un método de dominio no corresponde a una columna.</p>
+<p>El modelo tiene 26 entidades y 203 campos, incluyendo sesiones y auditoría. Se omiten detalles internos del proveedor de autenticación hasta elegir su implementación; cualquier mapeo posterior debe preservar revocación y seguridad del contrato. La IA produce borradores transitorios y su evidencia de evaluación se conserva como archivos del experimento; no se crea una tabla de sugerencias sin necesidad funcional.</p>
+<p>Las referencias, nulabilidad, índices y reglas de integridad complementan las figuras. Los importes del catálogo no son precios de suscripción: estos últimos se dejan sin definir.</p>
+<ul>
+<li><a href="../model/classes.md">Clases con operaciones y figuras por módulo</a>.</li>
+<li><a href="../model/ER.md">DER completo y por módulo</a>.</li>
+<li><a href="../model/data-dictionary.md">Diccionario de restricciones</a>.</li>
+<li><a href="../model/field-dictionary.md">Diccionario por campo: nombre, descripción, longitud y tipo</a>.</li>
+</ul>
+<h2>Proceso de negocio propuesto en BPMN</h2>
+<p><img src="figuras/proceso-solicitud-venta.svg" alt="Proceso de solicitud y venta"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/proceso-solicitud-venta.bpmn">Fuente BPMN 2.0 no ejecutable con coordenadas</a>.</p>
+<p>El modelo distingue consumidor, plataforma y negocio mediante carriles de un proceso de colaboración operativa. Si el consumidor no envía el mensaje, la solicitud queda pendiente; si el negocio informa venta, el sistema registra venta y stock atómicamente. La conversación externa no es observada automáticamente por la plataforma. Se presenta el proceso propuesto; el diagnóstico conserva los nombres de los procesos actuales. El tratamiento técnico de fallos y concurrencia se detalla en S04. La exportación XML es estructuralmente verificable; su importación visual en un editor BPMN específico no se ha probado.</p>
+<h2>Diagrama de componentes</h2>
+<p><img src="figuras/componentes.svg" alt="Componentes"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/componentes.puml">Código PlantUML</a>.</p>
+<p>La API expone casos de uso; BLL concentra las reglas e interfaces; DAL implementa persistencia; IoC conecta implementaciones. El proyecto de integraciones se agrega cuando se implemente asistencia de IA y almacenamiento de imágenes. BLL no referencia DAL ni SDKs externos. Se mantiene el <a href="../architecture/ADR-001-layered-architecture.md">ADR de arquitectura</a>.</p>
+<h2>Diagrama de despliegue</h2>
+<p><img src="figuras/despliegue.svg" alt="Despliegue"></p>
+<p>Fuente: elaboración propia. <a href="diagramas/despliegue.puml">Código PlantUML</a>.</p>
+<p>El consumidor y el negocio acceden mediante navegador al frontend Next.js. El frontend y las interacciones del navegador consumen la API ASP.NET Core; el backend aplica permisos y reglas y consulta PostgreSQL/PostGIS por conexión privada. Las imágenes se guardan en almacenamiento de objetos y se exponen mediante referencias de lectura controladas. El backend invoca al proveedor de IA con datos mínimos, mientras que WhatsApp se abre desde el dispositivo como servicio externo.</p>
+<p>El evaluador ejecuta el mismo núcleo de ranking en un proceso aislado con su propia base y datos sintéticos. No ejecuta simulaciones sobre los registros comerciales. La flecha discontinua representa reutilización lógica, no acceso del runner a la API de producción. Proveedores, dominios, capacidades y mecanismos de respaldo se elegirán en el diseño de despliegue; no hay contratación ni publicación implícita.</p>
+</section><section id="chapter-4"><h1>Diagrama de clases</h1>
+<p>Se elige UML por el diseño orientado a objetos. Las clases incluyen atributos, operaciones de dominio y multiplicidades; los servicios de aplicación coordinan las transacciones entre entidades. No se interpreta cada método como una tabla o endpoint. Fuente completa: <a href="../model/entities.puml">entities.puml</a>.</p>
+<h2>Negocios, identidad y planes</h2>
+<p><img src="../model/figures/UML-01-negocios.svg" alt="Clases Negocios, identidad y planes"></p>
+<p>Fuente: elaboración propia. <a href="../model/01-negocios.puml">Código PlantUML</a>. Las relaciones externas se incluyen en la fuente completa.</p>
+<h2>Catálogo, solicitudes, ventas e inventario</h2>
+<p><img src="../model/figures/UML-02-comercio.svg" alt="Clases Catálogo, solicitudes, ventas e inventario"></p>
+<p>Fuente: elaboración propia. <a href="../model/02-comercio.puml">Código PlantUML</a>. Las relaciones externas se incluyen en la fuente completa.</p>
+<h2>Ranking, campañas y medición</h2>
+<p><img src="../model/figures/UML-03-descubrimiento.svg" alt="Clases Ranking, campañas y medición"></p>
+<p>Fuente: elaboración propia. <a href="../model/03-descubrimiento.puml">Código PlantUML</a>. Las relaciones externas se incluyen en la fuente completa.</p>
+</section><section id="chapter-5"><h1>Diagramas entidad-relación</h1>
+<p>Modelo propuesto orientado a PostgreSQL/PostGIS. Las FK compuestas y restricciones condicionales se detallan en el <a href="../model/data-dictionary.md">diccionario</a>. El <a href="../model/field-dictionary.md">diccionario por campo</a> fija tipos y longitudes propuestos. Las figuras DOT/SVG y las fuentes Mermaid se generan desde <a href="../model/model.json">model.json</a>; no son migraciones ejecutadas.</p>
+<h2>Negocios, identidad y planes</h2>
+<p><img src="../model/figures/ER-01-negocios.svg" alt="DER Negocios, identidad y planes"></p>
+<p>Fuente: elaboración propia. Se omiten aristas externas al módulo para facilitar lectura; ver el modelo completo.</p>
+<h2>Catálogo, solicitudes, ventas e inventario</h2>
+<p><img src="../model/figures/ER-02-comercio.svg" alt="DER Catálogo, solicitudes, ventas e inventario"></p>
+<p>Fuente: elaboración propia. Se omiten aristas externas al módulo para facilitar lectura; ver el modelo completo.</p>
+<h2>Ranking, campañas y medición</h2>
+<p><img src="../model/figures/ER-03-descubrimiento.svg" alt="DER Ranking, campañas y medición"></p>
+<p>Fuente: elaboración propia. Se omiten aristas externas al módulo para facilitar lectura; ver el modelo completo.</p>
+</section><section id="chapter-6"><h1>Diccionario y restricciones del modelo</h1>
+<p>Versión 1.0 · Propuesta complementaria a UML y ER. <strong>Los atributos son obligatorios salvo los indicados como opcionales aquí o en el <a href="../model/field-dictionary.md">diccionario por campo</a>.</strong> PK = clave primaria, FK = referencia, UK = unicidad. La notación Mermaid no expresa todas las restricciones compuestas y condicionales.</p>
+<h2>Convenciones físicas propuestas</h2>
+<ul>
+<li><code>uuid</code> → UUID; <code>string</code> → varchar con longitud definida por campo; <code>datetime</code> → timestamptz UTC; <code>decimal</code> monetario → numeric(12,2); factores → numeric(14,8); <code>long</code> → bigint; <code>json</code> → jsonb. Ver las longitudes propuestas en el diccionario por campo.</li>
+<li><code>geography</code> → geography(Point,4326), coordenadas en orden longitud/latitud. Radios en metros, distancia de la fórmula convertida a kilómetros.</li>
+<li>Productos y cantidades por unidad entera; precios no negativos, cantidades solicitadas/vendidas positivas, saldo no negativo. Una moneda por solicitud y venta, consistente en sus líneas.</li>
+<li>Los identificadores de negocio redundantes son deliberados para integridad entre propietarios. Cada tabla con <code>id</code> y <code>business_id</code> expone UNIQUE(business_id,id). Las referencias entre recursos del negocio usan FK compuestas, además de la FK de negocio correspondiente.</li>
+<li>Las bajas operativas archivan o suspenden. RESTRICT para borrar productos, negocios o documentos referenciados por ventas. La eliminación/anonimización de datos personales requiere una política de retención antes del piloto con datos reales.</li>
+<li>No se guardan contraseñas ni tokens en claro. UserAccount incorpora password_hash para autenticación local propuesta, y UserSession representa sesiones revocables. El componente de autenticación definitivo debe respetar ese contrato o documentar el mapeo a sus tablas propias.</li>
+</ul>
+<h2>Identidad, negocio y SaaS</h2>
+<table>
+<thead>
+<tr>
+<th>Entidad</th>
+<th>Significado y restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UserAccount</td>
+<td>Identidad interna. Email único normalizado; status controla habilitación. PasswordHash generado por el componente de autenticación, no criptografía propia.</td>
+</tr>
+<tr>
+<td>UserSession</td>
+<td>UserId referencia la cuenta. TokenHash único; ExpiresAt posterior a CreatedAt. RevokedAt opcional. Una sesión válida requiere cuenta habilitada, no estar revocada y no haber vencido.</td>
+</tr>
+<tr>
+<td>AuditEvent</td>
+<td>ActorId obligatorio. BusinessId opcional para operaciones globales. TargetType y TargetId identifican lógicamente el recurso: no es una FK polimórfica física. Action, Reason y OccurredAt obligatorios; estados anterior/nuevo opcionales. Registro inmutable, validado por el servicio; conservar aunque el recurso se archive. No copiar contactos, hashes ni secretos en el motivo.</td>
+</tr>
+<tr>
+<td>UserRole</td>
+<td>PK(user_id,role). Roles propuestos: consumer, business_owner, administrator; una cuenta puede tener varios.</td>
+</tr>
+<tr>
+<td>BusinessCategory</td>
+<td>Rubro de negocio, independiente de categorías de producto.</td>
+</tr>
+<tr>
+<td>Business</td>
+<td>OwnerId referencia UserAccount; CategoryId referencia BusinessCategory. Description y address opcionales; location y whatsapp_number requeridos para publicar. Propuesta: un rubro principal por negocio. Estados: draft, published, suspended, archived.</td>
+</tr>
+<tr>
+<td>Plan</td>
+<td>Code único: presence o boost; nombres visibles Presencia e Impulso. IsFree distingue el acceso gratuito. Sin campo de precio.</td>
+</tr>
+<tr>
+<td>PlanCapability</td>
+<td>PK(plan_id,capability). Códigos propuestos: catalog, orders, inventory, product_analytics, promotion_ads, product_ads, sales_attribution. Enabled determina habilitación; no concede acceso a datos ajenos.</td>
+</tr>
+<tr>
+<td>Subscription</td>
+<td>BusinessId y PlanId obligatorios. EndsAt y ActivatedBy opcionales para registros aún no activados; Impulso activo requiere fin y actor de activación. Intervalos [starts_at,ends_at), fin posterior al inicio. No superponer períodos habilitados de un mismo negocio. Sin período vigente, aplicar Presencia.</td>
+</tr>
+<tr>
+<td>Publication</td>
+<td>ProductId opcional, con FK(business_id,product_id) a Product. Kind: news o promotion. ImageUrl y PublishedAt opcionales. Terms, StartsAt y EndsAt opcionales para news, obligatorios para promotion publicada, con fin posterior a inicio. Status: draft, published, suspended, archived.</td>
+</tr>
+<tr>
+<td>BusinessActivity</td>
+<td>ActorId obligatorio; PublicationId opcional y del mismo negocio. Kind identifica el cambio sustantivo. DeduplicationKey único. El servicio define qué cuenta como actividad y aplica límites, no cada actualización de fila.</td>
+</tr>
+</tbody>
+</table>
+<p>Capacidades propuestas: ambos planes permiten promotion_ads; solo Impulso permite catalog, orders, inventory, product_analytics, product_ads y sales_attribution. Las campañas son contratación adicional. La elegibilidad comercial sigue propuesta, no decisión confirmada por este modelo.</p>
+<h2>Catálogo, pedidos y ventas</h2>
+<table>
+<thead>
+<tr>
+<th>Entidad</th>
+<th>Significado y restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ProductCategory</td>
+<td>Clasificación del catálogo; no requiere coincidir con BusinessCategory.</td>
+</tr>
+<tr>
+<td>Product</td>
+<td>Pertenece a un negocio. Description e ImageUrl opcionales en borrador. Price y currency guardan la oferta actual; el historial comercial usa copias. Status: draft, published, archived.</td>
+</tr>
+<tr>
+<td>Inventory</td>
+<td>PK product_id; FK(business_id,product_id) a Product. Exactamente un saldo por producto, creado junto con él. Quantity y LowStockThreshold &gt;= 0. Version para concurrencia optimista o alternativa de bloqueo a decidir.</td>
+</tr>
+<tr>
+<td>OrderRequest</td>
+<td>ConsumerId, SourceInteractionId, ContactPhone, ContactConfirmedAt y ContactConfirmedBy opcionales. ContactName obligatorio propuesto. Token de acceso privado obligatorio propuesto; se guarda solo su hash. Reference única no es credencial. UNIQUE(business_id,idempotency_key). Origin: feed, search, advertisement, direct, unknown. ContactConfirmedAt y su actor se completan juntos. Status: pending, in_progress, converted, cancelled.</td>
+</tr>
+<tr>
+<td>OrderItem</td>
+<td>OrderRequestId y ProductId del mismo negocio mediante FK compuestas. Al menos una línea por solicitud; UNIQUE(order_request_id,product_id) mientras no haya variantes. Quantity &gt; 0. Nombre, precio y moneda son copias inmutables de lo solicitado.</td>
+</tr>
+<tr>
+<td>Sale</td>
+<td>OrderRequestId opcional para venta presencial; UNIQUE(order_request_id) para no convertir dos veces. FK(business_id,order_request_id) y UNIQUE(business_id,idempotency_key). Origin: platform o in_store; platform requiere solicitud, in_store no la admite. RecordedBy obligatorio. Status: recorded o voided, con corrección auditada.</td>
+</tr>
+<tr>
+<td>SaleItem</td>
+<td>FK compuestas hacia Sale y Product; al menos una línea por venta. UNIQUE(sale_id,product_id). Quantity &gt; 0. Copia de nombre, precio y moneda finales; no se obtiene el importe histórico del precio actual.</td>
+</tr>
+<tr>
+<td>StockMovement</td>
+<td>FK(business_id,product_id) a Inventory y ActorId a UserAccount. SaleItemId opcional para entrada/ajuste, obligatorio en venta o devolución. QuantityDelta distinto de cero: negativo para venta, positivo para devolución; ajuste con signo según motivo. Reason obligatorio. UNIQUE(business_id,operation_key).</td>
+</tr>
+</tbody>
+</table>
+<p>SourceInteractionId debe apuntar a una interacción del mismo negocio; origin debe coincidir con la atribución guardada. Para publicidad se recorre Interaction → AdImpression → AdCampaign. Si no existe evidencia, no fabricar la relación.</p>
+<p>StockMovement con SaleItemId usa FK(business_id,product_id,sale_item_id) hacia UNIQUE(business_id,product_id,id) de SaleItem. Así no puede descontar un producto distinto al vendido. Un índice único parcial sobre sale_item_id para kind=sale evita descuentos de venta duplicados; las devoluciones pueden generar varios movimientos, sin exceder unidades vendidas.</p>
+<p>Registrar Sale, SaleItem, movimientos y nuevo saldo en una transacción, comprobando stock concurrentemente. El saldo inicial también es un movimiento. La suma de movimientos debe reconciliar con Inventory.quantity. Un CHECK aislado no puede asegurar esa igualdad entre filas: se implementa con el servicio transaccional y su verificación.</p>
+<p>Anular una venta conserva sus líneas y requiere motivo y actor en AuditEvent; no repone stock automáticamente. Una devolución física genera su propio movimiento. No se modela contabilidad de reintegros monetarios. No usar StockMovement para simular una corrección sin movimiento físico.</p>
+<h2>Descubrimiento y exposición</h2>
+<table>
+<thead>
+<tr>
+<th>Entidad</th>
+<th>Significado y restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RankingConfiguration</td>
+<td>Version única e inmutable. Context: business_feed, business_search, product_search. Parameters contiene pesos, normalización, ventana, bonificación, umbrales y reglas versionadas. No es permiso para cambiar una versión ya usada.</td>
+</tr>
+<tr>
+<td>DiscoveryRequest</td>
+<td>ConsumerId, QueryText, BusinessCategoryId y ProductCategoryId opcionales. BusinessFeed acepta texto ausente. Configuración y contexto deben coincidir. Radio &gt; 0. SessionKey seudónimo; ubicación de búsqueda sujeta a minimización y retención.</td>
+</tr>
+<tr>
+<td>RankingCandidate</td>
+<td>RequestId y BusinessId obligatorios; ProductId solo para product_search y del mismo negocio. Availability y Activity opcionales si no aplican al contexto; no reemplazarlas silenciosamente por cero. Position opcional para candidatos no seleccionados. Resto de componentes requerido. Factores normalizados [0,1]; rango de bonificación y puntaje según configuración.</td>
+</tr>
+<tr>
+<td>OrganicImpression</td>
+<td>CandidateId obligatorio. Position &gt; 0, consistente con posición presentada; ExposureWeight = 1/log2(position+1). Solo se registra al cumplir contrato de visibilidad. DeduplicationKey evita duplicados técnicos; la ventana de deduplicación aún debe especificarse.</td>
+</tr>
+</tbody>
+</table>
+<p>Unicidad de candidatos: índice parcial UNIQUE(request_id,business_id) cuando product_id es nulo; UNIQUE(request_id,product_id) cuando no es nulo. Position única por request_id cuando no es nula. Las restricciones de contexto entre tablas requieren validación transaccional o trigger, no un CHECK local.</p>
+<p>ExpectedExposureShare representa la proporción esperada <strong>del negocio en esa consulta</strong>, entre 0 y 1. En búsqueda de productos se repite como copia en los candidatos del mismo negocio y se agrega una sola vez por (request_id,business_id), nunca por producto. Su valor debe ser idéntico en ese grupo y normalizar entre negocios elegibles. El mérito que la determina se especifica con el algoritmo. No constituye una fórmula de Eq ya aprobada.</p>
+<p>Para la equidad histórica se agrega OrganicImpression por negocio dentro de la ventana y se contrasta con oportunidades esperadas deduplicadas por negocio/consulta. La publicidad no entra en esa suma. Los agregados diarios son derivados, no entidades obligatorias del MVP. Candidatos sin impresión conservan evidencia de elegibilidad, no exposición ficticia.</p>
+<h2>Publicidad e interacciones</h2>
+<table>
+<thead>
+<tr>
+<th>Entidad</th>
+<th>Significado y restricciones</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AdCampaign</td>
+<td>ProductId y PublicationId opcionales individualmente, pero exactamente uno obligatorio (XOR). FK compuestas aseguran mismo negocio. Publication debe ser promotion. StartsAt &lt; EndsAt y radio &gt; 0. ApprovedAt/By y PaymentConfirmedAt/By opcionales hasta completar revisión/pago y obligatorios para activar. Actores referencian UserAccount con permiso administrador. Sin importes ni precios.</td>
+</tr>
+<tr>
+<td>AdImpression</td>
+<td>CampaignId obligatorio; DiscoveryRequestId opcional para otros espacios públicos. SessionKey identifica sesión seudónima; Placement distingue ubicación del anuncio. Solo campañas elegibles generan nuevas impresiones. DeduplicationKey único.</td>
+</tr>
+<tr>
+<td>Interaction</td>
+<td>ProductId, PublicationId, OrganicImpressionId, AdImpressionId y ConsumerId opcionales. Como máximo un destino específico Product o Publication; ambos nulos representan perfil de negocio. Como máximo una impresión origen orgánica o publicitaria; ambas nulas para acceso directo o sin evidencia. Kind: profile_view, product_view, promotion_view, whatsapp_click.</td>
+</tr>
+</tbody>
+</table>
+<p>Las impresiones vinculadas deben corresponder al mismo negocio que Interaction. Un clic a producto desde la tarjeta de negocio puede diferir del destino original, pero nunca cambiar de negocio sin iniciar una nueva atribución. Las FK simples a impresiones no garantizan esto: validar el recorrido en transacción o definir triggers antes de migraciones. No confiar en identificadores de campaña enviados por el cliente sin comprobarlos.</p>
+<p>AdCampaign.status usa draft, pending_review, pending_payment, scheduled, active, paused, finished, rejected. La elegibilidad de entrega también comprueba fechas, zona, estado del negocio, contenido y capacidades vigentes. Un estado active aislado no basta.</p>
+<h2>Índices y controles previstos</h2>
+<ul>
+<li>GiST en Business.location y AdCampaign.target_center; filtros por estado, vigencia y radio además de búsqueda espacial.</li>
+<li>Índices de FK, particularmente (business_id,status,created_at) en solicitudes y (business_id,recorded_at) en ventas.</li>
+<li>Búsqueda textual indexada de negocio/producto y trigramas donde se justifique; definición exacta en diseño físico.</li>
+<li>RankingCandidate(request_id,business_id), OrganicImpression(viewed_at,candidate_id) y AdImpression(campaign_id,viewed_at) para evaluación y métricas.</li>
+<li>Exclusión o control transaccional de superposición de suscripciones; índices únicos parciales de pedidos/ventas y candidatos descritos arriba.</li>
+<li>Reglas que no caben en FK/CHECK (mínimo una línea, actor autorizado, estados, plan, consistencia de atribución) se documentan y prueban como contratos transaccionales.</li>
+</ul>
+<h2>Pendientes de diseño físico</h2>
+<p>Componente definitivo de autenticación, retención y anonimización; política de modificación de planes y calibración del ranking. Auditoría y sesiones están representadas en el modelo. No aplicar migraciones hasta revisar estos contratos. Las cardinalidades UML y ER describen estados válidos del dominio, incluidos mínimos que necesitan transacciones para cumplirse.</p>
+</section><section id="chapter-7"><h1>Diccionario de datos por campo</h1>
+<p>Versión 1.0 · Tipos y longitudes propuestos para el prototipo. Identificadores en inglés y descripción en español conforme a la consigna. No se han ejecutado migraciones. «Sí*» significa opcional físicamente pero sujeto a reglas condicionales del <a href="../model/data-dictionary.md">diccionario de restricciones</a>. Los tipos de tamaño fijo se expresan en bytes, no en caracteres.</p>
+<p>Las operaciones de autenticación utilizarán un componente mantenido del framework; los hashes no son contraseñas ni tokens utilizables. Longitudes de almacenamiento geográfico/JSON no se equiparan a longitud de texto.</p>
+<h2>UserAccount — Cuenta de usuario</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>email</td>
+<td>254 caracteres</td>
+<td>varchar(254)</td>
+<td>No</td>
+<td>UK</td>
+<td>Correo normalizado de la cuenta.</td>
+</tr>
+<tr>
+<td>display_name</td>
+<td>120 caracteres</td>
+<td>varchar(120)</td>
+<td>No</td>
+<td>—</td>
+<td>Nombre visible de la persona.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Estado del recurso según su ciclo de vida.</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC de creación.</td>
+</tr>
+<tr>
+<td>password_hash</td>
+<td>512 caracteres</td>
+<td>varchar(512)</td>
+<td>No</td>
+<td>—</td>
+<td>Hash de contraseña generado y verificado por el componente de autenticación; nunca contraseña en claro.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>UserRole — Rol de una cuenta</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK,FK</td>
+<td>Cuenta de usuario relacionada.</td>
+</tr>
+<tr>
+<td>role</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>PK</td>
+<td>Rol asignado a la cuenta.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>BusinessCategory — Rubro de negocio</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>160 caracteres</td>
+<td>varchar(160)</td>
+<td>No</td>
+<td>UK</td>
+<td>Nombre visible.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>Business — Negocio y su única ubicación</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>owner_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Cuenta responsable del negocio.</td>
+</tr>
+<tr>
+<td>category_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Categoría o rubro de la entidad.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>160 caracteres</td>
+<td>varchar(160)</td>
+<td>No</td>
+<td>—</td>
+<td>Nombre visible.</td>
+</tr>
+<tr>
+<td>description</td>
+<td>2000 caracteres</td>
+<td>varchar(2000)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Descripción de la oferta o del negocio.</td>
+</tr>
+<tr>
+<td>address</td>
+<td>250 caracteres</td>
+<td>varchar(250)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Dirección textual del local.</td>
+</tr>
+<tr>
+<td>location</td>
+<td>1 punto, 2 coordenadas; sin longitud textual</td>
+<td>geography(Point,4326)</td>
+<td>No</td>
+<td>—</td>
+<td>Ubicación geográfica del negocio.</td>
+</tr>
+<tr>
+<td>whatsapp_number</td>
+<td>16 caracteres</td>
+<td>varchar(16)</td>
+<td>No</td>
+<td>—</td>
+<td>Número del negocio validado para contacto.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Estado del recurso según su ciclo de vida.</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC de creación.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>Plan — Plan sin precios definidos</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>code</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>UK</td>
+<td>Código estable del plan.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>160 caracteres</td>
+<td>varchar(160)</td>
+<td>No</td>
+<td>—</td>
+<td>Nombre visible.</td>
+</tr>
+<tr>
+<td>is_free</td>
+<td>1 byte</td>
+<td>boolean</td>
+<td>No</td>
+<td>—</td>
+<td>Indica si el plan corresponde al acceso gratuito.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>PlanCapability — Permisos del plan</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>plan_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK,FK</td>
+<td>Plan relacionado.</td>
+</tr>
+<tr>
+<td>capability</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>PK</td>
+<td>Código de capacidad funcional.</td>
+</tr>
+<tr>
+<td>enabled</td>
+<td>1 byte</td>
+<td>boolean</td>
+<td>No</td>
+<td>—</td>
+<td>Indica si la capacidad está habilitada.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>Subscription — Período de suscripción</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>plan_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Plan relacionado.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Estado del recurso según su ciclo de vida.</td>
+</tr>
+<tr>
+<td>starts_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Inicio de vigencia UTC, inclusivo.</td>
+</tr>
+<tr>
+<td>ends_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Fin de vigencia UTC, exclusivo.</td>
+</tr>
+<tr>
+<td>activated_by</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Administrador que habilita el período.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>Publication — Novedad o promoción</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>product_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Producto relacionado, perteneciente al negocio.</td>
+</tr>
+<tr>
+<td>kind</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Tipo de evento, contenido o movimiento.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>160 caracteres</td>
+<td>varchar(160)</td>
+<td>No</td>
+<td>—</td>
+<td>Título visible del contenido.</td>
+</tr>
+<tr>
+<td>body</td>
+<td>4000 caracteres</td>
+<td>varchar(4000)</td>
+<td>No</td>
+<td>—</td>
+<td>Texto de la publicación.</td>
+</tr>
+<tr>
+<td>image_url</td>
+<td>2048 caracteres</td>
+<td>varchar(2048)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Referencia a la imagen almacenada.</td>
+</tr>
+<tr>
+<td>terms</td>
+<td>2000 caracteres</td>
+<td>varchar(2000)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Condiciones de la promoción.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Estado del recurso según su ciclo de vida.</td>
+</tr>
+<tr>
+<td>starts_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Inicio de vigencia UTC, inclusivo.</td>
+</tr>
+<tr>
+<td>ends_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Fin de vigencia UTC, exclusivo.</td>
+</tr>
+<tr>
+<td>published_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Fecha y hora de publicación.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>BusinessActivity — Actividad sustantiva auditable</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>actor_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Cuenta que realiza la operación.</td>
+</tr>
+<tr>
+<td>publication_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Publicación relacionada.</td>
+</tr>
+<tr>
+<td>kind</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Tipo de evento, contenido o movimiento.</td>
+</tr>
+<tr>
+<td>occurred_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC del evento.</td>
+</tr>
+<tr>
+<td>deduplication_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>UK</td>
+<td>Clave estable para evitar duplicación de eventos.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>UserSession — Sesión autenticada revocable</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Cuenta de usuario relacionada.</td>
+</tr>
+<tr>
+<td>token_hash</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>UK</td>
+<td>Hash del token de sesión; nunca el token utilizable.</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC de creación.</td>
+</tr>
+<tr>
+<td>expires_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC de vencimiento de la sesión.</td>
+</tr>
+<tr>
+<td>revoked_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Fecha y hora de revocación explícita.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>AuditEvent — Auditoría inmutable de cambios sensibles</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>actor_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Cuenta que realiza la operación.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>target_type</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Tipo de recurso auditado; lista cerrada.</td>
+</tr>
+<tr>
+<td>target_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>—</td>
+<td>Identificador del recurso auditado; referencia lógica preservada.</td>
+</tr>
+<tr>
+<td>action</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Acción auditada.</td>
+</tr>
+<tr>
+<td>previous_state</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Estado anterior, si aplica.</td>
+</tr>
+<tr>
+<td>new_state</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Estado nuevo, si aplica.</td>
+</tr>
+<tr>
+<td>reason</td>
+<td>1000 caracteres</td>
+<td>varchar(1000)</td>
+<td>No</td>
+<td>—</td>
+<td>Motivo de ajuste, corrección o decisión.</td>
+</tr>
+<tr>
+<td>occurred_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC del evento.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>ProductCategory — Categoría de producto</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>160 caracteres</td>
+<td>varchar(160)</td>
+<td>No</td>
+<td>UK</td>
+<td>Nombre visible.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>Product — Producto por unidad</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>category_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Categoría o rubro de la entidad.</td>
+</tr>
+<tr>
+<td>name</td>
+<td>160 caracteres</td>
+<td>varchar(160)</td>
+<td>No</td>
+<td>—</td>
+<td>Nombre visible.</td>
+</tr>
+<tr>
+<td>description</td>
+<td>2000 caracteres</td>
+<td>varchar(2000)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Descripción de la oferta o del negocio.</td>
+</tr>
+<tr>
+<td>image_url</td>
+<td>2048 caracteres</td>
+<td>varchar(2048)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Referencia a la imagen almacenada.</td>
+</tr>
+<tr>
+<td>price</td>
+<td>12 dígitos, 2 decimales</td>
+<td>numeric(12,2)</td>
+<td>No</td>
+<td>—</td>
+<td>Precio actual del producto.</td>
+</tr>
+<tr>
+<td>currency</td>
+<td>3 caracteres</td>
+<td>varchar(3)</td>
+<td>No</td>
+<td>—</td>
+<td>Código de moneda.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Estado del recurso según su ciclo de vida.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>Inventory — Saldo de stock</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>product_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK,FK</td>
+<td>Producto relacionado, perteneciente al negocio.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>quantity</td>
+<td>4 bytes; entero de 32 bits</td>
+<td>integer</td>
+<td>No</td>
+<td>—</td>
+<td>Cantidad entera de unidades.</td>
+</tr>
+<tr>
+<td>low_stock_threshold</td>
+<td>4 bytes; entero de 32 bits</td>
+<td>integer</td>
+<td>No</td>
+<td>—</td>
+<td>Umbral de disponibilidad baja.</td>
+</tr>
+<tr>
+<td>version</td>
+<td>8 bytes; entero de 64 bits</td>
+<td>bigint</td>
+<td>No</td>
+<td>—</td>
+<td>Versión de concurrencia o identificación del algoritmo.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>OrderRequest — Solicitud previa al contacto</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>consumer_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Cuenta del consumidor, cuando está autenticado.</td>
+</tr>
+<tr>
+<td>source_interaction_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Interacción comprobada que origina la solicitud.</td>
+</tr>
+<tr>
+<td>reference</td>
+<td>32 caracteres</td>
+<td>varchar(32)</td>
+<td>No</td>
+<td>UK</td>
+<td>Referencia pública de solicitud; no autoriza acceso privado.</td>
+</tr>
+<tr>
+<td>access_token_hash</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>—</td>
+<td>Hash del token privado para consultar la solicitud.</td>
+</tr>
+<tr>
+<td>contact_name</td>
+<td>120 caracteres</td>
+<td>varchar(120)</td>
+<td>No</td>
+<td>—</td>
+<td>Nombre proporcionado para atender la solicitud.</td>
+</tr>
+<tr>
+<td>contact_phone</td>
+<td>16 caracteres</td>
+<td>varchar(16)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Teléfono opcional proporcionado por el consumidor.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Estado del recurso según su ciclo de vida.</td>
+</tr>
+<tr>
+<td>origin</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Canal de origen conocido o sin atribución.</td>
+</tr>
+<tr>
+<td>idempotency_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>—</td>
+<td>Clave de operación que evita repetir sus efectos.</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC de creación.</td>
+</tr>
+<tr>
+<td>contact_confirmed_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Instante en que el negocio reportó recepción del contacto.</td>
+</tr>
+<tr>
+<td>contact_confirmed_by</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Responsable que confirmó recepción del contacto.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>OrderItem — Copia de lo solicitado</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>order_request_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Solicitud vinculada.</td>
+</tr>
+<tr>
+<td>product_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Producto relacionado, perteneciente al negocio.</td>
+</tr>
+<tr>
+<td>product_name_snapshot</td>
+<td>160 caracteres</td>
+<td>varchar(160)</td>
+<td>No</td>
+<td>—</td>
+<td>Copia del nombre del producto al registrar la operación.</td>
+</tr>
+<tr>
+<td>quantity</td>
+<td>4 bytes; entero de 32 bits</td>
+<td>integer</td>
+<td>No</td>
+<td>—</td>
+<td>Cantidad entera de unidades.</td>
+</tr>
+<tr>
+<td>unit_price_snapshot</td>
+<td>12 dígitos, 2 decimales</td>
+<td>numeric(12,2)</td>
+<td>No</td>
+<td>—</td>
+<td>Copia del precio unitario solicitado.</td>
+</tr>
+<tr>
+<td>currency</td>
+<td>3 caracteres</td>
+<td>varchar(3)</td>
+<td>No</td>
+<td>—</td>
+<td>Código de moneda.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>Sale — Venta reportada</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>order_request_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Solicitud vinculada.</td>
+</tr>
+<tr>
+<td>recorded_by</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Responsable que registra la venta.</td>
+</tr>
+<tr>
+<td>origin</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Canal de origen conocido o sin atribución.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Estado del recurso según su ciclo de vida.</td>
+</tr>
+<tr>
+<td>idempotency_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>—</td>
+<td>Clave de operación que evita repetir sus efectos.</td>
+</tr>
+<tr>
+<td>recorded_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora del registro de venta.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>SaleItem — Copia de lo efectivamente vendido</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>sale_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Venta a la que pertenece la línea.</td>
+</tr>
+<tr>
+<td>product_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Producto relacionado, perteneciente al negocio.</td>
+</tr>
+<tr>
+<td>product_name_snapshot</td>
+<td>160 caracteres</td>
+<td>varchar(160)</td>
+<td>No</td>
+<td>—</td>
+<td>Copia del nombre del producto al registrar la operación.</td>
+</tr>
+<tr>
+<td>quantity</td>
+<td>4 bytes; entero de 32 bits</td>
+<td>integer</td>
+<td>No</td>
+<td>—</td>
+<td>Cantidad entera de unidades.</td>
+</tr>
+<tr>
+<td>unit_price</td>
+<td>12 dígitos, 2 decimales</td>
+<td>numeric(12,2)</td>
+<td>No</td>
+<td>—</td>
+<td>Precio unitario efectivamente acordado.</td>
+</tr>
+<tr>
+<td>currency</td>
+<td>3 caracteres</td>
+<td>varchar(3)</td>
+<td>No</td>
+<td>—</td>
+<td>Código de moneda.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>StockMovement — Movimiento firmado de unidades</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>product_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Producto relacionado, perteneciente al negocio.</td>
+</tr>
+<tr>
+<td>sale_item_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Línea de venta que explica la salida o devolución.</td>
+</tr>
+<tr>
+<td>actor_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Cuenta que realiza la operación.</td>
+</tr>
+<tr>
+<td>quantity_delta</td>
+<td>4 bytes; entero de 32 bits</td>
+<td>integer</td>
+<td>No</td>
+<td>—</td>
+<td>Variación de unidades con signo.</td>
+</tr>
+<tr>
+<td>kind</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Tipo de evento, contenido o movimiento.</td>
+</tr>
+<tr>
+<td>reason</td>
+<td>1000 caracteres</td>
+<td>varchar(1000)</td>
+<td>No</td>
+<td>—</td>
+<td>Motivo de ajuste, corrección o decisión.</td>
+</tr>
+<tr>
+<td>operation_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>—</td>
+<td>Clave de operación de inventario.</td>
+</tr>
+<tr>
+<td>occurred_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC del evento.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>RankingConfiguration — Versión inmutable del algoritmo</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>version</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>UK</td>
+<td>Versión de concurrencia o identificación del algoritmo.</td>
+</tr>
+<tr>
+<td>context</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Contexto del ranking: revista, búsqueda de negocios o productos.</td>
+</tr>
+<tr>
+<td>parameters</td>
+<td>Variable; límite propuesto de 16 KiB por documento</td>
+<td>jsonb</td>
+<td>No</td>
+<td>—</td>
+<td>Parámetros y reglas de una versión inmutable.</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC de creación.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>DiscoveryRequest — Consulta o entrada a la revista</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>configuration_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Versión del ranking utilizada.</td>
+</tr>
+<tr>
+<td>consumer_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Cuenta del consumidor, cuando está autenticado.</td>
+</tr>
+<tr>
+<td>session_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>—</td>
+<td>Identificador seudónimo de sesión de exploración.</td>
+</tr>
+<tr>
+<td>context</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Contexto del ranking: revista, búsqueda de negocios o productos.</td>
+</tr>
+<tr>
+<td>query_text</td>
+<td>250 caracteres</td>
+<td>varchar(250)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Texto de búsqueda; puede estar ausente al entrar.</td>
+</tr>
+<tr>
+<td>business_category_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Rubro usado como filtro.</td>
+</tr>
+<tr>
+<td>product_category_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Categoría de producto usada como filtro.</td>
+</tr>
+<tr>
+<td>search_center</td>
+<td>1 punto, 2 coordenadas; sin longitud textual</td>
+<td>geography(Point,4326)</td>
+<td>No</td>
+<td>—</td>
+<td>Centro geográfico de la consulta.</td>
+</tr>
+<tr>
+<td>radius_meters</td>
+<td>4 bytes; entero de 32 bits</td>
+<td>integer</td>
+<td>No</td>
+<td>—</td>
+<td>Radio de búsqueda o campaña en metros.</td>
+</tr>
+<tr>
+<td>random_seed</td>
+<td>8 bytes; entero de 64 bits</td>
+<td>bigint</td>
+<td>No</td>
+<td>—</td>
+<td>Semilla que permite repetir desempates controlados.</td>
+</tr>
+<tr>
+<td>created_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC de creación.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>RankingCandidate — Candidato evaluado, visible o no</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>request_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Consulta de descubrimiento evaluada.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>product_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Producto relacionado, perteneciente al negocio.</td>
+</tr>
+<tr>
+<td>relevance</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>No</td>
+<td>—</td>
+<td>Relevancia normalizada del candidato.</td>
+</tr>
+<tr>
+<td>proximity</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>No</td>
+<td>—</td>
+<td>Proximidad normalizada a la zona de consulta.</td>
+</tr>
+<tr>
+<td>availability</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Disponibilidad normalizada, si aplica al contexto.</td>
+</tr>
+<tr>
+<td>activity</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Actividad sustantiva normalizada, si aplica al contexto.</td>
+</tr>
+<tr>
+<td>equity</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>No</td>
+<td>—</td>
+<td>Factor normalizado de compensación de exposición.</td>
+</tr>
+<tr>
+<td>new_business_bonus</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>No</td>
+<td>—</td>
+<td>Bonificación temporal para negocio nuevo.</td>
+</tr>
+<tr>
+<td>merit</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>No</td>
+<td>—</td>
+<td>Mérito utilizado para estimar oportunidades esperadas.</td>
+</tr>
+<tr>
+<td>expected_exposure_share</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>No</td>
+<td>—</td>
+<td>Participación esperada del negocio en la consulta; no sumar una vez por producto.</td>
+</tr>
+<tr>
+<td>final_score</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>No</td>
+<td>—</td>
+<td>Puntaje final de esta evaluación.</td>
+</tr>
+<tr>
+<td>position</td>
+<td>4 bytes; entero de 32 bits</td>
+<td>integer</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Posición orgánica, comenzando en uno.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>OrganicImpression — Exposición orgánica observada</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>candidate_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Candidato cuya tarjeta fue observada.</td>
+</tr>
+<tr>
+<td>position</td>
+<td>4 bytes; entero de 32 bits</td>
+<td>integer</td>
+<td>No</td>
+<td>—</td>
+<td>Posición orgánica, comenzando en uno.</td>
+</tr>
+<tr>
+<td>exposure_weight</td>
+<td>14 dígitos, 8 decimales</td>
+<td>numeric(14,8)</td>
+<td>No</td>
+<td>—</td>
+<td>Peso de exposición según posición.</td>
+</tr>
+<tr>
+<td>deduplication_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>UK</td>
+<td>Clave estable para evitar duplicación de eventos.</td>
+</tr>
+<tr>
+<td>viewed_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Instante en que se cumple el contrato de visibilidad.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>AdCampaign — Campaña de producto o promoción</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>product_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Producto relacionado, perteneciente al negocio.</td>
+</tr>
+<tr>
+<td>publication_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Publicación relacionada.</td>
+</tr>
+<tr>
+<td>title</td>
+<td>160 caracteres</td>
+<td>varchar(160)</td>
+<td>No</td>
+<td>—</td>
+<td>Título visible del contenido.</td>
+</tr>
+<tr>
+<td>target_center</td>
+<td>1 punto, 2 coordenadas; sin longitud textual</td>
+<td>geography(Point,4326)</td>
+<td>No</td>
+<td>—</td>
+<td>Centro de la zona objetivo de campaña.</td>
+</tr>
+<tr>
+<td>radius_meters</td>
+<td>4 bytes; entero de 32 bits</td>
+<td>integer</td>
+<td>No</td>
+<td>—</td>
+<td>Radio de búsqueda o campaña en metros.</td>
+</tr>
+<tr>
+<td>starts_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Inicio de vigencia UTC, inclusivo.</td>
+</tr>
+<tr>
+<td>ends_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fin de vigencia UTC, exclusivo.</td>
+</tr>
+<tr>
+<td>status</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Estado del recurso según su ciclo de vida.</td>
+</tr>
+<tr>
+<td>approved_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Instante de aprobación de campaña.</td>
+</tr>
+<tr>
+<td>approved_by</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Administrador que aprueba.</td>
+</tr>
+<tr>
+<td>payment_confirmed_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Instante de confirmación manual del pago.</td>
+</tr>
+<tr>
+<td>payment_confirmed_by</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Administrador que confirma el pago externo.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>AdImpression — Exposición patrocinada observada</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>campaign_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Campaña publicitaria relacionada.</td>
+</tr>
+<tr>
+<td>discovery_request_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Consulta donde aparece el anuncio, si existe.</td>
+</tr>
+<tr>
+<td>placement</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Espacio publicitario utilizado.</td>
+</tr>
+<tr>
+<td>session_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>—</td>
+<td>Identificador seudónimo de sesión de exploración.</td>
+</tr>
+<tr>
+<td>deduplication_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>UK</td>
+<td>Clave estable para evitar duplicación de eventos.</td>
+</tr>
+<tr>
+<td>viewed_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Instante en que se cumple el contrato de visibilidad.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+<h2>Interaction — Visita o intención de contacto</h2>
+<table>
+<thead>
+<tr>
+<th>Campo</th>
+<th>Longitud / precisión</th>
+<th>Tipo propuesto</th>
+<th>Nulo</th>
+<th>Clave</th>
+<th>Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>PK</td>
+<td>Identificador interno de la entidad.</td>
+</tr>
+<tr>
+<td>business_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>No</td>
+<td>FK</td>
+<td>Negocio propietario o contexto del registro.</td>
+</tr>
+<tr>
+<td>product_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Producto relacionado, perteneciente al negocio.</td>
+</tr>
+<tr>
+<td>publication_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Publicación relacionada.</td>
+</tr>
+<tr>
+<td>organic_impression_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Impresión orgánica que origina la interacción.</td>
+</tr>
+<tr>
+<td>ad_impression_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Impresión patrocinada que origina la interacción.</td>
+</tr>
+<tr>
+<td>consumer_id</td>
+<td>16 bytes; 36 caracteres de representación</td>
+<td>uuid</td>
+<td>Sí*</td>
+<td>FK</td>
+<td>Cuenta del consumidor, cuando está autenticado.</td>
+</tr>
+<tr>
+<td>session_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>—</td>
+<td>Identificador seudónimo de sesión de exploración.</td>
+</tr>
+<tr>
+<td>kind</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Tipo de evento, contenido o movimiento.</td>
+</tr>
+<tr>
+<td>origin</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>No</td>
+<td>—</td>
+<td>Canal de origen conocido o sin atribución.</td>
+</tr>
+<tr>
+<td>deduplication_key</td>
+<td>128 caracteres</td>
+<td>varchar(128)</td>
+<td>No</td>
+<td>UK</td>
+<td>Clave estable para evitar duplicación de eventos.</td>
+</tr>
+<tr>
+<td>occurred_at</td>
+<td>8 bytes; fecha y hora UTC</td>
+<td>timestamptz</td>
+<td>No</td>
+<td>—</td>
+<td>Fecha y hora UTC del evento.</td>
+</tr>
+</tbody>
+</table>
+<p>Fuente: elaboración propia.</p>
+</section><section id="chapter-8"><h1>Prototipos de interfaces</h1>
+<p>Maquetas estáticas de baja fidelidad, con datos ficticios. No implementan el producto ni conectan con servicios externos. Los enlaces solo permiten revisar el encadenamiento propuesto. <a href="pantallas/index.html">Abrir galería navegable</a>.</p>
+<h2>P01 — Tu cuenta</h2>
+<p><img src="pantallas/P01.svg" alt="P01 Tu cuenta"></p>
+<p>CU-01. Acceso a la plataforma.</p>
+<p>Recorrido: Ingresar → P07; Crear cuenta → P02.</p>
+<p>Alternativa: Credenciales inválidas: revisar los datos. No se revela si otra cuenta existe.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P02 — Mi negocio</h2>
+<p><img src="pantallas/P02.svg" alt="P02 Mi negocio"></p>
+<p>CU-02. Identidad y ubicación.</p>
+<p>Recorrido: Guardar perfil → P02; Ver mi negocio → P09.</p>
+<p>Alternativa: Falta ubicación: podés guardar borrador antes de publicar.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P03 — Novedades y promociones</h2>
+<p><img src="pantallas/P03.svg" alt="P03 Novedades y promociones"></p>
+<p>CU-03. Contá qué hay de nuevo.</p>
+<p>Recorrido: Guardar borrador → P03; Publicar → P09; Promocionar → P16.</p>
+<p>Alternativa: La fecha de finalización debe ser posterior al inicio.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P04 — Mi catálogo</h2>
+<p><img src="pantallas/P04.svg" alt="P04 Mi catálogo"></p>
+<p>CU-04. Productos y disponibilidad.</p>
+<p>Recorrido: Nuevo producto → P04; Usar asistencia → P05; Ver stock → P06.</p>
+<p>Alternativa: Plan Presencia: el catálogo requiere Impulso; el historial se conserva.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P05 — Asistencia de catálogo</h2>
+<p><img src="pantallas/P05.svg" alt="P05 Asistencia de catálogo"></p>
+<p>CU-05. Vos revisás antes de publicar.</p>
+<p>Recorrido: Generar borrador → P05; Aceptar y editar → P04; Continuar manualmente → P04.</p>
+<p>Alternativa: No pudimos generar la sugerencia. Podés completar los datos manualmente.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P06 — Inventario</h2>
+<p><img src="pantallas/P06.svg" alt="P06 Inventario"></p>
+<p>CU-06. Cada cambio queda registrado.</p>
+<p>Recorrido: Registrar movimiento → P06; Ver catálogo → P04.</p>
+<p>Alternativa: El ajuste no puede dejar el stock por debajo de cero.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P07 — Descubrí tu zona</h2>
+<p><img src="pantallas/P07.svg" alt="P07 Descubrí tu zona"></p>
+<p>CU-07. Negocios cerca de vos.</p>
+<p>Recorrido: Cambiar zona → P07; Explorar negocio → P09; Buscar productos → P08.</p>
+<p>Alternativa: Sin resultados: probá otra zona o quitá un filtro. También podés elegir ubicación manual.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P08 — Productos cercanos</h2>
+<p><img src="pantallas/P08.svg" alt="P08 Productos cercanos"></p>
+<p>CU-08. Encontrá lo que buscás.</p>
+<p>Recorrido: Ver producto → P09; Volver a negocios → P07.</p>
+<p>Alternativa: No hay productos disponibles con estos filtros.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P09 — Librería del barrio</h2>
+<p><img src="pantallas/P09.svg" alt="P09 Librería del barrio"></p>
+<p>CU-09. Tu próximo hallazgo está cerca.</p>
+<p>Recorrido: Consultar por WhatsApp → P09; Agregar a solicitud → P10; Ver promoción → P09.</p>
+<p>Alternativa: El producto ya no está disponible. Consultá al negocio por alternativas.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P10 — Tu solicitud</h2>
+<p><img src="pantallas/P10.svg" alt="P10 Tu solicitud"></p>
+<p>CU-10. Revisá antes de continuar.</p>
+<p>Recorrido: Crear solicitud → P11.</p>
+<p>Alternativa: Cambió un precio o la disponibilidad: revisá el resumen antes de confirmar.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P11 — Solicitud creada</h2>
+<p><img src="pantallas/P11.svg" alt="P11 Solicitud creada"></p>
+<p>CU-11. Referencia · ABC123 · ejemplo.</p>
+<p>Recorrido: Abrir WhatsApp → P11; Copiar resumen → P11; Volver a explorar → P07.</p>
+<p>Alternativa: No se pudo abrir WhatsApp. Tu solicitud sigue guardada.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P12 — Solicitudes</h2>
+<p><img src="pantallas/P12.svg" alt="P12 Solicitudes"></p>
+<p>CU-12. Atendé cada oportunidad.</p>
+<p>Recorrido: Marcar en atención → P12; Registrar venta → P13; Cancelar con motivo → P12.</p>
+<p>Alternativa: Solicitud ya convertida: gestioná su corrección desde la venta.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P13 — Registrar venta</h2>
+<p><img src="pantallas/P13.svg" alt="P13 Registrar venta"></p>
+<p>CU-13. Confirmá lo efectivamente vendido.</p>
+<p>Recorrido: Confirmar venta → P14; Volver a solicitud → P12.</p>
+<p>Alternativa: Stock insuficiente: no se registró la venta ni se descontaron unidades.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P14 — Venta e historial</h2>
+<p><img src="pantallas/P14.svg" alt="P14 Venta e historial"></p>
+<p>CU-14. Registro conservado.</p>
+<p>Recorrido: Anular con motivo → P14; Registrar devolución → P14; Ver métricas → P18.</p>
+<p>Alternativa: Anular no repone stock; solo la devolución física registra unidades recibidas.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P15 — Planes para tu negocio</h2>
+<p><img src="pantallas/P15.svg" alt="P15 Planes para tu negocio"></p>
+<p>CU-15. Presencia / Impulso.</p>
+<p>Recorrido: Consultar ventajas → P15; Habilitar período (admin) → P15; Volver al panel → P02.</p>
+<p>Alternativa: El período se superpone con otra suscripción. No se habilitó.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P16 — Promocioná tu oferta</h2>
+<p><img src="pantallas/P16.svg" alt="P16 Promocioná tu oferta"></p>
+<p>CU-16. Campañas con destino claro.</p>
+<p>Recorrido: Enviar a revisión → P16; Pausar campaña → P16; Ver resultados → P18.</p>
+<p>Alternativa: El destino requiere catálogo habilitado o una promoción vigente.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P17 — Revisión de campañas</h2>
+<p><img src="pantallas/P17.svg" alt="P17 Revisión de campañas"></p>
+<p>CU-17. Panel de administración.</p>
+<p>Recorrido: Aprobar → P17; Rechazar con motivo → P17; Confirmar pago y programar → P17.</p>
+<p>Alternativa: Falta confirmar el pago: la campaña sigue sin mostrarse.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P18 — Resultados de tu negocio</h2>
+<p><img src="pantallas/P18.svg" alt="P18 Resultados de tu negocio"></p>
+<p>CU-18. Contactos y ventas reportadas.</p>
+<p>Recorrido: Aplicar filtros → P18; Ver solicitudes → P12.</p>
+<p>Alternativa: Sin datos en el período. La conversión no aplica si no hay solicitudes.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P19 — Administración</h2>
+<p><img src="pantallas/P19.svg" alt="P19 Administración"></p>
+<p>CU-19. Cuentas, contenido y categorías.</p>
+<p>Recorrido: Guardar decisión → P19; Gestionar planes → P15; Revisar campañas → P17.</p>
+<p>Alternativa: No se puede eliminar una categoría referenciada ni suspender al último administrador.</p>
+<p>Fuente: elaboración propia.</p>
+<h2>P20 — Evaluación del prototipo</h2>
+<p><img src="pantallas/P20.svg" alt="P20 Evaluación del prototipo"></p>
+<p>CU-20. Entorno académico aislado.</p>
+<p>Recorrido: Ejecutar experimento → P20; Exportar evidencia → P20.</p>
+<p>Alternativa: Sin juicios de relevancia no se calcula nDCG como resultado válido.</p>
+<p>Fuente: elaboración propia.</p>
+</section><section id="chapter-9"><h1>Trazabilidad y verificación prevista</h1>
+<p>Cada RF tiene al menos un caso de uso; cada caso tiene ficha, pantalla y entidades o artefactos relacionados. Las secuencias se seleccionan por complejidad. Las verificaciones son escenarios futuros, no pruebas ejecutadas.</p>
+<table>
+<thead>
+<tr>
+<th>RF</th>
+<th>Caso de uso</th>
+<th>Pantalla</th>
+<th>Secuencia</th>
+<th>Entidades principales / evidencia</th>
+<th>Verificación</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RF-01</td>
+<td>CU-01</td>
+<td>P01</td>
+<td>Ficha del caso</td>
+<td>UserAccount, UserRole</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-02</td>
+<td>CU-02</td>
+<td>P02</td>
+<td>Ficha del caso</td>
+<td>Business, BusinessCategory, BusinessActivity</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-03</td>
+<td>CU-03</td>
+<td>P03</td>
+<td>Ficha del caso</td>
+<td>Publication, BusinessActivity, Product</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-04</td>
+<td>CU-04</td>
+<td>P04</td>
+<td>S05</td>
+<td>Product, ProductCategory, Inventory</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-05</td>
+<td>CU-05</td>
+<td>P05</td>
+<td>S05</td>
+<td>Product, ProductCategory</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-06</td>
+<td>CU-06</td>
+<td>P06</td>
+<td>Ficha del caso</td>
+<td>Inventory, StockMovement, Product</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-07</td>
+<td>CU-07</td>
+<td>P07</td>
+<td>S01</td>
+<td>DiscoveryRequest, RankingConfiguration, RankingCandidate, OrganicImpression, Business</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-08</td>
+<td>CU-08</td>
+<td>P08</td>
+<td>S02</td>
+<td>Product, Inventory, RankingCandidate, OrganicImpression</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-09</td>
+<td>CU-09</td>
+<td>P09</td>
+<td>S03</td>
+<td>Business, Product, Publication, Interaction</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-10</td>
+<td>CU-10</td>
+<td>P10</td>
+<td>S03</td>
+<td>OrderRequest, OrderItem, Interaction</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-11</td>
+<td>CU-11</td>
+<td>P11</td>
+<td>S03</td>
+<td>OrderRequest, OrderItem, Sale</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-12</td>
+<td>CU-12</td>
+<td>P12</td>
+<td>Ficha del caso</td>
+<td>OrderRequest, AuditEvent</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-13</td>
+<td>CU-13</td>
+<td>P13</td>
+<td>S04</td>
+<td>Sale, SaleItem, StockMovement, Inventory, OrderRequest</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-14</td>
+<td>CU-14</td>
+<td>P14</td>
+<td>S08</td>
+<td>Sale, SaleItem, StockMovement, AuditEvent</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-15</td>
+<td>CU-15</td>
+<td>P15</td>
+<td>S06</td>
+<td>Plan, PlanCapability, Subscription, AuditEvent</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-16</td>
+<td>CU-16</td>
+<td>P16</td>
+<td>S07</td>
+<td>AdCampaign, Publication, Product</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-17</td>
+<td>CU-17</td>
+<td>P17</td>
+<td>S07</td>
+<td>AdCampaign, AdImpression, AuditEvent</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-18</td>
+<td>CU-18</td>
+<td>P18</td>
+<td>Ficha del caso</td>
+<td>Interaction, OrderRequest, Sale, OrganicImpression, AdImpression</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-19</td>
+<td>CU-19</td>
+<td>P19</td>
+<td>Ficha del caso</td>
+<td>UserAccount, Business, Publication, BusinessCategory, ProductCategory, AuditEvent</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-20</td>
+<td>CU-20</td>
+<td>P20</td>
+<td>Ficha del caso</td>
+<td>RankingConfiguration, DiscoveryRequest, RankingCandidate, OrganicImpression; archivos de evaluación</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+</tr>
+<tr>
+<td>RF-21</td>
+<td>CU-07, CU-08, CU-17, CU-20</td>
+<td>P07, P08, P17, P20</td>
+<td>S01, S02, S07</td>
+<td>RankingCandidate, OrganicImpression, AdImpression</td>
+<td>Comprobar deduplicación, separación de exposición o conservación de auditoría según RF.</td>
+</tr>
+<tr>
+<td>RF-22</td>
+<td>CU-02, CU-03, CU-07</td>
+<td>P02, P03, P07</td>
+<td>S01</td>
+<td>BusinessActivity</td>
+<td>Comprobar deduplicación, separación de exposición o conservación de auditoría según RF.</td>
+</tr>
+<tr>
+<td>RF-23</td>
+<td>CU-12, CU-14, CU-15, CU-17, CU-19</td>
+<td>P12, P14, P15, P17, P19</td>
+<td>S06, S07, S08</td>
+<td>AuditEvent</td>
+<td>Comprobar deduplicación, separación de exposición o conservación de auditoría según RF.</td>
+</tr>
+</tbody>
+</table>
+<h2>Relación con el diagnóstico</h2>
+<table>
+<thead>
+<tr>
+<th>Proceso relevado</th>
+<th>Funciones que lo atienden</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>incorporación y publicación de productos</td>
+<td>CU-02, CU-03, CU-04, CU-05 y descubrimiento CU-07/CU-08.</td>
+</tr>
+<tr>
+<td>actualización de precios y disponibilidad</td>
+<td>CU-04, CU-06, CU-13 y CU-14.</td>
+</tr>
+<tr>
+<td>atención de consultas y venta</td>
+<td>CU-09 a CU-14 y métricas CU-18.</td>
+</tr>
+</tbody>
+</table>
+<p>CU-01, CU-15, CU-16, CU-17, CU-19 y CU-20 son funciones de soporte, comercialización y evaluación de la solución, no procesos inventados dentro del relevamiento previo.</p>
+<h2>Registro de ejecución futura</h2>
+<p>Por cada escenario conservar: identificador de RF/RNF/CU, versión de software, fecha, datos de entrada, resultado esperado, resultado obtenido, evidencia y defecto asociado. El estado inicial de todos los escenarios de negocio es <strong>no ejecutado</strong>.</p>
+<p>Fuente: elaboración propia.</p>
+</section><section id="chapter-10"><h1>Decisiones de diseño y plan de validación</h1>
+<p>Versión 1.0 · 2026-09-07. Las siguientes decisiones concretan un <strong>borrador revisable</strong>, sin afirmar aprobación del tutor ni resultados de implementación. Los precios de planes y campañas quedan fuera de este documento.</p>
+<h2>Coherencia con la primera entrega</h2>
+<ul>
+<li>Se conservan los tres procesos relevados, el objetivo de digitalización y el aporte de ranking equitativo.</li>
+<li>Se mantiene la asistencia opcional de IA para borradores, porque figura en los objetivos específicos originales. Es opcional para el comerciante, pero una función incluida en este borrador del prototipo. Eliminarla requiere reconciliar objetivos y alcance.</li>
+<li>La revista inicial ordena negocios; la fórmula original de productos se conserva en su contexto y se propone una adaptación explícita para la revista.</li>
+<li>Solicitudes, ventas reportadas, planes y campañas concretan decisiones posteriores del usuario. Su alcance se mantiene acotado a habilitación manual, un negocio por solicitud y sin pagos del comprador.</li>
+<li>Presencia e Impulso son nombres propuestos, no el nombre definitivo del producto.</li>
+</ul>
+<h2>Contratos propuestos para cerrar el diseño</h2>
+<table>
+<thead>
+<tr>
+<th>Decisión</th>
+<th>Propuesta documentada</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Piloto</td>
+<td>Productos por unidad, sin talles, colores o fraccionamiento. Rubros concretos a elegir con el usuario.</td>
+</tr>
+<tr>
+<td>Zona</td>
+<td>Radio inicial de 3 km y opciones 1, 3 y 5 km, sujeto a evaluación de densidad. Selección manual disponible. No confundir radio con λ=1,5 km de la fórmula.</td>
+</tr>
+<tr>
+<td>Consumidor</td>
+<td>Explorar sin cuenta. Solicitar con nombre; teléfono opcional. Acceso privado mediante credencial, nunca solo referencia.</td>
+</tr>
+<tr>
+<td>Identidad</td>
+<td>Sesiones revocables y hash de credenciales gestionado por componente de autenticación; no inventar criptografía propia.</td>
+</tr>
+<tr>
+<td>Publicidad</td>
+<td>Ambos planes pueden contratar promociones; Impulso permite además productos y atribución de ventas. Validar comercialmente esta distribución antes de lanzamiento.</td>
+</tr>
+<tr>
+<td>Plan vencido</td>
+<td>Ocultar catálogo y bloquear solicitudes nuevas; conservar historial y permitir resolver solicitudes anteriores.</td>
+</tr>
+<tr>
+<td>Campaña inelegible</td>
+<td>Pausar entrega si destino, plan o negocio dejan de cumplir condiciones. Resolver compensación comercial fuera del prototipo.</td>
+</tr>
+<tr>
+<td>IA</td>
+<td>Timeout propuesto de 15 s; respuesta validada contra taxonomía y formulario manual siempre disponible.</td>
+</tr>
+<tr>
+<td>Impresión visible</td>
+<td>Propuesta: al menos 50 % de la tarjeta visible durante 1 s. Una impresión por candidato y sesión en una consulta; la repetición técnica no suma. Validar antes del experimento.</td>
+</tr>
+<tr>
+<td>Atribución comercial</td>
+<td>Vinculación explícita solicitud→venta. Para informes, cohorte por creación de solicitud y seguimiento de 30 días; evitar mezclar solicitudes recientes aún abiertas con cohortes maduras.</td>
+</tr>
+<tr>
+<td>Devoluciones</td>
+<td>Reportar unidades devueltas; no deducir reembolsos monetarios sin información registrada. Excluir ventas anuladas de los importes reportados.</td>
+</tr>
+</tbody>
+</table>
+<h2>Ranking: base conservada y adaptación propuesta</h2>
+<p>En productos se conserva la fórmula inicial de la entrega: <code>S = 0,40 Rel + 0,30 Prox + 0,10 Disp + 0,20 Eq</code>. Los productos sin stock se excluyen de solicitudes y de esta búsqueda. Proximidad: <code>Prox = exp(-d/1,5)</code> con d en kilómetros. Disponibilidad propuesta: 1 por encima del umbral de stock bajo y 0,5 cuando hay stock bajo positivo.</p>
+<p>Para negocios se propone evaluar <code>S = 0,40 Rel + 0,30 Prox + 0,10 Act + 0,20 Eq</code>. Cuando no hay texto, Rel vale 1 entre negocios elegibles por rubro/zona, de modo que no se inventa una coincidencia textual. Los factores restantes distinguen posiciones. Con texto, Rel considera nombre, descripción y rubro. La actividad reemplaza disponibilidad solo en este contexto; no se aplica como si un negocio gratuito tuviera productos sin stock.</p>
+<p>Actividad propuesta: número de días con al menos una novedad o cambio sustantivo de perfil en los últimos 14 días, dividido por 7 y limitado a 1. Se cuenta como máximo un día de actividad por negocio y día UTC. Las reediciones equivalentes no crean eventos. Esta definición es una hipótesis evaluable y puede cambiar con la versión del algoritmo.</p>
+<p>Para Eq se propone contrastar exposición histórica observada con exposición esperada por mérito dentro de 30 días. En cada consulta se calcula un mérito por negocio a partir de relevancia y proximidad, agregando los candidatos del negocio una sola vez; se normaliza entre negocios elegibles. La cuota esperada se aplica al presupuesto total de exposición orgánica efectivamente observado en esa consulta. Con esto no se exige repartir una exposición que nunca ocurrió ni se premia tener más productos por duplicar cuotas.</p>
+<p>Propuesta de compensación: <code>Eq = max(0, min(1, (esperada - observada) / max(esperada, ε)))</code>, con ε positivo versionado y Eq=0 cuando no hay historial esperado. Los negocios nuevos reciben una bonificación separada de hasta 0,05, decreciente linealmente durante 14 días. Se conserva un máximo de dos productos del mismo negocio entre los primeros diez, una tarjeta por negocio en la revista y desempate por semilla dentro de una tolerancia de puntaje fijada por versión.</p>
+<p>Estas fórmulas de adaptación y normalización <strong>no están calibradas ni demuestran mejora por sí mismas</strong>. La versión del algoritmo debe fijar ε, umbral de relevancia, tolerancia de empate y estrategia de agregación de mérito antes de ejecutar el experimento final. Se registran como parámetros pendientes, no se les asigna un valor oculto en las tablas.</p>
+<h2>Validación académica</h2>
+<table>
+<thead>
+<tr>
+<th>Objeto</th>
+<th>Diseño de evaluación</th>
+<th>Evidencia a conservar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ranking de productos</td>
+<td>Aproximadamente 200 negocios, 3000 productos y 5000 consultas sintéticas; relevancia sola, relevancia+cercanía y algoritmo completo sobre iguales datos y orden temporal.</td>
+<td>Semillas, configuración, conjunto, juicios independientes de relevancia, candidatos, impresiones simuladas y métricas.</td>
+</tr>
+<tr>
+<td>Revista de negocios</td>
+<td>Contextos sin texto y con rubro, negocios nuevos y zonas de distinta densidad; comparar cercanía con variante completa y con/sin actividad.</td>
+<td>Cobertura, Gini, concentración de los diez más expuestos y relevancia según juicios adecuados al contexto.</td>
+</tr>
+<tr>
+<td>Calidad de ranking</td>
+<td>nDCG@10 con juicios independientes del puntaje evaluado; métricas por segmento y variación entre corridas.</td>
+<td>No calcular nDCG usando el mismo score como verdad de referencia.</td>
+</tr>
+<tr>
+<td>IA</td>
+<td>Misma muestra de imágenes y taxonomía, carga manual y asistida con orden contrabalanceado propuesto.</td>
+<td>Aceptación sin cambios, campos editados, categoría correcta y tiempo por producto; registrar errores y límites de muestra.</td>
+</tr>
+<tr>
+<td>Recorridos funcionales</td>
+<td>Ejecutar normales y alternativas de CU-01 a CU-20.</td>
+<td>Resultado observado, fecha, versión, captura y defecto si corresponde.</td>
+</tr>
+<tr>
+<td>Seguridad e inventario</td>
+<td>Casos cruzados entre negocios, reintentos y concurrencia sobre PostgreSQL/PostGIS real.</td>
+<td>Evidencia de rechazo, atomicidad y ausencia de doble descuento.</td>
+</tr>
+</tbody>
+</table>
+<p>Antes de la evaluación final se acordarán umbrales de mejora de exposición y pérdida máxima admisible de nDCG. Sin esos umbrales fijados previamente se reportarán diferencias descriptivas, no cumplimiento retrospectivo de un objetivo inventado.</p>
+<h2>Pendientes reales</h2>
+<p>Revisión del usuario y tutor; rubros piloto; parámetros restantes del ranking; política de retención para datos reales; proveedor de despliegue y dimensionamiento; ejecución de pruebas funcionales y experimentos. Ningún pendiente implica que se hayan medido resultados ni que el prototipo esté implementado.</p>
+<p>Fuente: elaboración propia a partir de la primera entrega, la consigna y el PRD.</p>
+</section></main></html>

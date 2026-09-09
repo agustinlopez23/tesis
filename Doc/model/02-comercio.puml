@@ -1,0 +1,103 @@
+@startuml entities
+title Entidades de dominio — propuesta documentada
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+package "Catálogo, solicitudes, ventas e inventario" {
+class ProductCategory {
+  -id: uuid
+  -name: string
+}
+class Product {
+  -id: uuid
+  -business_id: uuid
+  -category_id: uuid
+  -name: string
+  -description: string
+  -image_url: string
+  -price: decimal
+  -currency: string
+  -status: string
+  +changePrice(value): void
+  +archive(): void
+}
+class Inventory {
+  -product_id: uuid
+  -business_id: uuid
+  -quantity: int
+  -low_stock_threshold: int
+  -version: long
+  +applyMovement(delta): void
+}
+class OrderRequest {
+  -id: uuid
+  -business_id: uuid
+  -consumer_id: uuid
+  -source_interaction_id: uuid
+  -reference: string
+  -access_token_hash: string
+  -contact_name: string
+  -contact_phone: string
+  -status: string
+  -origin: string
+  -idempotency_key: string
+  -created_at: datetime
+  -contact_confirmed_at: datetime
+  -contact_confirmed_by: uuid
+  +startAttention(): void
+  +cancel(reason): void
+  +markConverted(): void
+}
+class OrderItem {
+  -id: uuid
+  -business_id: uuid
+  -order_request_id: uuid
+  -product_id: uuid
+  -product_name_snapshot: string
+  -quantity: int
+  -unit_price_snapshot: decimal
+  -currency: string
+}
+class Sale {
+  -id: uuid
+  -business_id: uuid
+  -order_request_id: uuid
+  -recorded_by: uuid
+  -origin: string
+  -status: string
+  -idempotency_key: string
+  -recorded_at: datetime
+  +void(reason): void
+}
+class SaleItem {
+  -id: uuid
+  -business_id: uuid
+  -sale_id: uuid
+  -product_id: uuid
+  -product_name_snapshot: string
+  -quantity: int
+  -unit_price: decimal
+  -currency: string
+}
+class StockMovement {
+  -id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -sale_item_id: uuid
+  -actor_id: uuid
+  -quantity_delta: int
+  -kind: string
+  -reason: string
+  -operation_key: string
+  -occurred_at: datetime
+}
+}
+ProductCategory "1" -- "0..*" Product : clasifica
+Product "1" -- "1" Inventory : mantiene
+OrderRequest "1" -- "1..*" OrderItem : contiene
+Product "1" -- "0..*" OrderItem : solicitado
+OrderRequest "0..1" -- "0..1" Sale : se_convierte
+Sale "1" -- "1..*" SaleItem : contiene
+Product "1" -- "0..*" SaleItem : vendido
+Inventory "1" -- "0..*" StockMovement : historial
+SaleItem "0..1" -- "0..*" StockMovement : origina
+@enduml

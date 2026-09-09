@@ -1,0 +1,30 @@
+@startuml S05
+title S05 — Asistencia de catálogo con revisión humana
+' Trazabilidad: CU-04, CU-05
+actor "Responsable" as B
+participant "Formulario web" as UI
+participant "Catalog API" as API
+participant "CatalogAssistant (BLL)" as BLL
+participant "Adaptador de IA" as AD
+participant "Proveedor de IA" as AI
+B -> UI : Solicitar borrador desde imagen
+UI -> API : Imagen y datos mínimos
+API -> BLL : Validar capacidad y entrada
+BLL -> AD : Solicitar sugerencia estructurada
+AD -> AI : Imagen, datos y categorías admitidas
+alt Respuesta válida dentro del timeout
+AI --> AD : Nombre, descripción y categoría
+AD --> BLL : Sugerencia
+BLL -> BLL : Validar estructura y taxonomía
+BLL --> API : Borrador editable
+API --> UI : Mostrar sugerencia
+UI --> B : Pedir revisión
+B -> UI : Aceptar, corregir o descartar
+UI -> API : Guardar producto solo con confirmación
+else Error, timeout o respuesta inválida
+AD --> BLL : Fallo controlado
+BLL --> API : Continuar manualmente
+API --> UI : Formulario manual disponible
+end
+note over BLL, AI : La IA no modifica el ranking.
+@enduml

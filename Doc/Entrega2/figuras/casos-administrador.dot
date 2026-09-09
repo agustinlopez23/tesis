@@ -1,0 +1,9 @@
+digraph G { graph [rankdir=LR,bgcolor="white",pad=0.3,nodesep=0.25,ranksep=1]; node [fontname="Arial",fontsize=13]; edge [arrowhead=none,color="#65796e"];C [shape=box,label="«actor»
+Consumidor",style=filled,fillcolor="#e2eee9"];B [shape=box,label="«actor»
+Responsable del negocio",style=filled,fillcolor="#e2eee9"];A [shape=box,label="«actor»
+Administrador / evaluador",style=filled,fillcolor="#e2eee9"];subgraph cluster_system { label="Prototipo hiperlocal"; fontname="Arial";UC1 [shape=ellipse,label="CU-01
+Registrar cuenta y gestionar\nsesión"];UC15 [shape=ellipse,label="CU-15
+Consultar y habilitar\nsuscripción"];UC17 [shape=ellipse,label="CU-17
+Revisar y activar publicidad"];UC19 [shape=ellipse,label="CU-19
+Administrar cuentas, contenido y\ncategorías"];UC20 [shape=ellipse,label="CU-20
+Configurar y evaluar el\nprototipo"];}C -> UC1;B -> UC1;A -> UC1;B -> UC15;A -> UC15;A -> UC17;A -> UC19;A -> UC20;}

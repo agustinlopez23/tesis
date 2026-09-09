@@ -1,0 +1,24 @@
+@startuml S06
+title S06 — Habilitar suscripción y verificar capacidades
+' Trazabilidad: CU-15
+actor Administrador as A
+participant "Panel de planes" as UI
+participant "Subscriptions API" as API
+participant "SubscriptionService (BLL)" as BLL
+participant "Repositorio (DAL)" as DAL
+database "PostgreSQL" as DB
+A -> UI : Elegir negocio, plan y período
+UI -> API : Solicitar habilitación
+API -> BLL : Validar rol administrador
+BLL -> DAL : Comprobar períodos del negocio
+DAL -> DB : Consultar y bloquear períodos
+alt No hay superposición
+BLL -> DAL : Guardar período y auditoría
+DAL -> DB : Confirmar transacción
+BLL --> API : Suscripción habilitada
+else Período incompatible
+BLL --> API : Rechazar superposición
+end
+API --> UI : Mostrar resultado
+note over BLL, DB : Cada operación comprueba vigencia actual; no basta ocultar botones.
+@enduml

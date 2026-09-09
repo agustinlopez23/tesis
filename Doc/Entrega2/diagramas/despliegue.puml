@@ -1,0 +1,39 @@
+@startuml deployment
+title Despliegue propuesto del prototipo
+node "Dispositivo del usuario" as Client {
+  artifact "Navegador web" as Browser
+}
+node "Servidor web" as Web {
+  artifact "Next.js / TypeScript" as Front
+}
+node "Servidor de aplicación" as App {
+  artifact "ASP.NET Core API\nBLL + DAL + IoC" as Backend
+}
+node "Servidor de datos" as Data {
+  database "PostgreSQL + PostGIS" as DB
+}
+node "Almacenamiento de imágenes" as Media {
+  artifact "Objetos de catálogo" as Images
+}
+cloud "Proveedor externo de IA" as AI
+cloud "WhatsApp externo" as WA
+node "Entorno aislado de evaluación" as Eval {
+  artifact "Runner + datos sintéticos" as Runner
+  database "Base de evaluación" as EDB
+}
+Browser --> Front : HTTPS
+Browser --> Backend : HTTPS / API
+Front --> Backend : HTTP(S) interno
+Backend --> DB : Conexión privada
+Backend --> Images : HTTPS autenticado
+Browser --> Images : HTTPS de lectura autorizado
+Backend --> AI : HTTPS / datos mínimos
+Browser --> WA : Enlace de contacto
+Runner --> EDB : Datos sintéticos
+Runner ..> Backend : Usa lógica BLL en proceso aislado
+note bottom of App
+Proveedor de hosting pendiente.
+Es un diseño, no un despliegue existente.
+end note
+@enduml
+

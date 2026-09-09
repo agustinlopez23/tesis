@@ -1,0 +1,27 @@
+@startuml S02
+title S02 — Buscar productos disponibles
+' Trazabilidad: CU-08
+actor Consumidor as C
+participant "Búsqueda web" as UI
+participant "Search API" as API
+participant "ProductSearchService (BLL)" as BLL
+participant "Repositorio (DAL)" as DAL
+database "PostgreSQL/PostGIS" as DB
+C -> UI : Buscar producto en una zona
+UI -> API : Texto, categoría y ubicación
+API -> BLL : Validar solicitud
+BLL -> DAL : Consultar catálogo elegible
+DAL -> DB : Texto, distancia, plan y stock
+DB --> DAL : Productos candidatos
+DAL --> BLL : Candidatos e historial
+BLL -> BLL : Rel + Prox + Disp + Eq
+BLL -> BLL : Límite por negocio y desempate
+BLL -> DAL : Guardar consulta y candidatos
+BLL --> API : Productos ordenados
+API --> UI : Resultados
+alt Hay coincidencias
+UI --> C : Mostrar productos
+else Sin coincidencias
+UI --> C : Sugerir cambiar filtros
+end
+@enduml

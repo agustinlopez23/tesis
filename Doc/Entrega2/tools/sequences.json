@@ -1,0 +1,50 @@
+[
+  [
+    "S01",
+    "Descubrir negocios y registrar exposición",
+    "CU-07, RF-21, RF-22",
+    "actor Consumidor as C\nparticipant \"Revista web\" as UI\nparticipant \"Discovery API\" as API\nparticipant \"RankingService (BLL)\" as BLL\nparticipant \"Repositorio (DAL)\" as DAL\ndatabase \"PostgreSQL/PostGIS\" as DB\nC -> UI : Seleccionar zona y filtros\nUI -> API : Consultar negocios\nAPI -> BLL : Validar contexto y zona\nBLL -> DAL : Obtener candidatos, historial y versión\nDAL -> DB : Filtrar publicados dentro del radio\nDB --> DAL : Negocios e historial orgánico\nDAL --> BLL : Datos para evaluación\nBLL -> BLL : Calcular factores y ordenar\nBLL -> DAL : Guardar consulta y candidatos\nDAL -> DB : Persistir evidencia de ranking\nBLL --> API : Negocios ordenados y versión\nAPI --> UI : Resultados\nalt Hay candidatos\nUI --> C : Mostrar tarjetas y explicación\nC -> UI : Visualizar tarjeta\nUI -> API : Informar impresión visible con clave\nAPI -> BLL : Validar candidato y deduplicar\nBLL -> DAL : Registrar impresión orgánica\nelse Sin candidatos\nUI --> C : Ofrecer cambiar zona o filtros\nend"
+  ],
+  [
+    "S02",
+    "Buscar productos disponibles",
+    "CU-08",
+    "actor Consumidor as C\nparticipant \"Búsqueda web\" as UI\nparticipant \"Search API\" as API\nparticipant \"ProductSearchService (BLL)\" as BLL\nparticipant \"Repositorio (DAL)\" as DAL\ndatabase \"PostgreSQL/PostGIS\" as DB\nC -> UI : Buscar producto en una zona\nUI -> API : Texto, categoría y ubicación\nAPI -> BLL : Validar solicitud\nBLL -> DAL : Consultar catálogo elegible\nDAL -> DB : Texto, distancia, plan y stock\nDB --> DAL : Productos candidatos\nDAL --> BLL : Candidatos e historial\nBLL -> BLL : Rel + Prox + Disp + Eq\nBLL -> BLL : Límite por negocio y desempate\nBLL -> DAL : Guardar consulta y candidatos\nBLL --> API : Productos ordenados\nAPI --> UI : Resultados\nalt Hay coincidencias\nUI --> C : Mostrar productos\nelse Sin coincidencias\nUI --> C : Sugerir cambiar filtros\nend"
+  ],
+  [
+    "S03",
+    "Crear solicitud y preparar WhatsApp",
+    "CU-09, CU-10, CU-11",
+    "actor Consumidor as C\nparticipant \"Solicitud web\" as UI\nparticipant \"Orders API\" as API\nparticipant \"OrderService (BLL)\" as BLL\nparticipant \"Repositorio (DAL)\" as DAL\ndatabase \"PostgreSQL\" as DB\nparticipant \"WhatsApp externo\" as WA\nC -> UI : Revisar productos y confirmar solicitud\nUI -> API : Productos, contacto y clave idempotente\nAPI -> BLL : Crear solicitud\nBLL -> DAL : Buscar operación previa y revalidar oferta\nDAL -> DB : Consultar precios, stock y plan\nDB --> DAL : Estado vigente\nDAL --> BLL : Oferta o solicitud existente\nalt Solicitud ya creada con la misma clave\nBLL --> API : Devolver solicitud existente\nelse Nueva solicitud válida\nBLL -> DAL : Guardar solicitud y copias de líneas\nDAL -> DB : Transacción de solicitud sin reservar stock\nBLL --> API : Referencia y acceso privado\nend\nAPI --> UI : Resumen conservado\nC -> UI : Elegir abrir WhatsApp\nUI -> WA : Abrir mensaje preparado\nnote over UI, WA : No se observa envío ni recepción del mensaje.\nUI --> C : Mantener referencia y opción de copiar"
+  ],
+  [
+    "S04",
+    "Registrar venta con integridad",
+    "CU-13, RNF-02, RNF-03",
+    "actor \"Responsable\" as B\nparticipant \"Panel web\" as UI\nparticipant \"Sales API\" as API\nparticipant \"SaleService (BLL)\" as BLL\nparticipant \"Repositorio transaccional (DAL)\" as DAL\ndatabase \"PostgreSQL\" as DB\nB -> UI : Confirmar artículos realmente vendidos\nUI -> API : Venta y clave idempotente\nAPI -> BLL : Autorizar propietario y operación\nBLL -> DAL : Registrar venta atómica\nDAL -> DB : Iniciar transacción\nDAL -> DB : Buscar venta existente y bloquear saldos\nalt Reintento o solicitud ya convertida\nDB --> DAL : Venta existente\nDAL -> DB : Finalizar sin nuevos movimientos\nDAL --> BLL : Resultado existente\nelse Stock suficiente\nDAL -> DB : Insertar venta, líneas y movimientos\nDAL -> DB : Actualizar saldos y estado de solicitud\nDAL -> DB : Confirmar transacción\nDAL --> BLL : Venta registrada\nelse Stock insuficiente o conflicto\nDAL -> DB : Revertir transacción\nDAL --> BLL : Error sin cambios parciales\nend\nBLL --> API : Resultado\nAPI --> UI : Confirmación o corrección requerida\nUI --> B : Mostrar estado real"
+  ],
+  [
+    "S05",
+    "Asistencia de catálogo con revisión humana",
+    "CU-04, CU-05",
+    "actor \"Responsable\" as B\nparticipant \"Formulario web\" as UI\nparticipant \"Catalog API\" as API\nparticipant \"CatalogAssistant (BLL)\" as BLL\nparticipant \"Adaptador de IA\" as AD\nparticipant \"Proveedor de IA\" as AI\nB -> UI : Solicitar borrador desde imagen\nUI -> API : Imagen y datos mínimos\nAPI -> BLL : Validar capacidad y entrada\nBLL -> AD : Solicitar sugerencia estructurada\nAD -> AI : Imagen, datos y categorías admitidas\nalt Respuesta válida dentro del timeout\nAI --> AD : Nombre, descripción y categoría\nAD --> BLL : Sugerencia\nBLL -> BLL : Validar estructura y taxonomía\nBLL --> API : Borrador editable\nAPI --> UI : Mostrar sugerencia\nUI --> B : Pedir revisión\nB -> UI : Aceptar, corregir o descartar\nUI -> API : Guardar producto solo con confirmación\nelse Error, timeout o respuesta inválida\nAD --> BLL : Fallo controlado\nBLL --> API : Continuar manualmente\nAPI --> UI : Formulario manual disponible\nend\nnote over BLL, AI : La IA no modifica el ranking."
+  ],
+  [
+    "S06",
+    "Habilitar suscripción y verificar capacidades",
+    "CU-15",
+    "actor Administrador as A\nparticipant \"Panel de planes\" as UI\nparticipant \"Subscriptions API\" as API\nparticipant \"SubscriptionService (BLL)\" as BLL\nparticipant \"Repositorio (DAL)\" as DAL\ndatabase \"PostgreSQL\" as DB\nA -> UI : Elegir negocio, plan y período\nUI -> API : Solicitar habilitación\nAPI -> BLL : Validar rol administrador\nBLL -> DAL : Comprobar períodos del negocio\nDAL -> DB : Consultar y bloquear períodos\nalt No hay superposición\nBLL -> DAL : Guardar período y auditoría\nDAL -> DB : Confirmar transacción\nBLL --> API : Suscripción habilitada\nelse Período incompatible\nBLL --> API : Rechazar superposición\nend\nAPI --> UI : Mostrar resultado\nnote over BLL, DB : Cada operación comprueba vigencia actual; no basta ocultar botones."
+  ],
+  [
+    "S07",
+    "Solicitar y activar campaña",
+    "CU-16, CU-17",
+    "actor \"Responsable\" as B\nactor Administrador as A\nparticipant \"Panel web\" as UI\nparticipant \"Campaigns API\" as API\nparticipant \"CampaignService (BLL)\" as BLL\nparticipant \"Repositorio (DAL)\" as DAL\nB -> UI : Elegir destino, zona y vigencia\nUI -> API : Enviar campaña a revisión\nAPI -> BLL : Validar propietario y capacidad\nBLL -> DAL : Guardar campaña pendiente\nA -> UI : Revisar contenido y confirmar pago externo\nUI -> API : Aprobar y registrar confirmación\nAPI -> BLL : Validar administrador y estado\nBLL -> DAL : Guardar decisión y auditoría\nalt Aprobada, pagada, vigente y destino habilitado\nBLL --> API : Campaña elegible para entrega\nAPI --> UI : Mostrar como Patrocinado\nUI -> API : Informar impresión publicitaria visible\nAPI -> BLL : Validar y deduplicar\nBLL -> DAL : Guardar AdImpression\nelse Condiciones incompletas o destino inhabilitado\nBLL --> API : Mantener pendiente o pausar entrega\nAPI --> UI : Mostrar motivo\nend"
+  ],
+  [
+    "S08",
+    "Anular venta y registrar devolución",
+    "CU-14",
+    "actor \"Responsable\" as B\nparticipant \"Panel de ventas\" as UI\nparticipant \"Sales API\" as API\nparticipant \"SaleService (BLL)\" as BLL\nparticipant \"Repositorio transaccional (DAL)\" as DAL\ndatabase \"PostgreSQL\" as DB\nB -> UI : Elegir anulación o devolución física\nUI -> API : Venta, motivo y clave de operación\nAPI -> BLL : Autorizar propietario\nBLL -> DAL : Consultar venta y unidades devueltas\nDAL -> DB : Iniciar transacción y verificar estado\nalt Anulación\nDAL -> DB : Guardar estado y auditoría sin cambiar saldo\nDAL -> DB : Confirmar transacción\nelse Devolución dentro de unidades vendidas\nDAL -> DB : Registrar movimiento positivo y saldo\nDAL -> DB : Confirmar transacción\nelse Devolución excesiva o inválida\nDAL -> DB : Revertir sin cambios\nend\nDAL --> BLL : Resultado consistente\nBLL --> API : Resultado\nAPI --> UI : Historial actualizado\nnote over UI, DB : No hay reembolso monetario dentro del prototipo."
+  ]
+]

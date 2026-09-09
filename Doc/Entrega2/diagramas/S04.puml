@@ -1,0 +1,32 @@
+@startuml S04
+title S04 — Registrar venta con integridad
+' Trazabilidad: CU-13, RNF-02, RNF-03
+actor "Responsable" as B
+participant "Panel web" as UI
+participant "Sales API" as API
+participant "SaleService (BLL)" as BLL
+participant "Repositorio transaccional (DAL)" as DAL
+database "PostgreSQL" as DB
+B -> UI : Confirmar artículos realmente vendidos
+UI -> API : Venta y clave idempotente
+API -> BLL : Autorizar propietario y operación
+BLL -> DAL : Registrar venta atómica
+DAL -> DB : Iniciar transacción
+DAL -> DB : Buscar venta existente y bloquear saldos
+alt Reintento o solicitud ya convertida
+DB --> DAL : Venta existente
+DAL -> DB : Finalizar sin nuevos movimientos
+DAL --> BLL : Resultado existente
+else Stock suficiente
+DAL -> DB : Insertar venta, líneas y movimientos
+DAL -> DB : Actualizar saldos y estado de solicitud
+DAL -> DB : Confirmar transacción
+DAL --> BLL : Venta registrada
+else Stock insuficiente o conflicto
+DAL -> DB : Revertir transacción
+DAL --> BLL : Error sin cambios parciales
+end
+BLL --> API : Resultado
+API --> UI : Confirmación o corrección requerida
+UI --> B : Mostrar estado real
+@enduml

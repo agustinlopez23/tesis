@@ -1,0 +1,17 @@
+digraph G { graph [rankdir=LR,bgcolor="white",pad=0.3,nodesep=0.25,ranksep=1]; node [fontname="Arial",fontsize=13]; edge [arrowhead=none,color="#65796e"];C [shape=box,label="«actor»
+Consumidor",style=filled,fillcolor="#e2eee9"];B [shape=box,label="«actor»
+Responsable del negocio",style=filled,fillcolor="#e2eee9"];A [shape=box,label="«actor»
+Administrador / evaluador",style=filled,fillcolor="#e2eee9"];subgraph cluster_system { label="Prototipo hiperlocal"; fontname="Arial";UC1 [shape=ellipse,label="CU-01
+Registrar cuenta y gestionar\nsesión"];UC2 [shape=ellipse,label="CU-02
+Gestionar perfil del negocio"];UC3 [shape=ellipse,label="CU-03
+Gestionar novedades y\npromociones"];UC4 [shape=ellipse,label="CU-04
+Gestionar catálogo y precios"];UC5 [shape=ellipse,label="CU-05
+Generar borrador asistido de\nproducto"];UC6 [shape=ellipse,label="CU-06
+Registrar movimientos de\ninventario"];UC12 [shape=ellipse,label="CU-12
+Atender solicitudes del negocio"];UC13 [shape=ellipse,label="CU-13
+Registrar venta y descontar\nstock"];UC14 [shape=ellipse,label="CU-14
+Corregir venta y registrar\ndevolución física"];UC15 [shape=ellipse,label="CU-15
+Consultar y habilitar\nsuscripción"];UC16 [shape=ellipse,label="CU-16
+Gestionar campañas publicitarias"];UC18 [shape=ellipse,label="CU-18
+Consultar métricas del negocio"];}C -> UC1;B -> UC1;A -> UC1;B -> UC2;B -> UC3;B -> UC4;B -> UC5;B -> UC6;B -> UC12;B -> UC13;B -> UC14;B -> UC15;A -> UC15;B -> UC16;B -> UC18;AI [shape=box,label="«actor externo»
+Proveedor de IA"]; AI -> UC5;}

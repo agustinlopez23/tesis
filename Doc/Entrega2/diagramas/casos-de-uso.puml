@@ -1,0 +1,61 @@
+@startuml use_cases
+left to right direction
+skinparam packageStyle rectangle
+actor "Consumidor" as C
+actor "Responsable del negocio" as B
+actor "Administrador / evaluador" as A
+actor "Proveedor de IA" as AI
+actor "WhatsApp" as WA
+rectangle "Prototipo hiperlocal" {
+usecase "CU-01\nRegistrar cuenta y gestionar sesión" as UC1
+usecase "CU-02\nGestionar perfil del negocio" as UC2
+usecase "CU-03\nGestionar novedades y promociones" as UC3
+usecase "CU-04\nGestionar catálogo y precios" as UC4
+usecase "CU-05\nGenerar borrador asistido de producto" as UC5
+usecase "CU-06\nRegistrar movimientos de inventario" as UC6
+usecase "CU-07\nDescubrir negocios de la zona" as UC7
+usecase "CU-08\nBuscar productos cercanos" as UC8
+usecase "CU-09\nConsultar oferta y contactar al negocio" as UC9
+usecase "CU-10\nCrear solicitud para WhatsApp" as UC10
+usecase "CU-11\nConsultar estado de una solicitud" as UC11
+usecase "CU-12\nAtender solicitudes del negocio" as UC12
+usecase "CU-13\nRegistrar venta y descontar stock" as UC13
+usecase "CU-14\nCorregir venta y registrar devolución física" as UC14
+usecase "CU-15\nConsultar y habilitar suscripción" as UC15
+usecase "CU-16\nGestionar campañas publicitarias" as UC16
+usecase "CU-17\nRevisar y activar publicidad" as UC17
+usecase "CU-18\nConsultar métricas del negocio" as UC18
+usecase "CU-19\nAdministrar cuentas, contenido y categorías" as UC19
+usecase "CU-20\nConfigurar y evaluar el prototipo" as UC20
+}
+C -- UC1
+B -- UC1
+A -- UC1
+B -- UC2
+B -- UC3
+B -- UC4
+B -- UC5
+B -- UC6
+C -- UC7
+C -- UC8
+C -- UC9
+C -- UC10
+C -- UC11
+B -- UC12
+B -- UC13
+B -- UC14
+B -- UC15
+A -- UC15
+B -- UC16
+A -- UC17
+B -- UC18
+A -- UC19
+A -- UC20
+AI -- UC5
+WA -- UC9
+WA -- UC10
+note bottom of UC10
+Abrir WhatsApp no prueba envio.
+end note
+@enduml
+

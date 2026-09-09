@@ -1,0 +1,30 @@
+@startuml S03
+title S03 — Crear solicitud y preparar WhatsApp
+' Trazabilidad: CU-09, CU-10, CU-11
+actor Consumidor as C
+participant "Solicitud web" as UI
+participant "Orders API" as API
+participant "OrderService (BLL)" as BLL
+participant "Repositorio (DAL)" as DAL
+database "PostgreSQL" as DB
+participant "WhatsApp externo" as WA
+C -> UI : Revisar productos y confirmar solicitud
+UI -> API : Productos, contacto y clave idempotente
+API -> BLL : Crear solicitud
+BLL -> DAL : Buscar operación previa y revalidar oferta
+DAL -> DB : Consultar precios, stock y plan
+DB --> DAL : Estado vigente
+DAL --> BLL : Oferta o solicitud existente
+alt Solicitud ya creada con la misma clave
+BLL --> API : Devolver solicitud existente
+else Nueva solicitud válida
+BLL -> DAL : Guardar solicitud y copias de líneas
+DAL -> DB : Transacción de solicitud sin reservar stock
+BLL --> API : Referencia y acceso privado
+end
+API --> UI : Resumen conservado
+C -> UI : Elegir abrir WhatsApp
+UI -> WA : Abrir mensaje preparado
+note over UI, WA : No se observa envío ni recepción del mensaje.
+UI --> C : Mantener referencia y opción de copiar
+@enduml

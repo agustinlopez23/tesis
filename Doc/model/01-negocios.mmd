@@ -1,0 +1,106 @@
+erDiagram
+    UserAccount {
+        uuid id PK
+        string email UK
+        string display_name
+        string status
+        datetime created_at
+        string password_hash
+    }
+    UserRole {
+        uuid user_id PK,FK
+        string role PK
+    }
+    BusinessCategory {
+        uuid id PK
+        string name UK
+    }
+    Business {
+        uuid id PK
+        uuid owner_id FK
+        uuid category_id FK
+        string name
+        string description
+        string address
+        geography location
+        string whatsapp_number
+        string status
+        datetime created_at
+    }
+    Plan {
+        uuid id PK
+        string code UK
+        string name
+        boolean is_free
+    }
+    PlanCapability {
+        uuid plan_id PK,FK
+        string capability PK
+        boolean enabled
+    }
+    Subscription {
+        uuid id PK
+        uuid business_id FK
+        uuid plan_id FK
+        string status
+        datetime starts_at
+        datetime ends_at
+        uuid activated_by FK
+    }
+    Publication {
+        uuid id PK
+        uuid business_id FK
+        uuid product_id FK
+        string kind
+        string title
+        string body
+        string image_url
+        string terms
+        string status
+        datetime starts_at
+        datetime ends_at
+        datetime published_at
+    }
+    BusinessActivity {
+        uuid id PK
+        uuid business_id FK
+        uuid actor_id FK
+        uuid publication_id FK
+        string kind
+        datetime occurred_at
+        string deduplication_key UK
+    }
+    UserSession {
+        uuid id PK
+        uuid user_id FK
+        string token_hash UK
+        datetime created_at
+        datetime expires_at
+        datetime revoked_at
+    }
+    AuditEvent {
+        uuid id PK
+        uuid actor_id FK
+        uuid business_id FK
+        string target_type
+        uuid target_id
+        string action
+        string previous_state
+        string new_state
+        string reason
+        datetime occurred_at
+    }
+    UserAccount ||--o{ UserRole : posee
+    UserAccount ||--o{ Business : administra
+    BusinessCategory ||--o{ Business : clasifica
+    Plan ||--o{ PlanCapability : habilita
+    Business ||--o{ Subscription : contrata
+    Plan ||--o{ Subscription : define
+    UserAccount |o--o{ Subscription : activa
+    Business ||--o{ Publication : publica
+    Business ||--o{ BusinessActivity : registra
+    UserAccount ||--o{ BusinessActivity : realiza
+    Publication |o--o{ BusinessActivity : origina
+    UserAccount ||--o{ UserSession : inicia
+    UserAccount ||--o{ AuditEvent : ejecuta
+    Business |o--o{ AuditEvent : contextualiza

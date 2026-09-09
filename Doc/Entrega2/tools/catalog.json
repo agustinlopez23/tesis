@@ -1,0 +1,562 @@
+{
+  "cases": [
+    {
+      "n": 1,
+      "title": "Registrar cuenta y gestionar sesión",
+      "actor": "Usuario",
+      "obj": "OP-05",
+      "rf": "Registrar cuentas, iniciar y cerrar sesión y rechazar el acceso a cuentas suspendidas. Los permisos se comprobarán en servidor.",
+      "pre": "Para iniciar sesión debe existir una cuenta habilitada; el registro no requiere sesión.",
+      "steps": [
+        "El usuario elige registrarse o ingresar e introduce los datos requeridos.",
+        "El sistema valida formato y unicidad del correo al registrar, o credenciales al ingresar.",
+        "El sistema asigna el rol solicitado permitido; nunca permite autoconcederse administrador.",
+        "Se establece una sesión y se muestran las funciones autorizadas.",
+        "Al cerrar sesión se invalida el acceso de esa sesión."
+      ],
+      "alt": [
+        "Correo duplicado o datos inválidos: informar el campo y conservar datos no sensibles.",
+        "Credenciales inválidas o cuenta suspendida: rechazar sin revelar datos de otra cuenta."
+      ],
+      "post": "Cuenta o sesión gestionada; ningún fallo concede permisos.",
+      "screen": "P01",
+      "entities": "UserAccount, UserRole",
+      "priority": "Alta"
+    },
+    {
+      "n": 2,
+      "title": "Gestionar perfil del negocio",
+      "actor": "Responsable del negocio",
+      "obj": "OP-02",
+      "rf": "Crear, editar y archivar el perfil propio con nombre, descripción, rubro, ubicación y WhatsApp, validando los datos antes de publicarlo.",
+      "pre": "Responsable autenticado; para editar debe ser propietario.",
+      "steps": [
+        "El responsable abre su perfil o solicita crear un negocio.",
+        "Ingresa nombre, rubro, descripción, dirección, ubicación y WhatsApp.",
+        "El sistema valida los campos y la propiedad del recurso.",
+        "Guarda el perfil como borrador o publicado y registra el cambio.",
+        "La oferta pública refleja únicamente perfiles habilitados."
+      ],
+      "alt": [
+        "Ubicación o WhatsApp inválidos: conservar borrador e indicar corrección.",
+        "Recurso de otro negocio: denegar acceso sin modificarlo."
+      ],
+      "post": "Perfil persistido con estado y actividad correspondientes.",
+      "screen": "P02",
+      "entities": "Business, BusinessCategory, BusinessActivity",
+      "priority": "Alta"
+    },
+    {
+      "n": 3,
+      "title": "Gestionar novedades y promociones",
+      "actor": "Responsable del negocio",
+      "obj": "OP-02",
+      "rf": "Crear, editar, publicar y archivar novedades o promociones propias con condiciones y vigencia; vincular productos solo cuando el plan habilite catálogo.",
+      "pre": "Responsable autenticado con negocio habilitado.",
+      "steps": [
+        "Abre publicaciones y selecciona novedad o promoción.",
+        "Completa contenido y, si es promoción, condiciones y fechas.",
+        "Opcionalmente vincula un producto propio si tiene capacidad de catálogo.",
+        "El sistema valida vigencia y guarda o publica el contenido.",
+        "Registra actividad sustantiva deduplicada; los contenidos vencidos dejan de ofrecerse como vigentes."
+      ],
+      "alt": [
+        "Fechas inconsistentes o producto ajeno: rechazar guardado.",
+        "Plan sin catálogo: permitir promoción independiente y rechazar vínculo de producto."
+      ],
+      "post": "Publicación guardada y disponible según estado y vigencia.",
+      "screen": "P03",
+      "entities": "Publication, BusinessActivity, Product",
+      "priority": "Alta"
+    },
+    {
+      "n": 4,
+      "title": "Gestionar catálogo y precios",
+      "actor": "Responsable del negocio",
+      "obj": "OP-02",
+      "rf": "Crear, editar, publicar y archivar productos con nombre, descripción, categoría, imagen, precio, moneda y disponibilidad, preservando los valores históricos de pedidos y ventas.",
+      "pre": "Responsable autenticado con catálogo habilitado.",
+      "steps": [
+        "Abre su catálogo y elige un producto o una nueva carga.",
+        "Completa los datos comerciales y la categoría.",
+        "Revisa y confirma guardar o publicar.",
+        "El sistema valida propiedad, capacidad y valores no negativos.",
+        "Persiste el producto; en el alta crea saldo cero y conserva históricos existentes."
+      ],
+      "alt": [
+        "Plan vencido: bloquear nuevas publicaciones sin borrar datos.",
+        "Precio inválido o categoría inexistente: informar el campo y no publicar."
+      ],
+      "post": "Oferta vigente actualizada; stock cambia únicamente mediante movimientos.",
+      "screen": "P04",
+      "entities": "Product, ProductCategory, Inventory",
+      "priority": "Alta"
+    },
+    {
+      "n": 5,
+      "title": "Generar borrador asistido de producto",
+      "actor": "Responsable del negocio",
+      "obj": "OP-02",
+      "rf": "Solicitar sugerencias de nombre, descripción y categoría desde una imagen y datos mínimos, editarlas o descartarlas, sin publicar automáticamente y permitiendo carga manual ante fallos.",
+      "pre": "Sesión y catálogo habilitados; imagen válida seleccionada.",
+      "steps": [
+        "El responsable selecciona una imagen y solicita asistencia.",
+        "El sistema envía solo la imagen y los datos mínimos al proveedor de IA.",
+        "Valida que la respuesta estructurada incluya una categoría admitida.",
+        "Presenta las sugerencias como borrador editable.",
+        "El responsable acepta, corrige o descarta y continúa con CU-04 para guardar."
+      ],
+      "alt": [
+        "Proveedor falla, demora o devuelve formato inválido: ofrecer formulario manual sin bloqueo.",
+        "Sugerencia incorrecta: permitir editar o descartar sin publicación."
+      ],
+      "post": "Borrador revisable; no existe publicación sin confirmación.",
+      "screen": "P05",
+      "entities": "Product, ProductCategory",
+      "priority": "Alta"
+    },
+    {
+      "n": 6,
+      "title": "Registrar movimientos de inventario",
+      "actor": "Responsable del negocio",
+      "obj": "OP-03",
+      "rf": "Registrar entradas y ajustes de stock por producto con cantidad, motivo y responsable, mantener historial y rechazar saldos negativos y operaciones duplicadas.",
+      "pre": "Sesión y gestión de inventario habilitadas; producto propio existente.",
+      "steps": [
+        "Consulta saldo e historial de un producto.",
+        "Selecciona entrada o ajuste e indica cantidad y motivo.",
+        "El sistema valida la clave de operación y la disponibilidad si el ajuste resta.",
+        "Registra movimiento y saldo en una transacción con control concurrente.",
+        "Muestra el nuevo saldo y el historial."
+      ],
+      "alt": [
+        "Operación repetida: devolver el resultado previo sin aplicar otra vez.",
+        "Saldo insuficiente o conflicto concurrente: no modificar parcialmente e informar."
+      ],
+      "post": "Saldo conciliable con movimientos; no hay stock negativo.",
+      "screen": "P06",
+      "entities": "Inventory, StockMovement, Product",
+      "priority": "Alta"
+    },
+    {
+      "n": 7,
+      "title": "Descubrir negocios de la zona",
+      "actor": "Consumidor",
+      "obj": "OP-04",
+      "rf": "Mostrar al ingresar una revista de negocios ordenados por el ranking hiperlocal, con ubicación manual o del dispositivo, filtros de rubro y búsqueda textual opcional, incluyendo negocios gratuitos elegibles.",
+      "pre": "No requiere cuenta; debe obtenerse o elegirse una zona antes de consultar resultados locales.",
+      "steps": [
+        "El consumidor abre la revista y elige zona o permite geolocalización.",
+        "Opcionalmente selecciona rubro o escribe una búsqueda.",
+        "El sistema filtra negocios publicados de la zona y calcula factores con configuración versionada.",
+        "Presenta una tarjeta por negocio en orden orgánico y espacios patrocinados separados.",
+        "Registra candidatos y, al cumplirse la regla de visibilidad, impresiones orgánicas."
+      ],
+      "alt": [
+        "Ubicación denegada: ofrecer selección manual sin bloquear exploración.",
+        "Sin negocios elegibles: mostrar estado vacío y permitir cambiar zona o filtros."
+      ],
+      "post": "Resultados correspondientes a la zona, contexto y versión; exposición sin confundir anuncios.",
+      "screen": "P07",
+      "entities": "DiscoveryRequest, RankingConfiguration, RankingCandidate, OrganicImpression, Business",
+      "priority": "Crítica"
+    },
+    {
+      "n": 8,
+      "title": "Buscar productos cercanos",
+      "actor": "Consumidor",
+      "obj": "OP-04",
+      "rf": "Buscar productos de catálogos habilitados por texto, categoría y zona, ordenando con la fórmula de productos y sus límites de exposición por negocio.",
+      "pre": "Zona seleccionada; no requiere cuenta.",
+      "steps": [
+        "El consumidor selecciona búsqueda de productos e ingresa texto o categoría.",
+        "El sistema filtra productos publicados, disponibles y de negocios con catálogo habilitado.",
+        "Calcula relevancia, proximidad, disponibilidad y equidad con versión registrada.",
+        "Presenta resultados respetando el máximo de dos productos por negocio en los primeros diez.",
+        "Permite abrir el producto y registra exposición visible."
+      ],
+      "alt": [
+        "Sin coincidencias: ofrecer corregir texto o ampliar zona.",
+        "Producto pierde disponibilidad al abrirlo: mostrar estado actualizado e impedir solicitar unidades inexistentes."
+      ],
+      "post": "Resultados trazables al contexto de búsqueda.",
+      "screen": "P08",
+      "entities": "Product, Inventory, RankingCandidate, OrganicImpression",
+      "priority": "Alta"
+    },
+    {
+      "n": 9,
+      "title": "Consultar oferta y contactar al negocio",
+      "actor": "Consumidor",
+      "obj": "OP-03",
+      "rf": "Consultar perfil, catálogo o promoción vigente y abrir WhatsApp con contexto del negocio, registrando intención de contacto sin considerarla mensaje recibido ni venta.",
+      "pre": "Destino público habilitado.",
+      "steps": [
+        "Abre una tarjeta de negocio, producto o promoción.",
+        "El sistema muestra información vigente y registra la visita con su origen disponible.",
+        "El consumidor elige contactar al negocio.",
+        "Se registra el clic y se prepara el enlace a WhatsApp.",
+        "El consumidor decide si envía el mensaje en WhatsApp."
+      ],
+      "alt": [
+        "Destino archivado: informar que ya no está disponible.",
+        "WhatsApp no abre: ofrecer copiar número y resumen; no simular envío exitoso."
+      ],
+      "post": "Visita o intención registrada; no se crea venta.",
+      "screen": "P09",
+      "entities": "Business, Product, Publication, Interaction",
+      "priority": "Alta"
+    },
+    {
+      "n": 10,
+      "title": "Crear solicitud para WhatsApp",
+      "actor": "Consumidor",
+      "obj": "OP-03",
+      "rf": "Crear una solicitud de productos de un solo negocio con referencia única, copia de cantidades y precios y resumen para WhatsApp, sin reservar stock y sin duplicar la solicitud al reintentar.",
+      "pre": "Productos publicados de un negocio con catálogo; nombre de contacto y cantidades válidas.",
+      "steps": [
+        "El consumidor agrega productos de un negocio y revisa el resumen.",
+        "Confirma nombre de contacto y cantidades; el teléfono es opcional.",
+        "El sistema revalida productos, precios y capacidad del negocio.",
+        "Guarda solicitud y líneas con clave de idempotencia y acceso privado.",
+        "Entrega referencia y resumen y ofrece abrir WhatsApp."
+      ],
+      "alt": [
+        "Cambió el precio o disponibilidad: solicitar nueva revisión antes de confirmar.",
+        "Reintento: devolver la solicitud existente; si falla WhatsApp conservarla."
+      ],
+      "post": "Solicitud pendiente persistida con origen disponible y stock intacto.",
+      "screen": "P10",
+      "entities": "OrderRequest, OrderItem, Interaction",
+      "priority": "Crítica"
+    },
+    {
+      "n": 11,
+      "title": "Consultar estado de una solicitud",
+      "actor": "Consumidor",
+      "obj": "OP-03",
+      "rf": "Permitir consultar el resumen y estado de una solicitud mediante acceso privado autorizado, sin permitir acceso por la referencia pública aislada.",
+      "pre": "Enlace privado válido o cuenta propietaria de la solicitud.",
+      "steps": [
+        "El consumidor abre el acceso privado recibido al crear la solicitud.",
+        "El sistema valida credencial y asociación con la solicitud.",
+        "Muestra referencia, detalle original y estado reportado.",
+        "Distingue solicitud creada de contacto confirmado por el negocio.",
+        "Permite recuperar el resumen para WhatsApp sin generar otra solicitud."
+      ],
+      "alt": [
+        "Referencia sin credencial o token inválido: denegar datos privados.",
+        "Solicitud cancelada o convertida: mostrar su estado sin permitir duplicar conversión."
+      ],
+      "post": "Estado consultado sin alterar stock ni venta.",
+      "screen": "P11",
+      "entities": "OrderRequest, OrderItem, Sale",
+      "priority": "Alta"
+    },
+    {
+      "n": 12,
+      "title": "Atender solicitudes del negocio",
+      "actor": "Responsable del negocio",
+      "obj": "OP-03",
+      "rf": "Listar y localizar solicitudes propias por referencia, confirmar recepción del contacto, pasar a atención o cancelar, preservando el contenido original.",
+      "pre": "Responsable autenticado; solicitud del propio negocio.",
+      "steps": [
+        "Abre la bandeja y busca una referencia.",
+        "Consulta el detalle original y su estado.",
+        "Confirma si recibió el contacto y pasa a atención.",
+        "Puede cancelar con motivo o continuar al registro de venta.",
+        "El sistema valida la transición y registra actor e instante."
+      ],
+      "alt": [
+        "Solicitud ya convertida: no permitir cancelarla como pendiente; usar corrección de venta.",
+        "Suscripción vencida: permitir resolver solicitudes anteriores sin admitir nuevas."
+      ],
+      "post": "Estado y recepción reportada actualizados con auditoría.",
+      "screen": "P12",
+      "entities": "OrderRequest, AuditEvent",
+      "priority": "Alta"
+    },
+    {
+      "n": 13,
+      "title": "Registrar venta y descontar stock",
+      "actor": "Responsable del negocio",
+      "obj": "OP-03",
+      "rf": "Registrar una venta vinculada a solicitud o presencial, conservar artículos finales y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo.",
+      "pre": "Sesión autorizada; productos propios; solicitud no cancelada ni convertida cuando corresponda.",
+      "steps": [
+        "Abre una solicitud o inicia una venta presencial.",
+        "Confirma productos, cantidades y precios efectivamente acordados.",
+        "El sistema valida idempotencia, propiedad y disponibilidad con control concurrente.",
+        "Guarda venta, líneas, movimientos y saldo dentro de una transacción.",
+        "Si existe solicitud la marca convertida y conserva la relación de origen."
+      ],
+      "alt": [
+        "Stock insuficiente: rechazar toda la operación y permitir ajustar cantidades.",
+        "Solicitud ya convertida o reintento: recuperar venta existente sin nuevo descuento."
+      ],
+      "post": "Venta reportada y saldo consistentes; como máximo una venta por solicitud.",
+      "screen": "P13",
+      "entities": "Sale, SaleItem, StockMovement, Inventory, OrderRequest",
+      "priority": "Crítica"
+    },
+    {
+      "n": 14,
+      "title": "Corregir venta y registrar devolución física",
+      "actor": "Responsable del negocio",
+      "obj": "OP-03",
+      "rf": "Anular una venta con motivo y auditoría sin reponer stock automáticamente; registrar devoluciones físicas relacionadas con líneas vendidas sin exceder las cantidades originales.",
+      "pre": "Venta propia registrada y responsable autorizado.",
+      "steps": [
+        "Abre la venta y elige anular o registrar devolución física.",
+        "Indica motivo y, para devolución, líneas y unidades recibidas.",
+        "El sistema valida estado, cantidades acumuladas y clave de operación.",
+        "Guarda la auditoría y, solo si hay devolución física, movimiento y saldo atómicos.",
+        "Muestra el historial sin borrar la venta original."
+      ],
+      "alt": [
+        "Devolución excede lo vendido: rechazar.",
+        "Anulación o devolución repetida: no duplicar cambio ni unidades."
+      ],
+      "post": "Corrección trazable; no se gestiona reintegro monetario.",
+      "screen": "P14",
+      "entities": "Sale, SaleItem, StockMovement, AuditEvent",
+      "priority": "Alta"
+    },
+    {
+      "n": 15,
+      "title": "Consultar y habilitar suscripción",
+      "actor": "Responsable del negocio; Administrador",
+      "obj": "OP-05",
+      "rf": "Mostrar ventajas de Presencia e Impulso sin precios, permitir al administrador habilitar períodos no superpuestos y aplicar capacidades según vigencia, conservando historial al vencer.",
+      "pre": "Responsable autenticado para consultar; administrador autenticado para habilitar.",
+      "steps": [
+        "El responsable consulta su plan y las capacidades disponibles.",
+        "La contratación se acuerda fuera del prototipo.",
+        "El administrador selecciona negocio, plan e intervalo de vigencia.",
+        "El sistema valida que no exista superposición y registra la activación.",
+        "Durante el período aplica Impulso; al vencer aplica Presencia preservando datos y resolución de pedidos anteriores."
+      ],
+      "alt": [
+        "Intervalos superpuestos: rechazar activación.",
+        "Actor no administrador: rechazar cambio de suscripción."
+      ],
+      "post": "Período auditable y permisos derivados de la vigencia.",
+      "screen": "P15",
+      "entities": "Plan, PlanCapability, Subscription, AuditEvent",
+      "priority": "Alta"
+    },
+    {
+      "n": 16,
+      "title": "Gestionar campañas publicitarias",
+      "actor": "Responsable del negocio",
+      "obj": "OP-05",
+      "rf": "Crear y consultar campañas para una promoción o un producto propio elegible con zona y fechas, enviarlas a revisión y pausarlas; la suscripción no compra posición orgánica.",
+      "pre": "Negocio habilitado y capacidad según destino; producto o promoción vigente.",
+      "steps": [
+        "El responsable elige promocionar una promoción o producto propio.",
+        "Define título, zona y fechas de la campaña.",
+        "El sistema comprueba que haya exactamente un destino y las capacidades del plan.",
+        "Guarda borrador o envía a revisión.",
+        "El responsable consulta estado y puede pausar la campaña."
+      ],
+      "alt": [
+        "Producto sin catálogo habilitado: rechazar destino y ofrecer promoción independiente.",
+        "Fechas inválidas o destino ajeno: indicar corrección sin activar."
+      ],
+      "post": "Campaña registrada; no se entrega publicidad sin revisión y pago confirmado.",
+      "screen": "P16",
+      "entities": "AdCampaign, Publication, Product",
+      "priority": "Alta"
+    },
+    {
+      "n": 17,
+      "title": "Revisar y activar publicidad",
+      "actor": "Administrador",
+      "obj": "OP-05",
+      "rf": "Aprobar o rechazar campañas, registrar confirmación manual del pago y habilitar entrega solo con fechas, zona, negocio y destino válidos, identificándola como patrocinada.",
+      "pre": "Administrador autenticado; campaña presentada.",
+      "steps": [
+        "Consulta la campaña y su destino.",
+        "Aprueba o rechaza con motivo.",
+        "Si corresponde registra confirmación del pago acordado externamente.",
+        "Programa o activa según fechas y elegibilidad.",
+        "La entrega vuelve a verificar condiciones y registra impresiones patrocinadas separadas."
+      ],
+      "alt": [
+        "Sin pago confirmado: mantener pendiente aunque esté aprobada.",
+        "Destino suspendido, sin stock o plan vencido: suspender entrega; registrar motivo para resolución comercial externa."
+      ],
+      "post": "Campaña con decisión auditable; ningún anuncio modifica exposición orgánica.",
+      "screen": "P17",
+      "entities": "AdCampaign, AdImpression, AuditEvent",
+      "priority": "Alta"
+    },
+    {
+      "n": 18,
+      "title": "Consultar métricas del negocio",
+      "actor": "Responsable del negocio",
+      "obj": "OP-03",
+      "rf": "Mostrar métricas por período y capacidades: visitas y clics para Presencia y además solicitudes, ventas reportadas y atribución por producto o campaña para Impulso, separando exposición orgánica y paga.",
+      "pre": "Responsable autenticado y propietario.",
+      "steps": [
+        "Selecciona período y, si está habilitado, producto o campaña.",
+        "El sistema determina métricas autorizadas por plan.",
+        "Agrega eventos deduplicados y solicitudes de una misma cohorte.",
+        "Calcula conversión e importe de ventas reportadas excluyendo anuladas y explicando devoluciones físicas.",
+        "Muestra resultados y definiciones, incluyendo estados sin datos."
+      ],
+      "alt": [
+        "Sin eventos: mostrar cero o no aplicable cuando el denominador sea cero.",
+        "Filtro ajeno o métrica no habilitada: rechazar sin exponer datos."
+      ],
+      "post": "Reporte reproducible por período, sin inferir ventas desde clics.",
+      "screen": "P18",
+      "entities": "Interaction, OrderRequest, Sale, OrganicImpression, AdImpression",
+      "priority": "Alta"
+    },
+    {
+      "n": 19,
+      "title": "Administrar cuentas, contenido y categorías",
+      "actor": "Administrador",
+      "obj": "OP-05",
+      "rf": "Gestionar categorías y suspender o rehabilitar cuentas, negocios y publicaciones con motivo y auditoría, preservando historial comercial.",
+      "pre": "Administrador autenticado.",
+      "steps": [
+        "Selecciona cuenta, negocio, contenido o categoría.",
+        "Consulta su estado y referencias relevantes.",
+        "Elige modificación permitida e indica motivo.",
+        "El sistema valida dependencias y registra cambio y auditoría.",
+        "Las consultas públicas aplican el nuevo estado sin eliminar historial."
+      ],
+      "alt": [
+        "Categoría referenciada: impedir borrado destructivo y permitir corrección de nombre.",
+        "Intento de quitar el último administrador habilitado: rechazar."
+      ],
+      "post": "Recursos moderados con autor, instante y motivo.",
+      "screen": "P19",
+      "entities": "UserAccount, Business, Publication, BusinessCategory, ProductCategory, AuditEvent",
+      "priority": "Alta"
+    },
+    {
+      "n": 20,
+      "title": "Configurar y evaluar el prototipo",
+      "actor": "Administrador / evaluador académico",
+      "obj": "OP-04",
+      "rf": "Versionar parámetros y ejecutar evaluación reproducible del ranking con datos sintéticos y de la asistencia de catálogo con una muestra documentada, exportando métricas sin alterar evidencia de producción.",
+      "pre": "Evaluador autorizado; conjunto, juicios de relevancia y configuración preparados.",
+      "steps": [
+        "El evaluador selecciona contexto, configuración y conjunto de datos.",
+        "Registra semilla, versión y parámetros de las variantes de referencia.",
+        "Ejecuta consultas en el mismo orden y registra candidatos y exposición según protocolo.",
+        "Calcula equidad, cobertura y nDCG; en la muestra de IA registra aceptación, correcciones y tiempos.",
+        "Exporta informe y archivos de evidencia con limitaciones y resultados observados."
+      ],
+      "alt": [
+        "Configuración inválida o juicios ausentes: no presentar métricas como válidas.",
+        "Proveedor IA indisponible: registrar fallo de asistencia y evaluar la alternativa manual."
+      ],
+      "post": "Artefactos experimentales separados de datos operativos; sin afirmaciones de mejora anticipadas.",
+      "screen": "P20",
+      "entities": "RankingConfiguration, DiscoveryRequest, RankingCandidate, OrganicImpression",
+      "priority": "Crítica"
+    }
+  ],
+  "rfextra": [
+    [
+      "RF-21",
+      "Registrar candidatos elegibles, versión del ranking e impresiones visibles deduplicadas; conservar exposición orgánica y patrocinada en registros separados.",
+      "CU-07, CU-08, CU-17, CU-20"
+    ],
+    [
+      "RF-22",
+      "Registrar actividad sustantiva del negocio con fecha y deduplicación y aplicar su aporte acotado según la configuración; una edición repetida no podrá acumular ventaja ilimitada.",
+      "CU-02, CU-03, CU-07"
+    ],
+    [
+      "RF-23",
+      "Registrar cambios sensibles de estado, plan, moderación y venta con actor, instante y motivo, sin reemplazar el historial comercial ni registrar secretos.",
+      "CU-12, CU-14, CU-15, CU-17, CU-19"
+    ]
+  ],
+  "nfr": [
+    [
+      "RNF-01",
+      "Autorización",
+      "Toda operación privada comprueba identidad, rol, propietario y capacidad en servidor.",
+      "Pruebas de acceso cruzado con dos negocios; las operaciones ajenas deben rechazarse sin modificar ni revelar sus datos."
+    ],
+    [
+      "RNF-02",
+      "Integridad y concurrencia",
+      "Venta, líneas, movimientos y saldo se confirman juntos; nunca stock negativo ni doble conversión.",
+      "Dos ventas simultáneas sobre la última unidad: solo una descuenta. Un fallo intermedio revierte toda la operación."
+    ],
+    [
+      "RNF-03",
+      "Idempotencia",
+      "Repetir una misma operación de solicitud, venta o ajuste con la misma clave conserva un único efecto.",
+      "Reenviar tres veces la misma petición y comprobar una solicitud, venta o movimiento respectivamente."
+    ],
+    [
+      "RNF-04",
+      "Usabilidad y accesibilidad",
+      "Recorridos principales utilizables a 360 y 1280 píxeles, con teclado, etiquetas y mensajes de error asociados.",
+      "Revisión de todas las maquetas y prueba posterior sin ratón; evitar desplazamiento horizontal de formularios y ofrecer alternativa legible a tablas."
+    ],
+    [
+      "RNF-05",
+      "Tiempo de búsqueda",
+      "Objetivo propuesto: p95 de la API de descubrimiento inferior a 1 s con 200 negocios y 3000 productos, carga de 10 consultas concurrentes durante 5 min tras calentamiento.",
+      "Registrar hardware, versión, errores y latencias; no declarar cumplimiento antes de medir. El objetivo está sujeto a validación de infraestructura."
+    ],
+    [
+      "RNF-06",
+      "Fallos externos",
+      "La geolocalización denegada admite zona manual; WhatsApp fallido conserva la solicitud; IA fallida admite formulario manual.",
+      "Escenarios de permiso denegado, enlace no abierto y proveedor simulado con error o timeout de 15 s propuesto."
+    ],
+    [
+      "RNF-07",
+      "Privacidad",
+      "La referencia pública no autoriza acceso a solicitudes. Guardar hash del token privado y excluir secretos, mensajes completos y coordenadas de logs generales.",
+      "Pruebas de referencia enumerada, token inválido y revisión de logs. Política de retención de datos reales pendiente antes de piloto."
+    ],
+    [
+      "RNF-08",
+      "Reproducibilidad",
+      "Mismo conjunto, secuencia temporal, versión y semilla producen el mismo experimento de ranking.",
+      "Dos corridas aisladas deben coincidir en orden y métricas dentro de tolerancia numérica documentada."
+    ],
+    [
+      "RNF-09",
+      "Auditabilidad",
+      "Cambios sensibles conservan actor, fecha UTC, transición y motivo; no pueden editarse desde los paneles ordinarios.",
+      "Inspeccionar auditoría de suspensión, activación de plan y anulación de venta; verificar rechazo de modificación de eventos."
+    ],
+    [
+      "RNF-10",
+      "Compatibilidad",
+      "Interfaz web responsiva, sin app obligatoria; validar al menos Chromium y Firefox en las versiones registradas en el acta de pruebas.",
+      "Ejecutar recorridos de aceptación en ambos motores y registrar versiones, dispositivo y limitaciones."
+    ],
+    [
+      "RNF-11",
+      "Recuperación",
+      "Conservar respaldo de datos de demostración y procedimiento de restauración; no prometer disponibilidad comercial 24×7.",
+      "Restaurar copia en una instancia aislada y verificar conteos e integridad de una venta; registrar duración."
+    ],
+    [
+      "RNF-12",
+      "Mantenibilidad",
+      "Mantener separación API/BLL/DAL e inversión de dependencias; reglas de ranking y ventas verificables sin proveedores externos.",
+      "Revisar referencias de proyectos y ejecutar pruebas unitarias BLL e integración DAL con PostgreSQL/PostGIS real."
+    ],
+    [
+      "RNF-13",
+      "Seguridad de entradas",
+      "Validar longitudes, cantidades, imágenes y destinos externos; no aceptar HTML ejecutable ni enlaces arbitrarios como destino de contacto.",
+      "Casos de valores fuera de límite, contenido malicioso y archivo no admitido; construir enlace de WhatsApp desde número validado."
+    ]
+  ]
+}
+

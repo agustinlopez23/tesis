@@ -1,0 +1,120 @@
+@startuml entities
+title Entidades de dominio — propuesta documentada
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+package "Negocios, identidad y planes" {
+class UserAccount {
+  -id: uuid
+  -email: string
+  -display_name: string
+  -status: string
+  -created_at: datetime
+  -password_hash: string
+  +activate(): void
+  +suspend(): void
+}
+class UserRole {
+  -user_id: uuid
+  -role: string
+}
+class BusinessCategory {
+  -id: uuid
+  -name: string
+}
+class Business {
+  -id: uuid
+  -owner_id: uuid
+  -category_id: uuid
+  -name: string
+  -description: string
+  -address: string
+  -location: geography
+  -whatsapp_number: string
+  -status: string
+  -created_at: datetime
+  +publish(): void
+  +suspend(): void
+}
+class Plan {
+  -id: uuid
+  -code: string
+  -name: string
+  -is_free: boolean
+}
+class PlanCapability {
+  -plan_id: uuid
+  -capability: string
+  -enabled: boolean
+}
+class Subscription {
+  -id: uuid
+  -business_id: uuid
+  -plan_id: uuid
+  -status: string
+  -starts_at: datetime
+  -ends_at: datetime
+  -activated_by: uuid
+  +isEffective(at): boolean
+}
+class Publication {
+  -id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -kind: string
+  -title: string
+  -body: string
+  -image_url: string
+  -terms: string
+  -status: string
+  -starts_at: datetime
+  -ends_at: datetime
+  -published_at: datetime
+  +publish(): void
+  +archive(): void
+}
+class BusinessActivity {
+  -id: uuid
+  -business_id: uuid
+  -actor_id: uuid
+  -publication_id: uuid
+  -kind: string
+  -occurred_at: datetime
+  -deduplication_key: string
+}
+class UserSession {
+  -id: uuid
+  -user_id: uuid
+  -token_hash: string
+  -created_at: datetime
+  -expires_at: datetime
+  -revoked_at: datetime
+  +revoke(): void
+}
+class AuditEvent {
+  -id: uuid
+  -actor_id: uuid
+  -business_id: uuid
+  -target_type: string
+  -target_id: uuid
+  -action: string
+  -previous_state: string
+  -new_state: string
+  -reason: string
+  -occurred_at: datetime
+}
+}
+UserAccount "1" -- "0..*" UserRole : posee
+UserAccount "1" -- "0..*" Business : administra
+BusinessCategory "1" -- "0..*" Business : clasifica
+Plan "1" -- "0..*" PlanCapability : habilita
+Business "1" -- "0..*" Subscription : contrata
+Plan "1" -- "0..*" Subscription : define
+UserAccount "0..1" -- "0..*" Subscription : activa
+Business "1" -- "0..*" Publication : publica
+Business "1" -- "0..*" BusinessActivity : registra
+UserAccount "1" -- "0..*" BusinessActivity : realiza
+Publication "0..1" -- "0..*" BusinessActivity : origina
+UserAccount "1" -- "0..*" UserSession : inicia
+UserAccount "1" -- "0..*" AuditEvent : ejecuta
+Business "0..1" -- "0..*" AuditEvent : contextualiza
+@enduml

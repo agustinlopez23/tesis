@@ -1,0 +1,92 @@
+erDiagram
+    RankingConfiguration {
+        uuid id PK
+        string version UK
+        string context
+        json parameters
+        datetime created_at
+    }
+    DiscoveryRequest {
+        uuid id PK
+        uuid configuration_id FK
+        uuid consumer_id FK
+        string session_key
+        string context
+        string query_text
+        uuid business_category_id FK
+        uuid product_category_id FK
+        geography search_center
+        int radius_meters
+        long random_seed
+        datetime created_at
+    }
+    RankingCandidate {
+        uuid id PK
+        uuid request_id FK
+        uuid business_id FK
+        uuid product_id FK
+        decimal relevance
+        decimal proximity
+        decimal availability
+        decimal activity
+        decimal equity
+        decimal new_business_bonus
+        decimal merit
+        decimal expected_exposure_share
+        decimal final_score
+        int position
+    }
+    OrganicImpression {
+        uuid id PK
+        uuid candidate_id FK
+        int position
+        decimal exposure_weight
+        string deduplication_key UK
+        datetime viewed_at
+    }
+    AdCampaign {
+        uuid id PK
+        uuid business_id FK
+        uuid product_id FK
+        uuid publication_id FK
+        string title
+        geography target_center
+        int radius_meters
+        datetime starts_at
+        datetime ends_at
+        string status
+        datetime approved_at
+        uuid approved_by FK
+        datetime payment_confirmed_at
+        uuid payment_confirmed_by FK
+    }
+    AdImpression {
+        uuid id PK
+        uuid campaign_id FK
+        uuid discovery_request_id FK
+        string placement
+        string session_key
+        string deduplication_key UK
+        datetime viewed_at
+    }
+    Interaction {
+        uuid id PK
+        uuid business_id FK
+        uuid product_id FK
+        uuid publication_id FK
+        uuid organic_impression_id FK
+        uuid ad_impression_id FK
+        uuid consumer_id FK
+        string session_key
+        string kind
+        string origin
+        string deduplication_key UK
+        datetime occurred_at
+    }
+    RankingConfiguration ||--o{ DiscoveryRequest : configura
+    DiscoveryRequest ||--o{ RankingCandidate : evalua
+    RankingCandidate ||--o{ OrganicImpression : recibe
+    AdCampaign ||--o{ AdImpression : recibe
+    DiscoveryRequest |o--o{ AdImpression : aloja
+    OrganicImpression |o--o{ Interaction : origina
+    AdImpression |o--o{ Interaction : origina

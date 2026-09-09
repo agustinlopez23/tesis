@@ -1,0 +1,728 @@
+{
+  "groups": [
+    {
+      "section": "01-negocios",
+      "title": "Negocios, identidad y planes",
+      "entities": [
+        [
+          "UserAccount",
+          "Cuenta de usuario",
+          "uuid id PK;string email UK;string display_name;string status;datetime created_at;string password_hash"
+        ],
+        [
+          "UserRole",
+          "Rol de una cuenta",
+          "uuid user_id PK,FK;string role PK"
+        ],
+        [
+          "BusinessCategory",
+          "Rubro de negocio",
+          "uuid id PK;string name UK"
+        ],
+        [
+          "Business",
+          "Negocio y su única ubicación",
+          "uuid id PK;uuid owner_id FK;uuid category_id FK;string name;string description;string address;geography location;string whatsapp_number;string status;datetime created_at"
+        ],
+        [
+          "Plan",
+          "Plan sin precios definidos",
+          "uuid id PK;string code UK;string name;boolean is_free"
+        ],
+        [
+          "PlanCapability",
+          "Permisos del plan",
+          "uuid plan_id PK,FK;string capability PK;boolean enabled"
+        ],
+        [
+          "Subscription",
+          "Período de suscripción",
+          "uuid id PK;uuid business_id FK;uuid plan_id FK;string status;datetime starts_at;datetime ends_at;uuid activated_by FK"
+        ],
+        [
+          "Publication",
+          "Novedad o promoción",
+          "uuid id PK;uuid business_id FK;uuid product_id FK;string kind;string title;string body;string image_url;string terms;string status;datetime starts_at;datetime ends_at;datetime published_at"
+        ],
+        [
+          "BusinessActivity",
+          "Actividad sustantiva auditable",
+          "uuid id PK;uuid business_id FK;uuid actor_id FK;uuid publication_id FK;string kind;datetime occurred_at;string deduplication_key UK"
+        ],
+        [
+          "UserSession",
+          "Sesión autenticada revocable",
+          "uuid id PK;uuid user_id FK;string token_hash UK;datetime created_at;datetime expires_at;datetime revoked_at"
+        ],
+        [
+          "AuditEvent",
+          "Auditoría inmutable de cambios sensibles",
+          "uuid id PK;uuid actor_id FK;uuid business_id FK;string target_type;uuid target_id;string action;string previous_state;string new_state;string reason;datetime occurred_at"
+        ]
+      ]
+    },
+    {
+      "section": "02-comercio",
+      "title": "Catálogo, solicitudes, ventas e inventario",
+      "entities": [
+        [
+          "ProductCategory",
+          "Categoría de producto",
+          "uuid id PK;string name UK"
+        ],
+        [
+          "Product",
+          "Producto por unidad",
+          "uuid id PK;uuid business_id FK;uuid category_id FK;string name;string description;string image_url;decimal price;string currency;string status"
+        ],
+        [
+          "Inventory",
+          "Saldo de stock",
+          "uuid product_id PK,FK;uuid business_id FK;int quantity;int low_stock_threshold;long version"
+        ],
+        [
+          "OrderRequest",
+          "Solicitud previa al contacto",
+          "uuid id PK;uuid business_id FK;uuid consumer_id FK;uuid source_interaction_id FK;string reference UK;string access_token_hash;string contact_name;string contact_phone;string status;string origin;string idempotency_key;datetime created_at;datetime contact_confirmed_at;uuid contact_confirmed_by FK"
+        ],
+        [
+          "OrderItem",
+          "Copia de lo solicitado",
+          "uuid id PK;uuid business_id FK;uuid order_request_id FK;uuid product_id FK;string product_name_snapshot;int quantity;decimal unit_price_snapshot;string currency"
+        ],
+        [
+          "Sale",
+          "Venta reportada",
+          "uuid id PK;uuid business_id FK;uuid order_request_id FK;uuid recorded_by FK;string origin;string status;string idempotency_key;datetime recorded_at"
+        ],
+        [
+          "SaleItem",
+          "Copia de lo efectivamente vendido",
+          "uuid id PK;uuid business_id FK;uuid sale_id FK;uuid product_id FK;string product_name_snapshot;int quantity;decimal unit_price;string currency"
+        ],
+        [
+          "StockMovement",
+          "Movimiento firmado de unidades",
+          "uuid id PK;uuid business_id FK;uuid product_id FK;uuid sale_item_id FK;uuid actor_id FK;int quantity_delta;string kind;string reason;string operation_key;datetime occurred_at"
+        ]
+      ]
+    },
+    {
+      "section": "03-descubrimiento",
+      "title": "Ranking, campañas y medición",
+      "entities": [
+        [
+          "RankingConfiguration",
+          "Versión inmutable del algoritmo",
+          "uuid id PK;string version UK;string context;json parameters;datetime created_at"
+        ],
+        [
+          "DiscoveryRequest",
+          "Consulta o entrada a la revista",
+          "uuid id PK;uuid configuration_id FK;uuid consumer_id FK;string session_key;string context;string query_text;uuid business_category_id FK;uuid product_category_id FK;geography search_center;int radius_meters;long random_seed;datetime created_at"
+        ],
+        [
+          "RankingCandidate",
+          "Candidato evaluado, visible o no",
+          "uuid id PK;uuid request_id FK;uuid business_id FK;uuid product_id FK;decimal relevance;decimal proximity;decimal availability;decimal activity;decimal equity;decimal new_business_bonus;decimal merit;decimal expected_exposure_share;decimal final_score;int position"
+        ],
+        [
+          "OrganicImpression",
+          "Exposición orgánica observada",
+          "uuid id PK;uuid candidate_id FK;int position;decimal exposure_weight;string deduplication_key UK;datetime viewed_at"
+        ],
+        [
+          "AdCampaign",
+          "Campaña de producto o promoción",
+          "uuid id PK;uuid business_id FK;uuid product_id FK;uuid publication_id FK;string title;geography target_center;int radius_meters;datetime starts_at;datetime ends_at;string status;datetime approved_at;uuid approved_by FK;datetime payment_confirmed_at;uuid payment_confirmed_by FK"
+        ],
+        [
+          "AdImpression",
+          "Exposición patrocinada observada",
+          "uuid id PK;uuid campaign_id FK;uuid discovery_request_id FK;string placement;string session_key;string deduplication_key UK;datetime viewed_at"
+        ],
+        [
+          "Interaction",
+          "Visita o intención de contacto",
+          "uuid id PK;uuid business_id FK;uuid product_id FK;uuid publication_id FK;uuid organic_impression_id FK;uuid ad_impression_id FK;uuid consumer_id FK;string session_key;string kind;string origin;string deduplication_key UK;datetime occurred_at"
+        ]
+      ]
+    }
+  ],
+  "rels": [
+    [
+      "UserAccount",
+      "UserRole",
+      "1",
+      "0..*",
+      "posee"
+    ],
+    [
+      "UserAccount",
+      "Business",
+      "1",
+      "0..*",
+      "administra"
+    ],
+    [
+      "BusinessCategory",
+      "Business",
+      "1",
+      "0..*",
+      "clasifica"
+    ],
+    [
+      "Plan",
+      "PlanCapability",
+      "1",
+      "0..*",
+      "habilita"
+    ],
+    [
+      "Business",
+      "Subscription",
+      "1",
+      "0..*",
+      "contrata"
+    ],
+    [
+      "Plan",
+      "Subscription",
+      "1",
+      "0..*",
+      "define"
+    ],
+    [
+      "UserAccount",
+      "Subscription",
+      "0..1",
+      "0..*",
+      "activa"
+    ],
+    [
+      "Business",
+      "Publication",
+      "1",
+      "0..*",
+      "publica"
+    ],
+    [
+      "Product",
+      "Publication",
+      "0..1",
+      "0..*",
+      "ilustra"
+    ],
+    [
+      "Business",
+      "BusinessActivity",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "UserAccount",
+      "BusinessActivity",
+      "1",
+      "0..*",
+      "realiza"
+    ],
+    [
+      "Publication",
+      "BusinessActivity",
+      "0..1",
+      "0..*",
+      "origina"
+    ],
+    [
+      "Business",
+      "Product",
+      "1",
+      "0..*",
+      "ofrece"
+    ],
+    [
+      "ProductCategory",
+      "Product",
+      "1",
+      "0..*",
+      "clasifica"
+    ],
+    [
+      "Product",
+      "Inventory",
+      "1",
+      "1",
+      "mantiene"
+    ],
+    [
+      "Business",
+      "OrderRequest",
+      "1",
+      "0..*",
+      "recibe"
+    ],
+    [
+      "UserAccount",
+      "OrderRequest",
+      "0..1",
+      "0..*",
+      "solicita"
+    ],
+    [
+      "Interaction",
+      "OrderRequest",
+      "0..1",
+      "0..*",
+      "origina"
+    ],
+    [
+      "OrderRequest",
+      "OrderItem",
+      "1",
+      "1..*",
+      "contiene"
+    ],
+    [
+      "Product",
+      "OrderItem",
+      "1",
+      "0..*",
+      "solicitado"
+    ],
+    [
+      "Business",
+      "Sale",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "OrderRequest",
+      "Sale",
+      "0..1",
+      "0..1",
+      "se_convierte"
+    ],
+    [
+      "UserAccount",
+      "Sale",
+      "1",
+      "0..*",
+      "confirma"
+    ],
+    [
+      "Sale",
+      "SaleItem",
+      "1",
+      "1..*",
+      "contiene"
+    ],
+    [
+      "Product",
+      "SaleItem",
+      "1",
+      "0..*",
+      "vendido"
+    ],
+    [
+      "Inventory",
+      "StockMovement",
+      "1",
+      "0..*",
+      "historial"
+    ],
+    [
+      "SaleItem",
+      "StockMovement",
+      "0..1",
+      "0..*",
+      "origina"
+    ],
+    [
+      "UserAccount",
+      "StockMovement",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "RankingConfiguration",
+      "DiscoveryRequest",
+      "1",
+      "0..*",
+      "configura"
+    ],
+    [
+      "UserAccount",
+      "DiscoveryRequest",
+      "0..1",
+      "0..*",
+      "explora"
+    ],
+    [
+      "BusinessCategory",
+      "DiscoveryRequest",
+      "0..1",
+      "0..*",
+      "filtra"
+    ],
+    [
+      "ProductCategory",
+      "DiscoveryRequest",
+      "0..1",
+      "0..*",
+      "filtra"
+    ],
+    [
+      "DiscoveryRequest",
+      "RankingCandidate",
+      "1",
+      "0..*",
+      "evalua"
+    ],
+    [
+      "Business",
+      "RankingCandidate",
+      "1",
+      "0..*",
+      "participa"
+    ],
+    [
+      "Product",
+      "RankingCandidate",
+      "0..1",
+      "0..*",
+      "participa"
+    ],
+    [
+      "RankingCandidate",
+      "OrganicImpression",
+      "1",
+      "0..*",
+      "recibe"
+    ],
+    [
+      "Business",
+      "AdCampaign",
+      "1",
+      "0..*",
+      "contrata"
+    ],
+    [
+      "Product",
+      "AdCampaign",
+      "0..1",
+      "0..*",
+      "promociona"
+    ],
+    [
+      "Publication",
+      "AdCampaign",
+      "0..1",
+      "0..*",
+      "promociona"
+    ],
+    [
+      "AdCampaign",
+      "AdImpression",
+      "1",
+      "0..*",
+      "recibe"
+    ],
+    [
+      "DiscoveryRequest",
+      "AdImpression",
+      "0..1",
+      "0..*",
+      "aloja"
+    ],
+    [
+      "Business",
+      "Interaction",
+      "1",
+      "0..*",
+      "recibe"
+    ],
+    [
+      "Product",
+      "Interaction",
+      "0..1",
+      "0..*",
+      "recibe"
+    ],
+    [
+      "Publication",
+      "Interaction",
+      "0..1",
+      "0..*",
+      "recibe"
+    ],
+    [
+      "OrganicImpression",
+      "Interaction",
+      "0..1",
+      "0..*",
+      "origina"
+    ],
+    [
+      "AdImpression",
+      "Interaction",
+      "0..1",
+      "0..*",
+      "origina"
+    ],
+    [
+      "UserAccount",
+      "Interaction",
+      "0..1",
+      "0..*",
+      "realiza"
+    ],
+    [
+      "UserAccount",
+      "UserSession",
+      "1",
+      "0..*",
+      "inicia"
+    ],
+    [
+      "UserAccount",
+      "AuditEvent",
+      "1",
+      "0..*",
+      "ejecuta"
+    ],
+    [
+      "Business",
+      "AuditEvent",
+      "0..1",
+      "0..*",
+      "contextualiza"
+    ]
+  ],
+  "operations": {
+    "UserAccount": [
+      "activate(): void",
+      "suspend(): void"
+    ],
+    "UserSession": [
+      "revoke(): void"
+    ],
+    "Business": [
+      "publish(): void",
+      "suspend(): void"
+    ],
+    "Subscription": [
+      "isEffective(at): boolean"
+    ],
+    "Publication": [
+      "publish(): void",
+      "archive(): void"
+    ],
+    "Product": [
+      "changePrice(value): void",
+      "archive(): void"
+    ],
+    "Inventory": [
+      "applyMovement(delta): void"
+    ],
+    "OrderRequest": [
+      "startAttention(): void",
+      "cancel(reason): void",
+      "markConverted(): void"
+    ],
+    "Sale": [
+      "void(reason): void"
+    ],
+    "AdCampaign": [
+      "submitForReview(): void",
+      "approve(): void",
+      "pause(): void"
+    ],
+    "RankingConfiguration": [
+      "validate(): boolean"
+    ]
+  },
+  "descriptions": {
+    "id": "Identificador interno de la entidad.",
+    "email": "Correo normalizado de la cuenta.",
+    "display_name": "Nombre visible de la persona.",
+    "status": "Estado del recurso según su ciclo de vida.",
+    "created_at": "Fecha y hora UTC de creación.",
+    "user_id": "Cuenta de usuario relacionada.",
+    "role": "Rol asignado a la cuenta.",
+    "name": "Nombre visible.",
+    "owner_id": "Cuenta responsable del negocio.",
+    "category_id": "Categoría o rubro de la entidad.",
+    "description": "Descripción de la oferta o del negocio.",
+    "address": "Dirección textual del local.",
+    "location": "Ubicación geográfica del negocio.",
+    "whatsapp_number": "Número del negocio validado para contacto.",
+    "code": "Código estable del plan.",
+    "is_free": "Indica si el plan corresponde al acceso gratuito.",
+    "plan_id": "Plan relacionado.",
+    "capability": "Código de capacidad funcional.",
+    "enabled": "Indica si la capacidad está habilitada.",
+    "business_id": "Negocio propietario o contexto del registro.",
+    "starts_at": "Inicio de vigencia UTC, inclusivo.",
+    "ends_at": "Fin de vigencia UTC, exclusivo.",
+    "activated_by": "Administrador que habilita el período.",
+    "product_id": "Producto relacionado, perteneciente al negocio.",
+    "kind": "Tipo de evento, contenido o movimiento.",
+    "title": "Título visible del contenido.",
+    "body": "Texto de la publicación.",
+    "image_url": "Referencia a la imagen almacenada.",
+    "terms": "Condiciones de la promoción.",
+    "published_at": "Fecha y hora de publicación.",
+    "actor_id": "Cuenta que realiza la operación.",
+    "publication_id": "Publicación relacionada.",
+    "occurred_at": "Fecha y hora UTC del evento.",
+    "deduplication_key": "Clave estable para evitar duplicación de eventos.",
+    "price": "Precio actual del producto.",
+    "currency": "Código de moneda.",
+    "quantity": "Cantidad entera de unidades.",
+    "low_stock_threshold": "Umbral de disponibilidad baja.",
+    "version": "Versión de concurrencia o identificación del algoritmo.",
+    "consumer_id": "Cuenta del consumidor, cuando está autenticado.",
+    "source_interaction_id": "Interacción comprobada que origina la solicitud.",
+    "reference": "Referencia pública de solicitud; no autoriza acceso privado.",
+    "access_token_hash": "Hash del token privado para consultar la solicitud.",
+    "contact_name": "Nombre proporcionado para atender la solicitud.",
+    "contact_phone": "Teléfono opcional proporcionado por el consumidor.",
+    "origin": "Canal de origen conocido o sin atribución.",
+    "idempotency_key": "Clave de operación que evita repetir sus efectos.",
+    "contact_confirmed_at": "Instante en que el negocio reportó recepción del contacto.",
+    "contact_confirmed_by": "Responsable que confirmó recepción del contacto.",
+    "order_request_id": "Solicitud vinculada.",
+    "product_name_snapshot": "Copia del nombre del producto al registrar la operación.",
+    "unit_price_snapshot": "Copia del precio unitario solicitado.",
+    "recorded_by": "Responsable que registra la venta.",
+    "recorded_at": "Fecha y hora del registro de venta.",
+    "sale_id": "Venta a la que pertenece la línea.",
+    "unit_price": "Precio unitario efectivamente acordado.",
+    "sale_item_id": "Línea de venta que explica la salida o devolución.",
+    "quantity_delta": "Variación de unidades con signo.",
+    "reason": "Motivo de ajuste, corrección o decisión.",
+    "operation_key": "Clave de operación de inventario.",
+    "context": "Contexto del ranking: revista, búsqueda de negocios o productos.",
+    "parameters": "Parámetros y reglas de una versión inmutable.",
+    "configuration_id": "Versión del ranking utilizada.",
+    "session_key": "Identificador seudónimo de sesión de exploración.",
+    "query_text": "Texto de búsqueda; puede estar ausente al entrar.",
+    "business_category_id": "Rubro usado como filtro.",
+    "product_category_id": "Categoría de producto usada como filtro.",
+    "search_center": "Centro geográfico de la consulta.",
+    "radius_meters": "Radio de búsqueda o campaña en metros.",
+    "random_seed": "Semilla que permite repetir desempates controlados.",
+    "request_id": "Consulta de descubrimiento evaluada.",
+    "relevance": "Relevancia normalizada del candidato.",
+    "proximity": "Proximidad normalizada a la zona de consulta.",
+    "availability": "Disponibilidad normalizada, si aplica al contexto.",
+    "activity": "Actividad sustantiva normalizada, si aplica al contexto.",
+    "equity": "Factor normalizado de compensación de exposición.",
+    "new_business_bonus": "Bonificación temporal para negocio nuevo.",
+    "merit": "Mérito utilizado para estimar oportunidades esperadas.",
+    "expected_exposure_share": "Participación esperada del negocio en la consulta; no sumar una vez por producto.",
+    "final_score": "Puntaje final de esta evaluación.",
+    "position": "Posición orgánica, comenzando en uno.",
+    "candidate_id": "Candidato cuya tarjeta fue observada.",
+    "exposure_weight": "Peso de exposición según posición.",
+    "viewed_at": "Instante en que se cumple el contrato de visibilidad.",
+    "target_center": "Centro de la zona objetivo de campaña.",
+    "approved_at": "Instante de aprobación de campaña.",
+    "approved_by": "Administrador que aprueba.",
+    "payment_confirmed_at": "Instante de confirmación manual del pago.",
+    "payment_confirmed_by": "Administrador que confirma el pago externo.",
+    "campaign_id": "Campaña publicitaria relacionada.",
+    "discovery_request_id": "Consulta donde aparece el anuncio, si existe.",
+    "placement": "Espacio publicitario utilizado.",
+    "organic_impression_id": "Impresión orgánica que origina la interacción.",
+    "ad_impression_id": "Impresión patrocinada que origina la interacción.",
+    "password_hash": "Hash de contraseña generado y verificado por el componente de autenticación; nunca contraseña en claro.",
+    "token_hash": "Hash del token de sesión; nunca el token utilizable.",
+    "expires_at": "Fecha y hora UTC de vencimiento de la sesión.",
+    "revoked_at": "Fecha y hora de revocación explícita.",
+    "target_type": "Tipo de recurso auditado; lista cerrada.",
+    "target_id": "Identificador del recurso auditado; referencia lógica preservada.",
+    "action": "Acción auditada.",
+    "previous_state": "Estado anterior, si aplica.",
+    "new_state": "Estado nuevo, si aplica."
+  },
+  "optional": {
+    "Business": [
+      "description",
+      "address"
+    ],
+    "Subscription": [
+      "ends_at",
+      "activated_by"
+    ],
+    "Publication": [
+      "product_id",
+      "image_url",
+      "terms",
+      "starts_at",
+      "ends_at",
+      "published_at"
+    ],
+    "BusinessActivity": [
+      "publication_id"
+    ],
+    "Product": [
+      "description",
+      "image_url"
+    ],
+    "OrderRequest": [
+      "consumer_id",
+      "source_interaction_id",
+      "contact_phone",
+      "contact_confirmed_at",
+      "contact_confirmed_by"
+    ],
+    "Sale": [
+      "order_request_id"
+    ],
+    "StockMovement": [
+      "sale_item_id"
+    ],
+    "DiscoveryRequest": [
+      "consumer_id",
+      "query_text",
+      "business_category_id",
+      "product_category_id"
+    ],
+    "RankingCandidate": [
+      "product_id",
+      "availability",
+      "activity",
+      "position"
+    ],
+    "AdCampaign": [
+      "product_id",
+      "publication_id",
+      "approved_at",
+      "approved_by",
+      "payment_confirmed_at",
+      "payment_confirmed_by"
+    ],
+    "AdImpression": [
+      "discovery_request_id"
+    ],
+    "Interaction": [
+      "product_id",
+      "publication_id",
+      "organic_impression_id",
+      "ad_impression_id",
+      "consumer_id"
+    ],
+    "UserSession": [
+      "revoked_at"
+    ],
+    "AuditEvent": [
+      "business_id",
+      "previous_state",
+      "new_state"
+    ]
+  }
+}

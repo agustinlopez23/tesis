@@ -1,0 +1,335 @@
+@startuml entities
+title Entidades de dominio — propuesta documentada
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+package "Negocios, identidad y planes" {
+class UserAccount {
+  -id: uuid
+  -email: string
+  -display_name: string
+  -status: string
+  -created_at: datetime
+  -password_hash: string
+  +activate(): void
+  +suspend(): void
+}
+class UserRole {
+  -user_id: uuid
+  -role: string
+}
+class BusinessCategory {
+  -id: uuid
+  -name: string
+}
+class Business {
+  -id: uuid
+  -owner_id: uuid
+  -category_id: uuid
+  -name: string
+  -description: string
+  -address: string
+  -location: geography
+  -whatsapp_number: string
+  -status: string
+  -created_at: datetime
+  +publish(): void
+  +suspend(): void
+}
+class Plan {
+  -id: uuid
+  -code: string
+  -name: string
+  -is_free: boolean
+}
+class PlanCapability {
+  -plan_id: uuid
+  -capability: string
+  -enabled: boolean
+}
+class Subscription {
+  -id: uuid
+  -business_id: uuid
+  -plan_id: uuid
+  -status: string
+  -starts_at: datetime
+  -ends_at: datetime
+  -activated_by: uuid
+  +isEffective(at): boolean
+}
+class Publication {
+  -id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -kind: string
+  -title: string
+  -body: string
+  -image_url: string
+  -terms: string
+  -status: string
+  -starts_at: datetime
+  -ends_at: datetime
+  -published_at: datetime
+  +publish(): void
+  +archive(): void
+}
+class BusinessActivity {
+  -id: uuid
+  -business_id: uuid
+  -actor_id: uuid
+  -publication_id: uuid
+  -kind: string
+  -occurred_at: datetime
+  -deduplication_key: string
+}
+class UserSession {
+  -id: uuid
+  -user_id: uuid
+  -token_hash: string
+  -created_at: datetime
+  -expires_at: datetime
+  -revoked_at: datetime
+  +revoke(): void
+}
+class AuditEvent {
+  -id: uuid
+  -actor_id: uuid
+  -business_id: uuid
+  -target_type: string
+  -target_id: uuid
+  -action: string
+  -previous_state: string
+  -new_state: string
+  -reason: string
+  -occurred_at: datetime
+}
+}
+package "Catálogo, solicitudes, ventas e inventario" {
+class ProductCategory {
+  -id: uuid
+  -name: string
+}
+class Product {
+  -id: uuid
+  -business_id: uuid
+  -category_id: uuid
+  -name: string
+  -description: string
+  -image_url: string
+  -price: decimal
+  -currency: string
+  -status: string
+  +changePrice(value): void
+  +archive(): void
+}
+class Inventory {
+  -product_id: uuid
+  -business_id: uuid
+  -quantity: int
+  -low_stock_threshold: int
+  -version: long
+  +applyMovement(delta): void
+}
+class OrderRequest {
+  -id: uuid
+  -business_id: uuid
+  -consumer_id: uuid
+  -source_interaction_id: uuid
+  -reference: string
+  -access_token_hash: string
+  -contact_name: string
+  -contact_phone: string
+  -status: string
+  -origin: string
+  -idempotency_key: string
+  -created_at: datetime
+  -contact_confirmed_at: datetime
+  -contact_confirmed_by: uuid
+  +startAttention(): void
+  +cancel(reason): void
+  +markConverted(): void
+}
+class OrderItem {
+  -id: uuid
+  -business_id: uuid
+  -order_request_id: uuid
+  -product_id: uuid
+  -product_name_snapshot: string
+  -quantity: int
+  -unit_price_snapshot: decimal
+  -currency: string
+}
+class Sale {
+  -id: uuid
+  -business_id: uuid
+  -order_request_id: uuid
+  -recorded_by: uuid
+  -origin: string
+  -status: string
+  -idempotency_key: string
+  -recorded_at: datetime
+  +void(reason): void
+}
+class SaleItem {
+  -id: uuid
+  -business_id: uuid
+  -sale_id: uuid
+  -product_id: uuid
+  -product_name_snapshot: string
+  -quantity: int
+  -unit_price: decimal
+  -currency: string
+}
+class StockMovement {
+  -id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -sale_item_id: uuid
+  -actor_id: uuid
+  -quantity_delta: int
+  -kind: string
+  -reason: string
+  -operation_key: string
+  -occurred_at: datetime
+}
+}
+package "Ranking, campañas y medición" {
+class RankingConfiguration {
+  -id: uuid
+  -version: string
+  -context: string
+  -parameters: json
+  -created_at: datetime
+  +validate(): boolean
+}
+class DiscoveryRequest {
+  -id: uuid
+  -configuration_id: uuid
+  -consumer_id: uuid
+  -session_key: string
+  -context: string
+  -query_text: string
+  -business_category_id: uuid
+  -product_category_id: uuid
+  -search_center: geography
+  -radius_meters: int
+  -random_seed: long
+  -created_at: datetime
+}
+class RankingCandidate {
+  -id: uuid
+  -request_id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -relevance: decimal
+  -proximity: decimal
+  -availability: decimal
+  -activity: decimal
+  -equity: decimal
+  -new_business_bonus: decimal
+  -merit: decimal
+  -expected_exposure_share: decimal
+  -final_score: decimal
+  -position: int
+}
+class OrganicImpression {
+  -id: uuid
+  -candidate_id: uuid
+  -position: int
+  -exposure_weight: decimal
+  -deduplication_key: string
+  -viewed_at: datetime
+}
+class AdCampaign {
+  -id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -publication_id: uuid
+  -title: string
+  -target_center: geography
+  -radius_meters: int
+  -starts_at: datetime
+  -ends_at: datetime
+  -status: string
+  -approved_at: datetime
+  -approved_by: uuid
+  -payment_confirmed_at: datetime
+  -payment_confirmed_by: uuid
+  +submitForReview(): void
+  +approve(): void
+  +pause(): void
+}
+class AdImpression {
+  -id: uuid
+  -campaign_id: uuid
+  -discovery_request_id: uuid
+  -placement: string
+  -session_key: string
+  -deduplication_key: string
+  -viewed_at: datetime
+}
+class Interaction {
+  -id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -publication_id: uuid
+  -organic_impression_id: uuid
+  -ad_impression_id: uuid
+  -consumer_id: uuid
+  -session_key: string
+  -kind: string
+  -origin: string
+  -deduplication_key: string
+  -occurred_at: datetime
+}
+}
+UserAccount "1" -- "0..*" UserRole : posee
+UserAccount "1" -- "0..*" Business : administra
+BusinessCategory "1" -- "0..*" Business : clasifica
+Plan "1" -- "0..*" PlanCapability : habilita
+Business "1" -- "0..*" Subscription : contrata
+Plan "1" -- "0..*" Subscription : define
+UserAccount "0..1" -- "0..*" Subscription : activa
+Business "1" -- "0..*" Publication : publica
+Product "0..1" -- "0..*" Publication : ilustra
+Business "1" -- "0..*" BusinessActivity : registra
+UserAccount "1" -- "0..*" BusinessActivity : realiza
+Publication "0..1" -- "0..*" BusinessActivity : origina
+Business "1" -- "0..*" Product : ofrece
+ProductCategory "1" -- "0..*" Product : clasifica
+Product "1" -- "1" Inventory : mantiene
+Business "1" -- "0..*" OrderRequest : recibe
+UserAccount "0..1" -- "0..*" OrderRequest : solicita
+Interaction "0..1" -- "0..*" OrderRequest : origina
+OrderRequest "1" -- "1..*" OrderItem : contiene
+Product "1" -- "0..*" OrderItem : solicitado
+Business "1" -- "0..*" Sale : registra
+OrderRequest "0..1" -- "0..1" Sale : se_convierte
+UserAccount "1" -- "0..*" Sale : confirma
+Sale "1" -- "1..*" SaleItem : contiene
+Product "1" -- "0..*" SaleItem : vendido
+Inventory "1" -- "0..*" StockMovement : historial
+SaleItem "0..1" -- "0..*" StockMovement : origina
+UserAccount "1" -- "0..*" StockMovement : registra
+RankingConfiguration "1" -- "0..*" DiscoveryRequest : configura
+UserAccount "0..1" -- "0..*" DiscoveryRequest : explora
+BusinessCategory "0..1" -- "0..*" DiscoveryRequest : filtra
+ProductCategory "0..1" -- "0..*" DiscoveryRequest : filtra
+DiscoveryRequest "1" -- "0..*" RankingCandidate : evalua
+Business "1" -- "0..*" RankingCandidate : participa
+Product "0..1" -- "0..*" RankingCandidate : participa
+RankingCandidate "1" -- "0..*" OrganicImpression : recibe
+Business "1" -- "0..*" AdCampaign : contrata
+Product "0..1" -- "0..*" AdCampaign : promociona
+Publication "0..1" -- "0..*" AdCampaign : promociona
+AdCampaign "1" -- "0..*" AdImpression : recibe
+DiscoveryRequest "0..1" -- "0..*" AdImpression : aloja
+Business "1" -- "0..*" Interaction : recibe
+Product "0..1" -- "0..*" Interaction : recibe
+Publication "0..1" -- "0..*" Interaction : recibe
+OrganicImpression "0..1" -- "0..*" Interaction : origina
+AdImpression "0..1" -- "0..*" Interaction : origina
+UserAccount "0..1" -- "0..*" Interaction : realiza
+UserAccount "1" -- "0..*" UserSession : inicia
+UserAccount "1" -- "0..*" AuditEvent : ejecuta
+Business "0..1" -- "0..*" AuditEvent : contextualiza
+@enduml

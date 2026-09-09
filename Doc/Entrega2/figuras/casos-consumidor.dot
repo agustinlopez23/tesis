@@ -1,0 +1,11 @@
+digraph G { graph [rankdir=LR,bgcolor="white",pad=0.3,nodesep=0.25,ranksep=1]; node [fontname="Arial",fontsize=13]; edge [arrowhead=none,color="#65796e"];C [shape=box,label="«actor»
+Consumidor",style=filled,fillcolor="#e2eee9"];B [shape=box,label="«actor»
+Responsable del negocio",style=filled,fillcolor="#e2eee9"];A [shape=box,label="«actor»
+Administrador / evaluador",style=filled,fillcolor="#e2eee9"];subgraph cluster_system { label="Prototipo hiperlocal"; fontname="Arial";UC1 [shape=ellipse,label="CU-01
+Registrar cuenta y gestionar\nsesión"];UC7 [shape=ellipse,label="CU-07
+Descubrir negocios de la zona"];UC8 [shape=ellipse,label="CU-08
+Buscar productos cercanos"];UC9 [shape=ellipse,label="CU-09
+Consultar oferta y contactar al\nnegocio"];UC10 [shape=ellipse,label="CU-10
+Crear solicitud para WhatsApp"];UC11 [shape=ellipse,label="CU-11
+Consultar estado de una\nsolicitud"];}C -> UC1;B -> UC1;A -> UC1;C -> UC7;C -> UC8;C -> UC9;C -> UC10;C -> UC11;WA [shape=box,label="«actor externo»
+WhatsApp"]; WA -> UC9; WA -> UC10;}

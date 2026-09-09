@@ -1,0 +1,31 @@
+@startuml components
+title Componentes lógicos y dependencias
+component "Frontend Next.js" as UI
+component "Marketplace.Api" as API
+component "Marketplace.BLL" as BLL
+interface "Repositorios e integraciones\n(definidos en BLL)" as Ports
+component "Marketplace.DAL" as DAL
+component "Marketplace.Integrations\n(al incorporar IA e imágenes)" as INT
+component "Marketplace.IoC" as IOC
+component "DTOs / Models" as Shared
+database "PostgreSQL/PostGIS" as DB
+cloud "Proveedor IA / imágenes" as Ext
+UI --> API : HTTP
+API --> BLL
+API --> IOC
+BLL --> Ports
+DAL ..|> Ports
+INT ..|> Ports
+IOC --> DAL
+IOC --> INT
+IOC --> BLL
+BLL --> Shared
+DAL --> Shared
+DAL --> DB
+INT --> Ext
+note bottom of BLL
+BLL depende de contratos propios, no de DAL.
+Ranking determinista y ventas permanecen en BLL.
+end note
+@enduml
+

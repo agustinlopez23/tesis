@@ -1,0 +1,28 @@
+@startuml S07
+title S07 — Solicitar y activar campaña
+' Trazabilidad: CU-16, CU-17
+actor "Responsable" as B
+actor Administrador as A
+participant "Panel web" as UI
+participant "Campaigns API" as API
+participant "CampaignService (BLL)" as BLL
+participant "Repositorio (DAL)" as DAL
+B -> UI : Elegir destino, zona y vigencia
+UI -> API : Enviar campaña a revisión
+API -> BLL : Validar propietario y capacidad
+BLL -> DAL : Guardar campaña pendiente
+A -> UI : Revisar contenido y confirmar pago externo
+UI -> API : Aprobar y registrar confirmación
+API -> BLL : Validar administrador y estado
+BLL -> DAL : Guardar decisión y auditoría
+alt Aprobada, pagada, vigente y destino habilitado
+BLL --> API : Campaña elegible para entrega
+API --> UI : Mostrar como Patrocinado
+UI -> API : Informar impresión publicitaria visible
+API -> BLL : Validar y deduplicar
+BLL -> DAL : Guardar AdImpression
+else Condiciones incompletas o destino inhabilitado
+BLL --> API : Mantener pendiente o pausar entrega
+API --> UI : Mostrar motivo
+end
+@enduml

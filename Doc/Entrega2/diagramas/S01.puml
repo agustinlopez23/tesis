@@ -1,0 +1,31 @@
+@startuml S01
+title S01 — Descubrir negocios y registrar exposición
+' Trazabilidad: CU-07, RF-21, RF-22
+actor Consumidor as C
+participant "Revista web" as UI
+participant "Discovery API" as API
+participant "RankingService (BLL)" as BLL
+participant "Repositorio (DAL)" as DAL
+database "PostgreSQL/PostGIS" as DB
+C -> UI : Seleccionar zona y filtros
+UI -> API : Consultar negocios
+API -> BLL : Validar contexto y zona
+BLL -> DAL : Obtener candidatos, historial y versión
+DAL -> DB : Filtrar publicados dentro del radio
+DB --> DAL : Negocios e historial orgánico
+DAL --> BLL : Datos para evaluación
+BLL -> BLL : Calcular factores y ordenar
+BLL -> DAL : Guardar consulta y candidatos
+DAL -> DB : Persistir evidencia de ranking
+BLL --> API : Negocios ordenados y versión
+API --> UI : Resultados
+alt Hay candidatos
+UI --> C : Mostrar tarjetas y explicación
+C -> UI : Visualizar tarjeta
+UI -> API : Informar impresión visible con clave
+API -> BLL : Validar candidato y deduplicar
+BLL -> DAL : Registrar impresión orgánica
+else Sin candidatos
+UI --> C : Ofrecer cambiar zona o filtros
+end
+@enduml

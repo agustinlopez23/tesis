@@ -1,0 +1,9 @@
+digraph G { graph [rankdir=TB,pad=0.4]; node [shape=box3d,fontname="Arial",style=filled,fillcolor="#e2eee9"]; edge [fontname="Arial",fontsize=11]; Client [label="Dispositivo del usuario
+Navegador web"]; Front [label="Servidor web
+Next.js / TypeScript"]; API [label="Servidor de aplicación
+ASP.NET Core: API + BLL + DAL + IoC"]; DB [shape=cylinder,label="Servidor de datos
+PostgreSQL + PostGIS"]; Media [label="Almacenamiento
+Imágenes"]; AI [label="Servicio externo
+Proveedor de IA"]; WA [label="Servicio externo
+WhatsApp"]; Eval [label="Entorno aislado
+Runner + datos sintéticos + base de evaluación"]; Client -> Front [label="HTTPS"]; Client -> API [label="HTTPS / API"]; Front -> API [label="HTTP(S) interno"]; API -> DB [label="Conexión privada"]; API -> Media [label="HTTPS autenticado"]; Client -> Media [label="Lectura autorizada"]; API -> AI [label="HTTPS / datos mínimos"]; Client -> WA [label="Enlace de contacto"]; Eval -> API [style=dashed,label="Reutiliza BLL en proceso aislado"]; }

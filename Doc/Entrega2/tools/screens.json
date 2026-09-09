@@ -1,0 +1,440 @@
+[
+  [
+    "P01",
+    "Tu cuenta",
+    "Acceso a la plataforma",
+    [
+      "Ingresar | Crear cuenta",
+      "Correo electrónico",
+      "Contraseña",
+      "Tipo de cuenta: consumidor / negocio"
+    ],
+    [
+      "Ingresar",
+      "Crear cuenta"
+    ],
+    [
+      "P07",
+      "P02"
+    ],
+    "Credenciales inválidas: revisar los datos. No se revela si otra cuenta existe."
+  ],
+  [
+    "P02",
+    "Mi negocio",
+    "Identidad y ubicación",
+    [
+      "Nombre del negocio · Librería del barrio",
+      "Rubro · Librería y papelería",
+      "Dirección y punto de ubicación",
+      "WhatsApp · número del negocio",
+      "Estado · Borrador / Publicado"
+    ],
+    [
+      "Guardar perfil",
+      "Ver mi negocio"
+    ],
+    [
+      "P02",
+      "P09"
+    ],
+    "Falta ubicación: podés guardar borrador antes de publicar."
+  ],
+  [
+    "P03",
+    "Novedades y promociones",
+    "Contá qué hay de nuevo",
+    [
+      "Novedad / Promoción",
+      "Título · Semana de cuadernos",
+      "Imagen y descripción",
+      "Condiciones y vigencia",
+      "Producto relacionado · solo con Impulso"
+    ],
+    [
+      "Guardar borrador",
+      "Publicar",
+      "Promocionar"
+    ],
+    [
+      "P03",
+      "P09",
+      "P16"
+    ],
+    "La fecha de finalización debe ser posterior al inicio."
+  ],
+  [
+    "P04",
+    "Mi catálogo",
+    "Productos y disponibilidad",
+    [
+      "Cuaderno A5 · publicado · disponible",
+      "Lapicera azul · publicado · stock bajo",
+      "Nombre, descripción y categoría",
+      "Imagen · precio del producto · moneda"
+    ],
+    [
+      "Nuevo producto",
+      "Usar asistencia",
+      "Ver stock"
+    ],
+    [
+      "P04",
+      "P05",
+      "P06"
+    ],
+    "Plan Presencia: el catálogo requiere Impulso; el historial se conserva."
+  ],
+  [
+    "P05",
+    "Asistencia de catálogo",
+    "Vos revisás antes de publicar",
+    [
+      "Imagen del producto · seleccionar archivo",
+      "Datos mínimos · nombre tentativo",
+      "Borrador sugerido · Cuaderno A5",
+      "Descripción editable · categoría validada"
+    ],
+    [
+      "Generar borrador",
+      "Aceptar y editar",
+      "Continuar manualmente"
+    ],
+    [
+      "P05",
+      "P04",
+      "P04"
+    ],
+    "No pudimos generar la sugerencia. Podés completar los datos manualmente."
+  ],
+  [
+    "P06",
+    "Inventario",
+    "Cada cambio queda registrado",
+    [
+      "Producto · Cuaderno A5",
+      "Saldo actual · 12 unidades de ejemplo",
+      "Movimiento · Entrada / Ajuste",
+      "Cantidad con signo · motivo obligatorio",
+      "Historial · fecha, responsable y variación"
+    ],
+    [
+      "Registrar movimiento",
+      "Ver catálogo"
+    ],
+    [
+      "P06",
+      "P04"
+    ],
+    "El ajuste no puede dejar el stock por debajo de cero."
+  ],
+  [
+    "P07",
+    "Descubrí tu zona",
+    "Negocios cerca de vos",
+    [
+      "Zona · Córdoba · cambiar ubicación",
+      "Buscar negocios o elegir rubro",
+      "Librería del barrio · a 600 m · novedad reciente",
+      "Bazar de la esquina · a 900 m · descubrí su oferta",
+      "Patrocinado · Promoción de temporada"
+    ],
+    [
+      "Cambiar zona",
+      "Explorar negocio",
+      "Buscar productos"
+    ],
+    [
+      "P07",
+      "P09",
+      "P08"
+    ],
+    "Sin resultados: probá otra zona o quitá un filtro. También podés elegir ubicación manual."
+  ],
+  [
+    "P08",
+    "Productos cercanos",
+    "Encontrá lo que buscás",
+    [
+      "Búsqueda · cuaderno",
+      "Zona y categoría seleccionadas",
+      "Cuaderno A5 · Librería del barrio · disponible",
+      "Cuaderno rayado · Otro negocio · stock bajo"
+    ],
+    [
+      "Ver producto",
+      "Volver a negocios"
+    ],
+    [
+      "P09",
+      "P07"
+    ],
+    "No hay productos disponibles con estos filtros."
+  ],
+  [
+    "P09",
+    "Librería del barrio",
+    "Tu próximo hallazgo está cerca",
+    [
+      "Perfil · dirección · ubicación · contacto",
+      "Novedades y promociones vigentes",
+      "Catálogo si el negocio tiene Impulso",
+      "Producto · Cuaderno A5 · precio y disponibilidad",
+      "Por qué aparece · cercanía y contexto de consulta"
+    ],
+    [
+      "Consultar por WhatsApp",
+      "Agregar a solicitud",
+      "Ver promoción"
+    ],
+    [
+      "P09",
+      "P10",
+      "P09"
+    ],
+    "El producto ya no está disponible. Consultá al negocio por alternativas."
+  ],
+  [
+    "P10",
+    "Tu solicitud",
+    "Revisá antes de continuar",
+    [
+      "Un solo negocio · Librería del barrio",
+      "Cuaderno A5 · 2 unidades · precio de referencia",
+      "Nombre de contacto · obligatorio",
+      "Teléfono de contacto · opcional",
+      "El negocio confirma la venta; no se reserva stock"
+    ],
+    [
+      "Crear solicitud"
+    ],
+    [
+      "P11"
+    ],
+    "Cambió un precio o la disponibilidad: revisá el resumen antes de confirmar."
+  ],
+  [
+    "P11",
+    "Solicitud creada",
+    "Referencia · ABC123 · ejemplo",
+    [
+      "Estado · Pendiente de atención",
+      "Detalle original de productos y cantidades",
+      "Contacto recibido · todavía no informado",
+      "Acceso privado a esta solicitud",
+      "Abrir WhatsApp no confirma el envío"
+    ],
+    [
+      "Abrir WhatsApp",
+      "Copiar resumen",
+      "Volver a explorar"
+    ],
+    [
+      "P11",
+      "P11",
+      "P07"
+    ],
+    "No se pudo abrir WhatsApp. Tu solicitud sigue guardada."
+  ],
+  [
+    "P12",
+    "Solicitudes",
+    "Atendé cada oportunidad",
+    [
+      "Buscar por referencia · ABC123",
+      "Pendientes / En atención / Convertidas / Canceladas",
+      "Detalle original · productos y contacto",
+      "Confirmar recepción del contacto",
+      "Historial de cambios del pedido"
+    ],
+    [
+      "Marcar en atención",
+      "Registrar venta",
+      "Cancelar con motivo"
+    ],
+    [
+      "P12",
+      "P13",
+      "P12"
+    ],
+    "Solicitud ya convertida: gestioná su corrección desde la venta."
+  ],
+  [
+    "P13",
+    "Registrar venta",
+    "Confirmá lo efectivamente vendido",
+    [
+      "Origen · Solicitud ABC123 / Presencial",
+      "Productos finales · cantidades y precios editables",
+      "Stock disponible al confirmar",
+      "Una venta vinculada por solicitud",
+      "La confirmación descuenta inventario"
+    ],
+    [
+      "Confirmar venta",
+      "Volver a solicitud"
+    ],
+    [
+      "P14",
+      "P12"
+    ],
+    "Stock insuficiente: no se registró la venta ni se descontaron unidades."
+  ],
+  [
+    "P14",
+    "Venta e historial",
+    "Registro conservado",
+    [
+      "Venta · V-001 · ejemplo",
+      "Productos y cantidades efectivamente vendidos",
+      "Origen de la solicitud y campaña, si existe",
+      "Anular con motivo / Registrar devolución física",
+      "Historial de auditoría y movimientos"
+    ],
+    [
+      "Anular con motivo",
+      "Registrar devolución",
+      "Ver métricas"
+    ],
+    [
+      "P14",
+      "P14",
+      "P18"
+    ],
+    "Anular no repone stock; solo la devolución física registra unidades recibidas."
+  ],
+  [
+    "P15",
+    "Planes para tu negocio",
+    "Presencia / Impulso",
+    [
+      "Presencia · perfil, novedades y contacto",
+      "Impulso · catálogo, solicitudes y stock",
+      "Impulso · métricas por producto y ventas reportadas",
+      "Campañas adicionales según destino",
+      "Administrador · negocio, plan y período de vigencia"
+    ],
+    [
+      "Consultar ventajas",
+      "Habilitar período (admin)",
+      "Volver al panel"
+    ],
+    [
+      "P15",
+      "P15",
+      "P02"
+    ],
+    "El período se superpone con otra suscripción. No se habilitó."
+  ],
+  [
+    "P16",
+    "Promocioná tu oferta",
+    "Campañas con destino claro",
+    [
+      "Destino · Promoción / Producto del catálogo",
+      "Zona objetivo y radio",
+      "Fechas de inicio y fin",
+      "Estado · Borrador / En revisión / Activa / Pausada",
+      "Campañas contratadas por separado del plan"
+    ],
+    [
+      "Enviar a revisión",
+      "Pausar campaña",
+      "Ver resultados"
+    ],
+    [
+      "P16",
+      "P16",
+      "P18"
+    ],
+    "El destino requiere catálogo habilitado o una promoción vigente."
+  ],
+  [
+    "P17",
+    "Revisión de campañas",
+    "Panel de administración",
+    [
+      "Negocio y destino de la campaña",
+      "Contenido, condiciones, zona y fechas",
+      "Aprobación / Rechazo con motivo",
+      "Confirmación manual del pago externo",
+      "Entrega solo con todas las condiciones válidas"
+    ],
+    [
+      "Aprobar",
+      "Rechazar con motivo",
+      "Confirmar pago y programar"
+    ],
+    [
+      "P17",
+      "P17",
+      "P17"
+    ],
+    "Falta confirmar el pago: la campaña sigue sin mostrarse."
+  ],
+  [
+    "P18",
+    "Resultados de tu negocio",
+    "Contactos y ventas reportadas",
+    [
+      "Período · últimos 30 días de ejemplo",
+      "Visitas al perfil / Clics de contacto",
+      "Impulso · solicitudes / ventas reportadas",
+      "Orgánico y publicidad en métricas separadas",
+      "Filtro de producto o campaña · según plan"
+    ],
+    [
+      "Aplicar filtros",
+      "Ver solicitudes"
+    ],
+    [
+      "P18",
+      "P12"
+    ],
+    "Sin datos en el período. La conversión no aplica si no hay solicitudes."
+  ],
+  [
+    "P19",
+    "Administración",
+    "Cuentas, contenido y categorías",
+    [
+      "Cuentas · habilitadas / suspendidas",
+      "Negocios y publicaciones",
+      "Rubros y categorías de productos",
+      "Acción · suspender / rehabilitar / editar",
+      "Motivo obligatorio e historial de auditoría"
+    ],
+    [
+      "Guardar decisión",
+      "Gestionar planes",
+      "Revisar campañas"
+    ],
+    [
+      "P19",
+      "P15",
+      "P17"
+    ],
+    "No se puede eliminar una categoría referenciada ni suspender al último administrador."
+  ],
+  [
+    "P20",
+    "Evaluación del prototipo",
+    "Entorno académico aislado",
+    [
+      "Contexto · negocios / productos",
+      "Conjunto, versión y semilla",
+      "Comparar relevancia / cercanía / algoritmo completo",
+      "Gini · cobertura · concentración · nDCG",
+      "IA · aceptación, correcciones y tiempo de carga"
+    ],
+    [
+      "Ejecutar experimento",
+      "Exportar evidencia"
+    ],
+    [
+      "P20",
+      "P20"
+    ],
+    "Sin juicios de relevancia no se calcula nDCG como resultado válido."
+  ]
+]

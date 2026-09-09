@@ -1,0 +1,90 @@
+erDiagram
+    ProductCategory {
+        uuid id PK
+        string name UK
+    }
+    Product {
+        uuid id PK
+        uuid business_id FK
+        uuid category_id FK
+        string name
+        string description
+        string image_url
+        decimal price
+        string currency
+        string status
+    }
+    Inventory {
+        uuid product_id PK,FK
+        uuid business_id FK
+        int quantity
+        int low_stock_threshold
+        long version
+    }
+    OrderRequest {
+        uuid id PK
+        uuid business_id FK
+        uuid consumer_id FK
+        uuid source_interaction_id FK
+        string reference UK
+        string access_token_hash
+        string contact_name
+        string contact_phone
+        string status
+        string origin
+        string idempotency_key
+        datetime created_at
+        datetime contact_confirmed_at
+        uuid contact_confirmed_by FK
+    }
+    OrderItem {
+        uuid id PK
+        uuid business_id FK
+        uuid order_request_id FK
+        uuid product_id FK
+        string product_name_snapshot
+        int quantity
+        decimal unit_price_snapshot
+        string currency
+    }
+    Sale {
+        uuid id PK
+        uuid business_id FK
+        uuid order_request_id FK
+        uuid recorded_by FK
+        string origin
+        string status
+        string idempotency_key
+        datetime recorded_at
+    }
+    SaleItem {
+        uuid id PK
+        uuid business_id FK
+        uuid sale_id FK
+        uuid product_id FK
+        string product_name_snapshot
+        int quantity
+        decimal unit_price
+        string currency
+    }
+    StockMovement {
+        uuid id PK
+        uuid business_id FK
+        uuid product_id FK
+        uuid sale_item_id FK
+        uuid actor_id FK
+        int quantity_delta
+        string kind
+        string reason
+        string operation_key
+        datetime occurred_at
+    }
+    ProductCategory ||--o{ Product : clasifica
+    Product ||--|| Inventory : mantiene
+    OrderRequest ||--|{ OrderItem : contiene
+    Product ||--o{ OrderItem : solicitado
+    OrderRequest |o--o| Sale : se_convierte
+    Sale ||--|{ SaleItem : contiene
+    Product ||--o{ SaleItem : vendido
+    Inventory ||--o{ StockMovement : historial
+    SaleItem |o--o{ StockMovement : origina

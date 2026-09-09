@@ -1,0 +1,102 @@
+@startuml entities
+title Entidades de dominio — propuesta documentada
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+package "Ranking, campañas y medición" {
+class RankingConfiguration {
+  -id: uuid
+  -version: string
+  -context: string
+  -parameters: json
+  -created_at: datetime
+  +validate(): boolean
+}
+class DiscoveryRequest {
+  -id: uuid
+  -configuration_id: uuid
+  -consumer_id: uuid
+  -session_key: string
+  -context: string
+  -query_text: string
+  -business_category_id: uuid
+  -product_category_id: uuid
+  -search_center: geography
+  -radius_meters: int
+  -random_seed: long
+  -created_at: datetime
+}
+class RankingCandidate {
+  -id: uuid
+  -request_id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -relevance: decimal
+  -proximity: decimal
+  -availability: decimal
+  -activity: decimal
+  -equity: decimal
+  -new_business_bonus: decimal
+  -merit: decimal
+  -expected_exposure_share: decimal
+  -final_score: decimal
+  -position: int
+}
+class OrganicImpression {
+  -id: uuid
+  -candidate_id: uuid
+  -position: int
+  -exposure_weight: decimal
+  -deduplication_key: string
+  -viewed_at: datetime
+}
+class AdCampaign {
+  -id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -publication_id: uuid
+  -title: string
+  -target_center: geography
+  -radius_meters: int
+  -starts_at: datetime
+  -ends_at: datetime
+  -status: string
+  -approved_at: datetime
+  -approved_by: uuid
+  -payment_confirmed_at: datetime
+  -payment_confirmed_by: uuid
+  +submitForReview(): void
+  +approve(): void
+  +pause(): void
+}
+class AdImpression {
+  -id: uuid
+  -campaign_id: uuid
+  -discovery_request_id: uuid
+  -placement: string
+  -session_key: string
+  -deduplication_key: string
+  -viewed_at: datetime
+}
+class Interaction {
+  -id: uuid
+  -business_id: uuid
+  -product_id: uuid
+  -publication_id: uuid
+  -organic_impression_id: uuid
+  -ad_impression_id: uuid
+  -consumer_id: uuid
+  -session_key: string
+  -kind: string
+  -origin: string
+  -deduplication_key: string
+  -occurred_at: datetime
+}
+}
+RankingConfiguration "1" -- "0..*" DiscoveryRequest : configura
+DiscoveryRequest "1" -- "0..*" RankingCandidate : evalua
+RankingCandidate "1" -- "0..*" OrganicImpression : recibe
+AdCampaign "1" -- "0..*" AdImpression : recibe
+DiscoveryRequest "0..1" -- "0..*" AdImpression : aloja
+OrganicImpression "0..1" -- "0..*" Interaction : origina
+AdImpression "0..1" -- "0..*" Interaction : origina
+@enduml
