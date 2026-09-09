@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Marketplace.Api\Marketplace.Api.csproj" />
+    <ProjectReference Include="..\..\src\Marketplace.DAL\Marketplace.DAL.csproj" />
   </ItemGroup>
 
 </Project>

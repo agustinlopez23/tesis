@@ -1,0 +1,18 @@
+services:
+  database:
+    image: postgis/postgis:17-3.5
+    ports:
+      - "127.0.0.1:55432:5432"
+    environment:
+      POSTGRES_DB: marketplace
+      POSTGRES_USER: marketplace
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Generate App/.env.local first}
+    volumes:
+      - marketplace_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketplace -d marketplace"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+volumes:
+  marketplace_data:

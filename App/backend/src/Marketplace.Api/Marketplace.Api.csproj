@@ -6,4 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Marketplace.BLL\Marketplace.BLL.csproj" />
+    <ProjectReference Include="..\Marketplace.DTOs\Marketplace.DTOs.csproj" />
+    <ProjectReference Include="..\Marketplace.IoC\Marketplace.IoC.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.4" PrivateAssets="all" />
+  </ItemGroup>
 </Project>
