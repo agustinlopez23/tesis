@@ -53,4 +53,3 @@ El sistema deberá:
 Los valores de rendimiento y timeout son objetivos de diseño propuestos, no resultados observados. Las decisiones pendientes se reúnen en [decisiones y validación](07-decisiones-y-validacion.md).
 
 Fuente: elaboración propia.
-

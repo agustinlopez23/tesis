@@ -28,4 +28,3 @@ BLL depende de contratos propios, no de DAL.
 Ranking determinista y ventas permanecen en BLL.
 end note
 @enduml
-

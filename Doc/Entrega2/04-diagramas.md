@@ -134,4 +134,3 @@ Fuente: elaboración propia. [Código PlantUML](diagramas/despliegue.puml).
 El consumidor y el negocio acceden mediante navegador al frontend Next.js. El frontend y las interacciones del navegador consumen la API ASP.NET Core; el backend aplica permisos y reglas y consulta PostgreSQL/PostGIS por conexión privada. Las imágenes se guardan en almacenamiento de objetos y se exponen mediante referencias de lectura controladas. El backend invoca al proveedor de IA con datos mínimos, mientras que WhatsApp se abre desde el dispositivo como servicio externo.
 
 El evaluador ejecuta el mismo núcleo de ranking en un proceso aislado con su propia base y datos sintéticos. No ejecuta simulaciones sobre los registros comerciales. La flecha discontinua representa reutilización lógica, no acceso del runner a la API de producción. Proveedores, dominios, capacidades y mecanismos de respaldo se elegirán en el diseño de despliegue; no hay contratación ni publicación implícita.
-

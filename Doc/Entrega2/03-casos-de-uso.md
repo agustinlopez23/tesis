@@ -38,7 +38,6 @@ Cada caso mostrado en el diagrama general tiene una ficha. El diagrama general n
 | A2 | Credenciales inválidas o cuenta suspendida: rechazar sin revelar datos de otra cuenta. |
 
 Fuente: elaboración propia.
-
 ## CU-02 — Gestionar perfil del negocio
 
 | Campo | Descripción |
@@ -703,4 +702,3 @@ Fuente: elaboración propia.
 | A2 | Proveedor IA indisponible: registrar fallo de asistencia y evaluar la alternativa manual. |
 
 Fuente: elaboración propia.
-

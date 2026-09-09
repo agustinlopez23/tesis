@@ -43,4 +43,3 @@ CU-01, CU-15, CU-16, CU-17, CU-19 y CU-20 son funciones de soporte, comercializa
 Por cada escenario conservar: identificador de RF/RNF/CU, versión de software, fecha, datos de entrada, resultado esperado, resultado obtenido, evidencia y defecto asociado. El estado inicial de todos los escenarios de negocio es **no ejecutado**.
 
 Fuente: elaboración propia.
-
