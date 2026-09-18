@@ -2,6 +2,7 @@ type RouteParameters = { params: Promise<{ path: string[] }> };
 
 const allowedRoutes: Record<string, RegExp[]> = {
   GET: [
+    /^public\/businesses$/,
     /^auth\/session$/,
     /^business-categories$/,
     /^businesses$/,
@@ -34,14 +35,16 @@ async function forward(request: Request, context: RouteParameters): Promise<Resp
   if (cookie) headers.set("Cookie", cookie);
 
   try {
-    const upstream = await fetch(new URL(path, baseUrl).toString(), {
+    const upstreamUrl = new URL(path, baseUrl);
+    if (path === "public/businesses") upstreamUrl.search = new URL(request.url).search;
+    const upstream = await fetch(upstreamUrl.toString(), {
       method: request.method,
       headers,
       body: request.method === "GET" ? undefined : await request.arrayBuffer(),
       cache: "no-store",
       redirect: "manual",
     });
-    const responseHeaders = new Headers();
+    const responseHeaders = new Headers({ "Cache-Control": "no-store" });
     const responseType = upstream.headers.get("content-type");
     const setCookie = upstream.headers.get("set-cookie");
     if (responseType) responseHeaders.set("Content-Type", responseType);

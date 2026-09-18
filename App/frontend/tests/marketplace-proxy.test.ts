@@ -4,6 +4,19 @@ import { GET, POST } from "../src/app/api/marketplace/[...path]/route";
 const context = (path: string[]) => ({ params: Promise.resolve({ path }) });
 
 describe("proxy del marketplace", () => {
+  it("permite explorar sin sesión y conserva la página sin permitir mutaciones públicas", async () => {
+    vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
+    vi.stubEnv("API_BASE_URL", "http://localhost:5080");
+    const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ items: [], hasMore: false }));
+    const url = "http://localhost:3000/api/marketplace/public/businesses?page=2";
+    const response = await GET(new Request(url), context(["public", "businesses"]));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    expect(fetcher).toHaveBeenCalledWith("http://localhost:5080/public/businesses?page=2", expect.objectContaining({ method: "GET" }));
+    expect((fetcher.mock.calls[0][1]?.headers as Headers).has("Cookie")).toBe(false);
+    expect((await POST(new Request(url, { method: "POST" }), context(["public", "businesses"]))).status).toBe(404);
+  });
+
   it("rechaza mutaciones de otro origen antes de contactar la API", async () => {
     vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
     vi.stubEnv("API_BASE_URL", "http://localhost:5080");
