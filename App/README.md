@@ -13,6 +13,24 @@ La búsqueda ignora mayúsculas y tildes en vocales. Registro y gestión están 
 y permite cargar coordenadas manualmente o usar la ubicación del dispositivo.
 Este orden todavía no implementa el ranking de exposición equitativa.
 
+El visitante puede elegir Centro (Plaza San Martín), Nueva Córdoba (Buen Pastor)
+o Alberdi (Plaza Colón), o pulsar **Usar mi ubicación**. Las zonas son puntos de
+referencia, no límites barriales. El radio va de 500 m a 50 km en la interfaz.
+Con ubicación, se ordena por distancia, nombre e id y se muestra distancia
+aproximada en línea recta. Sin ubicación, continúa la guía alfabética.
+
+La API también acepta `lat`, `lon` y `radiusKm` juntos, por ejemplo
+`/public/businesses?lat=-31.416281&lon=-64.184022&radiusKm=2`.
+Valida coordenadas finitas y radio de 0,1 a 50 km; filtra antes de paginar.
+El DTO agrega `distanceKm` solamente cuando hay un centro de búsqueda.
+Aplicar las migraciones habituales incluye el índice espacial GiST.
+
+Zona y radio quedan en la URL. Las coordenadas del dispositivo se conservan
+en el estado de la entrada del historial del navegador para recarga/volver;
+la aplicación no las guarda en localStorage ni en la base de datos. El navegador
+controla la retención de su historial. Una URL copiada no contiene esas coordenadas.
+La petición HTTP a la API sí las incluye para calcular los resultados.
+
 Para probarla: crear un negocio desde el panel, seleccionar **Publicado** y
 guardar; abrir **Explorar negocios**. Cambiarlo a **Borrador** lo retira de la
 siguiente consulta. Los negocios de responsables suspendidos tampoco aparecen.

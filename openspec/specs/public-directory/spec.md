@@ -3,8 +3,9 @@
 ## Requisito: acceso anónimo y elegibilidad
 
 `GET /public/businesses?page=1` devuelve `items` y `hasMore`, sin sesión.
-Cada elemento contiene únicamente id, nombre, descripción, dirección, rubro y
-WhatsApp del negocio. Se excluyen borradores y responsables suspendidos.
+Sin ubicación, cada elemento contiene únicamente id, nombre, descripción,
+dirección, rubro y WhatsApp. Con centro de búsqueda agrega distanceKm según
+`../location-discovery/spec.md`. Se excluyen borradores y responsables suspendidos.
 
 - Publicar un negocio lo incorpora; volver a borrador lo retira en la siguiente consulta.
 - Suspender al responsable oculta sus negocios publicados.
@@ -12,7 +13,8 @@ WhatsApp del negocio. Se excluyen borradores y responsables suspendidos.
 
 ## Requisito: consulta limitada
 
-Se devuelven hasta 20 elementos ordenados por nombre e id como desempate estable.
+Se devuelven hasta 20 elementos ordenados por nombre e id como desempate estable
+sin ubicación, o distancia/nombre/id cuando se elige un centro de búsqueda.
 La página predeterminada es 1; valores no enteros o fuera de 1..10000 dan HTTP 400.
 Una página sin resultados devuelve lista vacía y `hasMore=false`.
 La paginación no representa ranking ni exposición equitativa.

@@ -18,8 +18,9 @@ context: |
   y alternativa manual; la IA no participa en el ranking.
 
   Estado vigente: scaffold, onboarding y guía pública implementados.
-  La guía incluye búsqueda textual, rubro y rediseño visual Cerca.
-  Próximo incremento autorizado: descubrimiento espacial con zona manual.
+  La guía incluye búsqueda textual, rubro, rediseño visual Cerca y
+  descubrimiento espacial con zona manual, geolocalización, radio y distancia.
+  Próximo bloque: perfil público con fotos; luego instrumentación y ranking.
 
   Idioma: documentación en español; identificadores técnicos de código en
   inglés.

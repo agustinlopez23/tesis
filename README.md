@@ -7,6 +7,8 @@ con ubicación PostGIS. El panel web de este recorrido también está implementa
 La guía pública en `/explorar` permite recorrer negocios publicados y contactar
 por WhatsApp sin cuenta. Oculta borradores y negocios de responsables suspendidos.
 La portada también presenta la guía, con búsqueda y filtros por rubro.
+Permite elegir una zona o usar la ubicación del navegador, ajustar el radio
+y ver los comercios ordenados por distancia en línea recta.
 El panel está en `/mi-negocio` y el diagnóstico técnico en `/estado`.
 
 - [Instalación, pruebas y ejecución](App/README.md)
