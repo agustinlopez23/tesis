@@ -1,6 +1,7 @@
 using Marketplace.BLL;
 using Marketplace.DTOs;
 using Marketplace.IoC;
+using Marketplace.Models;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Data.Common;
 using System.Threading.RateLimiting;
@@ -42,7 +43,8 @@ app.UseRateLimiter();
 app.MapGet("/health/live", () => Results.Json(new { status = "ok" }));
 
 app.MapGet("/public/businesses", async (
-    int? page, string? q, string? category, HttpResponse response, BusinessService businesses, CancellationToken cancellationToken) =>
+    int? page, string? q, string? category, double? lat, double? lon, double? radiusKm,
+    HttpResponse response, BusinessService businesses, CancellationToken cancellationToken) =>
 {
     response.Headers.CacheControl = "no-store";
     var currentPage = page ?? 1;
@@ -50,7 +52,16 @@ app.MapGet("/public/businesses", async (
         return Results.BadRequest(new { message = "La página debe estar entre 1 y 10000." });
     if (q?.Length > 150 || category?.Length > 100)
         return Results.BadRequest(new { message = "La búsqueda es demasiado larga." });
-    return Results.Ok(await businesses.GetPublishedAsync(currentPage, q, category, cancellationToken));
+    DiscoveryArea? area = null;
+    if (lat.HasValue || lon.HasValue || radiusKm.HasValue)
+    {
+        if (lat is null || lon is null || radiusKm is null)
+            return Results.BadRequest(new { message = "Indicá latitud, longitud y radio juntos." });
+        area = new DiscoveryArea(lat.Value, lon.Value, radiusKm.Value);
+        if (!area.IsValid)
+            return Results.BadRequest(new { message = "La ubicación debe ser válida y el radio debe estar entre 0,1 y 50 km." });
+    }
+    return Results.Ok(await businesses.GetPublishedAsync(currentPage, q, category, area, cancellationToken));
 });
 
 app.MapPost("/auth/register", async (

@@ -2,6 +2,13 @@ namespace Marketplace.Models;
 
 public sealed record GeoLocation(double Latitude, double Longitude);
 
+public sealed record DiscoveryArea(double Latitude, double Longitude, double RadiusKm)
+{
+    public bool IsValid => double.IsFinite(Latitude) && double.IsFinite(Longitude) &&
+        double.IsFinite(RadiusKm) && Latitude is >= -90 and <= 90 &&
+        Longitude is >= -180 and <= 180 && RadiusKm is >= 0.1 and <= 50;
+}
+
 public sealed class BusinessCategory
 {
     public short Id { get; set; }

@@ -9,7 +9,7 @@ public sealed record BusinessSaveResult(BusinessSaveStatus Status, BusinessRespo
 
 public interface IBusinessRepository
 {
-    Task<IReadOnlyList<PublicBusinessResponse>> GetPublishedAsync(int skip, int take, string? query, string? category, CancellationToken cancellationToken);
+    Task<IReadOnlyList<PublicBusinessResponse>> GetPublishedAsync(int skip, int take, string? query, string? category, DiscoveryArea? area, CancellationToken cancellationToken);
     Task<IReadOnlyList<BusinessCategory>> GetCategoriesAsync(CancellationToken cancellationToken);
     Task<bool> CategoryExistsAsync(short categoryId, CancellationToken cancellationToken);
     Task<IReadOnlyList<BusinessProfile>> GetOwnedAsync(Guid ownerId, CancellationToken cancellationToken);
@@ -20,9 +20,9 @@ public interface IBusinessRepository
 
 public sealed partial class BusinessService(IBusinessRepository repository)
 {
-    public async Task<PublicBusinessPage> GetPublishedAsync(int page, string? query, string? category, CancellationToken cancellationToken)
+    public async Task<PublicBusinessPage> GetPublishedAsync(int page, string? query, string? category, DiscoveryArea? area, CancellationToken cancellationToken)
     {
-        var items = await repository.GetPublishedAsync((page - 1) * 20, 21, query?.Trim(), category?.Trim(), cancellationToken);
+        var items = await repository.GetPublishedAsync((page - 1) * 20, 21, query?.Trim(), category?.Trim(), area, cancellationToken);
         return new(items.Take(20).ToArray(), items.Count > 20);
     }
 
