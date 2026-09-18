@@ -44,6 +44,20 @@ jobs:
     name: Backend
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    services:
+      database:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_USER: marketplace
+          POSTGRES_PASSWORD: ci-temporary-password
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U marketplace -d postgres"
+          --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      TEST_DATABASE_CONNECTION: Host=127.0.0.1;Port=5432;Database=postgres;Username=marketplace;Password=ci-temporary-password
     defaults:
       run:
         working-directory: App/backend

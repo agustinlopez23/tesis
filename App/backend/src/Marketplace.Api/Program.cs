@@ -41,6 +41,18 @@ app.UseRateLimiter();
 
 app.MapGet("/health/live", () => Results.Json(new { status = "ok" }));
 
+app.MapGet("/public/businesses", async (
+    int? page, string? q, string? category, HttpResponse response, BusinessService businesses, CancellationToken cancellationToken) =>
+{
+    response.Headers.CacheControl = "no-store";
+    var currentPage = page ?? 1;
+    if (currentPage is < 1 or > 10000)
+        return Results.BadRequest(new { message = "La página debe estar entre 1 y 10000." });
+    if (q?.Length > 150 || category?.Length > 100)
+        return Results.BadRequest(new { message = "La búsqueda es demasiado larga." });
+    return Results.Ok(await businesses.GetPublishedAsync(currentPage, q, category, cancellationToken));
+});
+
 app.MapPost("/auth/register", async (
     HttpRequest httpRequest,
     RegisterOwnerRequest request,
