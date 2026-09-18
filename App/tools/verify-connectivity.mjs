@@ -45,11 +45,11 @@ try {
   if (await health.text() !== '{"status":"ok"}') throw new Error('Contrato API incorrecto');
   start('next', process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', '3000'],
     resolve(root, 'App/frontend'), { NEXT_PUBLIC_API_URL: 'http://localhost:5081', NEXT_TELEMETRY_DISABLED: '1' });
-  const available = await (await waitFor('http://localhost:3000')).text();
+  const available = await (await waitFor('http://localhost:3000/estado')).text();
   if (!available.includes('API disponible')) throw new Error('No muestra disponibilidad');
   if (bRequests !== 0) throw new Error(`El artefacto consultÃ³ B ${bRequests} veces`);
   await stop(api);
-  const unavailable = await (await fetch('http://localhost:3000')).text();
+  const unavailable = await (await fetch('http://localhost:3000/estado')).text();
   if (!unavailable.includes('API no disponible')) throw new Error('No muestra indisponibilidad');
   const result = { utc: new Date().toISOString(), health: 200, available: true, unavailable: true,
     buildUrl: 'http://localhost:5080', startUrl: 'http://localhost:5081', bRequests, logs };

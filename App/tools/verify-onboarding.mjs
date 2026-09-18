@@ -3,6 +3,7 @@ import { once } from "node:events";
 import { readFile, writeFile } from "node:fs/promises";
 import { randomBytes } from "node:crypto";
 import { resolve } from "node:path";
+import assert from "node:assert/strict";
 
 const root = process.cwd();
 const appRoot = resolve(root, "App");
@@ -106,11 +107,31 @@ try {
   const read = await proxy(`/businesses/${created.id}`, "GET", undefined, cookie);
   expectStatus(read, 200, "consulta de negocio");
   if ((await read.json()).name !== "Negocio actualizado") throw new Error("La edición no quedó persistida");
+  const directory = async () => {
+    const response = await proxy("/public/businesses?page=1");
+    expectStatus(response, 200, "guía pública anónima");
+    assert.equal(response.headers.get("cache-control"), "no-store");
+    return response.json();
+  };
+  assert.deepEqual((await directory()).items, []);
+  expectStatus(await proxy(`/businesses/${created.id}`, "PUT", { ...created, status: "published" }, cookie), 200, "publicación");
+  const published = await directory();
+  assert.equal(published.items.length, 1);
+  assert.equal(published.items[0].id, created.id);
+  assert.equal(published.items[0].whatsApp, created.whatsApp);
+  assert.equal(published.items[0].ownerId, undefined);
+  assert.deepEqual((await (await proxy("/public/businesses?page=2")).json()).items, []);
+  const explore = await fetch("http://localhost:3000/explorar");
+  expectStatus(explore, 200, "pantalla pública");
+  assert.match(await explore.text(), /Descubrí comercios de tu ciudad/);
+  expectStatus(await proxy(`/businesses/${created.id}`, "PUT", created, cookie), 200, "despublicación");
+  assert.deepEqual((await directory()).items, []);
   expectStatus(await proxy("/auth/logout", "POST", undefined, cookie), 204, "logout");
   expectStatus(await proxy("/auth/session", "GET", undefined, cookie), 401, "revocación");
 
   const result = { utc: new Date().toISOString(), registration: 201, login: 200, businessCreate: 201,
-    businessUpdate: 200, logout: 204, revokedSession: 401, temporaryDatabase: true };
+    businessUpdate: 200, logout: 204, revokedSession: 401, temporaryDatabase: true,
+    publicDirectory: 200, publicationVisibility: true, draftHidden: true, publicPage: 200 };
   await writeFile(resolve(root, ".tools/onboarding-smoke-result.json"), JSON.stringify(result, null, 2));
   console.log(JSON.stringify(result));
 } finally {

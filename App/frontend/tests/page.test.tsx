@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
-import Home from "../src/app/page";
+import Home from "../src/app/estado/page";
 import { checkApiHealth } from "../src/lib/check-api-health";
 
 vi.mock("../src/lib/check-api-health", () => ({ checkApiHealth: vi.fn() }));
