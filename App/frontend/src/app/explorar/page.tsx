@@ -4,11 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { categoryStyle, Icon, SiteFooter, SiteHeader } from "../ui";
+import { areaParams, DiscoveryLocation, distanceLabel, readArea } from "./discovery-location";
+import { LocationFilter } from "./location-filter";
 
-type Business = { id: string; name: string; description: string; address: string; category: string; whatsApp: string };
+type Business = { id: string; name: string; description: string; address: string; category: string; whatsApp: string; distanceKm?: number };
 type Directory = { items: Business[]; hasMore: boolean };
-type Filters = { page: number; query: string; category: string };
-const initialFilters: Filters = { page: 1, query: "", category: "" };
+type Filters = { page: number; query: string; category: string; area: DiscoveryLocation | null };
+const initialFilters: Filters = { page: 1, query: "", category: "", area: null };
 
 export default function Explore() {
   const [filters, setFilters] = useState(initialFilters);
@@ -17,13 +19,16 @@ export default function Explore() {
   const [directory, setDirectory] = useState<Directory | null>(null);
   const [categories, setCategories] = useState<string[]>([]);
   const [error, setError] = useState(false);
+  const [locationNotice, setLocationNotice] = useState(false);
 
   useEffect(() => {
     function readLocation() {
       const params = new URLSearchParams(window.location.search);
       const page = Number(params.get("page") ?? 1);
+      const area = readArea(params, window.history.state);
+      setLocationNotice(params.get("near") === "me" && !area);
       setFilters({ page: Number.isInteger(page) && page >= 1 && page <= 10000 ? page : 1,
-        query: (params.get("q") ?? "").slice(0, 150), category: (params.get("category") ?? "").slice(0, 100) });
+        query: (params.get("q") ?? "").slice(0, 150), category: (params.get("category") ?? "").slice(0, 100), area });
       setDirectory(null);
       setError(false);
       setReady(true);
@@ -45,6 +50,7 @@ export default function Explore() {
     const params = new URLSearchParams({ page: String(filters.page) });
     if (filters.query) params.set("q", filters.query);
     if (filters.category) params.set("category", filters.category);
+    areaParams(params, filters.area);
     void fetch("/api/marketplace/public/businesses?" + params, {
       cache: "no-store", signal: controller.signal,
     }).then(async (response) => {
@@ -58,15 +64,21 @@ export default function Explore() {
   function navigate(next: Filters, scroll = false) {
     setDirectory(null);
     setError(false);
+    setLocationNotice(false);
     setFilters(next);
     setAttempt((value) => value + 1);
     const params = new URLSearchParams();
     if (next.query) params.set("q", next.query);
     if (next.category) params.set("category", next.category);
     if (next.page > 1) params.set("page", String(next.page));
+    areaParams(params, next.area, true);
     const search = params.toString();
     const destination = window.location.pathname + (search ? "?" + search : "");
-    if (destination !== window.location.pathname + window.location.search) window.history.pushState(null, "", destination);
+    const discoveryLocation = next.area?.kind === "device" ? next.area : null;
+    if (destination !== window.location.pathname + window.location.search ||
+      JSON.stringify(discoveryLocation) !== JSON.stringify(window.history.state?.discoveryLocation ?? null)) {
+      window.history.pushState({ ...window.history.state, discoveryLocation }, "", destination);
+    }
     if (scroll) document.getElementById("negocios")?.scrollIntoView({ block: "start" });
   }
 
@@ -74,7 +86,7 @@ export default function Explore() {
     event.preventDefault();
     navigate({ ...filters, page: 1, query: String(new FormData(event.currentTarget).get("q") ?? "").trim() }, true);
   }
-  const filtered = Boolean(filters.query || filters.category);
+  const filtered = Boolean(filters.query || filters.category || filters.area);
 
   return <><SiteHeader /><main id="contenido" tabIndex={-1} className="container explore-main">
     <section className="discovery-hero" aria-labelledby="discovery-title">
@@ -98,19 +110,21 @@ export default function Explore() {
         <input key={filters.query} id="business-search" name="q" type="search" defaultValue={filters.query} maxLength={150} placeholder="Un negocio, algo que te gusta o una dirección…" />
         <button className="button button-primary" type="submit">Buscar <Icon name="arrow" /></button>
       </form>
+      <LocationFilter key={JSON.stringify(filters.area)} area={filters.area} onChange={(area) => navigate({ ...filters, page: 1, area })} />
+      {locationNotice && <p className="location-note" role="status">Este enlace no incluye la ubicación del dispositivo. Elegí una zona o usá tu ubicación para ver distancias.</p>}
       <div className="category-filters" role="group" aria-label="Filtrar por rubro">
         <button className={"category-chip " + (!filters.category ? "selected" : "")} aria-pressed={!filters.category} onClick={() => navigate({ ...filters, page: 1, category: "" })}><Icon name="grid" />Todos los rubros</button>
         {categories.map((category) => <button key={category} className={"category-chip " + (filters.category === category ? "selected" : "")} aria-pressed={filters.category === category} onClick={() => navigate({ ...filters, page: 1, category })}><Icon name={categoryStyle(category).icon} />{category}</button>)}
       </div>
-      {filtered && <div className="applied-filters"><span>Tu búsqueda:</span>
+      {(filters.query || filters.category) && <div className="applied-filters"><span>Tu búsqueda:</span>
         {filters.query && <button onClick={() => navigate({ ...filters, page: 1, query: "" })} aria-label={"Quitar búsqueda " + filters.query}>“{filters.query}” <Icon name="close" /></button>}
         {filters.category && <button onClick={() => navigate({ ...filters, page: 1, category: "" })} aria-label={"Quitar filtro " + filters.category}>{filters.category} <Icon name="close" /></button>}
         <button className="clear-filters" onClick={() => navigate(initialFilters)}>Limpiar filtros</button></div>}
-      <div className="results-toolbar"><span aria-live="polite">{directory ? directory.items.length + (directory.hasMore ? "+" : "") + (directory.items.length === 1 ? " comercio" : " comercios") + " en esta página" : "Buscando comercios locales"}</span><span>Orden: <strong>Nombre, A–Z</strong></span></div>
+      <div className="results-toolbar"><span aria-live="polite">{directory ? directory.items.length + (directory.hasMore ? "+" : "") + (directory.items.length === 1 ? " comercio" : " comercios") + " en esta página" : "Buscando comercios locales"}</span><span>Orden: <strong>{filters.area ? "Más cercanos" : "Nombre, A–Z"}</strong></span></div>
       {error ? <div className="empty-state"><span className="empty-icon"><Icon name="store" /></span><h3>La guía no está disponible por un momento.</h3><p role="alert">No pudimos cargar los negocios. Revisá tu conexión y volvé a intentarlo.</p><button className="button button-dark" onClick={() => navigate(filters)}>Reintentar</button></div>
         : !directory ? <div role="status" aria-label="Cargando negocios"><span className="sr-only">Cargando negocios…</span><div className="directory-grid skeleton-grid" aria-hidden="true">{[1, 2, 3].map((item) => <div className="skeleton-card" key={item}><div/><span/><span/><span/></div>)}</div></div>
         : <section aria-label="Negocios publicados">
-          {directory.items.length === 0 ? <div className="empty-state"><span className="empty-icon"><Icon name="search" /></span><h3>{filtered ? "No encontramos negocios con esa búsqueda." : filters.page === 1 ? "Todavía no hay negocios publicados." : "No hay más negocios en esta página."}</h3><p>{filtered ? "Probá con otro nombre, una dirección o un rubro diferente." : "Cada comercio tiene una historia. La tuya puede ser la próxima."}</p>{filtered ? <button className="button button-dark" onClick={() => navigate(initialFilters)}>Ver todos los negocios</button> : <Link className="button button-dark" href="/mi-negocio">Sumar mi negocio <Icon name="arrow" /></Link>}</div>
+          {directory.items.length === 0 ? <div className="empty-state"><span className="empty-icon"><Icon name="search" /></span><h3>{filtered ? "No encontramos negocios con esa búsqueda." : filters.page === 1 ? "Todavía no hay negocios publicados." : "No hay más negocios en esta página."}</h3><p>{filters.area ? "Ampliá el radio, elegí otra zona o quitá la ubicación para ver más negocios." : filtered ? "Probá con otro nombre, una dirección o un rubro diferente." : "Cada comercio tiene una historia. La tuya puede ser la próxima."}</p>{filtered ? <button className="button button-dark" onClick={() => navigate(initialFilters)}>Ver todos los negocios</button> : <Link className="button button-dark" href="/mi-negocio">Sumar mi negocio <Icon name="arrow" /></Link>}</div>
           : <div className="directory-grid">{directory.items.map((business) => <BusinessCard key={business.id} business={business}/>)}</div>}
         </section>}
       <nav className="directory-pagination" aria-label="Páginas de negocios">
@@ -130,6 +144,7 @@ function BusinessCard({ business }: { business: Business }) {
     <div className={"business-cover " + style.tone} aria-hidden="true"><span className="cover-phrase">{style.phrase}</span><Icon name={style.icon} /><span className="cover-monogram">{business.name.charAt(0)}</span></div>
     <div className="business-card-body"><span className={"category-label " + style.tone}>{business.category}</span><h3>{business.name}</h3>
       <p className="business-address"><Icon name="pin" />{business.address || "Córdoba · Consultá la dirección"}</p>
+      {business.distanceKm !== undefined && <p className="business-distance">{distanceLabel(business.distanceKm)}<span> · En línea recta</span></p>}
       <p className={"business-description " + (!expanded && business.description.length > 155 ? "collapsed" : "")}>{business.description || "Conocé su propuesta y contactá directamente con el negocio."}</p>
       {business.description.length > 155 && <button className="description-toggle" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? "Ver menos" : "Leer descripción completa"}</button>}
       <a className="contact-button" href={"https://wa.me/" + business.whatsApp.replace(/^\+/, "")} target="_blank" rel="noopener noreferrer" aria-label={"Contactar a " + business.name + " por WhatsApp"}><Icon name="message" />Contactar por WhatsApp <Icon name="arrow" /></a>

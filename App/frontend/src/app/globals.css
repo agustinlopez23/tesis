@@ -47,6 +47,26 @@
 }
 
 @layer components {
+  .location-filter { margin-top: 16px; padding: 22px 24px 15px; background: #f0f2eb; border: 1px solid #dfe5d9; border-radius: 12px; }
+  .location-intro { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .location-intro strong { font-size: 14px; }
+  .location-intro p { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .location-intro .mini-icon { width: 36px; height: 36px; background: #e1e8db; }
+  .location-controls { display: flex; align-items: end; gap: 16px; }
+  .location-controls label { font-size: 11px; gap: 7px; }
+  .zone-select { flex: 1; min-width: 0; }
+  .location-controls select { font-size: 13px; }
+  .location-or { font-size: 12px; color: var(--muted); align-self: center; padding-top: 19px; }
+  .radius-select { width: 145px; }
+  .locate-button { background: #fff; white-space: nowrap; }
+  .location-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; min-height: 34px; font-size: 12px; }
+  .location-summary p { color: var(--muted); }
+  .location-summary strong { color: var(--ink); }
+  .location-summary .text-link { font-size: 12px; flex-shrink: 0; min-height: 44px; }
+  .location-note { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .location-error { font-size: 13px; color: #963820; margin-top: 10px; }
+  .business-distance { font-size: 12px; color: var(--green); font-weight: 600; margin-top: 8px; }
+  .business-distance span { color: var(--muted); font-weight: 400; font-size: 11px; }
   .site-header { border-bottom: 1px solid var(--line); background: var(--paper); }
   .nav-inner { display: flex; align-items: center; gap: 32px; height: 86px; }
   .brand { display: inline-flex; align-items: center; font-size: 34px; letter-spacing: -2px; font-weight: 750; line-height: 1; }
@@ -358,5 +378,21 @@
   }
   @media (prefers-reduced-motion: reduce) {
     *, *:before, *:after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  }
+  @media (max-width: 800px) {
+    .location-controls { flex-wrap: wrap; gap: 12px; }
+    .zone-select { flex: 1 1 calc(100% - 150px); }
+    .location-or { display: none; }
+    .radius-select { width: 130px; order: 1; }
+    .locate-button { order: 2; }
+  }
+  @media (max-width: 480px) {
+    .location-filter { padding: 18px 16px 12px; }
+    .zone-select { flex: 1 1 100%; }
+    .location-controls select { font-size: 16px; }
+    .radius-select { width: 100%; }
+    .locate-button { width: 100%; }
+    .location-summary { align-items: start; }
+    .location-summary span { display: block; }
   }
 }
