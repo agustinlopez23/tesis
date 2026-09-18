@@ -17,9 +17,9 @@ context: |
   opcionales asistidos por IA. Toda sugerencia de IA requiere confirmación
   y alternativa manual; la IA no participa en el ranking.
 
-  Primer slice técnico: generar backend y frontend compilables, con
-  conectividad mínima y sin funcionalidad de negocio. App/ permanece sin
-  implementación durante la fase init.
+  Estado vigente: scaffold, onboarding y guía pública implementados.
+  La guía incluye búsqueda textual, rubro y rediseño visual Cerca.
+  Próximo incremento autorizado: descubrimiento espacial con zona manual.
 
   Idioma: documentación en español; identificadores técnicos de código en
   inglés.
@@ -27,10 +27,8 @@ context: |
   falla antes de escribir su implementación, seguida por el mínimo cambio
   para pasar y una refactorización segura.
 
-  Toolchain observado al inicializar: .NET SDK 9.0.311, Node.js 24.20.0 y
-  npm 11.19.0. Revalidar y fijar versiones compatibles antes del scaffold,
-  incluida la versión estable de Next.js y su requisito de Node. No inferir
-  una versión objetivo de .NET solo del SDK instalado.
+  Toolchain fijado: .NET SDK 10.0.400, Next.js 16.3.4, Node.js 24.20.0 y
+  npm 11.19.0. Revalidar compatibilidad antes de cambiar dependencias.
 
   Runners previstos: backend con xUnit mediante `dotnet test`; frontend con
   Vitest y Testing Library mediante `npm test`; validación de producción

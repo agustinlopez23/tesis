@@ -1,10 +1,25 @@
-# Scaffold del marketplace local
+# Prototipo del marketplace local
 
 Backend ASP.NET Core en seis proyectos y frontend Next.js. La página inicial
-comprueba la API desde el servidor Next y muestra su disponibilidad. El backend
+presenta la guía de descubrimiento con la identidad visual de trabajo **Cerca**. El backend
 ya incluye el primer corte de negocio: registro, ingreso y sesión revocable del
 responsable y alta/edición de negocios, persistidos en PostgreSQL/PostGIS. El
 panel web permite completar el recorrido desde el navegador.
+La guía pública en `/` y `/explorar` muestra negocios publicados con contacto
+por WhatsApp, paginados de a 20 y ordenados por nombre. Permite buscar por nombre,
+descripción o dirección y filtrar por rubro; los filtros se conservan en la URL.
+La búsqueda ignora mayúsculas y tildes en vocales. Registro y gestión están en
+`/mi-negocio`. El panel distingue borradores y publicados, confirma guardados
+y permite cargar coordenadas manualmente o usar la ubicación del dispositivo.
+Este orden todavía no implementa el ranking de exposición equitativa.
+
+Para probarla: crear un negocio desde el panel, seleccionar **Publicado** y
+guardar; abrir **Explorar negocios**. Cambiarlo a **Borrador** lo retira de la
+siguiente consulta. Los negocios de responsables suspendidos tampoco aparecen.
+La API pública es `GET /public/businesses?page=1&q=cafe&category=Gastronomía`
+y no requiere sesión. Los parámetros `q` y `category` son opcionales; se filtra
+antes de paginar. La investigación y decisiones de interfaz están en
+`../Doc/ux-research-2026-09-18.md`.
 
 ## Entorno
 
@@ -75,7 +90,9 @@ npm run build
 npm start
 ```
 
-Abrir `http://localhost:3000`. Con API iniciada debe mostrar `API disponible`.
+Abrir `http://localhost:3000` para explorar o `/mi-negocio` para administrar.
+El diagnóstico técnico está en `http://localhost:3000/estado`.
+Con API iniciada debe mostrar `API disponible`.
 Detener la API y recargar: debe mostrar `API no disponible`. La consulta aborta
 a los 3 segundos; solo acepta HTTP 200, JSON y el objeto exacto de liveness.
 Para desarrollo usar `npm run dev` en lugar de build/start.
@@ -104,7 +121,10 @@ node App/tools/verify-onboarding.mjs
 ```
 
 El script aplica migraciones, atraviesa el proxy, registra una cuenta, crea y
-edita un negocio, revoca la sesión y elimina la base temporal al terminar.
+edita un negocio, verifica publicación/despublicación en la guía sin sesión,
+comprueba `/explorar`, revoca la sesión y elimina la base temporal al terminar.
+Las pruebas automatizadas de interfaz cubren tarjetas, enlace de WhatsApp,
+paginación y recuperación ante fallos; el script integrado comprueba HTTP.
 
 ## Evidencia y mantenimiento
 

@@ -279,7 +279,7 @@ Preservar origen disponible: revista, búsqueda, anuncio o acceso directo, adem�
 6. Ranking completo, actividad definida y evaluación experimental.
 7. Publicidad, reportes y revisión integral del MVP.
 
-Cada entrega se descompone en propuestas y especificaciones OpenSpec con criterios observables antes de implementar. Se mantiene el enfoque TDD y las decisiones arquitectónicas vigentes. El scaffold backend/frontend ya está implementado; las capacidades de negocio de este PRD todavía no.
+Cada entrega se descompone en propuestas y especificaciones OpenSpec con criterios observables antes de implementar. Se mantiene el enfoque TDD y las decisiones arquitectónicas vigentes. Al 2026-09-18 están implementados el scaffold, el onboarding de responsables y una guía pública paginada con contacto por WhatsApp. La guía usa orden por nombre; geobúsqueda, ranking, exposición y las demás capacidades continúan pendientes. Ver [estado técnico](../openspec/project.md).
 
 ## 14. Decisiones abiertas
 

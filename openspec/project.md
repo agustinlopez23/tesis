@@ -1,5 +1,34 @@
 # Contexto SDD de la tesis
 
+## Estado vigente — 2026-09-18
+
+Implementados: scaffold, onboarding de responsables y guía pública de negocios,
+búsqueda textual/rubro y rediseño visual Cerca (nombre de trabajo).
+El panel permite registrar una cuenta, iniciar/cerrar sesión y crear/editar
+negocios con ubicación PostGIS. `/explorar` permite visitar sin cuenta las
+tarjetas de negocios publicados y contactar por WhatsApp.
+
+La guía pagina de a 20, ordena por nombre/id y excluye borradores y responsables
+suspendidos. El DTO público no contiene datos de cuenta. Se corrigió además la
+lectura del campo `whatsApp` al editar/publicar desde el panel y se incorporó
+PostGIS a la configuración CI, que antes no preparaba base para la suite.
+
+Verificación local del estado final: backend 16/16, frontend 34/34, lint y build aprobados.
+Recorrido HTTP integrado aprobado sobre base temporal: publicación, consulta
+anónima y despublicación, además del onboarding y la revocación de sesión.
+Contrato, tareas y evidencia: `changes/archive/2026-09-18-public-business-directory/`.
+Versiones vigentes: .NET SDK 10.0.400, Next.js 16.3.4, Node 24.20.0, npm 11.19.0.
+
+La portada y `/explorar` presentan la guía; `/mi-negocio` contiene el panel.
+El diagnóstico técnico se conserva en `/estado`. Búsqueda y filtros sobreviven
+a recarga e historial; la búsqueda ignora tildes en vocales.
+Próximo incremento autorizado: descubrimiento por ubicación con zona
+manual, antes del ranking equitativo. Siguen pendientes catálogo, capacidades
+por plan, pedidos, stock, publicidad y evaluación experimental del ranking.
+No hay despliegue público; documentación de ejecución en `App/README.md`.
+
+## Contexto inicial (histórico)
+
 El proyecto continuará mediante OpenSpec con **strict TDD**. El primer cambio a especificar será un scaffold compilable de backend y frontend con conectividad mínima, sin implementar todavía funcionalidades del marketplace.
 
 ## Camino inmediato
