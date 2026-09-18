@@ -92,6 +92,7 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
                     point => new GeoLocation(point.Y, point.X))
                 .HasColumnType("geography (point,4326)");
             entity.HasIndex(x => x.OwnerId);
+            entity.HasIndex(x => x.Location).HasMethod("gist");
             entity.HasOne<UserAccount>().WithMany().HasForeignKey(x => x.OwnerId);
             entity.HasOne<BusinessCategory>().WithMany().HasForeignKey(x => x.CategoryId);
         });

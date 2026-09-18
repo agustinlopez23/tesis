@@ -132,6 +132,10 @@ namespace Marketplace.DAL.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("Location");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "gist");
+
                     b.HasIndex("OwnerId");
 
                     b.ToTable("businesses", null, t =>
