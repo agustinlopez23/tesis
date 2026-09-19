@@ -12,9 +12,15 @@ const string SessionCookie = "marketplace_session";
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMarketplace(builder.Configuration);
 builder.Services.AddProblemDetails();
+builder.Services.AddDataProtection();
+builder.Services.AddSingleton<ActivityTokens>();
+builder.Services.AddHostedService<ActivityRetentionWorker>();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("activity", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = 1200, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
     options.AddPolicy("auth", context => RateLimitPartition.GetFixedWindowLimiter(
         context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
         _ => new FixedWindowRateLimiterOptions
@@ -41,12 +47,13 @@ app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =
 }));
 app.UseRateLimiter();
 app.MapBusinessProfiles();
+app.MapBusinessActivity();
 
 app.MapGet("/health/live", () => Results.Json(new { status = "ok" }));
 
 app.MapGet("/public/businesses", async (
     int? page, string? q, string? category, double? lat, double? lon, double? radiusKm,
-    HttpResponse response, BusinessService businesses, CancellationToken cancellationToken) =>
+    HttpResponse response, BusinessService businesses, ActivityTokens tokens, CancellationToken cancellationToken) =>
 {
     response.Headers.CacheControl = "no-store";
     var currentPage = page ?? 1;
@@ -63,7 +70,11 @@ app.MapGet("/public/businesses", async (
         if (!area.IsValid)
             return Results.BadRequest(new { message = "La ubicación debe ser válida y el radio debe estar entre 0,1 y 50 km." });
     }
-    return Results.Ok(await businesses.GetPublishedAsync(currentPage, q, category, area, cancellationToken));
+    var result = await businesses.GetPublishedAsync(currentPage, q, category, area, cancellationToken);
+    return Results.Ok(result with { Measurement = result.Items.Select((item, index) => new {
+        item.Id, Token = tokens.Issue(new(item.Id, string.IsNullOrWhiteSpace(q) ? "directory" : "search",
+            (currentPage - 1) * 20 + index + 1, area is null ? "name-v1" : "distance-v1"))
+    }).ToDictionary(x => x.Id, x => x.Token) });
 });
 
 app.MapPost("/auth/register", async (

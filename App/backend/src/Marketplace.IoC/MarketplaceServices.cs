@@ -26,6 +26,9 @@ public static class MarketplaceServices
         services.AddScoped<IBusinessProfileRepository, BusinessProfileRepository>();
         services.AddScoped<IPhotoProcessor, PhotoProcessorAdapter>();
         services.AddScoped<BusinessProfileService>();
+        services.AddSingleton(TimeProvider.System);
+        services.AddScoped<IActivityRepository, ActivityRepository>();
+        services.AddScoped<ActivityService>();
         services.AddScoped<IPasswordService, AspNetPasswordService>();
         return services;
     }

@@ -7,11 +7,11 @@ public static class BusinessProfileEndpoints
 {
     public static void MapBusinessProfiles(this WebApplication app)
     {
-        app.MapGet("/public/businesses/{id:guid}", async (Guid id, HttpResponse response, BusinessProfileService profiles, CancellationToken ct) =>
+        app.MapGet("/public/businesses/{id:guid}", async (Guid id, HttpResponse response, BusinessProfileService profiles, ActivityTokens tokens, CancellationToken ct) =>
         {
             response.Headers.CacheControl = "no-store";
             var profile = await profiles.GetPublicAsync(id, ct);
-            return profile is null ? Results.NotFound() : Results.Ok(profile);
+            return profile is null ? Results.NotFound() : Results.Ok(profile with { MeasurementToken = tokens.Issue(new(id, "unknown", null, null)) });
         });
         app.MapGet("/public/businesses/{id:guid}/photos/{slot:int}", async (
             Guid id, int slot, HttpResponse response, BusinessProfileService profiles, CancellationToken ct) =>
