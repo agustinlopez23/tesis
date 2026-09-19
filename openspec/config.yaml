@@ -20,7 +20,9 @@ context: |
   Estado vigente: scaffold, onboarding y guía pública implementados.
   La guía incluye búsqueda textual, rubro, rediseño visual Cerca y
   descubrimiento espacial con zona manual, geolocalización, radio y distancia.
-  Próximo bloque: perfil público con fotos; luego instrumentación y ranking.
+  Perfil público con galería y gestión de hasta cinco fotos implementado.
+  Utility procesa imágenes sin dependencias de las capas; IoC adapta a BLL.
+  Próximo bloque: instrumentación y ranking.
 
   Idioma: documentación en español; identificadores técnicos de código en
   inglés.

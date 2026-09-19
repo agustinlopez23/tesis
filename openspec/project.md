@@ -14,7 +14,7 @@ suspendidos. El DTO público no contiene datos de cuenta. Se corrigió además l
 lectura del campo `whatsApp` al editar/publicar desde el panel y se incorporó
 PostGIS a la configuración CI, que antes no preparaba base para la suite.
 
-Verificación local del estado final: backend 27/27, frontend 40/40, lint y build aprobados.
+Verificación local del estado final: backend 41/41, frontend 48/48, lint y build aprobados.
 Recorrido HTTP integrado aprobado sobre base temporal: publicación, consulta
 anónima y despublicación, además del onboarding y la revocación de sesión.
 Contrato, tareas y evidencia: `changes/archive/2026-09-18-public-business-directory/`.
@@ -27,8 +27,13 @@ La búsqueda por ubicación ofrece zona manual, geolocalización opcional, radio
 distancias y recuperación de permisos denegados. La consulta espacial usa PostGIS
 con índice GiST y respeta elegibilidad y filtros antes de paginar.
 Evidencia: `changes/archive/2026-09-18-location-discovery/verify-report.md`.
-Próximo bloque de la secuencia: perfil público del negocio con fotos, seguido
-por instrumentación y ranking equitativo evaluable. Siguen pendientes catálogo, capacidades
+Los perfiles en `/negocios/{id}` ya incluyen galería y enlace desde la guía.
+El responsable administra cinco fotos con carga/reemplazo/eliminación; el backend
+valida, orienta, reduce y elimina metadatos. Borradores y suspendidos mantienen
+sus imágenes privadas. Utility aporta el procesamiento, sin referencias a capas.
+Evidencia: `changes/archive/2026-09-18-public-business-profile/verify-report.md`.
+Próximo bloque de la secuencia: instrumentación y ranking equitativo evaluable.
+Siguen pendientes catálogo, capacidades
 por plan, pedidos, stock, publicidad y evaluación experimental del ranking.
 No hay despliegue público; documentación de ejecución en `App/README.md`.
 

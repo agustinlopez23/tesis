@@ -4,7 +4,9 @@
 
 `GET /public/businesses?page=1` devuelve `items` y `hasMore`, sin sesión.
 Sin ubicación, cada elemento contiene únicamente id, nombre, descripción,
-dirección, rubro y WhatsApp. Con centro de búsqueda agrega distanceKm según
+dirección, rubro y WhatsApp. Si tiene fotos agrega coverPhotoSlot para enlazar
+su portada, según `../public-business-profile/spec.md`.
+Con centro de búsqueda agrega distanceKm según
 `../location-discovery/spec.md`. Se excluyen borradores y responsables suspendidos.
 
 - Publicar un negocio lo incorpora; volver a borrador lo retira en la siguiente consulta.

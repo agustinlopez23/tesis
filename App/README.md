@@ -1,6 +1,6 @@
 # Prototipo del marketplace local
 
-Backend ASP.NET Core en seis proyectos y frontend Next.js. La página inicial
+Backend ASP.NET Core en siete proyectos de aplicación y frontend Next.js. La página inicial
 presenta la guía de descubrimiento con la identidad visual de trabajo **Cerca**. El backend
 ya incluye el primer corte de negocio: registro, ingreso y sesión revocable del
 responsable y alta/edición de negocios, persistidos en PostgreSQL/PostGIS. El
@@ -38,6 +38,39 @@ La API pública es `GET /public/businesses?page=1&q=cafe&category=Gastronomía`
 y no requiere sesión. Los parámetros `q` y `category` son opcionales; se filtra
 antes de paginar. La investigación y decisiones de interfaz están en
 `../Doc/ux-research-2026-09-18.md`.
+
+## Perfiles y fotos
+
+Cada tarjeta enlaza a `/negocios/{id}`. El perfil público presenta descripción
+completa, dirección, contacto por WhatsApp y galería. Sin fotos, conserva una
+presentación tipográfica. Un negocio ausente, en borrador o de un responsable
+suspendido no tiene perfil ni imágenes accesibles por la API pública.
+
+En **Mi negocio**, guardar o editar un comercio y elegir **Administrar fotos**.
+Hay hasta cinco posiciones: agregar, reemplazar con otro archivo o eliminar
+con confirmación. La primera posición ocupada se usa como portada de la guía.
+Después de guardar el negocio permanece seleccionado para poder agregar fotos.
+
+- Entrada: JPEG, PNG o WebP estático; máximo 5 MB y 20 megapíxeles.
+- Salida: JPEG sin metadatos, orientación corregida, máximo 1600 px y 1 MB.
+- Persistencia: tabla `business_photos` en PostgreSQL, cinco slots por negocio.
+  Incluir esta tabla en el respaldo de la base. Pensado para el prototipo;
+  separar los archivos en almacenamiento de objetos al escalar.
+- Dependencia: SkiaSharp y SkiaSharp.NativeAssets.Linux.NoDependencies
+  **4.152.0**, auditados durante restore. Utility no referencia las capas;
+  IoC adapta su resultado a la interfaz de procesamiento definida en BLL.
+
+API de perfil: `GET /public/businesses/{id}`.
+Imágenes públicas: `GET /public/businesses/{id}/photos/{slot}`.
+Listado privado: `GET /businesses/{id}/photos`. Imagen privada, carga y
+eliminación: `GET/PUT/DELETE /businesses/{id}/photos/{slot}`.
+PUT usa multipart con `file` y `caption` (opcional, hasta 160 caracteres).
+Las rutas privadas requieren propietario; las mutaciones también validan origen.
+No se cachean imágenes: despublicar bloquea nuevas lecturas públicas.
+
+La demo local usa una imagen ilustrativa rotulada como tal; no representa una
+foto verificada del negocio ficticio. Evidencia:
+`../openspec/changes/archive/2026-09-18-public-business-profile/verify-report.md`.
 
 ## Entorno
 

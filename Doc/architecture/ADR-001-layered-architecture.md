@@ -1,6 +1,6 @@
 # ADR-001: Arquitectura N capas con inversión de dependencias
 
-**Estado:** aceptada para orientar la implementación; estructura todavía no implementada.
+**Estado:** aceptada e implementada; actualización de alcance técnico 2026-09-18.
 
 ## Decisión
 
@@ -30,7 +30,9 @@ API, BLL y DAL son capas. Los demás proyectos son apoyos, no capas adicionales.
 | `Marketplace.Models` | Entidades y tipos del negocio | Sin dependencias de EF Core; mapeos en DAL |
 | `Marketplace.Utility` | Funciones transversales pequeñas, cuando sean necesarias | No es un contenedor de reglas, servicios o integraciones |
 
-`Marketplace` es un nombre provisional. Utility se reserva como ubicación conceptual, pero no necesita crearse hasta tener contenido real.
+`Marketplace` es un nombre provisional. Utility se incorporó para normalizar
+imágenes mediante SkiaSharp: recibe bytes y devuelve bytes/dimensiones, sin
+referencias a BLL, DAL ni Models. IoC adapta ese resultado al contrato de BLL.
 
 ## Dependencias de código
 
@@ -40,7 +42,7 @@ La flecha indica una referencia de proyecto permitida; no obliga a agregar refer
 Api  -> BLL, DTOs, IoC
 BLL  -> Models, DTOs
 DAL  -> BLL, Models
-IoC  -> BLL, DAL
+IoC  -> BLL, DAL, Utility
 Models, DTOs -> sin referencias a las capas
 Utility     -> sin referencias a las capas
 ```
@@ -73,7 +75,7 @@ App/
 │   │   ├── Marketplace.IoC/
 │   │   ├── Marketplace.DTOs/
 │   │   ├── Marketplace.Models/
-│   │   └── Marketplace.Utility/       # Cuando exista contenido real
+│   │   └── Marketplace.Utility/       # Normalización de imágenes
 │   ├── tests/
 │   │   ├── Marketplace.BLL.Tests/
 │   │   ├── Marketplace.DAL.Tests/

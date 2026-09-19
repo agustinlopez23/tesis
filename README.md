@@ -9,6 +9,8 @@ por WhatsApp sin cuenta. Oculta borradores y negocios de responsables suspendido
 La portada también presenta la guía, con búsqueda y filtros por rubro.
 Permite elegir una zona o usar la ubicación del navegador, ajustar el radio
 y ver los comercios ordenados por distancia en línea recta.
+Cada negocio tiene un perfil público en `/negocios/{id}`, con descripción,
+galería y contacto. El responsable administra hasta cinco fotos desde el panel.
 El panel está en `/mi-negocio` y el diagnóstico técnico en `/estado`.
 
 - [Instalación, pruebas y ejecución](App/README.md)
