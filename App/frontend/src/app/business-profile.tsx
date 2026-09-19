@@ -4,15 +4,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { categoryStyle, Icon, SiteFooter, SiteHeader } from "./ui";
+import { profileMeasurementToken, trackActivity, useProfileVisit } from "./activity";
 
 export type Photo = { slot: number; caption: string; width: number; height: number };
 type Profile = { id: string; name: string; description: string; address: string;
-  category: string; whatsApp: string; photos: Photo[] };
+  category: string; whatsApp: string; photos: Photo[]; measurementToken?: string };
 
 export default function BusinessProfile({ id }: { id: string }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "missing" | "error">("loading");
   const [attempt, setAttempt] = useState(0);
+  useProfileVisit(id, status === "ready" ? profile?.measurementToken : undefined);
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
@@ -41,7 +43,7 @@ export default function BusinessProfile({ id }: { id: string }) {
             <section className="profile-about"><p className="eyebrow">Detrás del negocio</p><h2>Conocé su propuesta.</h2><p>{profile.description || "Para conocer su propuesta, contactá directamente al negocio."}</p></section>
           </div>
           <aside className="profile-contact"><span className="mini-icon"><Icon name="message" /></span><h2>Una buena conexión <br/>empieza con un hola.</h2><p>Consultá disponibilidad, precios o lo que quieras saber directamente con el negocio.</p>
-            <a className="button button-dark full-width" href={"https://wa.me/" + profile.whatsApp.replace(/^\+/, "")} target="_blank" rel="noopener noreferrer">Contactar por WhatsApp<Icon name="arrow" /></a>
+            <a className="button button-dark full-width" onClick={() => void trackActivity(id, profileMeasurementToken(id, profile.measurementToken), "contact", "profile")} href={"https://wa.me/" + profile.whatsApp.replace(/^\+/, "")} target="_blank" rel="noopener noreferrer">Contactar por WhatsApp<Icon name="arrow" /></a>
             <div className="profile-address"><Icon name="pin" /><div><strong>Dónde encontrarlo</strong><p>{profile.address || "Consultá la dirección por WhatsApp."}</p>{profile.address && <a className="text-link" href={"https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(profile.address + ", Córdoba, Argentina")} target="_blank" rel="noopener noreferrer">Buscar dirección en Maps <Icon name="arrow" /></a>}</div></div>
           </aside>
         </div>

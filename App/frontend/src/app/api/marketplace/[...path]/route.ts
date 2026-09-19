@@ -9,8 +9,9 @@ const allowedRoutes: Record<string, RegExp[]> = {
     /^businesses$/,
     /^businesses\/[0-9a-f-]{36}$/i,
     /^businesses\/[0-9a-f-]{36}\/photos(\/[1-5])?$/i,
+    /^businesses\/[0-9a-f-]{36}\/activity$/i,
   ],
-  POST: [/^auth\/(register|login|logout)$/, /^businesses$/],
+  POST: [/^auth\/(register|login|logout)$/, /^businesses$/, /^public\/events$/],
   PUT: [/^businesses\/[0-9a-f-]{36}$/i, /^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i],
   DELETE: [/^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i],
 };
@@ -38,7 +39,7 @@ async function forward(request: Request, context: RouteParameters): Promise<Resp
   if (cookie) headers.set("Cookie", cookie);
 
   try {
-    const maxBody = 5 * 1024 * 1024 + 65536;
+    const maxBody = path === "public/events" ? 4096 : 5 * 1024 * 1024 + 65536;
     if (Number(request.headers.get("content-length")) > maxBody) return new Response(null, { status: 413 });
     // Bound streamed/chunked uploads too, before buffering them for the API.
     const chunks: Uint8Array[] = [];
@@ -57,7 +58,7 @@ async function forward(request: Request, context: RouteParameters): Promise<Resp
     let offset = 0;
     for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
     const upstreamUrl = new URL(path, baseUrl);
-    if (path === "public/businesses") upstreamUrl.search = new URL(request.url).search;
+    if (path === "public/businesses" || path.endsWith("/activity")) upstreamUrl.search = new URL(request.url).search;
     const upstream = await fetch(upstreamUrl.toString(), {
       method: request.method,
       headers,

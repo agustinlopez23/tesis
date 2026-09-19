@@ -4,6 +4,19 @@ import { GET, POST, PUT, DELETE } from "../src/app/api/marketplace/[...path]/rou
 const context = (path: string[]) => ({ params: Promise.resolve({ path }) });
 
 describe("proxy del marketplace", () => {
+  it("reenvía actividad privada y limita eventos públicos a 4 KiB", async () => {
+    vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
+    vi.stubEnv("API_BASE_URL", "http://localhost:5080");
+    const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({}));
+    const id = "d71cd8d6-7245-492f-92de-4caa0cf11e50";
+    await GET(new Request(`http://localhost:3000/api/marketplace/businesses/${id}/activity?days=7`), context(["businesses", id, "activity"]));
+    expect(fetcher).toHaveBeenCalledWith(`http://localhost:5080/businesses/${id}/activity?days=7`, expect.anything());
+    const request = (body: string) => new Request("http://localhost:3000/api/marketplace/public/events", {
+      method: "POST", headers: { Origin: "http://localhost:3000", "X-Requested-With": "marketplace" }, body });
+    expect((await POST(request("{}"), context(["public", "events"]))).status).toBe(200);
+    expect((await POST(request("x".repeat(4097)), context(["public", "events"]))).status).toBe(413);
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
   it("limita cargas sin Content-Length y rechaza eliminaciones de otro origen", async () => {
     vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
     vi.stubEnv("API_BASE_URL", "http://localhost:5080");

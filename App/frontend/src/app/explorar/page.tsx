@@ -6,9 +6,10 @@ import { FormEvent, useEffect, useState } from "react";
 import { categoryStyle, Icon, SiteFooter, SiteHeader } from "../ui";
 import { areaParams, DiscoveryLocation, distanceLabel, readArea } from "./discovery-location";
 import { LocationFilter } from "./location-filter";
+import { rememberDiscovery, trackActivity, useImpression } from "../activity";
 
 type Business = { id: string; name: string; description: string; address: string; category: string; whatsApp: string; distanceKm?: number; coverPhotoSlot?: number };
-type Directory = { items: Business[]; hasMore: boolean };
+type Directory = { items: Business[]; hasMore: boolean; measurement?: Record<string, string> };
 type Filters = { page: number; query: string; category: string; area: DiscoveryLocation | null };
 const initialFilters: Filters = { page: 1, query: "", category: "", area: null };
 
@@ -125,7 +126,7 @@ export default function Explore() {
         : !directory ? <div role="status" aria-label="Cargando negocios"><span className="sr-only">Cargando negocios…</span><div className="directory-grid skeleton-grid" aria-hidden="true">{[1, 2, 3].map((item) => <div className="skeleton-card" key={item}><div/><span/><span/><span/></div>)}</div></div>
         : <section aria-label="Negocios publicados">
           {directory.items.length === 0 ? <div className="empty-state"><span className="empty-icon"><Icon name="search" /></span><h3>{filtered ? "No encontramos negocios con esa búsqueda." : filters.page === 1 ? "Todavía no hay negocios publicados." : "No hay más negocios en esta página."}</h3><p>{filters.area ? "Ampliá el radio, elegí otra zona o quitá la ubicación para ver más negocios." : filtered ? "Probá con otro nombre, una dirección o un rubro diferente." : "Cada comercio tiene una historia. La tuya puede ser la próxima."}</p>{filtered ? <button className="button button-dark" onClick={() => navigate(initialFilters)}>Ver todos los negocios</button> : <Link className="button button-dark" href="/mi-negocio">Sumar mi negocio <Icon name="arrow" /></Link>}</div>
-          : <div className="directory-grid">{directory.items.map((business) => <BusinessCard key={business.id} business={business}/>)}</div>}
+          : <div className="directory-grid">{directory.items.map((business) => <BusinessCard key={business.id} business={business} token={directory.measurement?.[business.id]}/>)}</div>}
         </section>}
       <nav className="directory-pagination" aria-label="Páginas de negocios">
         <button className="button button-outline" disabled={filters.page === 1 || (!directory && !error)} onClick={() => navigate({ ...filters, page: filters.page - 1 }, true)}><Icon name="chevron" className="rotate" />Anterior</button>
@@ -137,13 +138,14 @@ export default function Explore() {
   </main><SiteFooter /></>;
 }
 
-function BusinessCard({ business }: { business: Business }) {
+function BusinessCard({ business, token }: { business: Business; token?: string }) {
+  const impression = useImpression(business.id, token);
   const style = categoryStyle(business.category);
   const [expanded, setExpanded] = useState(false);
   const [coverFailed, setCoverFailed] = useState(false);
   const profileUrl = "/negocios/" + business.id;
-  return <article className="business-card">
-    <Link href={profileUrl} className={"business-cover " + style.tone} aria-label={"Ver perfil de " + business.name} tabIndex={-1}>
+  return <article className="business-card" ref={impression}>
+    <Link href={profileUrl} onClick={() => rememberDiscovery(business.id, token)} className={"business-cover " + style.tone} aria-label={"Ver perfil de " + business.name} tabIndex={-1}>
       {business.coverPhotoSlot && !coverFailed ? <Image src={"/api/marketplace/public/businesses/" + business.id + "/photos/" + business.coverPhotoSlot} alt="" fill unoptimized onError={() => setCoverFailed(true)} /> :
         <><span className="cover-phrase">{style.phrase}</span><Icon name={style.icon} /><span className="cover-monogram">{business.name.charAt(0)}</span></>}
     </Link>
@@ -152,8 +154,8 @@ function BusinessCard({ business }: { business: Business }) {
       {business.distanceKm !== undefined && <p className="business-distance">{distanceLabel(business.distanceKm)}<span> · En línea recta</span></p>}
       <p className={"business-description " + (!expanded && business.description.length > 155 ? "collapsed" : "")}>{business.description || "Conocé su propuesta y contactá directamente con el negocio."}</p>
       {business.description.length > 155 && <button className="description-toggle" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>{expanded ? "Ver menos" : "Leer descripción completa"}</button>}
-      <Link className="text-link profile-card-link" href={profileUrl}>Conocer el negocio <Icon name="arrow" /></Link>
-      <a className="contact-button" href={"https://wa.me/" + business.whatsApp.replace(/^\+/, "")} target="_blank" rel="noopener noreferrer" aria-label={"Contactar a " + business.name + " por WhatsApp"}><Icon name="message" />Contactar por WhatsApp <Icon name="arrow" /></a>
+      <Link className="text-link profile-card-link" href={profileUrl} onClick={() => rememberDiscovery(business.id, token)}>Conocer el negocio <Icon name="arrow" /></Link>
+      <a className="contact-button" onClick={() => void trackActivity(business.id, token, "contact", "directory")} href={"https://wa.me/" + business.whatsApp.replace(/^\+/, "")} target="_blank" rel="noopener noreferrer" aria-label={"Contactar a " + business.name + " por WhatsApp"}><Icon name="message" />Contactar por WhatsApp <Icon name="arrow" /></a>
     </div>
   </article>;
 }
