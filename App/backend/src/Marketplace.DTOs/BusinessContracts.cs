@@ -8,7 +8,10 @@ public sealed record PublicBusinessResponse(Guid Id, string Name, string Descrip
     string Address, string Category, string WhatsApp,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] double? DistanceKm = null,
     [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] int? CoverPhotoSlot = null);
-public sealed record PublicBusinessPage(IReadOnlyList<PublicBusinessResponse> Items, bool HasMore);
+public sealed record PublicBusinessPage(IReadOnlyList<PublicBusinessResponse> Items, bool HasMore)
+{
+    public IReadOnlyDictionary<Guid, string>? Measurement { get; init; }
+}
 
 public sealed record SaveBusinessRequest(
     string? Name,
