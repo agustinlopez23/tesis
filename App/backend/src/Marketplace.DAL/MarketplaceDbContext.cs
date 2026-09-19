@@ -13,9 +13,11 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<BusinessCategory> BusinessCategories => Set<BusinessCategory>();
     public DbSet<BusinessProfile> Businesses => Set<BusinessProfile>();
     public DbSet<BusinessPhoto> BusinessPhotos => Set<BusinessPhoto>();
+    public DbSet<BusinessActivity> BusinessActivity => Set<BusinessActivity>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new BusinessActivityConfiguration());
         modelBuilder.Entity<BusinessPhoto>(entity =>
         {
             entity.ToTable("business_photos", table =>

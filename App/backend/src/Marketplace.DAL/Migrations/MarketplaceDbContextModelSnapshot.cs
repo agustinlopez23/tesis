@@ -24,6 +24,61 @@ namespace Marketplace.DAL.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Marketplace.Models.BusinessActivity", b =>
+                {
+                    b.Property<Guid>("VisitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("visit_id");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("business_id");
+
+                    b.Property<string>("Kind")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("Surface")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("surface");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at");
+
+                    b.Property<int?>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.Property<string>("RankingVersion")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("ranking_version");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("source");
+
+                    b.HasKey("VisitId", "BusinessId", "Kind", "Surface");
+
+                    b.HasIndex("OccurredAt");
+
+                    b.HasIndex("BusinessId", "OccurredAt");
+
+                    b.ToTable("business_activity", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_activity_context", "(source IN ('directory', 'search') AND position BETWEEN 1 AND 200000 AND ranking_version IN ('name-v1', 'distance-v1')) OR (source = 'unknown' AND position IS NULL AND ranking_version IS NULL)");
+
+                            t.HasCheckConstraint("CK_activity_kind", "kind IN ('impression', 'profile_view', 'contact')");
+
+                            t.HasCheckConstraint("CK_activity_surface", "surface IN ('directory', 'profile') AND (kind <> 'impression' OR surface = 'directory') AND (kind <> 'profile_view' OR surface = 'profile')");
+                        });
+                });
+
             modelBuilder.Entity("Marketplace.Models.BusinessCategory", b =>
                 {
                     b.Property<short>("Id")
@@ -304,6 +359,15 @@ namespace Marketplace.DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_sessions", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Models.BusinessActivity", b =>
+                {
+                    b.HasOne("Marketplace.Models.BusinessProfile", null)
+                        .WithMany()
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Marketplace.Models.BusinessPhoto", b =>
