@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "./ui";
+import BusinessPhotos from "./business-photos";
 
 type Owner = { id: string; email: string; displayName: string };
 type Category = { id: number; name: string; slug: string };
@@ -100,7 +101,7 @@ export default function OwnerOnboarding() {
       setBusinesses((current) => business.id
         ? current.map((item) => item.id === saved.id ? saved : item)
         : [...current, saved]);
-      setBusiness({ ...emptyBusiness, categoryId: String(categories[0]?.id ?? "") });
+      setBusiness({ ...saved, categoryId: String(saved.categoryId), latitude: String(saved.latitude), longitude: String(saved.longitude) });
       setSuccess(saved.status === "published" ? "Negocio publicado. Ya se puede encontrar en la guía." : "Borrador guardado. Solo vos podés verlo hasta que lo publiques.");
     } catch {
       setError("No pudimos guardar el negocio.");
@@ -191,7 +192,7 @@ export default function OwnerOnboarding() {
           {business.id && <button className="button button-outline full-width" disabled={pending} type="button" onClick={() => { setBusiness({ ...emptyBusiness, categoryId: String(categories[0]?.id ?? "") }); setError(""); setLocationMessage(""); }}><Icon name="plus" />Nuevo negocio</button>}
           <div className="sidebar-tip"><Icon name="eye" /><strong>Vos elegís cuándo aparecer.</strong><p>Un borrador es privado. Cuando lo publiques, cualquier persona podrá encontrarlo en la guía.</p></div>
         </aside>
-        <form id="business-form" className="business-form" onSubmit={saveBusiness}>
+        <div className="business-editor"><form id="business-form" className="business-form" onSubmit={saveBusiness}>
           <div className="form-heading"><div><p className="eyebrow">Perfil del comercio</p><h2>{business.id ? "Editar negocio" : "Nuevo negocio"}</h2></div><span className="form-note">* Datos obligatorios</span></div>
           <fieldset disabled={pending}><legend><span>01</span> Contanos sobre tu negocio</legend>
             <label htmlFor="business-name">Nombre del negocio</label><input id="business-name" required aria-required="true" placeholder="El nombre que conoce tu barrio" maxLength={160} value={business.name} onChange={(e) => setBusiness({ ...business, name: e.target.value })} />
@@ -211,6 +212,10 @@ export default function OwnerOnboarding() {
           <fieldset disabled={pending} className="publication-section"><legend><span>03</span> Elegí quién puede verlo</legend><label htmlFor="business-status">Estado</label><select id="business-status" value={business.status} onChange={(e) => setBusiness({ ...business, status: e.target.value })}><option value="draft">Borrador</option><option value="published">Publicado</option></select><p className="field-help">{business.status === "published" ? "Al guardar, tu negocio aparecerá en la guía pública con su WhatsApp." : "Solo vos vas a poder verlo. Podés publicarlo cuando esté listo."}</p></fieldset>
           <div className="form-actions">{business.id && <button className="button button-outline" disabled={pending} type="button" onClick={() => { setBusiness({ ...emptyBusiness, categoryId: String(categories[0]?.id ?? "") }); setError(""); setLocationMessage(""); }}>Cancelar edición</button>}<button className="button button-primary" disabled={pending || locating} type="submit">{pending ? "Guardando…" : "Guardar negocio"}<Icon name="check" /></button></div>
         </form>
+        {business.id ? <><BusinessPhotos key={business.id} id={business.id} />
+          {businesses.find((item) => item.id === business.id)?.status === "published" && <Link className="text-link" href={"/negocios/" + business.id}>Ver perfil público <Icon name="arrow" /></Link>}</> :
+          <p className="photo-save-hint"><Icon name="eye" />Guardá el negocio para agregar sus fotos. Podés empezar con un borrador.</p>}
+        </div>
       </div>
     </section>
   );

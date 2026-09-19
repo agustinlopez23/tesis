@@ -81,8 +81,10 @@ it("conserva el WhatsApp al recuperar un negocio y publicarlo", async () => {
   await waitFor(() => expect(fetcher).toHaveBeenLastCalledWith(`/api/marketplace/businesses/${saved.id}`,
     expect.objectContaining({ method: "PUT" })));
   expect(JSON.parse(fetcher.mock.calls.at(-1)?.[1]?.body as string)).toMatchObject({ status: "published", whatsApp: saved.whatsApp });
-  await screen.findByRole("heading", { name: "Nuevo negocio" });
-  expect(screen.getByRole("status")).toHaveTextContent("Negocio publicado.");
+  expect(await screen.findByRole("status")).toHaveTextContent("Negocio publicado.");
+  expect(screen.getByRole("heading", { name: "Editar negocio" })).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Administrar fotos" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Ver perfil público" })).toHaveAttribute("href", "/negocios/" + saved.id);
 });
 
 it("mantiene el panel y permite reintentar cuando falla el cierre de sesión", async () => {
