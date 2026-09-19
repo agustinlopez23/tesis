@@ -12,9 +12,26 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<UserSession> UserSessions => Set<UserSession>();
     public DbSet<BusinessCategory> BusinessCategories => Set<BusinessCategory>();
     public DbSet<BusinessProfile> Businesses => Set<BusinessProfile>();
+    public DbSet<BusinessPhoto> BusinessPhotos => Set<BusinessPhoto>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<BusinessPhoto>(entity =>
+        {
+            entity.ToTable("business_photos", table =>
+            {
+                table.HasCheckConstraint("CK_business_photos_slot", "slot BETWEEN 1 AND 5");
+                table.HasCheckConstraint("CK_business_photos_size", "octet_length(content) <= 1048576");
+            });
+            entity.HasKey(x => new { x.BusinessId, x.Slot });
+            entity.Property(x => x.BusinessId).HasColumnName("business_id");
+            entity.Property(x => x.Slot).HasColumnName("slot");
+            entity.Property(x => x.Caption).HasColumnName("caption").HasMaxLength(160);
+            entity.Property(x => x.Width).HasColumnName("width");
+            entity.Property(x => x.Height).HasColumnName("height");
+            entity.Property(x => x.Content).HasColumnName("content");
+            entity.HasOne<BusinessProfile>().WithMany().HasForeignKey(x => x.BusinessId).OnDelete(DeleteBehavior.Cascade);
+        });
         modelBuilder.Entity<UserAccount>(entity =>
         {
             entity.ToTable("user_accounts");

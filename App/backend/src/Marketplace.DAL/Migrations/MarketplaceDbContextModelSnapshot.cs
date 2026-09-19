@@ -70,6 +70,45 @@ namespace Marketplace.DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Marketplace.Models.BusinessPhoto", b =>
+                {
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("business_id");
+
+                    b.Property<int>("Slot")
+                        .HasColumnType("integer")
+                        .HasColumnName("slot");
+
+                    b.Property<string>("Caption")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasColumnName("caption");
+
+                    b.Property<byte[]>("Content")
+                        .IsRequired()
+                        .HasColumnType("bytea")
+                        .HasColumnName("content");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("integer")
+                        .HasColumnName("height");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("integer")
+                        .HasColumnName("width");
+
+                    b.HasKey("BusinessId", "Slot");
+
+                    b.ToTable("business_photos", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_business_photos_size", "octet_length(content) <= 1048576");
+
+                            t.HasCheckConstraint("CK_business_photos_slot", "slot BETWEEN 1 AND 5");
+                        });
+                });
+
             modelBuilder.Entity("Marketplace.Models.BusinessProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -265,6 +304,15 @@ namespace Marketplace.DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_sessions", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Models.BusinessPhoto", b =>
+                {
+                    b.HasOne("Marketplace.Models.BusinessProfile", null)
+                        .WithMany()
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Marketplace.Models.BusinessProfile", b =>

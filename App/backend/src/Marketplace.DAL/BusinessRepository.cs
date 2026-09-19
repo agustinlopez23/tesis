@@ -33,7 +33,8 @@ public sealed class BusinessRepository(MarketplaceDbContext database) : IBusines
             businesses.OrderBy(x => x.DistanceKm).ThenBy(x => x.Name).ThenBy(x => x.Id);
         return await ordered
             .Skip(skip).Take(take)
-            .Select(x => new PublicBusinessResponse(x.Id, x.Name, x.Description, x.Address, x.Category, x.WhatsApp, x.DistanceKm))
+            .Select(x => new PublicBusinessResponse(x.Id, x.Name, x.Description, x.Address, x.Category, x.WhatsApp, x.DistanceKm,
+                database.BusinessPhotos.Where(p => p.BusinessId == x.Id).Select(p => (int?)p.Slot).Min()))
             .ToListAsync(cancellationToken);
     }
 
