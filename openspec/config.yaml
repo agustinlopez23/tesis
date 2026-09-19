@@ -22,7 +22,9 @@ context: |
   descubrimiento espacial con zona manual, geolocalización, radio y distancia.
   Perfil público con galería y gestión de hasta cinco fotos implementado.
   Utility procesa imágenes sin dependencias de las capas; IoC adapta a BLL.
-  Próximo bloque: instrumentación y ranking.
+  Actividad implementada: eventos visibles, deduplicación, contexto protegido,
+  retención de 30 días y métricas privadas con períodos 7/30 días.
+  Próximo bloque: ranking equitativo y experimento reproducible.
 
   Idioma: documentación en español; identificadores técnicos de código en
   inglés.

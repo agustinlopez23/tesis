@@ -12,6 +12,11 @@ y ver los comercios ordenados por distancia en línea recta.
 Cada negocio tiene un perfil público en `/negocios/{id}`, con descripción,
 galería y contacto. El responsable administra hasta cinco fotos desde el panel.
 El panel está en `/mi-negocio` y el diagnóstico técnico en `/estado`.
+En **Mi negocio → Ver actividad**, el responsable consulta apariciones visibles,
+visitas al perfil y clics de WhatsApp, por negocio y período de 7/30 días.
+La medición evita duplicados y excluye visitas propias autenticadas.
+
+- [Investigación y decisiones de medición](Doc/analytics-research-2026-09-19.md)
 
 - [Instalación, pruebas y ejecución](App/README.md)
 - [Arquitectura](Doc/architecture/ADR-001-layered-architecture.md)

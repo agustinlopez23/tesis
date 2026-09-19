@@ -1,6 +1,6 @@
 # Contexto SDD de la tesis
 
-## Estado vigente — 2026-09-18
+## Estado vigente — 2026-09-19
 
 Implementados: scaffold, onboarding de responsables y guía pública de negocios,
 búsqueda textual/rubro, descubrimiento por ubicación y rediseño visual Cerca (nombre de trabajo).
@@ -14,7 +14,7 @@ suspendidos. El DTO público no contiene datos de cuenta. Se corrigió además l
 lectura del campo `whatsApp` al editar/publicar desde el panel y se incorporó
 PostGIS a la configuración CI, que antes no preparaba base para la suite.
 
-Verificación local del estado final: backend 41/41, frontend 48/48, lint y build aprobados.
+Verificación local del estado final: backend 46/46, frontend 56/56, lint y build aprobados.
 Recorrido HTTP integrado aprobado sobre base temporal: publicación, consulta
 anónima y despublicación, además del onboarding y la revocación de sesión.
 Contrato, tareas y evidencia: `changes/archive/2026-09-18-public-business-directory/`.
@@ -32,7 +32,11 @@ El responsable administra cinco fotos con carga/reemplazo/eliminación; el backe
 valida, orienta, reduce y elimina metadatos. Borradores y suspendidos mantienen
 sus imágenes privadas. Utility aporta el procesamiento, sin referencias a capas.
 Evidencia: `changes/archive/2026-09-18-public-business-profile/verify-report.md`.
-Próximo bloque de la secuencia: instrumentación y ranking equitativo evaluable.
+Actividad implementada: apariciones visibles, visitas y clics, contexto protegido,
+deduplicación, exclusión del dueño autenticado, retención de 30 días y panel privado
+con períodos 7/30 días y evolución. Investigación: `Doc/analytics-research-2026-09-19.md`.
+Evidencia: `changes/archive/2026-09-19-business-activity/verify-report.md`.
+Próximo bloque de la secuencia: ranking equitativo con experimento reproducible.
 Siguen pendientes catálogo, capacidades
 por plan, pedidos, stock, publicidad y evaluación experimental del ranking.
 No hay despliegue público; documentación de ejecución en `App/README.md`.

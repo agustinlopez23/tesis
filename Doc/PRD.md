@@ -279,7 +279,7 @@ Preservar origen disponible: revista, búsqueda, anuncio o acceso directo, adem�
 6. Ranking completo, actividad definida y evaluación experimental.
 7. Publicidad, reportes y revisión integral del MVP.
 
-Cada entrega se descompone en propuestas y especificaciones OpenSpec con criterios observables antes de implementar. Al 2026-09-18 están implementados el scaffold, el onboarding, la guía pública con búsqueda/rubro, selección de zona o ubicación, radio y distancias, y perfiles públicos con galería de hasta cinco fotos administradas por el responsable. La guía ordena por distancia cuando hay centro y por nombre cuando no lo hay. Ranking equitativo, medición de exposición y las demás capacidades continúan pendientes. La evidencia distingue pruebas previas a la implementación de ampliaciones posteriores. Ver [estado técnico](../openspec/project.md).
+Cada entrega se descompone en propuestas y especificaciones OpenSpec con criterios observables antes de implementar. Al 2026-09-19 están implementados el scaffold, el onboarding, la guía pública con búsqueda/rubro, selección de zona o ubicación, radio y distancias, y perfiles públicos con galería de hasta cinco fotos administradas por el responsable. La guía ordena por distancia cuando hay centro y por nombre cuando no lo hay. Se agregó medición de apariciones visibles, visitas y clics, con deduplicación, exclusión del dueño conectado, contexto protegido, retención de 30 días y panel privado. Ranking equitativo y las demás capacidades continúan pendientes. La evidencia distingue pruebas previas a la implementación de ampliaciones posteriores. Ver [estado técnico](../openspec/project.md).
 
 ## 14. Decisiones abiertas
 

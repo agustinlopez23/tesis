@@ -39,6 +39,32 @@ y no requiere sesión. Los parámetros `q` y `category` son opcionales; se filtr
 antes de paginar. La investigación y decisiones de interfaz están en
 `../Doc/ux-research-2026-09-18.md`.
 
+## Actividad del negocio
+
+En **Mi negocio → Ver actividad**, elegir negocio, período (7/30 días) y métrica.
+El panel ofrece resumen, evolución diaria, tabla, actualización y definiciones.
+No presenta clics como conversaciones o ventas. Días según hora de Córdoba.
+
+`POST /public/events` recibe un comprobante emitido con la guía/perfil, UUID de
+sesión por pestaña, tipo y superficie. Requiere origen confiable y cabecera
+`X-Requested-With: marketplace`, máximo 4 KiB y límite global de 1200/minuto por
+instancia. Los comprobantes vencen a los 30 minutos. Una impresión requiere
+50 % de tarjeta visible durante un segundo continuo con pestaña activa.
+Se deduplica por sesión/negocio/tipo/superficie y se excluye al dueño conectado.
+
+`GET /businesses/{id}/activity?days=7|30` exige sesión y propiedad del negocio.
+Retorna totales y días sin caché. Conserva eventos 30 días, con purga automática
+al arrancar/cada hora, mediante servicio BLL. La tarea no se ejecuta automáticamente
+en entorno Testing: las pruebas la invocan sobre sus bases aisladas.
+
+La tabla de eventos no guarda IP, user-agent, coordenadas, búsqueda textual ni
+contactos. El contexto incluye primera posición observada, versión del orden y
+origen disponible. No identifica personas únicas ni prueba ausencia de bots.
+No se usan servicios analíticos externos. Configurar claves de Data Protection
+compartidas si se despliegan varias instancias y definir retención de logs/backups.
+Contrato: `../openspec/specs/business-activity/spec.md`. Fuentes y decisiones:
+`../Doc/analytics-research-2026-09-19.md`.
+
 ## Perfiles y fotos
 
 Cada tarjeta enlaza a `/negocios/{id}`. El perfil público presenta descripción
