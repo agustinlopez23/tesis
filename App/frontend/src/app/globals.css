@@ -47,6 +47,75 @@
 }
 
 @layer components {
+  .business-cover { display: block; }
+  .business-cover img { object-fit: cover; }
+  .profile-card-link { margin: 10px 0 18px; }
+  .profile-main { padding-top: 26px; min-height: 65vh; }
+  .profile-back { color: var(--muted); margin-bottom: 34px; }
+  .profile-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 32px; }
+  .profile-heading h1 { font-size: clamp(34px, 4.5vw, 62px); line-height: 1.12; letter-spacing: -1.8px; margin: 17px 0; overflow-wrap: anywhere; }
+  .profile-heading p { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
+  .profile-local { display: flex; align-items: center; gap: 9px; color: var(--muted); font-size: 12px; white-space: nowrap; margin-bottom: 7px; }
+  .profile-layout { display: grid; grid-template-columns: minmax(0, 1fr) 350px; gap: 40px; align-items: start; }
+  .profile-photo { position: relative; aspect-ratio: 4 / 3; border-radius: 14px; overflow: hidden; background: var(--cream); }
+  .profile-photo img { object-fit: contain; }
+  .photo-count { position: absolute; right: 18px; bottom: 18px; padding: 7px 13px; border-radius: 20px; color: white; background: #273d32dc; font-size: 12px; }
+  .gallery-caption { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 12px 0; min-height: 44px; }
+  .gallery-caption p { font-size: 13px; color: var(--muted); overflow-wrap: anywhere; }
+  .gallery-arrows { display: flex; gap: 6px; }
+  .gallery-arrows button { border: 1px solid var(--line); }
+  .gallery-thumbnails { display: flex; gap: 10px; }
+  .gallery-thumbnails button { position: relative; width: 96px; max-width: 20%; aspect-ratio: 4 / 3; overflow: hidden; border-radius: 8px; padding: 3px; background: transparent; border: 2px solid transparent; }
+  .gallery-thumbnails button.selected { border-color: var(--accent); }
+  .gallery-thumbnails img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: block; }
+  .gallery-thumbnails span { position: absolute; left: 8px; bottom: 6px; color: white; font-size: 10px; background: #273d32c9; border-radius: 3px; padding: 1px 4px; }
+  .profile-about { margin: 36px 0; border-top: 1px solid var(--line); padding-top: 28px; }
+  .profile-about h2 { font-size: 29px; margin: 12px 0 16px; letter-spacing: -.5px; }
+  .profile-about > p:last-child { color: var(--muted); white-space: pre-line; overflow-wrap: anywhere; font-size: 15px; }
+  .profile-contact { position: sticky; top: 24px; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 28px; }
+  .profile-contact h2 { font-size: 25px; line-height: 1.3; letter-spacing: -.5px; margin: 19px 0 12px; }
+  .profile-contact > p { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+  .profile-contact > .button { gap: 8px; padding-inline: 12px; }
+  .profile-address { border-top: 1px solid var(--line); margin-top: 25px; padding-top: 22px; display: flex; align-items: start; gap: 11px; }
+  .profile-address strong { font-size: 12px; }
+  .profile-address p, .profile-address .text-link { font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .profile-address p { overflow-wrap: anywhere; }
+  .profile-no-photos { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 340px; border-radius: 14px; padding: 28px; text-align: center; background: var(--cream); }
+  .profile-no-photos > .icon { width: 42px; height: 42px; opacity: .65; }
+  .profile-phrase { font: italic 40px Georgia, serif; margin: 23px 0 16px; }
+  .profile-no-photos p { font-size: 12px; color: var(--muted); }
+  .photo-unavailable { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; padding: 20px; text-align: center; }
+  .profile-loading { background: var(--cream); padding: 100px 24px; border-radius: 14px; text-align: center; }
+  .business-editor { min-width: 0; }
+  .photo-manager { margin-top: 24px; padding: 26px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+  .photo-manager-heading h2 { font-size: 25px; letter-spacing: -.5px; margin: 10px 0; }
+  .photo-manager-heading p:not(.eyebrow) { font-size: 13px; color: var(--muted); }
+  .photo-manager-heading .button { margin-top: 18px; }
+  .photo-manager-content { border-top: 1px solid var(--line); padding-top: 22px; margin-top: 22px; }
+  .owner-photo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 20px 0; }
+  .owner-photo-grid article { min-width: 0; }
+  .owner-photo { position: relative; aspect-ratio: 4 / 3; background: var(--cream); border-radius: 8px; overflow: hidden; }
+  .owner-photo img { object-fit: cover; }
+  .owner-photo > span { position: absolute; bottom: 9px; left: 9px; background: #fff; border-radius: 4px; padding: 4px 8px; font-size: 10px; }
+  .owner-photo-grid article > p { font-size: 12px; margin-top: 8px; overflow-wrap: anywhere; }
+  .photo-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .photo-actions button, .photo-confirm button { border: 0; padding: 8px 0; background: none; font-size: 12px; text-decoration: underline; min-height: 44px; }
+  .photo-actions button:last-child { color: var(--accent); }
+  .photo-confirm { background: #fff0e8; padding: 12px; border-radius: 7px; font-size: 12px; }
+  .photo-confirm button { display: block; text-align: left; }
+  .photo-upload { margin-top: 22px; padding-top: 22px; border-top: 1px solid var(--line); }
+  .photo-upload fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+  .photo-upload legend { padding: 0 0 17px; font-weight: 600; }
+  .photo-upload label { margin-bottom: 8px; }
+  .photo-upload .field-help { margin: 8px 0 18px; }
+  .photo-upload input[type=file] { padding: 12px; font-size: 12px; }
+  .photo-upload input::file-selector-button { border: 0; padding: 8px; border-radius: 4px; background: var(--cream); margin-right: 8px; cursor: pointer; }
+  .photo-upload-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+  .photos-empty { padding: 20px; background: var(--paper); border-radius: 7px; font-size: 13px; }
+  .photo-message { font-size: 13px; color: var(--green); display: flex; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .upload-preview { display: flex; gap: 14px; align-items: center; margin-bottom: 18px; font-size: 12px; overflow-wrap: anywhere; }
+  .upload-preview img { object-fit: contain; border-radius: 7px; }
+  .photo-save-hint { display: flex; gap: 10px; font-size: 12px; color: var(--muted); padding: 20px 5px; }
   .location-filter { margin-top: 16px; padding: 22px 24px 15px; background: #f0f2eb; border: 1px solid #dfe5d9; border-radius: 12px; }
   .location-intro { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
   .location-intro strong { font-size: 14px; }
@@ -271,6 +340,10 @@
     .location-assistance { align-items: start; flex-direction: column; }
   }
   @media (max-width: 800px) {
+    .profile-layout { grid-template-columns: 1fr; gap: 12px; }
+    .profile-contact { position: static; }
+    .profile-contact h2 br { display: none; }
+    .profile-local { display: none; }
     .container { width: calc(100% - 40px); }
     .nav-inner { height: 74px; gap: 20px; }
     .location-label { display: none; }
@@ -387,6 +460,23 @@
     .locate-button { order: 2; }
   }
   @media (max-width: 480px) {
+    .profile-main { padding-top: 15px; }
+    .profile-back { margin-bottom: 24px; }
+    .profile-heading { margin-bottom: 23px; }
+    .profile-heading h1 { font-size: 36px; letter-spacing: -.9px; margin: 13px 0; }
+    .profile-heading p { font-size: 12px; align-items: start; }
+    .profile-photo { border-radius: 10px; }
+    .profile-about { margin: 26px 0; padding-top: 23px; }
+    .profile-about h2 { font-size: 25px; }
+    .profile-about > p:last-child { font-size: 14px; }
+    .profile-contact { padding: 23px; }
+    .profile-no-photos { min-height: 240px; }
+    .profile-phrase { font-size: 31px; }
+    .photo-manager { padding: 21px 18px; }
+    .photo-manager-heading h2 { font-size: 23px; }
+    .owner-photo-grid { grid-template-columns: 1fr; }
+    .photo-upload input { font-size: 16px; }
+    .upload-preview img { width: 90px; }
     .location-filter { padding: 18px 16px 12px; }
     .zone-select { flex: 1 1 100%; }
     .location-controls select { font-size: 16px; }
