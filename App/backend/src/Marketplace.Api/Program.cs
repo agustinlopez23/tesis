@@ -1,4 +1,5 @@
 using Marketplace.BLL;
+using Marketplace.Api;
 using Marketplace.DTOs;
 using Marketplace.IoC;
 using Marketplace.Models;
@@ -39,6 +40,7 @@ app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =
         .ExecuteAsync(context);
 }));
 app.UseRateLimiter();
+app.MapBusinessProfiles();
 
 app.MapGet("/health/live", () => Results.Json(new { status = "ok" }));
 
