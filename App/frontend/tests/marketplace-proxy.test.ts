@@ -1,9 +1,43 @@
 import { describe, expect, it, vi } from "vitest";
-import { GET, POST } from "../src/app/api/marketplace/[...path]/route";
+import { GET, POST, PUT, DELETE } from "../src/app/api/marketplace/[...path]/route";
 
 const context = (path: string[]) => ({ params: Promise.resolve({ path }) });
 
 describe("proxy del marketplace", () => {
+  it("limita cargas sin Content-Length y rechaza eliminaciones de otro origen", async () => {
+    vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
+    vi.stubEnv("API_BASE_URL", "http://localhost:5080");
+    const fetcher = vi.spyOn(globalThis, "fetch");
+    const id = "d71cd8d6-7245-492f-92de-4caa0cf11e50";
+    const path = ["businesses", id, "photos", "1"];
+    const url = "http://localhost:3000/api/marketplace/" + path.join("/");
+    const large = new Request(url, { method: "PUT", headers: { Origin: "http://localhost:3000",
+      "X-Requested-With": "marketplace" }, body: new Uint8Array(5 * 1024 * 1024 + 65537) });
+    expect((await PUT(large, context(path))).status).toBe(413);
+    expect((await DELETE(new Request(url, { method: "DELETE", headers: {
+      Origin: "https://other.example", "X-Requested-With": "marketplace" } }), context(path))).status).toBe(403);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+  it("reenvía perfiles e imágenes sin cachear y conserva el multipart de fotos", async () => {
+    vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
+    vi.stubEnv("API_BASE_URL", "http://localhost:5080");
+    const id = "d71cd8d6-7245-492f-92de-4caa0cf11e50";
+    const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(new Uint8Array([255, 216]), {
+      headers: { "Content-Type": "image/jpeg", "X-Content-Type-Options": "nosniff" },
+    }));
+    const response = await GET(new Request("http://localhost:3000/api/marketplace/public/businesses/" + id + "/photos/1"),
+      context(["public", "businesses", id, "photos", "1"]));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toBe("image/jpeg");
+    expect(response.headers.get("x-content-type-options")).toBe("nosniff");
+    const form = new FormData();
+    form.append("file", new Blob(["pixels"], { type: "image/png" }), "photo.png");
+    const request = new Request("http://localhost:3000/api/marketplace/businesses/" + id + "/photos/1", {
+      method: "PUT", headers: { Origin: "http://localhost:3000", "X-Requested-With": "marketplace" }, body: form,
+    });
+    expect((await PUT(request, context(["businesses", id, "photos", "1"]))).status).toBe(200);
+    expect((fetcher.mock.calls.at(-1)![1]?.headers as Headers).get("Content-Type")).toContain("multipart/form-data; boundary=");
+  });
   it("permite explorar sin sesión y conserva la página sin permitir mutaciones públicas", async () => {
     vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
     vi.stubEnv("API_BASE_URL", "http://localhost:5080");

@@ -21,6 +21,7 @@ it("muestra negocios y contacto sin cuenta, con navegación entre páginas", asy
   expect(screen.getByText(business.description)).toBeInTheDocument();
   expect(screen.getByText(business.address)).toBeInTheDocument();
   expect(screen.getByRole("link", { name: /WhatsApp/ })).toHaveAttribute("href", "https://wa.me/5493515551234");
+  expect(screen.getByRole("link", { name: "Conocer el negocio" })).toHaveAttribute("href", "/negocios/1");
   expect(screen.getByRole("button", { name: "Anterior" })).toBeDisabled();
   fireEvent.click(screen.getByRole("button", { name: "Siguiente" }));
   expect(await screen.findByRole("heading", { name: "Segundo negocio" })).toBeInTheDocument();
