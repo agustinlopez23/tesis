@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "./ui";
 import BusinessPhotos from "./business-photos";
+import { BusinessInsights } from "./business-insights";
 
 type Owner = { id: string; email: string; displayName: string };
 type Category = { id: number; name: string; slug: string };
@@ -177,6 +178,7 @@ export default function OwnerOnboarding() {
       <header className="panel-header"><div><p className="eyebrow">Tu espacio en Cerca</p><h1 id="dashboard-title">Hola, {owner.displayName}<span className="brand-dot">.</span></h1><p className="muted">Un buen negocio merece que lo encuentren.</p></div>
         <button className="button button-outline" type="button" disabled={pending} onClick={logout}><Icon name="logout" />Cerrar sesión</button></header>
       <div className="dashboard-summary"><div><Icon name="store" /><strong>{businesses.length}</strong><span>{businesses.length === 1 ? "negocio" : "negocios"}</span></div><div><span className="status-dot"/><strong>{published}</strong><span>publicados</span></div><div><span className="status-dot draft"/><strong>{businesses.length - published}</strong><span>en borrador</span></div><Link className="text-link" href="/explorar">Ver guía pública <Icon name="arrow" /></Link></div>
+      <BusinessInsights businesses={businesses} />
       {error && <p role="alert" className="error">{error}</p>}
       {success && <div role="status" className="success-message"><Icon name="check" />{success}<button type="button" className="icon-button" aria-label="Cerrar confirmación" onClick={() => setSuccess("")}><Icon name="close" /></button></div>}
       <div className="panel-grid">
