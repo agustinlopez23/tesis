@@ -229,6 +229,24 @@ Los juicios de relevancia deben establecerse independientemente del puntaje que 
 
 Los umbrales de mejora y pérdida máxima aceptable de nDCG deben acordarse antes del experimento final. No basta con obtener un Gini menor si los resultados dejan de ser útiles.
 
+La [propuesta de protocolo del 21/09](evaluation/business-ranking-final/protocol.md)
+concreta límites, particiones y juicios humanos. El usuario acordó los criterios
+principales el 21/09 para preparar el experimento; esto no prueba aceptación del
+ranking. La importación y recolección verificable de hojas están implementadas,
+con [paquetes de entrenamiento/calibración](evaluation/business-ranking-final/packages/README.md)
+preparados y grados vacíos, sin juicios humanos recogidos.
+El [comparador de calibración](evaluation/business-ranking-final/human-ranking.md)
+conecta esas hojas verificadas a historial completo y métricas por superficie;
+todavía no ejecuta la evaluación reservada ni decide aceptación.
+El [barrido de calibración](evaluation/business-ranking-final/calibration.md)
+comprueba los límites y suficiencia de datos y sugiere una candidata provisional;
+las salvaguardas adicionales siguen identificadas como propuestas metodológicas.
+El [borrador de congelamiento](evaluation/business-ranking-final/freeze.md)
+conserva la evidencia y permite verificar su integridad sin declarar aprobación.
+El [contrato de integración](ranking-public-integration.md)
+describe candidatos históricos y paginación estable. Historial de publicación y
+lector completo implementados el 22/09; adaptador, snapshots y ledger pendientes.
+
 ## 10. Métricas de producto y atribución
 
 | Evento / métrica | Interpretación |
@@ -280,6 +298,18 @@ Preservar origen disponible: revista, búsqueda, anuncio o acceso directo, adem�
 7. Publicidad, reportes y revisión integral del MVP.
 
 Cada entrega se descompone en propuestas y especificaciones OpenSpec con criterios observables antes de implementar. Al 2026-09-19 están implementados el scaffold, el onboarding, la guía pública con búsqueda/rubro, selección de zona o ubicación, radio y distancias, y perfiles públicos con galería de hasta cinco fotos administradas por el responsable. La guía ordena por distancia cuando hay centro y por nombre cuando no lo hay. Se agregó medición de apariciones visibles, visitas y clics, con deduplicación, exclusión del dueño conectado, contexto protegido, retención de 30 días y panel privado. Ranking equitativo y las demás capacidades continúan pendientes. La evidencia distingue pruebas previas a la implementación de ampliaciones posteriores. Ver [estado técnico](../openspec/project.md).
+
+Al cierre del piloto del 2026-09-19 se agregó un motor de ranking de negocios y
+un laboratorio reproducible offline. Las tres semillas comparan cuatro variantes
+con 200 negocios y 5.000 consultas cada una. Hay menor concentración y pérdida
+de nDCG; no se activó el ranking público ni se declaró validada la hipótesis.
+Al cierre de ese piloto faltaban productos, juicios humanos y umbrales acordados.
+Ver [resultados y límites](evaluation/business-ranking-pilot/README.md).
+El 21/09 se completaron ablaciones separadas de novedad y rotación: la
+compensación sola explica la mayor parte del cambio global, con diferencias
+marcadas entre revista y búsqueda. Ver [evidencia](evaluation/business-ranking-ablations/README.md).
+Los criterios principales se acordaron el 21/09; siguen pendientes juicios humanos
+y evaluación final. No se activó el ranking público.
 
 ## 14. Decisiones abiertas
 

@@ -1,0 +1,10 @@
+{
+  "minimumRelevance": 0.2,
+  "distanceDecayKm": 2,
+  "relevanceWeight": 0.7,
+  "equityWeight": 0.025,
+  "newcomerWeight": 0,
+  "activityWeight": 0.05,
+  "newcomerDays": 14,
+  "tieBucketWidth": 0.01
+}

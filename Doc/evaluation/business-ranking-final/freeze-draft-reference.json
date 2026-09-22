@@ -1,0 +1,25 @@
+{
+  "schema": "business-freeze-draft-reference-v1",
+  "status": "draft",
+  "directoryFromRepositoryRoot": ".tools/freeze-preparation-2026-09-21/draft",
+  "manifestSha256": "ba27292a32cf36f44829f3bb577ca3d4fcf76ea89ae135c5951d46a2c0dc794a",
+  "sourceTreeSha256": "dc72d01020e187db2a6782e7dd6b122c464d307b46dea843e8657cebbac54c01",
+  "preparedAtUtc": "2026-09-22T00:56:12.6256064+00:00",
+  "artifactCount": 85,
+  "packageSha256": "2414208ce4557d9626fa68d6c5c9d108bcc16a9dafe7175c8bcc6db6beea466c",
+  "missingJudgments": 2286,
+  "policy": null,
+  "policyFrozen": false,
+  "evaluationAuthorized": false,
+  "verification": "integrity-only; original responses remain blank",
+  "pendingRequirements": [
+    "human-annotations",
+    "human-training-record",
+    "assessor-authorship-and-dates",
+    "methodological-freeze",
+    "source-build-correspondence",
+    "reserved-material-and-custody",
+    "final-evaluator",
+    "eligible-calibration-policy"
+  ]
+}

@@ -1,0 +1,85 @@
+{
+  "schema": "business-freeze-rebuild-reference-v1",
+  "status": "matches",
+  "directoryFromRepositoryRoot": ".tools/freeze-rebuild-2026-09-21/verified-retry",
+  "manifestSha256": "ba27292a32cf36f44829f3bb577ca3d4fcf76ea89ae135c5951d46a2c0dc794a",
+  "sourceTreeSha256": "dc72d01020e187db2a6782e7dd6b122c464d307b46dea843e8657cebbac54c01",
+  "reportSha256": "a346e415f519648ccf25c3b430832d361a70200e62ae107d5ff34882fa85ded4",
+  "artifactsIndexSha256": "8c110aeb5815c9850bd0c1f52e28118637c7918b8b16a72bdae37f0a47d19772",
+  "verifierSourceSha256": "8288328c11e40aecd511d7e67143e4f33b748278cc5297f16899fcf0fd8a45f4",
+  "verifierTestsSha256": "5e97e1460ea2e34f16bcaee9c5b3461e6d300deb3cd7c688aee5ac26a5e4fc57",
+  "gitIgnoreSha256": "db4d0be8143c4fac990db05286a7e74c2bf36c0442a02827eca4a2f0ab337d3e",
+  "sdkVersion": "10.0.400",
+  "gitRevision": "58ecb08a7bc771a5c94b5b5c076cd07a61e1b565",
+  "dotnetSha256": "ab1b71fd3dd71062e074c9fab8312081a81b7f2b3e0327c48c4d249c8d1a3135",
+  "runtime": [
+    {
+      "name": "Marketplace.BLL.dll",
+      "expectedSha256": "03812c945588341ad9bc2ef9a419faa66434cad0aadaacca40611f33bb845611",
+      "actualSha256": "03812c945588341ad9bc2ef9a419faa66434cad0aadaacca40611f33bb845611",
+      "matches": true
+    },
+    {
+      "name": "Marketplace.DTOs.dll",
+      "expectedSha256": "4dc5e775ae8bbb37b669c7242f4cd48d49a8ebd0c4cb057ac7e08b9bd592faf2",
+      "actualSha256": "4dc5e775ae8bbb37b669c7242f4cd48d49a8ebd0c4cb057ac7e08b9bd592faf2",
+      "matches": true
+    },
+    {
+      "name": "Marketplace.Evaluation.deps.json",
+      "expectedSha256": "9519d437ae7a2a05634a998695ba7c2abc41ec808736002aea0b60b2eeb23444",
+      "actualSha256": "9519d437ae7a2a05634a998695ba7c2abc41ec808736002aea0b60b2eeb23444",
+      "matches": true
+    },
+    {
+      "name": "Marketplace.Evaluation.dll",
+      "expectedSha256": "b75bce85684fc432ecb918a00c8afdb62fb3ea4125db52a12c299f01cae03f97",
+      "actualSha256": "b75bce85684fc432ecb918a00c8afdb62fb3ea4125db52a12c299f01cae03f97",
+      "matches": true
+    },
+    {
+      "name": "Marketplace.Evaluation.runtimeconfig.json",
+      "expectedSha256": "c230a317a54dd960bcbeb5f347f52e18dc665a26f7efda2159fced9a5ac7e097",
+      "actualSha256": "c230a317a54dd960bcbeb5f347f52e18dc665a26f7efda2159fced9a5ac7e097",
+      "matches": true
+    },
+    {
+      "name": "Marketplace.Models.dll",
+      "expectedSha256": "d9035ebbab4476f2b8f9f7f34df6200d90937a0227a35215fb8900c0e2bb4c5d",
+      "actualSha256": "d9035ebbab4476f2b8f9f7f34df6200d90937a0227a35215fb8900c0e2bb4c5d",
+      "matches": true
+    }
+  ],
+  "calibration": [
+    {
+      "name": "grid.json",
+      "expectedSha256": "7eb54c264dce6e9ba2f96dac17433c6ddf0779e14aa68e832ae81ebc90779f52",
+      "actualSha256": "7eb54c264dce6e9ba2f96dac17433c6ddf0779e14aa68e832ae81ebc90779f52",
+      "matches": true
+    },
+    {
+      "name": "review/review-status.json",
+      "expectedSha256": "d7f91f6e4f07d52534f2959f03b6da1e7c47f111790655dfe9bba58f64cbfc11",
+      "actualSha256": "d7f91f6e4f07d52534f2959f03b6da1e7c47f111790655dfe9bba58f64cbfc11",
+      "matches": true
+    },
+    {
+      "name": "sha256.json",
+      "expectedSha256": "4686317426f8b9660dc20d18bccdf53689c3585d03da9c5d264e6759c642b490",
+      "actualSha256": "4686317426f8b9660dc20d18bccdf53689c3585d03da9c5d264e6759c642b490",
+      "matches": true
+    },
+    {
+      "name": "status.json",
+      "expectedSha256": "eb5841234eef1562afab0750f6de98ad2c395d5affcc4bedfc07b20f1f8c17ac",
+      "actualSha256": "eb5841234eef1562afab0750f6de98ad2c395d5affcc4bedfc07b20f1f8c17ac",
+      "matches": true
+    }
+  ],
+  "replayScope": "pending-review-only",
+  "missingJudgments": 2286,
+  "originalDraftUnchanged": true,
+  "buildSourceBytesUnchanged": true,
+  "policyFrozen": false,
+  "evaluationAuthorized": false
+}

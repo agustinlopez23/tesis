@@ -13,6 +13,15 @@ La búsqueda ignora mayúsculas y tildes en vocales. Registro y gestión están 
 y permite cargar coordenadas manualmente o usar la ubicación del dispositivo.
 Este orden todavía no implementa el ranking de exposición equitativa.
 
+La migración `AddBusinessPublicationHistory` registra la primera publicación y la
+conserva al editar o republicar. Los registros anteriores, incluidos borradores,
+quedan con historia desconocida. Aplicar las migraciones habituales antes de usar
+este backend; el historial se verifica con la suite HTTP/PostGIS.
+
+El lector interno `IRankingCandidateRepository` recupera todos los elegibles por
+rubro/radio con distancia e historial, sin paginar antes del futuro ranking.
+Está registrado en IoC; la guía sigue usando su consulta y orden vigentes.
+
 El visitante puede elegir Centro (Plaza San Martín), Nueva Córdoba (Buen Pastor)
 o Alberdi (Plaza Colón), o pulsar **Usar mi ubicación**. Las zonas son puntos de
 referencia, no límites barriales. El radio va de 500 m a 50 km en la interfaz.
@@ -38,6 +47,64 @@ La API pública es `GET /public/businesses?page=1&q=cafe&category=Gastronomía`
 y no requiere sesión. Los parámetros `q` y `category` son opcionales; se filtra
 antes de paginar. La investigación y decisiones de interfaz están en
 `../Doc/ux-research-2026-09-18.md`.
+
+## Piloto reproducible de ranking
+
+El motor experimental de negocios está en BLL y la consola en
+`backend/tools/Marketplace.Evaluation`. Desde la raíz del repositorio:
+
+```powershell
+dotnet run --project App/backend/tools/Marketplace.Evaluation --configuration Release -- --output .tools/ranking-reproduction
+```
+
+Usar un directorio vacío. Ejecuta cuatro variantes, 200 negocios y 5.000 consultas
+por cada semilla 17/29/43. Exporta inputs, configuración, trazas comprimidas,
+métricas por zona/superficie y SHA-256. No necesita base de datos.
+Pruebas: `dotnet test App/backend/tests/Marketplace.BLL.Tests --configuration Release`.
+
+El piloto no está conectado al orden de la guía. La exposición modelada no es
+una impresión visible real ni evidencia de ventas. Resultados, reproducción y
+limitaciones: [evidencia del piloto](../Doc/evaluation/business-ranking-pilot/README.md).
+
+Para separar compensación, novedad y rotación, agregar `--suite ablation` al
+comando (después de `--`) y elegir otro directorio vacío. Ejecuta cinco variantes
+con idénticos datos y pesos; `--suite pilot` conserva el piloto original.
+[Resultados de ablaciones](../Doc/evaluation/business-ranking-ablations/README.md).
+
+El [protocolo de evaluación final](../Doc/evaluation/business-ranking-final/protocol.md)
+tiene criterios principales acordados, rúbrica y plantillas humanas. La consola
+valida hojas con `--validate-review RUTA_CSV --output DIRECTORIO_VACIO` (sin otras
+opciones): 0 completo, 2 incompleto, 1 inválido. Ver [instrucciones](../Doc/evaluation/business-ranking-final/human-review.md).
+Esto no ejecuta todavía el experimento final; `plan.json` tampoco es una
+configuración de pesos para `--config`.
+
+Paquetes humanos: `--prepare-review training|calibration --output SALIDA_VACIA`
+genera fichas sintéticas y hojas en blanco; `--collect-review PAQUETE
+--package-sha256 HASH_FIJADO --output SALIDA_VACIA` verifica fuentes/fichas y
+recoge grados. [Descargas e instrucciones](../Doc/evaluation/business-ranking-final/packages/README.md).
+
+`--evaluate-review PAQUETE --package-sha256 HASH --config PESOS.json --variant EquityOnly --output SALIDA`
+compara una candidata con Proximity solo en calibración, con hojas verificadas,
+historial completo y métricas por superficie. Sin juicios completos devuelve 2
+y un reporte de pendientes, sin ranking. No decide aceptación.
+[Uso, variantes y límites](../Doc/evaluation/business-ranking-final/human-ranking.md).
+
+`--calibrate-review PAQUETE --package-sha256 HASH --output SALIDA` recorre la grilla
+fija de 18 configuraciones, comprueba criterios y sugiere una candidata provisional.
+Separa límites acordados de salvaguardas propuestas; sin hojas completas devuelve
+2 y no ejecuta rankings. [Uso y estados](../Doc/evaluation/business-ranking-final/calibration.md).
+
+`--prepare-freeze PAQUETE --package-sha256 HASH --source-root RAÍZ --output SALIDA`
+conserva fuentes, originales, binarios y calibración en un borrador con pendientes.
+`--verify-freeze CARPETA --manifest-sha256 HASH_EXTERNO --output SALIDA` verifica su
+integridad. Ninguno congela política ni abre reserva.
+[Uso y alcance](../Doc/evaluation/business-ranking-final/freeze.md).
+
+`node App/tools/verify-ranking-rebuild.mjs --draft CARPETA --manifest-sha256 HASH --dotnet RUTA_DOTNET --output SALIDA_NUEVA`
+reconstruye fuentes verificadas, compara los seis archivos runtime y repite la
+salida de calibración. Requiere Windows/SDK local y contexto Git del repositorio.
+[Evidencia y condiciones](../Doc/evaluation/business-ranking-final/rebuild.md).
+La evaluación reservada todavía no se genera.
 
 ## Actividad del negocio
 

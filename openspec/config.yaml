@@ -24,7 +24,24 @@ context: |
   Utility procesa imágenes sin dependencias de las capas; IoC adapta a BLL.
   Actividad implementada: eventos visibles, deduplicación, contexto protegido,
   retención de 30 días y métricas privadas con períodos 7/30 días.
-  Próximo bloque: ranking equitativo y experimento reproducible.
+  Ranking offline de negocios implementado: motor BLL, métricas, cuatro variantes
+  y piloto reproducible con tres semillas; sin activación pública. Ablaciones de
+  novedad/rotación completas y reproducibles. Protocolo, rúbrica y contrato de
+  integración redactados. Criterios principales acordados el 21/09; importación
+  CSV de juicios implementada con cobertura y resoluciones. Paquetes de
+  entrenamiento/calibración preparados, con recolección verificable y notas vacías.
+  Comparación de calibración implementada con historial completo, juicios verificados,
+  agregados por superficie y diferencias pareadas; sin decisión de aceptación.
+  Comprobador de criterios/suficiencia y grilla de 18 celdas implementados;
+  selección provisional separa acuerdos de salvaguardas propuestas, sin congelar política.
+  Borrador para congelamiento preparado con fuentes/originales/binarios y verificador
+  de integridad por hash externo. Reconstrucción de esa copia verificada: seis archivos
+  runtime y cuatro salidas de pendientes idénticos bajo SDK/Git/PathMap registrados.
+  No hay política congelada; faltan entrenamiento/anotación y cierre metodológico.
+  Faltan anotación humana, material de reserva, runner final e implementación de snapshots.
+  Primera publicación persistente implementada con historia desconocida para registros
+  anteriores. Lector BLL/DAL de candidatos completos implementado; 62/62 HTTP/PostGIS.
+  Siguiente incremento: adaptador con historia desconocida N=0 y contexto de revista.
 
   Idioma: documentación en español; identificadores técnicos de código en
   inglés.

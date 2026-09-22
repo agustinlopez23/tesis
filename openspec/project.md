@@ -1,6 +1,6 @@
 # Contexto SDD de la tesis
 
-## Estado vigente — 2026-09-19
+## Estado vigente — 2026-09-22
 
 Implementados: scaffold, onboarding de responsables y guía pública de negocios,
 búsqueda textual/rubro, descubrimiento por ubicación y rediseño visual Cerca (nombre de trabajo).
@@ -14,7 +14,20 @@ suspendidos. El DTO público no contiene datos de cuenta. Se corrigió además l
 lectura del campo `whatsApp` al editar/publicar desde el panel y se incorporó
 PostGIS a la configuración CI, que antes no preparaba base para la suite.
 
-Verificación local del estado final: backend 46/46, frontend 56/56, lint y build aprobados.
+Verificación nueva: **62/62 HTTP/PostGIS**, incluidas 12 pruebas nuevas de candidatos
+y extensión de migración histórica. Lector interno BLL/DAL obtiene todos los
+elegibles con distancia/fecha/marca histórica en una consulta, sin corte top 20.
+Evidencia: `changes/archive/2026-09-22-complete-ranking-candidates/verify-report.md`.
+La verificación anterior de historial fue 50/50; modelo EF sin cambios pendientes.
+Primera publicación registrada atómicamente en PostgreSQL, conservada al editar
+o republicar. Todos los registros anteriores migran con historia desconocida,
+también borradores; no se inventan fechas. Aplicado solo en bases temporales.
+Evidencia: `changes/archive/2026-09-22-business-publication-history/verify-report.md`.
+Verificación anterior: helper de reconstrucción 7/7, build Release y correspondencia
+exacta de seis archivos runtime/cuatro salidas. BLL/evaluación 81/81 es evidencia
+previa de las mismas fuentes/binarios, sin repetir la suite.
+Las 46 HTTP/PostGIS y 56 frontend, lint y build son evidencia de sesiones previas;
+sin cambios API, DAL ni frontend durante las ablaciones.
 Recorrido HTTP integrado aprobado sobre base temporal: publicación, consulta
 anónima y despublicación, además del onboarding y la revocación de sesión.
 Contrato, tareas y evidencia: `changes/archive/2026-09-18-public-business-directory/`.
@@ -36,7 +49,39 @@ Actividad implementada: apariciones visibles, visitas y clics, contexto protegid
 deduplicación, exclusión del dueño autenticado, retención de 30 días y panel privado
 con períodos 7/30 días y evolución. Investigación: `Doc/analytics-research-2026-09-19.md`.
 Evidencia: `changes/archive/2026-09-19-business-activity/verify-report.md`.
-Próximo bloque de la secuencia: ranking equitativo con experimento reproducible.
+Laboratorio offline de ranking de negocios implementado: motor BLL explicable,
+ventana/contexto, cuatro variantes, juicios sintéticos independientes y exportación
+reproducible. Dos corridas completas con 200 negocios y 5.000 consultas por cada
+semilla 17/29/43 produjeron hashes idénticos. Reduce concentración con pérdida
+de nDCG; no se considera validada la hipótesis. La guía conserva su orden actual.
+Evidencia: `Doc/evaluation/business-ranking-pilot/README.md` y
+`changes/archive/2026-09-19-business-ranking-pilot/verify-report.md`.
+Ablaciones completadas: cinco variantes separan compensación, novedad y rotación;
+dos ejecuciones de 75.000 rankings con hashes idénticos y piloto original compatible.
+La compensación sola explica la mayor parte del cambio global; revisar pérdidas
+de nDCG y regresiones locales. Evidencia: `Doc/evaluation/business-ranking-ablations/`.
+Protocolo en `Doc/evaluation/business-ranking-final/protocol.md`: usuario acordó
+criterios principales el 21/09. Importador CSV `--validate-review` implementado:
+valida cobertura declarada y resoluciones, exporta hashes y juicios solo al completar.
+Paquetes de entrenamiento/calibración generados con fichas sintéticas, grados
+vacíos, manifiesto y recolección que verifica fuentes/selección/candidatos. ZIP por
+evaluador en `Doc/evaluation/business-ranking-final/packages/`. Reserva sin generar.
+Contrato de candidatos/snapshot
+propuesto en `Doc/ranking-public-integration.md`. No hay juicios humanos, runner
+final ni integración implementada. Comparación de calibración implementada:
+hojas verificadas, historial completo, agregados por superficie y diferencias pareadas.
+Comprobador de criterios/suficiencia y barrido de 18 celdas implementados; selección
+provisional distingue límites acordados de salvaguardas propuestas. CLI con hojas
+reales: 2.286 pendientes, sin métricas ni selección. Borrador de congelamiento
+preparado y verificado: 85 archivos, copias de fuentes/protocolo/originales/binarios,
+política null y requisitos humanos/metodológicos pendientes. No congela ni aprueba.
+Reconstrucción verificada desde la copia con SDK/Git/PathMap registrados; seis
+archivos runtime y cuatro salidas de pendientes idénticos. Borrador intacto,
+evidencia separada en `Doc/evaluation/business-ranking-final/rebuild.md`.
+Entrenamiento/anotación humana pendiente; siguiente desarrollo independiente:
+adaptador de candidatos al motor con historia desconocida N=0 y contexto de revista;
+la publicación histórica y recuperación completa están implementadas. Luego snapshots
+y ledger persistente, sin activar ranking público ni omitir la evaluación pendiente.
 Siguen pendientes catálogo, capacidades
 por plan, pedidos, stock, publicidad y evaluación experimental del ranking.
 No hay despliegue público; documentación de ejecución en `App/README.md`.

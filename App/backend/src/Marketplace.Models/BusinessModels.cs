@@ -27,6 +27,9 @@ public sealed class BusinessProfile
     public required string WhatsApp { get; set; }
     public required GeoLocation Location { get; set; }
     public required string Status { get; set; }
+    // Database-maintained history: null/false = never published, null/true = unknown.
+    public DateTimeOffset? FirstPublishedAt { get; private set; }
+    public bool PublicationHistoryUnknown { get; private set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
 }

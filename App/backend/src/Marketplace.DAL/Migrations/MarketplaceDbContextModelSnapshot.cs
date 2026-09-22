@@ -191,6 +191,11 @@ namespace Marketplace.DAL.Migrations
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("description");
 
+                    b.Property<DateTimeOffset?>("FirstPublishedAt")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_published_at");
+
                     b.Property<Point>("Location")
                         .IsRequired()
                         .HasColumnType("geography (point,4326)")
@@ -205,6 +210,11 @@ namespace Marketplace.DAL.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid")
                         .HasColumnName("owner_id");
+
+                    b.Property<bool>("PublicationHistoryUnknown")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("boolean")
+                        .HasColumnName("publication_history_unknown");
 
                     b.Property<string>("Status")
                         .IsRequired()

@@ -1,0 +1,27 @@
+{
+  "version": "business-evaluation-plan-v1",
+  "status": "criteria-agreed-not-executed",
+  "criteriaAgreement": { "date": "2026-09-21", "source": "User: Usar estos criterios para preparar el experimento", "scope": "Main relevance, concentration, merit-deviation and coverage tolerances; no final results or deployment approval" },
+  "additionalGuardrailsStatus": "Per-seed and local distribution guardrails are design proposals pending methodological freeze",
+  "unit": "business",
+  "baseline": "Proximity",
+  "activityEnabled": false,
+  "seeds": { "exploration": [17, 29, 43], "calibration": [101, 103, 107], "evaluation": [211, 223, 227, 229, 233], "training": [61] },
+  "businessesPerSeed": 200,
+  "queriesPerSeed": 5000,
+  "simulationDays": 60,
+  "windowDays": 30,
+  "cutoff": 10,
+  "humanQueries": { "training": 12, "calibration": 30, "evaluation": 60 },
+  "humanAssessorsPerPair": 2,
+  "humanRubricVersion": "business-relevance-v1",
+  "calibrationGrid": { "equityWeights": [0.025, 0.05, 0.1], "newcomerWeights": [0, 0.025, 0.05], "rotation": [false, true] },
+  "limits": {
+    "globalAndSurface": { "maxAbsoluteHumanNdcgLoss": 0.02, "minRelativeGiniReduction": 0.1, "minRelativeMeritDeviationReduction": 0.05 },
+    "surfaceZone": { "maxAbsoluteHumanNdcgLoss": 0.03, "maxAbsoluteGiniIncrease": 0.01, "maxAbsoluteMeritDeviationIncrease": 0.01 },
+    "eachSeedGlobal": { "maxAbsoluteHumanNdcgLoss": 0.03, "maxAbsoluteGiniIncrease": 0, "maxAbsoluteMeritDeviationIncrease": 0 },
+    "allRequiredScopes": { "maxAbsoluteCoverageLoss": 0.01, "maxAbsoluteNewcomerCoverageLoss": 0.01 }
+  },
+  "readiness": { "criteriaAgreed": true, "reviewImporterImplemented": true, "trainingAndCalibrationPackagesPrepared": true, "humanReplayImplemented": true, "calibrationComparisonImplemented": true, "calibrationCriteriaImplemented": true, "calibrationGridImplemented": true, "freezeDraftImplemented": true, "semanticDatasetsPrepared": false, "humanJudgmentsComplete": false, "policyFrozen": false, "finalRunnerImplemented": false },
+  "decisionStates": ["meets-in-this-collection", "does-not-meet", "inconclusive"]
+}

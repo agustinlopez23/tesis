@@ -20,6 +20,7 @@ public static class MarketplaceServices
         });
         services.AddScoped<IIdentityRepository, IdentityRepository>();
         services.AddScoped<IBusinessRepository, BusinessRepository>();
+        services.AddScoped<IRankingCandidateRepository, RankingCandidateRepository>();
         services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
         services.AddScoped<AuthenticationService>();
         services.AddScoped<BusinessService>();

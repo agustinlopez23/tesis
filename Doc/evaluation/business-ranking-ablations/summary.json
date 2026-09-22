@@ -1,0 +1,1701 @@
+{
+  "schema": "ranking-ablation-report-v1",
+  "synthetic": true,
+  "configuration": {
+    "version": "business-pilot-v1",
+    "minimumRelevance": 0.2,
+    "distanceDecayKm": 2,
+    "relevanceWeight": 0.7,
+    "equityWeight": 0.1,
+    "newcomerWeight": 0.05,
+    "activityWeight": 0.05,
+    "newcomerDays": 14,
+    "tieBucketWidth": 0.01,
+    "windowDays": 30,
+    "cutoff": 10
+  },
+  "seeds": [
+    17,
+    29,
+    43
+  ],
+  "queryCount": 5000,
+  "businessesPerSeed": 200,
+  "simulationDays": 60,
+  "runs": [
+    {
+      "seed": 17,
+      "variant": "Proximity",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.9458206967256311,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.5042729776961573,
+            "topTenShare": 0.18742846057209495,
+            "coverage": 0.9895833333333334,
+            "meritDeviation": 0.278602748514491
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 1,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.7842715486158814,
+            "topTenShare": 0.3619207238124639,
+            "coverage": 0.4789473684210526,
+            "meritDeviation": 0.6104859659682155
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.4
+        },
+        "magazine/1": {
+          "queries": 863,
+          "emptyQueries": 0,
+          "judgedQueries": 863,
+          "ndcg": 1,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.786282672529448,
+            "topTenShare": 0.36889904299486687,
+            "coverage": 0.49732620320855614,
+            "meritDeviation": 0.5944909903661527
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.4
+        },
+        "magazine/2": {
+          "queries": 789,
+          "emptyQueries": 0,
+          "judgedQueries": 789,
+          "ndcg": 1,
+          "distribution": {
+            "eligible": 179,
+            "gini": 0.7951269501815974,
+            "topTenShare": 0.362525405890067,
+            "coverage": 0.39664804469273746,
+            "meritDeviation": 0.5804995721691673
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.3888888888888889
+        },
+        "search/0": {
+          "queries": 844,
+          "emptyQueries": 0,
+          "judgedQueries": 844,
+          "ndcg": 0.9059818284926291,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.43988498147174115,
+            "topTenShare": 0.1576177807707339,
+            "coverage": 0.9368421052631579,
+            "meritDeviation": 0.23401618237937435
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "search/1": {
+          "queries": 827,
+          "emptyQueries": 0,
+          "judgedQueries": 827,
+          "ndcg": 0.8951988179780579,
+          "distribution": {
+            "eligible": 186,
+            "gini": 0.437571479560063,
+            "topTenShare": 0.1555181507210313,
+            "coverage": 0.8870967741935484,
+            "meritDeviation": 0.20851856846006053
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.8
+        },
+        "search/2": {
+          "queries": 829,
+          "emptyQueries": 0,
+          "judgedQueries": 829,
+          "ndcg": 0.8734926392189731,
+          "distribution": {
+            "eligible": 178,
+            "gini": 0.48218259612269976,
+            "topTenShare": 0.16858478155197062,
+            "coverage": 0.8820224719101124,
+            "meritDeviation": 0.18399809375785084
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.8888888888888888
+        }
+      }
+    },
+    {
+      "seed": 17,
+      "variant": "EquityOnly",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.9162884918654755,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.436451032157592,
+            "topTenShare": 0.17454838510690984,
+            "coverage": 1,
+            "meritDeviation": 0.22339393559806192
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 0.9315161967898539,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.5942924758799348,
+            "topTenShare": 0.3383893085361141,
+            "coverage": 0.9842105263157894,
+            "meritDeviation": 0.396933336865665
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/1": {
+          "queries": 863,
+          "emptyQueries": 0,
+          "judgedQueries": 863,
+          "ndcg": 0.9502893358758233,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.630060159424386,
+            "topTenShare": 0.3504960024817884,
+            "coverage": 0.9411764705882353,
+            "meritDeviation": 0.4135034777559052
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.85
+        },
+        "magazine/2": {
+          "queries": 789,
+          "emptyQueries": 0,
+          "judgedQueries": 789,
+          "ndcg": 0.9596794396099785,
+          "distribution": {
+            "eligible": 179,
+            "gini": 0.6716694182506904,
+            "topTenShare": 0.3485086840826339,
+            "coverage": 0.8547486033519553,
+            "meritDeviation": 0.41257036816073744
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.7777777777777778
+        },
+        "search/0": {
+          "queries": 844,
+          "emptyQueries": 0,
+          "judgedQueries": 844,
+          "ndcg": 0.8980348611203105,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.40025439034284765,
+            "topTenShare": 0.15372578038470155,
+            "coverage": 0.9947368421052631,
+            "meritDeviation": 0.20633375374224303
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 827,
+          "emptyQueries": 0,
+          "judgedQueries": 827,
+          "ndcg": 0.8894198672943625,
+          "distribution": {
+            "eligible": 186,
+            "gini": 0.4066870985151985,
+            "topTenShare": 0.15329933057972348,
+            "coverage": 0.9838709677419355,
+            "meritDeviation": 0.1898948725786255
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "search/2": {
+          "queries": 829,
+          "emptyQueries": 0,
+          "judgedQueries": 829,
+          "ndcg": 0.8694068717714384,
+          "distribution": {
+            "eligible": 178,
+            "gini": 0.46030905435357317,
+            "topTenShare": 0.16821052449557394,
+            "coverage": 0.9438202247191011,
+            "meritDeviation": 0.16625197521824966
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.9444444444444444
+        }
+      }
+    },
+    {
+      "seed": 17,
+      "variant": "EquityNewcomer",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.9124404970411151,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.4290035507218973,
+            "topTenShare": 0.17268062770780807,
+            "coverage": 1,
+            "meritDeviation": 0.21927968370542086
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 0.9227874325392025,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.5800446501306395,
+            "topTenShare": 0.3342676992949821,
+            "coverage": 0.9894736842105263,
+            "meritDeviation": 0.3867120190648096
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/1": {
+          "queries": 863,
+          "emptyQueries": 0,
+          "judgedQueries": 863,
+          "ndcg": 0.9446349285342867,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.6192919469728146,
+            "topTenShare": 0.34627764213174955,
+            "coverage": 0.9572192513368984,
+            "meritDeviation": 0.4054098269123648
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.9
+        },
+        "magazine/2": {
+          "queries": 789,
+          "emptyQueries": 0,
+          "judgedQueries": 789,
+          "ndcg": 0.9529493512478961,
+          "distribution": {
+            "eligible": 179,
+            "gini": 0.6594262266600106,
+            "topTenShare": 0.34404604624236584,
+            "coverage": 0.8938547486033519,
+            "meritDeviation": 0.402667680858423
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.8333333333333334
+        },
+        "search/0": {
+          "queries": 844,
+          "emptyQueries": 0,
+          "judgedQueries": 844,
+          "ndcg": 0.8967526198335412,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.395071346125042,
+            "topTenShare": 0.1530226166257109,
+            "coverage": 0.9947368421052631,
+            "meritDeviation": 0.2049128424248123
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 827,
+          "emptyQueries": 0,
+          "judgedQueries": 827,
+          "ndcg": 0.8894694207125226,
+          "distribution": {
+            "eligible": 186,
+            "gini": 0.4020789474898014,
+            "topTenShare": 0.15194203623744687,
+            "coverage": 0.9838709677419355,
+            "meritDeviation": 0.18913718004331992
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "search/2": {
+          "queries": 829,
+          "emptyQueries": 0,
+          "judgedQueries": 829,
+          "ndcg": 0.8686747151796391,
+          "distribution": {
+            "eligible": 178,
+            "gini": 0.45699402035248343,
+            "topTenShare": 0.1680098131621749,
+            "coverage": 0.9438202247191011,
+            "meritDeviation": 0.1654364264926109
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 1
+        }
+      }
+    },
+    {
+      "seed": 17,
+      "variant": "EquityRotation",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.9140365038174901,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.43392860157604946,
+            "topTenShare": 0.17431973372516735,
+            "coverage": 1,
+            "meritDeviation": 0.22132012277279725
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 0.9259477562758635,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.5872945036823348,
+            "topTenShare": 0.3365310524471083,
+            "coverage": 0.9894736842105263,
+            "meritDeviation": 0.39186861888646995
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/1": {
+          "queries": 863,
+          "emptyQueries": 0,
+          "judgedQueries": 863,
+          "ndcg": 0.9463825745190533,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.6244949118421445,
+            "topTenShare": 0.35029156131391503,
+            "coverage": 0.9518716577540107,
+            "meritDeviation": 0.409937538076046
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.85
+        },
+        "magazine/2": {
+          "queries": 789,
+          "emptyQueries": 0,
+          "judgedQueries": 789,
+          "ndcg": 0.956388158794337,
+          "distribution": {
+            "eligible": 179,
+            "gini": 0.6658481539893047,
+            "topTenShare": 0.3458395691012972,
+            "coverage": 0.8770949720670391,
+            "meritDeviation": 0.40761965005793754
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.8333333333333334
+        },
+        "search/0": {
+          "queries": 844,
+          "emptyQueries": 0,
+          "judgedQueries": 844,
+          "ndcg": 0.8979016107135352,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.3987802181694621,
+            "topTenShare": 0.15308879736349582,
+            "coverage": 0.9947368421052631,
+            "meritDeviation": 0.20530080058694755
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 827,
+          "emptyQueries": 0,
+          "judgedQueries": 827,
+          "ndcg": 0.8891313924961662,
+          "distribution": {
+            "eligible": 186,
+            "gini": 0.40532600021799414,
+            "topTenShare": 0.1527964370542204,
+            "coverage": 0.9838709677419355,
+            "meritDeviation": 0.1889221256367035
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "search/2": {
+          "queries": 829,
+          "emptyQueries": 0,
+          "judgedQueries": 829,
+          "ndcg": 0.8691432830281285,
+          "distribution": {
+            "eligible": 178,
+            "gini": 0.4603094616928078,
+            "topTenShare": 0.16801421747045783,
+            "coverage": 0.9382022471910112,
+            "meritDeviation": 0.1667093624086906
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.9444444444444444
+        }
+      }
+    },
+    {
+      "seed": 17,
+      "variant": "Equity",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.90953560851849,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.4263240235797858,
+            "topTenShare": 0.17193634675041447,
+            "coverage": 1,
+            "meritDeviation": 0.21675769427217673
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 0.9179301330425913,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.5739280984124713,
+            "topTenShare": 0.33196308893759036,
+            "coverage": 0.9894736842105263,
+            "meritDeviation": 0.38278533908097273
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/1": {
+          "queries": 863,
+          "emptyQueries": 0,
+          "judgedQueries": 863,
+          "ndcg": 0.9386972773071607,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.6132890518479324,
+            "topTenShare": 0.34520860924193003,
+            "coverage": 0.9625668449197861,
+            "meritDeviation": 0.4015914641621417
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.85
+        },
+        "magazine/2": {
+          "queries": 789,
+          "emptyQueries": 0,
+          "judgedQueries": 789,
+          "ndcg": 0.9482677323527353,
+          "distribution": {
+            "eligible": 179,
+            "gini": 0.6524887657421957,
+            "topTenShare": 0.34233904893960754,
+            "coverage": 0.9106145251396648,
+            "meritDeviation": 0.3971665384095045
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.8888888888888888
+        },
+        "search/0": {
+          "queries": 844,
+          "emptyQueries": 0,
+          "judgedQueries": 844,
+          "ndcg": 0.8963426782233277,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.3929616751000515,
+            "topTenShare": 0.15183103358936995,
+            "coverage": 0.9947368421052631,
+            "meritDeviation": 0.2034988100014672
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 827,
+          "emptyQueries": 0,
+          "judgedQueries": 827,
+          "ndcg": 0.8888722127205118,
+          "distribution": {
+            "eligible": 186,
+            "gini": 0.400582608968766,
+            "topTenShare": 0.1509630106253667,
+            "coverage": 0.9838709677419355,
+            "meritDeviation": 0.18761702952465104
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "search/2": {
+          "queries": 829,
+          "emptyQueries": 0,
+          "judgedQueries": 829,
+          "ndcg": 0.8677729291792639,
+          "distribution": {
+            "eligible": 178,
+            "gini": 0.4566857639575918,
+            "topTenShare": 0.16791904906447838,
+            "coverage": 0.9382022471910112,
+            "meritDeviation": 0.16512435683586826
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.9444444444444444
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "variant": "Proximity",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.916273335144566,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.4670925423101021,
+            "topTenShare": 0.16302422571060027,
+            "coverage": 0.984375,
+            "meritDeviation": 0.2478930430372888
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 1,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.7786298880306837,
+            "topTenShare": 0.33739304614180027,
+            "coverage": 0.5026178010471204,
+            "meritDeviation": 0.6061016533204675
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.4
+        },
+        "magazine/1": {
+          "queries": 822,
+          "emptyQueries": 0,
+          "judgedQueries": 822,
+          "ndcg": 1,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.7616926169968391,
+            "topTenShare": 0.35940135416098823,
+            "coverage": 0.5,
+            "meritDeviation": 0.5729358842123519
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.3684210526315789
+        },
+        "magazine/2": {
+          "queries": 830,
+          "emptyQueries": 0,
+          "judgedQueries": 830,
+          "ndcg": 1,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.7865068640409436,
+            "topTenShare": 0.33727968426533755,
+            "coverage": 0.384180790960452,
+            "meritDeviation": 0.5856098766174667
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.3684210526315789
+        },
+        "search/0": {
+          "queries": 823,
+          "emptyQueries": 0,
+          "judgedQueries": 823,
+          "ndcg": 0.8254511908277339,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.4186963492381418,
+            "topTenShare": 0.15533677791419886,
+            "coverage": 0.9319371727748691,
+            "meritDeviation": 0.2051674588741491
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 839,
+          "emptyQueries": 0,
+          "judgedQueries": 839,
+          "ndcg": 0.8173343147657949,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.4011264422195546,
+            "topTenShare": 0.1548309301649308,
+            "coverage": 0.9239130434782609,
+            "meritDeviation": 0.1970545607968615
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.8421052631578947
+        },
+        "search/2": {
+          "queries": 838,
+          "emptyQueries": 0,
+          "judgedQueries": 838,
+          "ndcg": 0.854745651053827,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.4382426829043849,
+            "topTenShare": 0.16579788305086327,
+            "coverage": 0.9209039548022598,
+            "meritDeviation": 0.17336540337539422
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.9473684210526315
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "variant": "EquityOnly",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.8827774855419631,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.40860167332238856,
+            "topTenShare": 0.15394934584436623,
+            "coverage": 1,
+            "meritDeviation": 0.19966240947929245
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 0.929733001525937,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.5887582726378016,
+            "topTenShare": 0.30644333948188945,
+            "coverage": 0.9633507853403142,
+            "meritDeviation": 0.4045156314690003
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "magazine/1": {
+          "queries": 822,
+          "emptyQueries": 0,
+          "judgedQueries": 822,
+          "ndcg": 0.9326463669333654,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.5806230842089817,
+            "topTenShare": 0.3378637610129275,
+            "coverage": 0.967391304347826,
+            "meritDeviation": 0.37671953260140706
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "magazine/2": {
+          "queries": 830,
+          "emptyQueries": 0,
+          "judgedQueries": 830,
+          "ndcg": 0.9430859264359573,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.7013926940589469,
+            "topTenShare": 0.32626465199957005,
+            "coverage": 0.7796610169491526,
+            "meritDeviation": 0.4504942218226661
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.6842105263157895
+        },
+        "search/0": {
+          "queries": 823,
+          "emptyQueries": 0,
+          "judgedQueries": 823,
+          "ndcg": 0.8223361391011581,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.39630485912852137,
+            "topTenShare": 0.154886955567505,
+            "coverage": 0.9842931937172775,
+            "meritDeviation": 0.1931880582653048
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 839,
+          "emptyQueries": 0,
+          "judgedQueries": 839,
+          "ndcg": 0.8146465021031879,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.37925865773807893,
+            "topTenShare": 0.1540294128998364,
+            "coverage": 0.9891304347826086,
+            "meritDeviation": 0.1877575183902155
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "search/2": {
+          "queries": 838,
+          "emptyQueries": 0,
+          "judgedQueries": 838,
+          "ndcg": 0.8541839523984798,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.43305826211906934,
+            "topTenShare": 0.1619948101811211,
+            "coverage": 0.9774011299435028,
+            "meritDeviation": 0.1716359733906771
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "variant": "EquityNewcomer",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.8788813757473772,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.4015637059673194,
+            "topTenShare": 0.15252363362251925,
+            "coverage": 1,
+            "meritDeviation": 0.19595228797444547
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 0.9223461671574128,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.5751770251990669,
+            "topTenShare": 0.30199600156148854,
+            "coverage": 0.9738219895287958,
+            "meritDeviation": 0.3938816912162795
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "magazine/1": {
+          "queries": 822,
+          "emptyQueries": 0,
+          "judgedQueries": 822,
+          "ndcg": 0.9250603414643707,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.5677335014786304,
+            "topTenShare": 0.33387400334776185,
+            "coverage": 0.9782608695652174,
+            "meritDeviation": 0.3685108643232276
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "magazine/2": {
+          "queries": 830,
+          "emptyQueries": 0,
+          "judgedQueries": 830,
+          "ndcg": 0.9367620453831808,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.6905590855820364,
+            "topTenShare": 0.32223479021356033,
+            "coverage": 0.8361581920903954,
+            "meritDeviation": 0.44032218480381496
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.8421052631578947
+        },
+        "search/0": {
+          "queries": 823,
+          "emptyQueries": 0,
+          "judgedQueries": 823,
+          "ndcg": 0.8213772418315511,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.3916305784397318,
+            "topTenShare": 0.15475808029725835,
+            "coverage": 0.9842931937172775,
+            "meritDeviation": 0.1928774097890626
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 839,
+          "emptyQueries": 0,
+          "judgedQueries": 839,
+          "ndcg": 0.8140149777065049,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.3750307143254212,
+            "topTenShare": 0.1533242687418815,
+            "coverage": 0.9891304347826086,
+            "meritDeviation": 0.1874925541664739
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "search/2": {
+          "queries": 838,
+          "emptyQueries": 0,
+          "judgedQueries": 838,
+          "ndcg": 0.8536911626641144,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.42960270924851185,
+            "topTenShare": 0.16113076766759513,
+            "coverage": 0.9774011299435028,
+            "meritDeviation": 0.16971134426974716
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "variant": "EquityRotation",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.8804979921094506,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.4060392299638364,
+            "topTenShare": 0.15277109079329673,
+            "coverage": 1,
+            "meritDeviation": 0.19757687990233364
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 0.9245608022162755,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.5806849291051749,
+            "topTenShare": 0.3018786311068191,
+            "coverage": 0.9738219895287958,
+            "meritDeviation": 0.39952056827696447
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "magazine/1": {
+          "queries": 822,
+          "emptyQueries": 0,
+          "judgedQueries": 822,
+          "ndcg": 0.9273157959847219,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.5736072677021813,
+            "topTenShare": 0.33562485984943796,
+            "coverage": 0.9782608695652174,
+            "meritDeviation": 0.37283427165586
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "magazine/2": {
+          "queries": 830,
+          "emptyQueries": 0,
+          "judgedQueries": 830,
+          "ndcg": 0.9410401015762337,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.6975210720843943,
+            "topTenShare": 0.32532199503269965,
+            "coverage": 0.807909604519774,
+            "meritDeviation": 0.4482240260248897
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.7368421052631579
+        },
+        "search/0": {
+          "queries": 823,
+          "emptyQueries": 0,
+          "judgedQueries": 823,
+          "ndcg": 0.8226250453816983,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.39395461881316435,
+            "topTenShare": 0.15510738988505557,
+            "coverage": 0.9842931937172775,
+            "meritDeviation": 0.19145847038071137
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 839,
+          "emptyQueries": 0,
+          "judgedQueries": 839,
+          "ndcg": 0.813479994669979,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.3777899848981694,
+            "topTenShare": 0.15386146316657034,
+            "coverage": 0.9891304347826086,
+            "meritDeviation": 0.1868442747048289
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "search/2": {
+          "queries": 838,
+          "emptyQueries": 0,
+          "judgedQueries": 838,
+          "ndcg": 0.8539563290965292,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.43315251807531163,
+            "topTenShare": 0.16272141282452934,
+            "coverage": 0.9774011299435028,
+            "meritDeviation": 0.17208287636162925
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        }
+      }
+    },
+    {
+      "seed": 29,
+      "variant": "Equity",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.8760776314518933,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.3990573673870965,
+            "topTenShare": 0.15135655098593087,
+            "coverage": 1,
+            "meritDeviation": 0.1939075976838518
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 848,
+          "emptyQueries": 0,
+          "judgedQueries": 848,
+          "ndcg": 0.9166755972968644,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.5681842489519414,
+            "topTenShare": 0.2988822980186873,
+            "coverage": 0.9790575916230366,
+            "meritDeviation": 0.38950048570010265
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 0.95
+        },
+        "magazine/1": {
+          "queries": 822,
+          "emptyQueries": 0,
+          "judgedQueries": 822,
+          "ndcg": 0.9194754041419193,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.5608094816329328,
+            "topTenShare": 0.3311302878816215,
+            "coverage": 0.9836956521739131,
+            "meritDeviation": 0.3641280133659073
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "magazine/2": {
+          "queries": 830,
+          "emptyQueries": 0,
+          "judgedQueries": 830,
+          "ndcg": 0.9338368348481229,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.6858763493922154,
+            "topTenShare": 0.3224996676441969,
+            "coverage": 0.8587570621468926,
+            "meritDeviation": 0.4376714780757174
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.8421052631578947
+        },
+        "search/0": {
+          "queries": 823,
+          "emptyQueries": 0,
+          "judgedQueries": 823,
+          "ndcg": 0.8206549866054598,
+          "distribution": {
+            "eligible": 191,
+            "gini": 0.38963660470296235,
+            "topTenShare": 0.15510790844047354,
+            "coverage": 0.9842931937172775,
+            "meritDeviation": 0.1913274401154011
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 839,
+          "emptyQueries": 0,
+          "judgedQueries": 839,
+          "ndcg": 0.8124139818822599,
+          "distribution": {
+            "eligible": 184,
+            "gini": 0.37343700361564863,
+            "topTenShare": 0.152568988325689,
+            "coverage": 0.9891304347826086,
+            "meritDeviation": 0.18670380469037218
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "search/2": {
+          "queries": 838,
+          "emptyQueries": 0,
+          "judgedQueries": 838,
+          "ndcg": 0.8533884377656585,
+          "distribution": {
+            "eligible": 177,
+            "gini": 0.4300763310992923,
+            "topTenShare": 0.16129274915242334,
+            "coverage": 0.9774011299435028,
+            "meritDeviation": 0.16999062229169087
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "variant": "Proximity",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.937911935400428,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.47053223949209316,
+            "topTenShare": 0.16468351333435366,
+            "coverage": 0.9947916666666666,
+            "meritDeviation": 0.25445994140308315
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 862,
+          "emptyQueries": 0,
+          "judgedQueries": 862,
+          "ndcg": 1,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.7801125966296188,
+            "topTenShare": 0.3510409203171545,
+            "coverage": 0.4842105263157895,
+            "meritDeviation": 0.6130538954709454
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.3684210526315789
+        },
+        "magazine/1": {
+          "queries": 831,
+          "emptyQueries": 0,
+          "judgedQueries": 831,
+          "ndcg": 1,
+          "distribution": {
+            "eligible": 189,
+            "gini": 0.791258809822314,
+            "topTenShare": 0.3532512131435487,
+            "coverage": 0.48148148148148145,
+            "meritDeviation": 0.62423985769291
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.4444444444444444
+        },
+        "magazine/2": {
+          "queries": 807,
+          "emptyQueries": 0,
+          "judgedQueries": 807,
+          "ndcg": 1,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.7753882506776197,
+            "topTenShare": 0.3605706547431896,
+            "coverage": 0.4470588235294118,
+            "meritDeviation": 0.5784526734602754
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 0.5
+        },
+        "search/0": {
+          "queries": 796,
+          "emptyQueries": 0,
+          "judgedQueries": 796,
+          "ndcg": 0.8758191180710284,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.36144315460706394,
+            "topTenShare": 0.13761564867300904,
+            "coverage": 0.9473684210526315,
+            "meritDeviation": 0.17153402116805594
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 0.9473684210526315
+        },
+        "search/1": {
+          "queries": 849,
+          "emptyQueries": 0,
+          "judgedQueries": 849,
+          "ndcg": 0.8727220939559701,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.37480516284389825,
+            "topTenShare": 0.14691789767587918,
+            "coverage": 0.9518716577540107,
+            "meritDeviation": 0.17344262489620352
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 1
+        },
+        "search/2": {
+          "queries": 855,
+          "emptyQueries": 0,
+          "judgedQueries": 855,
+          "ndcg": 0.8789083055543679,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.4309005069407992,
+            "topTenShare": 0.16265417803470722,
+            "coverage": 0.9529411764705882,
+            "meritDeviation": 0.16747852349434314
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 0.875
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "variant": "EquityOnly",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.9047871035373688,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.41596277122984254,
+            "topTenShare": 0.15548241814276578,
+            "coverage": 1,
+            "meritDeviation": 0.21087722617153
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 862,
+          "emptyQueries": 0,
+          "judgedQueries": 862,
+          "ndcg": 0.9322354519234674,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.6191439778327587,
+            "topTenShare": 0.3188286464093358,
+            "coverage": 0.9421052631578948,
+            "meritDeviation": 0.42134987313700023
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "magazine/1": {
+          "queries": 831,
+          "emptyQueries": 0,
+          "judgedQueries": 831,
+          "ndcg": 0.9294751834898136,
+          "distribution": {
+            "eligible": 189,
+            "gini": 0.628069504531727,
+            "topTenShare": 0.32967272976459944,
+            "coverage": 0.8888888888888888,
+            "meritDeviation": 0.42401073613211027
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.8888888888888888
+        },
+        "magazine/2": {
+          "queries": 807,
+          "emptyQueries": 0,
+          "judgedQueries": 807,
+          "ndcg": 0.9461321919251686,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.655833536502078,
+            "topTenShare": 0.34905175641865527,
+            "coverage": 0.8705882352941177,
+            "meritDeviation": 0.4199475076699786
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 0.875
+        },
+        "search/0": {
+          "queries": 796,
+          "emptyQueries": 0,
+          "judgedQueries": 796,
+          "ndcg": 0.875900857485,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.3600375231706415,
+            "topTenShare": 0.1374040261892265,
+            "coverage": 0.9947368421052631,
+            "meritDeviation": 0.17709609179120234
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 849,
+          "emptyQueries": 0,
+          "judgedQueries": 849,
+          "ndcg": 0.8715755107302595,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.36517868992348196,
+            "topTenShare": 0.14241015874518667,
+            "coverage": 0.9946524064171123,
+            "meritDeviation": 0.1687766136656719
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 1
+        },
+        "search/2": {
+          "queries": 855,
+          "emptyQueries": 0,
+          "judgedQueries": 855,
+          "ndcg": 0.8739664451428453,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.41580401719040005,
+            "topTenShare": 0.16381313025925417,
+            "coverage": 0.9823529411764705,
+            "meritDeviation": 0.1539612692801225
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 1
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "variant": "EquityNewcomer",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.9004134076818756,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.4087194782238838,
+            "topTenShare": 0.15345121624613897,
+            "coverage": 1,
+            "meritDeviation": 0.2073069519221018
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 862,
+          "emptyQueries": 0,
+          "judgedQueries": 862,
+          "ndcg": 0.924750055523635,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.6046555032514535,
+            "topTenShare": 0.31221058704993815,
+            "coverage": 0.9631578947368421,
+            "meritDeviation": 0.41167292024739593
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "magazine/1": {
+          "queries": 831,
+          "emptyQueries": 0,
+          "judgedQueries": 831,
+          "ndcg": 0.9217834949290734,
+          "distribution": {
+            "eligible": 189,
+            "gini": 0.6143544560784594,
+            "topTenShare": 0.3241087113436884,
+            "coverage": 0.91005291005291,
+            "meritDeviation": 0.41298532510785213
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 1
+        },
+        "magazine/2": {
+          "queries": 807,
+          "emptyQueries": 0,
+          "judgedQueries": 807,
+          "ndcg": 0.9394799362371972,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.6439622448894248,
+            "topTenShare": 0.3459439817019144,
+            "coverage": 0.9,
+            "meritDeviation": 0.40994796548527296
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 0.9375
+        },
+        "search/0": {
+          "queries": 796,
+          "emptyQueries": 0,
+          "judgedQueries": 796,
+          "ndcg": 0.8738924543531664,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.3563370262900072,
+            "topTenShare": 0.13686794649700668,
+            "coverage": 0.9947368421052631,
+            "meritDeviation": 0.17733658286295775
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 849,
+          "emptyQueries": 0,
+          "judgedQueries": 849,
+          "ndcg": 0.869509148221241,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.36096582620962764,
+            "topTenShare": 0.14138680356345903,
+            "coverage": 0.9946524064171123,
+            "meritDeviation": 0.1691543805232967
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 1
+        },
+        "search/2": {
+          "queries": 855,
+          "emptyQueries": 0,
+          "judgedQueries": 855,
+          "ndcg": 0.8736122072673512,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.41307583983072826,
+            "topTenShare": 0.16361134464176452,
+            "coverage": 0.9823529411764705,
+            "meritDeviation": 0.15312936204638358
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 1
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "variant": "EquityRotation",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.9024794349018986,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.4134593817341112,
+            "topTenShare": 0.15469037455834544,
+            "coverage": 1,
+            "meritDeviation": 0.20874856138568837
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 862,
+          "emptyQueries": 0,
+          "judgedQueries": 862,
+          "ndcg": 0.9275511038856914,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.6118706552945734,
+            "topTenShare": 0.3170687411608563,
+            "coverage": 0.9631578947368421,
+            "meritDeviation": 0.4164633464151871
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "magazine/1": {
+          "queries": 831,
+          "emptyQueries": 0,
+          "judgedQueries": 831,
+          "ndcg": 0.9252610757129758,
+          "distribution": {
+            "eligible": 189,
+            "gini": 0.6218443085796526,
+            "topTenShare": 0.32756825302125114,
+            "coverage": 0.91005291005291,
+            "meritDeviation": 0.4199405637545088
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 0.9444444444444444
+        },
+        "magazine/2": {
+          "queries": 807,
+          "emptyQueries": 0,
+          "judgedQueries": 807,
+          "ndcg": 0.9421246673971853,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.6498977508140287,
+            "topTenShare": 0.34811301532413425,
+            "coverage": 0.8941176470588236,
+            "meritDeviation": 0.4157736951428635
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 0.9375
+        },
+        "search/0": {
+          "queries": 796,
+          "emptyQueries": 0,
+          "judgedQueries": 796,
+          "ndcg": 0.8756069771325699,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.35875068359914536,
+            "topTenShare": 0.13677180290796312,
+            "coverage": 0.9947368421052631,
+            "meritDeviation": 0.17625540325254194
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 849,
+          "emptyQueries": 0,
+          "judgedQueries": 849,
+          "ndcg": 0.8717847891431473,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.3636897437978315,
+            "topTenShare": 0.14125698328002367,
+            "coverage": 0.9946524064171123,
+            "meritDeviation": 0.16829327844769207
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 1
+        },
+        "search/2": {
+          "queries": 855,
+          "emptyQueries": 0,
+          "judgedQueries": 855,
+          "ndcg": 0.8731381551730689,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.4153513490756005,
+            "topTenShare": 0.16388030246373572,
+            "coverage": 0.9823529411764705,
+            "meritDeviation": 0.1539376757868418
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 1
+        }
+      }
+    },
+    {
+      "seed": 43,
+      "variant": "Equity",
+      "strata": {
+        "all": {
+          "queries": 5000,
+          "emptyQueries": 0,
+          "judgedQueries": 5000,
+          "ndcg": 0.8981121699704429,
+          "distribution": {
+            "eligible": 192,
+            "gini": 0.4064674515414826,
+            "topTenShare": 0.15284821455548664,
+            "coverage": 1,
+            "meritDeviation": 0.20544005190972647
+          },
+          "newcomersEligible": 20,
+          "newcomerCoverage": 1
+        },
+        "magazine/0": {
+          "queries": 862,
+          "emptyQueries": 0,
+          "judgedQueries": 862,
+          "ndcg": 0.9203091999024163,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.5977070307203157,
+            "topTenShare": 0.31013503056118114,
+            "coverage": 0.9736842105263158,
+            "meritDeviation": 0.40707786278141467
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "magazine/1": {
+          "queries": 831,
+          "emptyQueries": 0,
+          "judgedQueries": 831,
+          "ndcg": 0.9172995298566368,
+          "distribution": {
+            "eligible": 189,
+            "gini": 0.6080403450618324,
+            "topTenShare": 0.3215637966612883,
+            "coverage": 0.9312169312169312,
+            "meritDeviation": 0.4087094405221671
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 1
+        },
+        "magazine/2": {
+          "queries": 807,
+          "emptyQueries": 0,
+          "judgedQueries": 807,
+          "ndcg": 0.9354413325188631,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.638256015740184,
+            "topTenShare": 0.34444002013655695,
+            "coverage": 0.9058823529411765,
+            "meritDeviation": 0.4060023058688706
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 0.9375
+        },
+        "search/0": {
+          "queries": 796,
+          "emptyQueries": 0,
+          "judgedQueries": 796,
+          "ndcg": 0.8743379160310204,
+          "distribution": {
+            "eligible": 190,
+            "gini": 0.3550361165778166,
+            "topTenShare": 0.1361691411289236,
+            "coverage": 0.9947368421052631,
+            "meritDeviation": 0.17600057014769524
+          },
+          "newcomersEligible": 19,
+          "newcomerCoverage": 1
+        },
+        "search/1": {
+          "queries": 849,
+          "emptyQueries": 0,
+          "judgedQueries": 849,
+          "ndcg": 0.8692049910302326,
+          "distribution": {
+            "eligible": 187,
+            "gini": 0.3589802113410384,
+            "topTenShare": 0.14024059831902994,
+            "coverage": 0.9946524064171123,
+            "meritDeviation": 0.16784567134320283
+          },
+          "newcomersEligible": 18,
+          "newcomerCoverage": 1
+        },
+        "search/2": {
+          "queries": 855,
+          "emptyQueries": 0,
+          "judgedQueries": 855,
+          "ndcg": 0.8726891653068958,
+          "distribution": {
+            "eligible": 170,
+            "gini": 0.4122588121879726,
+            "topTenShare": 0.16339111663860612,
+            "coverage": 0.9823529411764705,
+            "meritDeviation": 0.15340488519206333
+          },
+          "newcomersEligible": 16,
+          "newcomerCoverage": 1
+        }
+      }
+    }
+  ],
+  "artifacts": {
+    "configuration.json": "6fc092894087342880d98a3289d6dc310a27eb5c855ed9228f8cf497f6972a8f",
+    "inputs-17.json": "c5883f6e1add386100c9a735f44141ea3d779591ed8964e9c2ec6cdddc1a0b50",
+    "inputs-29.json": "f58912add0b055120ec3a513cb7f3f0bb6fe7eff439e6803f6d1362a54cc9a5f",
+    "inputs-43.json": "7dcb2556da4dcbaeb77e4440ba24114c30c3df1cadf20ee78cc1f3ede76349f9",
+    "traces-17.jsonl.gz": "589fbd5c56f8fe8efdb55b898c30f171a32472dd1073f59db00470e5d4e58134",
+    "traces-29.jsonl.gz": "ae8f3b3b951479465e01804b10915939fc7f4bbf25640ba9e8a2aa451aea4289",
+    "traces-43.jsonl.gz": "a2ddd6b989dd080f7b0c505e1f4ca3be104e02efa4477a949ffbc1b2fdd420c0"
+  }
+}

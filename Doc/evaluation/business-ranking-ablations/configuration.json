@@ -1,0 +1,1 @@
+{"version":"business-pilot-v1","minimumRelevance":0.2,"distanceDecayKm":2,"relevanceWeight":0.7,"equityWeight":0.1,"newcomerWeight":0.05,"activityWeight":0.05,"newcomerDays":14,"tieBucketWidth":0.01,"windowDays":30,"cutoff":10}

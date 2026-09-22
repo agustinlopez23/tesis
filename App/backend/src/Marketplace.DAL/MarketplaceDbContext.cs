@@ -103,6 +103,8 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
             entity.Property(x => x.Address).HasColumnName("address").HasMaxLength(250).IsRequired();
             entity.Property(x => x.WhatsApp).HasColumnName("whatsapp").HasMaxLength(16).IsRequired();
             entity.Property(x => x.Status).HasColumnName("status").HasMaxLength(20).IsRequired();
+            entity.Property(x => x.FirstPublishedAt).HasColumnName("first_published_at").ValueGeneratedOnAddOrUpdate();
+            entity.Property(x => x.PublicationHistoryUnknown).HasColumnName("publication_history_unknown").ValueGeneratedOnAddOrUpdate();
             entity.Property(x => x.CreatedAt).HasColumnName("created_at");
             entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
             entity.Property(x => x.Location).HasColumnName("location")
