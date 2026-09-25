@@ -50,4 +50,8 @@ appsettings.*.Local.json
 Thumbs.db
 
 # Originales académicos con identidad y metadatos personales: conservar localmente
-/Doc/Seminario1 entrega/
+/Doc/Seminario_Entrega_1/
+
+# Entregas en preparación: conservar localmente hasta su publicación
+/Doc/Seminario_Entrega_3/
+/Doc/Seminario_Entrega_4/
