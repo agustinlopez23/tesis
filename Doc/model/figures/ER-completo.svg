@@ -651,26 +651,27 @@
 <!-- SaleItem -->
 <g id="node18" class="node">
 <title>SaleItem</title>
-<polygon fill="black" stroke="black" points="3023.84,-483 3023.84,-483 3210.62,-483 3210.62,-483 3023.84,-483"/>
-<polygon fill="none" stroke="black" points="3023.84,-286.8 3023.84,-530.4 3210.62,-530.4 3210.62,-286.8 3023.84,-286.8"/>
-<polygon fill="#e2eee9" stroke="none" points="3024.84,-505 3024.84,-529.4 3209.62,-529.4 3209.62,-505 3024.84,-505"/>
-<text xml:space="preserve" text-anchor="start" x="3092.55" y="-514.6" font-family="Arial" font-weight="bold" font-size="12.00">SaleItem</text>
-<text xml:space="preserve" text-anchor="start" x="3040.51" y="-490" font-family="Arial" font-size="10.00">Copia de lo efectivamente vendido</text>
-<text xml:space="preserve" text-anchor="start" x="3029.84" y="-466" font-family="Arial" font-size="12.00">id : uuid PK</text>
-<text xml:space="preserve" text-anchor="start" x="3029.84" y="-441.6" font-family="Arial" font-size="12.00">business_id : uuid FK</text>
-<text xml:space="preserve" text-anchor="start" x="3029.84" y="-417.2" font-family="Arial" font-size="12.00">sale_id : uuid FK</text>
-<text xml:space="preserve" text-anchor="start" x="3029.84" y="-392.8" font-family="Arial" font-size="12.00">product_id : uuid FK</text>
-<text xml:space="preserve" text-anchor="start" x="3029.84" y="-368.4" font-family="Arial" font-size="12.00">product_name_snapshot : string </text>
-<text xml:space="preserve" text-anchor="start" x="3029.84" y="-344" font-family="Arial" font-size="12.00">quantity : int </text>
-<text xml:space="preserve" text-anchor="start" x="3029.84" y="-319.6" font-family="Arial" font-size="12.00">unit_price : decimal </text>
-<text xml:space="preserve" text-anchor="start" x="3029.84" y="-295.2" font-family="Arial" font-size="12.00">currency : string </text>
+<polygon fill="black" stroke="black" points="3023.84,-507.2 3023.84,-507.2 3210.62,-507.2 3210.62,-507.2 3023.84,-507.2"/>
+<polygon fill="none" stroke="black" points="3023.84,-286.6 3023.84,-554.6 3210.62,-554.6 3210.62,-286.6 3023.84,-286.6"/>
+<polygon fill="#e2eee9" stroke="none" points="3024.84,-529.2 3024.84,-553.6 3209.62,-553.6 3209.62,-529.2 3024.84,-529.2"/>
+<text xml:space="preserve" text-anchor="start" x="3092.55" y="-538.8" font-family="Arial" font-weight="bold" font-size="12.00">SaleItem</text>
+<text xml:space="preserve" text-anchor="start" x="3040.51" y="-514.2" font-family="Arial" font-size="10.00">Copia de lo efectivamente vendido</text>
+<text xml:space="preserve" text-anchor="start" x="3029.84" y="-490.2" font-family="Arial" font-size="12.00">id : uuid PK</text>
+<text xml:space="preserve" text-anchor="start" x="3029.84" y="-465.8" font-family="Arial" font-size="12.00">business_id : uuid FK</text>
+<text xml:space="preserve" text-anchor="start" x="3029.84" y="-441.4" font-family="Arial" font-size="12.00">sale_id : uuid FK</text>
+<text xml:space="preserve" text-anchor="start" x="3029.84" y="-417" font-family="Arial" font-size="12.00">product_id : uuid FK</text>
+<text xml:space="preserve" text-anchor="start" x="3029.84" y="-392.6" font-family="Arial" font-size="12.00">product_name_snapshot : string </text>
+<text xml:space="preserve" text-anchor="start" x="3029.84" y="-368.2" font-family="Arial" font-size="12.00">item_origin : string </text>
+<text xml:space="preserve" text-anchor="start" x="3029.84" y="-343.8" font-family="Arial" font-size="12.00">quantity : int </text>
+<text xml:space="preserve" text-anchor="start" x="3029.84" y="-319.4" font-family="Arial" font-size="12.00">unit_price : decimal </text>
+<text xml:space="preserve" text-anchor="start" x="3029.84" y="-295" font-family="Arial" font-size="12.00">currency : string </text>
 </g>
 <!-- Product&#45;&gt;SaleItem -->
 <g id="edge25" class="edge">
 <title>Product&#45;&gt;SaleItem</title>
-<path fill="none" stroke="#60756c" d="M731.66,-630.43C794.19,-536.66 882.91,-405.63 895.1,-398.6 1003.63,-335.98 1893.77,-306.6 2019.08,-306.6 2019.08,-306.6 2019.08,-306.6 2807.65,-306.6 2883.12,-306.6 2963.96,-334.44 3023.96,-361.03"/>
+<path fill="none" stroke="#60756c" d="M731.66,-630.43C794.19,-536.66 882.91,-405.63 895.1,-398.6 1003.63,-335.98 1893.77,-306.6 2019.08,-306.6 2019.08,-306.6 2019.08,-306.6 2807.65,-306.6 2883.75,-306.6 2964.23,-337.49 3023.92,-367.1"/>
 <text xml:space="preserve" text-anchor="middle" x="2020.08" y="-309.7" font-family="Arial" font-size="10.00">vendido</text>
-<text xml:space="preserve" text-anchor="middle" x="3003.97" y="-358.65" font-family="Arial" font-size="10.00">0..*</text>
+<text xml:space="preserve" text-anchor="middle" x="3003.92" y="-363.87" font-family="Arial" font-size="10.00">0..*</text>
 <text xml:space="preserve" text-anchor="middle" x="734.71" y="-607.66" font-family="Arial" font-size="10.00">1</text>
 </g>
 <!-- Product&#45;&gt;RankingCandidate -->
@@ -724,18 +725,18 @@
 <!-- Sale&#45;&gt;SaleItem -->
 <g id="edge24" class="edge">
 <title>Sale&#45;&gt;SaleItem</title>
-<path fill="none" stroke="#60756c" d="M2836.06,-1608.89C2894.8,-1357.22 3029.05,-782.1 3087.81,-530.37"/>
-<text xml:space="preserve" text-anchor="middle" x="2961.94" y="-1151.75" font-family="Arial" font-size="10.00">contiene</text>
-<text xml:space="preserve" text-anchor="middle" x="3091.92" y="-546.95" font-family="Arial" font-size="10.00">1..*</text>
-<text xml:space="preserve" text-anchor="middle" x="2831.95" y="-1586.32" font-family="Arial" font-size="10.00">1</text>
+<path fill="none" stroke="#60756c" d="M2836.33,-1608.83C2894.2,-1363.19 3024.5,-810.02 3084.67,-554.57"/>
+<text xml:space="preserve" text-anchor="middle" x="2961.94" y="-1157.03" font-family="Arial" font-size="10.00">contiene</text>
+<text xml:space="preserve" text-anchor="middle" x="3088.74" y="-571.15" font-family="Arial" font-size="10.00">1..*</text>
+<text xml:space="preserve" text-anchor="middle" x="2832.26" y="-1586.25" font-family="Arial" font-size="10.00">1</text>
 </g>
 <!-- SaleItem&#45;&gt;StockMovement -->
 <g id="edge27" class="edge">
 <title>SaleItem&#45;&gt;StockMovement</title>
-<path fill="none" stroke="#60756c" d="M3210.58,-351.38C3248.08,-328.15 3290.89,-301.62 3326.69,-279.44"/>
-<text xml:space="preserve" text-anchor="middle" x="3268.63" y="-323.1" font-family="Arial" font-size="10.00">origina</text>
-<text xml:space="preserve" text-anchor="middle" x="3315.73" y="-293.17" font-family="Arial" font-size="10.00">0..*</text>
-<text xml:space="preserve" text-anchor="middle" x="3221.54" y="-331.65" font-family="Arial" font-size="10.00">0..1</text>
+<path fill="none" stroke="#60756c" d="M3210.58,-359.5C3248.08,-334.69 3290.89,-306.36 3326.69,-282.68"/>
+<text xml:space="preserve" text-anchor="middle" x="3268.63" y="-329.1" font-family="Arial" font-size="10.00">origina</text>
+<text xml:space="preserve" text-anchor="middle" x="3316.23" y="-296.73" font-family="Arial" font-size="10.00">0..*</text>
+<text xml:space="preserve" text-anchor="middle" x="3221.04" y="-339.45" font-family="Arial" font-size="10.00">0..1</text>
 </g>
 <!-- RankingConfiguration -->
 <g id="node20" class="node">

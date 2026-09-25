@@ -247,6 +247,7 @@ Fuente: elaboración propia.
 | sale_id | 16 bytes; 36 caracteres de representación | uuid | No | FK | Venta a la que pertenece la línea. |
 | product_id | 16 bytes; 36 caracteres de representación | uuid | No | FK | Producto relacionado, perteneciente al negocio. |
 | product_name_snapshot | 160 caracteres | varchar(160) | No | — | Copia del nombre del producto al registrar la operación. |
+| item_origin | 64 caracteres | varchar(64) | Sí* | — | Origen de la línea: solicitada por el consumidor o acordada durante la conversación. |
 | quantity | 4 bytes; entero de 32 bits | integer | No | — | Cantidad entera de unidades. |
 | unit_price | 12 dígitos, 2 decimales | numeric(12,2) | No | — | Precio unitario efectivamente acordado. |
 | currency | 3 caracteres | varchar(3) | No | — | Código de moneda. |

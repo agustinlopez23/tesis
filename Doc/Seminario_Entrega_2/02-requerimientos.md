@@ -20,7 +20,7 @@ El sistema deberá:
 | RF-10 | Crear una solicitud de productos de un solo negocio con referencia única, copia de cantidades y precios y resumen para WhatsApp, sin reservar stock y sin duplicar la solicitud al reintentar. | CU-10 |
 | RF-11 | Permitir consultar el resumen y estado de una solicitud mediante acceso privado autorizado, sin permitir acceso por la referencia pública aislada. | CU-11 |
 | RF-12 | Listar y localizar solicitudes propias por referencia, confirmar recepción del contacto, pasar a atención o cancelar, preservando el contenido original. | CU-12 |
-| RF-13 | Registrar una venta vinculada a solicitud o presencial, conservar artículos finales y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo. | CU-13 |
+| RF-13 | Registrar una venta vinculada a solicitud o presencial, conservar los artículos finales con el origen de cada línea y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo. | CU-13 |
 | RF-14 | Anular una venta con motivo y auditoría sin reponer stock automáticamente; registrar devoluciones físicas relacionadas con líneas vendidas sin exceder las cantidades originales. | CU-14 |
 | RF-15 | Mostrar ventajas de Presencia e Impulso sin precios, permitir al administrador habilitar períodos no superpuestos y aplicar capacidades según vigencia, conservando historial al vencer. | CU-15 |
 | RF-16 | Crear y consultar campañas para una promoción o un producto propio elegible con zona y fechas, enviarlas a revisión y pausarlas; la suscripción no compra posición orgánica. | CU-16 |

@@ -39,7 +39,7 @@ Esta selección es una propuesta de cobertura, no una exigencia de un diagrama p
 | Requerimientos no funcionales (RNF) | 13 RNF con verificación prevista; no se presentan como pruebas realizadas. |
 | Fichas de casos de uso | 20 fichas con precondiciones, flujo normal, alternativas y postcondiciones. Frecuencias pendientes de relevamiento, sin cifras inventadas. |
 | Justificación de estructura de datos | Redactada: UML orientado a objetos y DER para persistencia relacional. |
-| Diccionario de datos | Completados 203 campos con descripción en español, longitud/precisión y tipo propuesto. |
+| Diccionario de datos | Completados 204 campos con descripción en español, longitud/precisión y tipo propuesto. |
 | Explicación del despliegue | Redactada junto al diagrama; proveedores aún pendientes. |
 
 Procesos relevados en la primera entrega, cuyos nombres deben conservarse:

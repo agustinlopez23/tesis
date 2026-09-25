@@ -188,7 +188,7 @@
 </tr>
 <tr>
 <td>RF-13</td>
-<td>Registrar una venta vinculada a solicitud o presencial, conservar artículos finales y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo.</td>
+<td>Registrar una venta vinculada a solicitud o presencial, conservar los artículos finales con el origen de cada línea y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo.</td>
 <td>CU-13</td>
 </tr>
 <tr>
@@ -1638,7 +1638,7 @@
 </tr>
 <tr>
 <td>Descripción</td>
-<td>Registrar una venta vinculada a solicitud o presencial, conservar artículos finales y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo.</td>
+<td>Registrar una venta vinculada a solicitud o presencial, conservar los artículos finales con el origen de cada línea y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo.</td>
 </tr>
 <tr>
 <td>Precondiciones</td>
@@ -1650,7 +1650,7 @@
 </tr>
 <tr>
 <td>Postcondiciones</td>
-<td>Venta reportada y saldo consistentes; como máximo una venta por solicitud.</td>
+<td>Venta reportada y saldo consistentes; como máximo una venta por solicitud, con el origen declarado en cada línea.</td>
 </tr>
 <tr>
 <td>Frecuencia esperada</td>
@@ -1681,7 +1681,7 @@
 </tr>
 <tr>
 <td>2</td>
-<td>Confirma productos, cantidades y precios efectivamente acordados.</td>
+<td>Confirma los productos, cantidades y precios efectivamente acordados, quitando, cambiando o agregando líneas respecto de la solicitud.</td>
 </tr>
 <tr>
 <td>3</td>
@@ -1689,7 +1689,7 @@
 </tr>
 <tr>
 <td>4</td>
-<td>Guarda venta, líneas, movimientos y saldo dentro de una transacción.</td>
+<td>Guarda venta, líneas con su origen, movimientos y saldo dentro de una transacción.</td>
 </tr>
 <tr>
 <td>5</td>
@@ -2510,7 +2510,7 @@
 <p>Fuente: elaboración propia. <a href="diagramas/S08.puml">Código PlantUML</a>.</p>
 <h2>Estructura de datos</h2>
 <p>Se utilizan <strong>clases y DER</strong> porque el sistema se diseña orientado a objetos y almacena datos relacionales. El diagrama de clases representa atributos, operaciones de dominio y asociaciones. El DER representa entidades persistentes, claves y cardinalidades. No son intercambiables: por ejemplo, un método de dominio no corresponde a una columna.</p>
-<p>El modelo tiene 26 entidades y 203 campos, incluyendo sesiones y auditoría. Se omiten detalles internos del proveedor de autenticación hasta elegir su implementación; cualquier mapeo posterior debe preservar revocación y seguridad del contrato. La IA produce borradores transitorios y su evidencia de evaluación se conserva como archivos del experimento; no se crea una tabla de sugerencias sin necesidad funcional.</p>
+<p>El modelo tiene 26 entidades y 204 campos, incluyendo sesiones y auditoría. Se omiten detalles internos del proveedor de autenticación hasta elegir su implementación; cualquier mapeo posterior debe preservar revocación y seguridad del contrato. La IA produce borradores transitorios y su evidencia de evaluación se conserva como archivos del experimento; no se crea una tabla de sugerencias sin necesidad funcional.</p>
 <p>Las referencias, nulabilidad, índices y reglas de integridad complementan las figuras. Los importes del catálogo no son precios de suscripción: estos últimos se dejan sin definir.</p>
 <ul>
 <li><a href="../model/classes.md">Clases con operaciones y figuras por módulo</a>.</li>
@@ -2655,7 +2655,7 @@
 </tr>
 <tr>
 <td>SaleItem</td>
-<td>FK compuestas hacia Sale y Product; al menos una línea por venta. UNIQUE(sale_id,product_id). Quantity &gt; 0. Copia de nombre, precio y moneda finales; no se obtiene el importe histórico del precio actual.</td>
+<td>FK compuestas hacia Sale y Product; al menos una línea por venta. UNIQUE(sale_id,product_id,item_origin). Quantity &gt; 0. Copia de nombre, precio y moneda finales; no se obtiene el importe histórico del precio actual. ItemOrigin: requested o agreed_in_conversation; obligatorio cuando la venta tiene solicitud, ausente cuando Origin es in_store.</td>
 </tr>
 <tr>
 <td>StockMovement</td>
@@ -2664,6 +2664,7 @@
 </tbody>
 </table>
 <p>SourceInteractionId debe apuntar a una interacción del mismo negocio; origin debe coincidir con la atribución guardada. Para publicidad se recorre Interaction → AdImpression → AdCampaign. Si no existe evidencia, no fabricar la relación.</p>
+<p>Un mismo producto puede ocupar dos líneas de la misma venta cuando parte de las unidades venía en la solicitud y el resto se acordó durante la conversación. Por eso la unicidad incluye ItemOrigin. El descuento de stock opera sobre las líneas finales, sin distinguir origen; la separación existe para medir cuánto del importe fue solicitado y cuánto se acordó después, sin atribuir ese incremento a una venta presencial.</p>
 <p>StockMovement con SaleItemId usa FK(business_id,product_id,sale_item_id) hacia UNIQUE(business_id,product_id,id) de SaleItem. Así no puede descontar un producto distinto al vendido. Un índice único parcial sobre sale_item_id para kind=sale evita descuentos de venta duplicados; las devoluciones pueden generar varios movimientos, sin exceder unidades vendidas.</p>
 <p>Registrar Sale, SaleItem, movimientos y nuevo saldo en una transacción, comprobando stock concurrentemente. El saldo inicial también es un movimiento. La suma de movimientos debe reconciliar con Inventory.quantity. Un CHECK aislado no puede asegurar esa igualdad entre filas: se implementa con el servicio transaccional y su verificación.</p>
 <p>Anular una venta conserva sus líneas y requiere motivo y actor en AuditEvent; no repone stock automáticamente. Una devolución física genera su propio movimiento. No se modela contabilidad de reintegros monetarios. No usar StockMovement para simular una corrección sin movimiento físico.</p>
@@ -3982,6 +3983,14 @@
 <td>Copia del nombre del producto al registrar la operación.</td>
 </tr>
 <tr>
+<td>item_origin</td>
+<td>64 caracteres</td>
+<td>varchar(64)</td>
+<td>Sí*</td>
+<td>—</td>
+<td>Origen de la línea: solicitada por el consumidor o acordada durante la conversación.</td>
+</tr>
+<tr>
 <td>quantity</td>
 <td>4 bytes; entero de 32 bits</td>
 <td>integer</td>
@@ -5014,7 +5023,7 @@
 <td>P13</td>
 <td>S04</td>
 <td>Sale, SaleItem, StockMovement, Inventory, OrderRequest</td>
-<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha.</td>
+<td>Ejecutar flujo normal y alternativas A1/A2 de la ficha, incluyendo una línea agregada en la conversación.</td>
 </tr>
 <tr>
 <td>RF-14</td>

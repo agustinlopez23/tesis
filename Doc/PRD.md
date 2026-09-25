@@ -139,11 +139,12 @@ Propuesta: no exigir cuenta para explorar. La identidad y los datos mínimos nec
 
 1. El negocio localiza la solicitud por referencia y confirma si recibió el contacto.
 2. Puede acordar cambios y registrar los productos, cantidades y precios finales, preservando el pedido original.
-3. Al registrar la venta, el sistema comprueba disponibilidad y descuenta las cantidades efectivamente vendidas.
-4. La venta y sus movimientos de stock conservan la relación con la solicitud y su origen.
-5. Si falta stock, la operación no se confirma; el negocio debe ajustar la venta.
+3. Las líneas acordadas durante la conversación se registran en esa misma venta, indicando si venían en la solicitud o si se sumaron después. No se abre una venta presencial para absorberlas.
+4. Al registrar la venta, el sistema comprueba disponibilidad y descuenta las cantidades efectivamente vendidas, sin distinguir el origen de cada línea.
+5. La venta y sus movimientos de stock conservan la relación con la solicitud y su origen.
+6. Si falta stock, la operación no se confirma; el negocio debe ajustar la venta.
 
-Las ventas presenciales y los ajustes de inventario se registran con un origen propio. No se atribuyen a una consulta por coincidir en producto o fecha.
+Las ventas presenciales y los ajustes de inventario se registran con un origen propio y corresponden a operaciones sin solicitud. No se atribuyen a una consulta por coincidir en producto o fecha, y tampoco absorben artículos acordados sobre una solicitud existente.
 
 ## 7. Pedidos, ventas e inventario
 
@@ -157,13 +158,14 @@ Estados propuestos de solicitud: **pendiente**, **en atención**, **convertida e
 | Confirmación | Registrar venta y descontar stock debe ser una operación atómica. |
 | Concurrencia | Dos ventas simultáneas no pueden vender las mismas últimas unidades ni generar stock negativo. |
 | Reintentos | Confirmar repetidamente la misma operación no crea ventas ni descuentos duplicados. |
-| Cambios | Los artículos finales pueden diferir de los solicitados; ambos se conservan para medir sustituciones. |
+| Cambios | Los artículos finales pueden diferir de los solicitados, en menos o en más; ambos se conservan para medir sustituciones. Cada línea final declara si venía en la solicitud o si se acordó durante la conversación. |
+| Importes | Se reportan por separado el importe de las líneas solicitadas y el importe incremental acordado en la conversación. No se publica un único importe mezclado. |
 | Cancelación | Cancelar una solicitud sin venta no cambia stock. |
 | Correcciones | Una venta registrada se corrige mediante una operación auditada; la reposición de unidades requiere registrar su devolución efectiva. |
 | Inventario manual | Todo ajuste indica cantidad, motivo, responsable y fecha; no genera conversión. |
 | Trazabilidad | Una venta atribuida apunta explícitamente a una solicitud; no se deduce por proximidad temporal. |
 
-Propuesta de límite: una venta por solicitud en el MVP, sin entregas ni conversiones parciales múltiples. Las cantidades finales pueden reducirse al registrar esa venta.
+Propuesta de límite: una venta por solicitud en el MVP, sin entregas ni conversiones parciales múltiples. Las líneas finales pueden diferir de las solicitadas al registrar esa venta: reducirse, cambiar de producto o agregarse. Un solo acuerdo comercial produce una sola venta atribuida a esa solicitud, con el origen declarado por línea.
 
 ## 8. Ranking: aporte tecnológico
 
@@ -282,10 +284,11 @@ Preservar origen disponible: revista, búsqueda, anuncio o acceso directo, adem�
 4. Crear una solicitud no altera stock ni se contabiliza como venta o mensaje recibido.
 5. El negocio puede registrar una venta vinculada; venta y descuento se guardan juntos, sin duplicados ni stock negativo ante concurrencia.
 6. Una venta presencial o un ajuste de stock no se atribuye automáticamente a contactos de la revista.
-7. Un responsable no puede acceder a información privada de otro negocio, incluso modificando identificadores en solicitudes HTTP.
-8. Un negocio elegible puede solicitar una campaña para un producto o una promoción, con zona y fechas definidas. Solo se muestra tras aprobación y confirmación de pago, mientras siga vigente y habilitada. Los espacios patrocinados son identificables y sus impresiones no se mezclan con la exposición orgánica.
-9. El ranking respeta elegibilidad y límites por negocio y produce resultados reproducibles bajo una configuración experimental fija.
-10. Se entrega una comparación de variantes con métricas de equidad y relevancia, sin afirmar mejoras no observadas.
+7. Los artículos acordados durante la conversación se registran en la venta de esa solicitud, con su origen por línea, y no como una venta presencial separada.
+8. Un responsable no puede acceder a información privada de otro negocio, incluso modificando identificadores en solicitudes HTTP.
+9. Un negocio elegible puede solicitar una campaña para un producto o una promoción, con zona y fechas definidas. Solo se muestra tras aprobación y confirmación de pago, mientras siga vigente y habilitada. Los espacios patrocinados son identificables y sus impresiones no se mezclan con la exposición orgánica.
+10. El ranking respeta elegibilidad y límites por negocio y produce resultados reproducibles bajo una configuración experimental fija.
+11. Se entrega una comparación de variantes con métricas de equidad y relevancia, sin afirmar mejoras no observadas.
 
 ## 13. Secuencia de entrega propuesta
 

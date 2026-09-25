@@ -98,7 +98,7 @@
         [
           "SaleItem",
           "Copia de lo efectivamente vendido",
-          "uuid id PK;uuid business_id FK;uuid sale_id FK;uuid product_id FK;string product_name_snapshot;int quantity;decimal unit_price;string currency"
+          "uuid id PK;uuid business_id FK;uuid sale_id FK;uuid product_id FK;string product_name_snapshot;string item_origin;int quantity;decimal unit_price;string currency"
         ],
         [
           "StockMovement",
@@ -647,7 +647,8 @@
     "target_id": "Identificador del recurso auditado; referencia lógica preservada.",
     "action": "Acción auditada.",
     "previous_state": "Estado anterior, si aplica.",
-    "new_state": "Estado nuevo, si aplica."
+    "new_state": "Estado nuevo, si aplica.",
+    "item_origin": "Origen de la línea: solicitada por el consumidor o acordada durante la conversación."
   },
   "optional": {
     "Business": [
@@ -723,6 +724,9 @@
       "business_id",
       "previous_state",
       "new_state"
+    ],
+    "SaleItem": [
+      "item_origin"
     ]
   }
 }

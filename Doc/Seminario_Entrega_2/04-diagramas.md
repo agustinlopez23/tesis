@@ -100,7 +100,7 @@ Fuente: elaboración propia. [Código PlantUML](diagramas/S08.puml).
 
 Se utilizan **clases y DER** porque el sistema se diseña orientado a objetos y almacena datos relacionales. El diagrama de clases representa atributos, operaciones de dominio y asociaciones. El DER representa entidades persistentes, claves y cardinalidades. No son intercambiables: por ejemplo, un método de dominio no corresponde a una columna.
 
-El modelo tiene 26 entidades y 203 campos, incluyendo sesiones y auditoría. Se omiten detalles internos del proveedor de autenticación hasta elegir su implementación; cualquier mapeo posterior debe preservar revocación y seguridad del contrato. La IA produce borradores transitorios y su evidencia de evaluación se conserva como archivos del experimento; no se crea una tabla de sugerencias sin necesidad funcional.
+El modelo tiene 26 entidades y 204 campos, incluyendo sesiones y auditoría. Se omiten detalles internos del proveedor de autenticación hasta elegir su implementación; cualquier mapeo posterior debe preservar revocación y seguridad del contrato. La IA produce borradores transitorios y su evidencia de evaluación se conserva como archivos del experimento; no se crea una tabla de sugerencias sin necesidad funcional.
 
 Las referencias, nulabilidad, índices y reglas de integridad complementan las figuras. Los importes del catálogo no son precios de suscripción: estos últimos se dejan sin definir.
 

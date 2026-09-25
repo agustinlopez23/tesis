@@ -20,7 +20,7 @@ La portada no incorpora datos personales del autor. Al integrar el trabajo final
 | Casos de uso, 8 secuencias, BPMN, componentes y despliegue con explicación | [04-diagramas.md](04-diagramas.md) |
 | Clases con operaciones | [Modelo de clases](../model/classes.md) |
 | DER por módulos y completo | [Modelo relacional](../model/ER.md) |
-| Diccionario de 203 campos, tipos y longitudes | [Diccionario por campo](../model/field-dictionary.md) |
+| Diccionario de 204 campos, tipos y longitudes | [Diccionario por campo](../model/field-dictionary.md) |
 | Reglas de integridad y decisiones de persistencia | [Diccionario de restricciones](../model/data-dictionary.md) |
 | Pantallas y encadenamiento | [05-pantallas.md](05-pantallas.md) |
 | RF → CU → pantalla/secuencia → entidades → verificación | [06-trazabilidad.md](06-trazabilidad.md) |

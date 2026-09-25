@@ -16,7 +16,7 @@ const nodes = [
   ['pending','endEvent','Solicitud pendiente','consumer',765,235,36,36],
   ['attend','userTask','Atender consulta y acordar venta','business',990,515,180,64],
   ['saleDecision','exclusiveGateway','¿Se concreta?','business',1235,520,50,50],
-  ['confirm','userTask','Confirmar artículos y cantidades','business',1380,510,180,64],
+  ['confirm','userTask','Confirmar artículos, cantidades y origen','business',1380,510,180,64],
   ['commit','serviceTask','Registrar venta y stock atómicamente','platform',1620,330,185,70],
   ['sold','endEvent','Venta registrada','platform',1880,345,36,36],
   ['cancel','userTask','Cancelar solicitud con motivo','business',1380,625,180,64],

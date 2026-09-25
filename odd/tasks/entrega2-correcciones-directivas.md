@@ -80,21 +80,21 @@ Documentacion y generadores documentales. No se toca `App/` ni `openspec/`: el c
 
 ### T3 — Origen por linea de venta
 
-- [ ] T3.1 `Doc/model/model.json`: campo `item_origin` en `SaleItem`, entrada en
+- [x] T3.1 `Doc/model/model.json`: campo `item_origin` en `SaleItem`, entrada en
       `descriptions` y marca en `optional.SaleItem`.
-- [ ] T3.2 `Doc/model/data-dictionary.md`: restriccion `UNIQUE` y valores del campo.
-- [ ] T3.3 `Doc/model/README.md`: decisiones 4 y la nota de venta presencial.
-- [ ] T3.4 `Doc/PRD.md`: seccion 6 recorrido C, seccion 7 (tabla y limite: "pueden
+- [x] T3.2 `Doc/model/data-dictionary.md`: restriccion `UNIQUE` y valores del campo.
+- [x] T3.3 `Doc/model/README.md`: decisiones 4 y la nota de venta presencial.
+- [x] T3.4 `Doc/PRD.md`: seccion 6 recorrido C, seccion 7 (tabla y limite: "pueden
       diferir" en lugar de "pueden reducirse") y criterio de aceptacion de la seccion 12.
-- [ ] T3.5 `catalog.json` caso 13, `screens.json` P13 y `sequences.json` S04.
-- [ ] T3.6 `02-requerimientos.md` RF-13, `03-casos-de-uso.md` CU-13 y
+- [x] T3.5 `catalog.json` caso 13, `screens.json` P13 y `sequences.json` S04.
+- [x] T3.6 `02-requerimientos.md` RF-13, `03-casos-de-uso.md` CU-13 y
       `06-trazabilidad.md`, manteniendo la coincidencia literal que exige `verify.py`.
-- [ ] T3.7 `contenido-entrega2.mjs`: RF-13 y criterios de aceptacion de HU-13.
-- [ ] T3.8 Actualizar los conteos de campos codificados a mano (203 a 204) en
+- [x] T3.7 `contenido-entrega2.mjs`: RF-13 y criterios de aceptacion de HU-13.
+- [x] T3.8 Actualizar los conteos de campos codificados a mano (203 a 204) en
       `Doc/model/README.md`, `Doc/documentation-checklist.md`,
       `Doc/Seminario_Entrega_2/README.md` y `04-diagramas.md`.
-- [ ] T3.9 Regenerar modelo, figuras, BPMN, reporte y el docx de Scrum.
-- [ ] T3.10 Ejecutar `verify.py` y commit de unidad de trabajo.
+- [x] T3.9 Regenerar modelo, figuras, BPMN, reporte y el docx de Scrum.
+- [x] T3.10 Ejecutar `verify.py` y commit de unidad de trabajo.
 
 ## Criterios de aceptacion
 
@@ -120,7 +120,11 @@ Documentacion y generadores documentales. No se toca `App/` ni `openspec/`: el c
   en historias de usuario, Fowler 2002 y Singh y Joachims 2018 en arquitectura). Comprobado por
   extraccion de word/document.xml: los catorce marcadores de cita y referencia estan presentes.
   verify.py sale 0.
+- T3 cerrado: campo item_origin en SaleItem (204 campos), unicidad por origen, PRD secciones 6, 7
+  y 12, caso 13, pantalla P13, secuencia S04, RF-13, CU-13, trazabilidad, RF-13 y HU-13 del
+  documento de Scrum, SaleItem agregado al diccionario curado y etiqueta BPMN. Conteos de campos
+  escritos a mano actualizados en cuatro documentos. verify.py sale 0 con 204 campos.
 
 ## Proximo paso
 
-T3.1 — origen por linea de venta en el modelo.
+Feature completa. Pendiente de decision del usuario: push y pull request.
