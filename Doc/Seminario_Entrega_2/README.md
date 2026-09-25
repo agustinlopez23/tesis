@@ -40,11 +40,13 @@ Las dependencias de documentación se instalan en `.tools/documentation`, separa
 
 ```powershell
 New-Item -ItemType Directory -Force .tools/documentation
-Copy-Item Doc/Entrega2/tools/package.json .tools/documentation/package.json
-Copy-Item Doc/Entrega2/tools/package-lock.json .tools/documentation/package-lock.json
+Copy-Item Doc/Seminario_Entrega_2/tools/package.json .tools/documentation/package.json
+Copy-Item Doc/Seminario_Entrega_2/tools/package-lock.json .tools/documentation/package-lock.json
 npm ci --prefix .tools/documentation --no-audit --no-fund
-node Doc/Entrega2/tools/build-all.mjs
-python Doc/Entrega2/tools/verify.py
+node Doc/Seminario_Entrega_2/tools/build-all.mjs
+node Doc/Seminario_Entrega_2/tools/render-arquitectura.mjs
+node Doc/Seminario_Entrega_2/tools/build-entrega2-scrum.mjs
+python Doc/Seminario_Entrega_2/tools/verify.py
 ```
 
 Editar el texto académico en Markdown. `tools/catalog.json` contiene la matriz de requisitos/casos usada para comprobar trazabilidad; si cambia una ficha, actualizar también esa definición. `tools/screens.json` controla las maquetas, `tools/sequences.json` las secuencias y `../model/model.json` el modelo y diccionario por campo. Los generadores reemplazan únicamente sus artefactos derivados.

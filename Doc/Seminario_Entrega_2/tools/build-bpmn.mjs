@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
-const dir = path.join(root, 'Doc/Entrega2');
+const dir = path.join(root, 'Doc/Seminario_Entrega_2');
 const require = createRequire(path.join(root, '.tools/documentation/package.json'));
 const { Resvg } = require('@resvg/resvg-js');
 const esc = s => s.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('"', '&quot;');
