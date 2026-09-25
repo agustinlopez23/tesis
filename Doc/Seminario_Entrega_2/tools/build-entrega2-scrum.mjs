@@ -74,6 +74,19 @@ const itemCodificado = (codigo, texto) => new Paragraph({
   ],
 });
 
+// Referencia bibliográfica con sangría francesa. El segundo segmento va en cursiva
+// por corresponder al título de la obra o al nombre de la publicación.
+const referencia = ({ antes, cursiva, despues }) => new Paragraph({
+  alignment: AlignmentType.LEFT,
+  spacing: { after: 120, line: INTERLINEADO },
+  indent: { left: SANGRIA, hanging: SANGRIA },
+  children: [
+    new TextRun({ text: antes, font: FUENTE, size: CUERPO }),
+    new TextRun({ text: cursiva, font: FUENTE, size: CUERPO, italics: true }),
+    new TextRun({ text: despues, font: FUENTE, size: CUERPO }),
+  ],
+});
+
 const rotuloTabla = (nombre) => {
   nTabla += 1;
   return [
@@ -197,7 +210,7 @@ C.alcances.forEach((a) => push(vinieta(a)));
 // 3. Descripción del Sistema
 push(titulo('Descripción del Sistema'));
 push(cuerpo(
-  'La descripción del sistema se desarrolla con los artefactos de Scrum, marco de trabajo definido en el diseño metodológico del proyecto. Se presentan los requerimientos funcionales y no funcionales, el product backlog, la especificación de las historias de usuario con sus criterios de aceptación y el sprint backlog del primer sprint.',
+  'La descripción del sistema se desarrolla con los artefactos de Scrum, marco de trabajo definido en el diseño metodológico del proyecto, cuyos artefactos y responsabilidades se toman de la guía oficial de sus autores (Schwaber y Sutherland, 2020). Se presentan los requerimientos funcionales y no funcionales, el product backlog, la especificación de las historias de usuario con sus criterios de aceptación y el sprint backlog del primer sprint.',
 ));
 
 push(subtitulo('Requerimientos funcionales'));
@@ -220,7 +233,7 @@ push(tabla([1100, 2100, 5826], [
 
 push(subtitulo('Product backlog'));
 push(cuerpo(
-  'El product backlog reúne las historias de usuario que cubren la totalidad de los requerimientos funcionales definidos. La prioridad expresa el orden de negocio, los puntos de historia estiman el esfuerzo relativo en escala de Fibonacci y las dependencias indican qué historias deben resolverse previamente.',
+  'El product backlog reúne las historias de usuario que cubren la totalidad de los requerimientos funcionales definidos. La prioridad expresa el orden de negocio, los puntos de historia estiman el esfuerzo relativo en escala de Fibonacci, según la técnica de estimación relativa propuesta por Cohn (2005), y las dependencias indican qué historias deben resolverse previamente.',
 ));
 push(rotuloTabla('Product backlog del prototipo'));
 push(tabla([1000, 3826, 1200, 1400, 1600], [
@@ -242,7 +255,7 @@ push(tabla([1000, 3826, 1200, 1400, 1600], [
 
 push(subtitulo('Historias de usuario'));
 push(cuerpo(
-  'A continuación se especifica cada historia identificada en el product backlog, con su descripción y sus criterios de aceptación.',
+  'A continuación se especifica cada historia identificada en el product backlog, con su descripción y sus criterios de aceptación. La descripción adopta la plantilla de rol, funcionalidad y beneficio sistematizada por Cohn (2004), y los criterios de aceptación se redactan como escenarios de contexto, acción y resultado esperado, formato difundido por North (2006) para expresar el comportamiento esperado en el lenguaje del negocio.',
 ));
 for (const h of C.historiasUsuario) {
   push(rotuloTabla(`Historia de usuario ${h.id}`));
@@ -338,6 +351,11 @@ for (const p of C.pantallas) {
 push(titulo('Diagrama de Arquitectura'));
 C.arquitecturaTexto.forEach((p) => push(cuerpo(p)));
 push(figura(resolve(entrega, 'figuras', 'arquitectura.png'), 'Diagrama de arquitectura del prototipo'));
+
+// 7. Referencias
+push(titulo('Referencias'));
+push(cuerpo(C.referenciasIntro));
+C.referencias.forEach((r) => push(referencia(r)));
 
 // --- Empaquetado -----------------------------------------------------------
 const documento = new Document({

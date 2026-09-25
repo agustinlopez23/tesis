@@ -114,8 +114,13 @@ Documentacion y generadores documentales. No se toca `App/` ni `openspec/`: el c
 
 ## Progreso
 
-Sin tareas completadas todavia.
+- T1 cerrado en ea74cf5. build-all.mjs completa los cuatro generadores; verify.py sale 0.
+- T2 cerrado: seis referencias en ingles verificadas contra sus fuentes y citadas en el cuerpo
+  (Scrum en la descripcion del sistema, Cohn 2005 en el product backlog, Cohn 2004 y North 2006
+  en historias de usuario, Fowler 2002 y Singh y Joachims 2018 en arquitectura). Comprobado por
+  extraccion de word/document.xml: los catorce marcadores de cita y referencia estan presentes.
+  verify.py sale 0.
 
 ## Proximo paso
 
-T1.1.
+T3.1 — origen por linea de venta en el modelo.

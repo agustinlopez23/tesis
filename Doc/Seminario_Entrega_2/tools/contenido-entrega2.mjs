@@ -546,7 +546,45 @@ export const pantallas = [
 export const arquitecturaTexto = [
   'El diagrama de arquitectura representa los componentes del prototipo y la forma en que se comunican entre sí. El recorrido comienza en la capa de cliente, donde el comerciante y el consumidor acceden desde el navegador de un dispositivo móvil o de escritorio, sin necesidad de instalar una aplicación nativa.',
   'Las peticiones llegan por HTTPS a la aplicación web construida con Next.js sobre React, desplegada en Vercel, que resuelve las interfaces del catálogo, la búsqueda, el mapa y el panel del comercio. Esa aplicación no accede a la base de datos: se comunica mediante una interfaz REST con intercambio en formato JSON y autenticación por token contra el backend.',
-  'El backend está desarrollado en C# con ASP.NET Core y se organiza en N capas. La capa de presentación expone los servicios y resuelve la autenticación y la comprobación de permisos. La capa de lógica de negocio concentra las reglas del sistema, entre ellas el motor de ranking orgánico que calcula el puntaje S = w₁·Rel + w₂·Prox + w₃·Disp + w₄·Eq. La capa de acceso a datos traduce los objetos del dominio a la base mediante Entity Framework Core. Cada capa invoca únicamente a la inmediata inferior, lo que permite verificar las reglas de ranking y de ventas sin depender de proveedores externos.',
+  'El backend está desarrollado en C# con ASP.NET Core y se organiza en N capas, siguiendo la separación entre presentación, lógica de negocio y acceso a datos descrita por Fowler (2002). La capa de presentación expone los servicios y resuelve la autenticación y la comprobación de permisos. La capa de lógica de negocio concentra las reglas del sistema, entre ellas el motor de ranking orgánico que calcula el puntaje S = w₁·Rel + w₂·Prox + w₃·Disp + w₄·Eq, cuyo cuarto factor recoge la noción de equidad de exposición formulada por Singh y Joachims (2018): la visibilidad acumulada de cada negocio debe guardar proporción con su mérito estimado, y no con su capacidad de pago. La capa de acceso a datos traduce los objetos del dominio a la base mediante Entity Framework Core. Cada capa invoca únicamente a la inmediata inferior, lo que permite verificar las reglas de ranking y de ventas sin depender de proveedores externos.',
   'La persistencia se resuelve en PostgreSQL con la extensión PostGIS, que almacena el catálogo, el stock, la geolocalización de los negocios y el historial de exposición necesario para el cálculo de equidad. Las fotografías de los productos se conservan en un almacenamiento de objetos compatible con S3, al que la capa de presentación accede para su carga y lectura, y del que la base de datos guarda únicamente la referencia. Ambos servicios se alojan en Supabase.',
   'Por último, la capa de lógica de negocio se comunica por HTTPS con la API de OpenAI, único servicio externo del prototipo, al que envía la fotografía y los datos mínimos del producto y del que recibe la propuesta estructurada de nombre, descripción y categoría. Esa propuesta queda sujeta a la revisión del comerciante antes de publicarse, de modo que el servicio externo no interviene en la indexación ni en la recuperación de la información, que dependen exclusivamente de la lógica propia del sistema.',
+];
+
+export const referenciasIntro =
+  'Las fuentes consultadas se citan en su idioma original. Las obras sobre marco de trabajo, historias de usuario, criterios de aceptación, arquitectura de aplicaciones y equidad de exposición en rankings fueron publicadas originalmente en inglés, de modo que la referencia bibliográfica corresponde a esa edición y no a una traducción.';
+
+// Cada referencia se expresa en tres segmentos para aplicar la cursiva del título
+// o de la publicación sin depender de marcas dentro del texto.
+export const referencias = [
+  {
+    antes: 'Cohn, M. (2004). ',
+    cursiva: 'User stories applied: For agile software development',
+    despues: '. Addison-Wesley.',
+  },
+  {
+    antes: 'Cohn, M. (2005). ',
+    cursiva: 'Agile estimating and planning',
+    despues: '. Prentice Hall.',
+  },
+  {
+    antes: 'Fowler, M. (2002). ',
+    cursiva: 'Patterns of enterprise application architecture',
+    despues: '. Addison-Wesley.',
+  },
+  {
+    antes: 'North, D. (2006). Introducing BDD. ',
+    cursiva: 'Better Software',
+    despues: '.',
+  },
+  {
+    antes: 'Schwaber, K., & Sutherland, J. (2020). ',
+    cursiva: 'The Scrum Guide: The definitive guide to Scrum: The rules of the game',
+    despues: '. Scrum.org.',
+  },
+  {
+    antes: 'Singh, A., & Joachims, T. (2018). Fairness of exposure in rankings. En ',
+    cursiva: 'Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining',
+    despues: ' (pp. 2219-2228). Association for Computing Machinery.',
+  },
 ];
