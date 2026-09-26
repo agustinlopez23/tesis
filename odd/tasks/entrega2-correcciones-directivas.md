@@ -96,6 +96,21 @@ Documentacion y generadores documentales. No se toca `App/` ni `openspec/`: el c
 - [x] T3.9 Regenerar modelo, figuras, BPMN, reporte y el docx de Scrum.
 - [x] T3.10 Ejecutar `verify.py` y commit de unidad de trabajo.
 
+### T4 — Trazabilidad de la entrega de Scrum
+
+La catedra cierra las directivas pidiendo que cada requerimiento funcional pueda
+rastrearse contra el alcance, una historia de usuario, la estructura de datos y al menos
+una parte del prototipo. El documento de Scrum no tenia esa seccion.
+
+- [x] T4.1 Codificar los alcances (`A-01` a `A-16`) para que la matriz pueda referirlos.
+- [x] T4.2 Agregar los dos alcances faltantes: moderacion de la plataforma (cubre RF-19) y
+      registro de auditoria (cubre RF-23). Ambos describen funcionalidad ya exigida por
+      esos requerimientos; el alcance estaba incompleto, no los requerimientos.
+- [x] T4.3 Export `trazabilidad` con las 23 filas RF -> alcance -> HU -> entidades ->
+      prototipo, derivadas de `catalog.json` (casos y `rfextra`).
+- [x] T4.4 Renderizar la seccion en `build-entrega2-scrum.mjs`.
+- [x] T4.5 Regenerar, verificar y commit de unidad de trabajo.
+
 ## Criterios de aceptacion
 
 - `verify.py` pasa sin fallos tras cada unidad de trabajo.
@@ -105,6 +120,9 @@ Documentacion y generadores documentales. No se toca `App/` ni `openspec/`: el c
   sobre una solicitud existente.
 - El conteo de campos del modelo es consistente entre el generador y la prosa.
 - Los archivos generados no se editan a mano.
+- Cada uno de los 23 RF aparece exactamente una vez en la matriz de trazabilidad, con
+  alcance, historia, entidades y prototipo cuando corresponde.
+- Todo alcance declarado tiene al menos un RF que lo cubre, y todo RF tiene alcance.
 
 ## Verificacion
 
@@ -124,7 +142,14 @@ Documentacion y generadores documentales. No se toca `App/` ni `openspec/`: el c
   y 12, caso 13, pantalla P13, secuencia S04, RF-13, CU-13, trazabilidad, RF-13 y HU-13 del
   documento de Scrum, SaleItem agregado al diccionario curado y etiqueta BPMN. Conteos de campos
   escritos a mano actualizados en cuatro documentos. verify.py sale 0 con 204 campos.
+- T4 cerrado: la entrega efectiva es la de Scrum, decidido por el usuario. Alcances codificados
+  A-01 a A-16 con dos agregados (moderacion y auditoria) que cubren RF-19 y RF-23, hasta ahora
+  sin alcance declarado. Matriz de 23 filas RF -> alcance -> HU -> entidades -> prototipo,
+  validada por script: los 23 RF aparecen una sola vez, los 16 alcances tienen cobertura y no
+  hay referencias colgadas. verify.py sale 0.
 
 ## Proximo paso
 
-Feature completa. Pendiente de decision del usuario: push y pull request.
+Revision manual de la paginacion del docx, que verify.py no cubre. Queda por decidir que se
+hace con el corpus UML paralelo: verify.py lo valida, de modo que borrarlo romperia la puerta
+de verificacion.

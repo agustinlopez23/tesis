@@ -88,21 +88,24 @@ export const objetivoPrototipo =
 export const limites =
   'Desde que el responsable del negocio registra su comercio y prepara su oferta, hasta que la solicitud de un consumidor se registra como venta y se descuenta del inventario. La conversación, el acuerdo comercial, el pago y la entrega ocurren fuera del sistema.';
 
+// Cada alcance lleva código para que la matriz de trazabilidad pueda referirlo.
 export const alcances = [
-  'Registro y acceso de cuentas con roles de consumidor, responsable del negocio y administrador de plataforma.',
-  'Gestión del perfil, el rubro y la ubicación del negocio.',
-  'Gestión de novedades y promociones del negocio.',
-  'Gestión del catálogo, los precios y la disponibilidad de productos.',
-  'Asistencia de inteligencia artificial generativa para la creación de productos.',
-  'Registro de movimientos de inventario con motivo y responsable.',
-  'Descubrimiento de negocios de la zona mediante ranking hiperlocal.',
-  'Búsqueda de productos cercanos por texto, categoría y zona.',
-  'Consulta de la oferta y contacto con el negocio por mensajería.',
-  'Creación y seguimiento de solicitudes de productos.',
-  'Registro de ventas, corrección de ventas y devoluciones físicas.',
-  'Habilitación de planes de suscripción y de campañas publicitarias identificadas.',
-  'Consulta de métricas de visitas, contactos y ventas reportadas.',
-  'Configuración y evaluación reproducible del algoritmo de ranking.',
+  ['A-01', 'Registro y acceso de cuentas con roles de consumidor, responsable del negocio y administrador de plataforma.'],
+  ['A-02', 'Gestión del perfil, el rubro y la ubicación del negocio.'],
+  ['A-03', 'Gestión de novedades y promociones del negocio.'],
+  ['A-04', 'Gestión del catálogo, los precios y la disponibilidad de productos.'],
+  ['A-05', 'Asistencia de inteligencia artificial generativa para la creación de productos.'],
+  ['A-06', 'Registro de movimientos de inventario con motivo y responsable.'],
+  ['A-07', 'Descubrimiento de negocios de la zona mediante ranking hiperlocal.'],
+  ['A-08', 'Búsqueda de productos cercanos por texto, categoría y zona.'],
+  ['A-09', 'Consulta de la oferta y contacto con el negocio por mensajería.'],
+  ['A-10', 'Creación y seguimiento de solicitudes de productos.'],
+  ['A-11', 'Registro de ventas, corrección de ventas y devoluciones físicas.'],
+  ['A-12', 'Habilitación de planes de suscripción y de campañas publicitarias identificadas.'],
+  ['A-13', 'Consulta de métricas de visitas, contactos y ventas reportadas.'],
+  ['A-14', 'Configuración y evaluación reproducible del algoritmo de ranking.'],
+  ['A-15', 'Moderación de la plataforma: gestión de categorías y suspensión o rehabilitación de cuentas, negocios y publicaciones.'],
+  ['A-16', 'Registro de auditoría de los cambios sensibles de estado, plan, moderación y venta.'],
 ];
 
 export const requerimientosFuncionales = [
@@ -603,4 +606,36 @@ export const referencias = [
     cursiva: 'Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery & Data Mining',
     despues: ' (pp. 2219-2228). Association for Computing Machinery.',
   },
+];
+
+export const trazabilidadIntro = [
+  'La matriz vincula cada requerimiento funcional con el alcance que lo origina, la historia de usuario que lo especifica, las entidades de la estructura de datos que lo sostienen y el prototipo de interfaz que lo muestra. Su finalidad es comprobar que las secciones anteriores describen un mismo sistema y no conjuntos independientes: todo requerimiento nace de un alcance declarado y todo alcance declarado tiene al menos un requerimiento que lo cubre.',
+  'La columna de prototipo queda vacía cuando el requerimiento no se muestra en ninguna de las cuatro maquetas presentadas. Los prototipos se seleccionaron para exhibir el recorrido central del sistema, no para cubrir la totalidad de los requerimientos, de modo que esa ausencia es una decisión de alcance del entregable y no una falta de especificación: la historia de usuario y sus criterios de aceptación definen el comportamiento esperado en todos los casos.',
+];
+
+// Filas derivadas de las fichas de caso y del bloque rfextra de tools/catalog.json.
+export const trazabilidad = [
+  ['RF-01', 'A-01', 'HU-01', 'UserAccount, UserRole', ''],
+  ['RF-02', 'A-02', 'HU-02', 'Business, BusinessCategory, BusinessActivity', ''],
+  ['RF-03', 'A-03', 'HU-03', 'Publication, BusinessActivity, Product', ''],
+  ['RF-04', 'A-04', 'HU-04', 'Product, ProductCategory, Inventory', ''],
+  ['RF-05', 'A-05', 'HU-05', 'Product, ProductCategory', 'P05'],
+  ['RF-06', 'A-06', 'HU-06', 'Inventory, StockMovement, Product', ''],
+  ['RF-07', 'A-07', 'HU-07', 'DiscoveryRequest, RankingConfiguration, RankingCandidate, OrganicImpression, Business', 'P07'],
+  ['RF-08', 'A-08', 'HU-08', 'Product, Inventory, RankingCandidate, OrganicImpression', ''],
+  ['RF-09', 'A-09', 'HU-09', 'Business, Product, Publication, Interaction', ''],
+  ['RF-10', 'A-10', 'HU-10', 'OrderRequest, OrderItem, Interaction', 'P10'],
+  ['RF-11', 'A-10', 'HU-11', 'OrderRequest, OrderItem, Sale', ''],
+  ['RF-12', 'A-10', 'HU-12', 'OrderRequest, AuditEvent', ''],
+  ['RF-13', 'A-11', 'HU-13', 'Sale, SaleItem, StockMovement, Inventory, OrderRequest', 'P13'],
+  ['RF-14', 'A-11', 'HU-14', 'Sale, SaleItem, StockMovement, AuditEvent', ''],
+  ['RF-15', 'A-12', 'HU-15', 'Plan, PlanCapability, Subscription, AuditEvent', ''],
+  ['RF-16', 'A-12', 'HU-16', 'AdCampaign, Publication, Product', ''],
+  ['RF-17', 'A-12', 'HU-17', 'AdCampaign, AdImpression, AuditEvent', ''],
+  ['RF-18', 'A-13', 'HU-18', 'Interaction, OrderRequest, Sale, OrganicImpression, AdImpression', ''],
+  ['RF-19', 'A-15', 'HU-19', 'UserAccount, Business, Publication, BusinessCategory, ProductCategory, AuditEvent', ''],
+  ['RF-20', 'A-14', 'HU-20', 'RankingConfiguration, DiscoveryRequest, RankingCandidate, OrganicImpression', ''],
+  ['RF-21', 'A-14', 'HU-21', 'RankingCandidate, OrganicImpression, AdImpression, RankingConfiguration', ''],
+  ['RF-22', 'A-07, A-14', 'HU-22', 'BusinessActivity, Business, RankingConfiguration', ''],
+  ['RF-23', 'A-16', 'HU-23', 'AuditEvent', ''],
 ];

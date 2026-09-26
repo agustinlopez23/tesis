@@ -205,7 +205,7 @@ push(subtitulo('Límites'));
 push(cuerpo(C.limites));
 push(subtitulo('Alcances'));
 push(cuerpo('El prototipo abarca los siguientes procesos:'));
-C.alcances.forEach((a) => push(vinieta(a)));
+C.alcances.forEach(([c, a]) => push(itemCodificado(c, a)));
 
 // 3. Descripción del Sistema
 push(titulo('Descripción del Sistema'));
@@ -352,7 +352,28 @@ push(titulo('Diagrama de Arquitectura'));
 C.arquitecturaTexto.forEach((p) => push(cuerpo(p)));
 push(figura(resolve(entrega, 'figuras', 'arquitectura.png'), 'Diagrama de arquitectura del prototipo'));
 
-// 7. Referencias
+// 7. Trazabilidad
+push(titulo('Trazabilidad'));
+C.trazabilidadIntro.forEach((p) => push(cuerpo(p)));
+push(rotuloTabla('Trazabilidad entre alcance, requerimientos, historias, datos y prototipos'));
+push(tabla([900, 1100, 900, 4526, 1600], [
+  fila([
+    celda('RF', 900, { encabezado: true }),
+    celda('Alcance', 1100, { encabezado: true }),
+    celda('Historia', 900, { encabezado: true }),
+    celda('Entidades de datos', 4526, { encabezado: true }),
+    celda('Prototipo', 1600, { encabezado: true }),
+  ]),
+  ...C.trazabilidad.map(([rf, al, hu, ent, proto]) => fila([
+    celda(rf, 900),
+    celda(al, 1100),
+    celda(hu, 900),
+    celda(ent, 4526),
+    celda(proto || '—', 1600, { alineacion: AlignmentType.CENTER }),
+  ])),
+]), fuente());
+
+// 8. Referencias
 push(titulo('Referencias'));
 push(cuerpo(C.referenciasIntro));
 C.referencias.forEach((r) => push(referencia(r)));
