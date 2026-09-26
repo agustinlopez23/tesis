@@ -111,24 +111,23 @@ una parte del prototipo. El documento de Scrum no tenia esa seccion.
 - [x] T4.4 Renderizar la seccion en `build-entrega2-scrum.mjs`.
 - [x] T4.5 Regenerar, verificar y commit de unidad de trabajo.
 
-### T5 — Prototipos fieles a lo construido
+### T5 — Prototipos del documento con el encabezado real
 
-El usuario decidio que los cuatro prototipos muestren unicamente pantallas ya
-construidas. Se aceptan las consecuencias: el recorrido solicitud a venta deja de tener
-maqueta y queda sostenido por texto, historias y diagramas.
+Primero se reemplazaron los cuatro prototipos por pantallas construidas (P21 a P24). El
+usuario revirtio esa decision: el documento conserva los cuatro prototipos que describe
+—asistencia de catalogo, descubrimiento, solicitud y registro de venta— y solo el
+encabezado de las maquetas adopta el de la aplicacion.
 
 - [x] T5.1 Relevar con CodeGraph lo construido: rutas /explorar, /negocios/[id],
       /mi-negocio y /estado, con fotos, metricas de actividad y marca real `cerca.`.
-- [x] T5.2 Agregar P21 a P24 a `screens.json` describiendo solo funcionalidad existente,
-      sin tocar P01 a P20, que documentan el sistema disenado y son referidas por las
-      fichas de caso de uso.
-- [x] T5.3 Diferenciar el marco de las maquetas construidas en `render-figures.mjs`:
-      marca `cerca.`, navegacion real de dos entradas y rotulo "Pantalla construida".
-- [x] T5.4 Reemplazar `pantallas` y `pantallasIntro` del documento de Scrum.
-- [x] T5.5 Reapuntar la columna de prototipo de la matriz: RF-02 a P23, RF-07 a P21,
-      RF-09 a P22 y RF-18 a P24; RF-05, RF-10 y RF-13 quedan sin maqueta.
-- [x] T5.6 Actualizar `export-imagenes.mjs` y regenerar la carpeta de alta calidad.
-- [x] T5.7 Regenerar, verificar y commit de unidad de trabajo.
+- [x] T5.2 Restaurar `pantallas`, `pantallasIntro` y la columna de prototipo de la matriz
+      a P05, P07, P10 y P13, recuperando el texto desde el commit a6e1cb0.
+- [x] T5.3 Reemplazar el encabezado de todas las maquetas por el de la aplicacion:
+      marca `cerca.`, ciudad y las dos entradas reales de navegacion. El identificador de
+      pantalla se movio al pie de la barra lateral.
+- [x] T5.4 Retirar P21 a P24 de `screens.json` y sus archivos generados; quedan en el
+      historial, en el commit f5d4d02, por si hicieran falta.
+- [x] T5.5 Regenerar, verificar y commit de unidad de trabajo.
 
 ## Criterios de aceptacion
 
@@ -166,9 +165,8 @@ maqueta y queda sostenido por texto, historias y diagramas.
   sin alcance declarado. Matriz de 23 filas RF -> alcance -> HU -> entidades -> prototipo,
   validada por script: los 23 RF aparecen una sola vez, los 16 alcances tienen cobertura y no
   hay referencias colgadas. verify.py sale 0.
-- T5 cerrado: los cuatro prototipos del documento de Scrum son ahora pantallas construidas
-  (P21 explorar, P22 perfil, P23 mi negocio, P24 actividad). verify.py sale 0 con 24 maquetas,
-  55 SVG y un docx de 45 imagenes. Las maquetas del sistema disenado quedaron intactas.
+- T5 cerrado: el documento conserva sus cuatro prototipos y las maquetas adoptan el encabezado
+  real de la aplicacion. verify.py sale 0 con 20 maquetas, 51 SVG y un docx de 41 imagenes.
 
 ## Proximo paso
 

@@ -529,36 +529,36 @@ export const diccionarioDatos = [
 ];
 
 export const pantallasIntro =
-  'Se presentan cuatro prototipos de las pantallas efectivamente construidas del sistema, con datos de ejemplo. Los cuatro conforman el recorrido que hoy funciona: el consumidor explora los negocios de su zona, abre el perfil de uno y lo contacta por mensajería, mientras el comerciante publica y mantiene su comercio y consulta la actividad que generó. Cada pantalla se corresponde con las historias de usuario especificadas en el apartado anterior.';
+  'Se presentan cuatro prototipos de baja fidelidad correspondientes al núcleo del negocio, con datos ficticios. Los cuatro conforman el recorrido completo de la propuesta: el comerciante publica su producto con asistencia, el consumidor descubre el negocio en su zona, arma una solicitud y el comerciante la convierte en venta. Cada pantalla se corresponde con las historias de usuario especificadas en el apartado anterior.';
 
 export const pantallas = [
   {
-    archivo: 'P21.png',
-    titulo: 'Explorar negocios',
+    archivo: 'P05.png',
+    titulo: 'Asistencia de catálogo',
+    historia: 'HU-05',
+    descripcion:
+      'Pantalla de carga de un producto con asistencia de inteligencia artificial generativa. El comerciante sube la fotografía y los datos mínimos, y el sistema propone nombre, descripción y categoría en campos editables. La publicación no se produce hasta que el comerciante confirma, y ante un fallo del proveedor la pantalla habilita la carga manual. Desde aquí se accede al catálogo completo del negocio.',
+  },
+  {
+    archivo: 'P07.png',
+    titulo: 'Descubrí tu zona',
     historia: 'HU-07',
     descripcion:
-      'Pantalla de entrada del consumidor. Presenta los negocios de la zona con su foto, rubro, dirección y distancia en línea recta, y permite acotar el listado por texto, por rubro y por zona, tomando la ubicación del dispositivo o un punto elegido a mano. Cada tarjeta ofrece el contacto por mensajería sin salir de la guía y deriva al perfil del negocio.',
+      'Pantalla de entrada del consumidor. Presenta los negocios de la zona ordenados por el ranking hiperlocal, con selección de ubicación manual o del dispositivo y filtros por rubro. Es el punto de partida de la navegación del consumidor y deriva al perfil de cada negocio y a la búsqueda de productos cercanos.',
   },
   {
-    archivo: 'P22.png',
-    titulo: 'Perfil del negocio',
-    historia: 'HU-09',
+    archivo: 'P10.png',
+    titulo: 'Tu solicitud',
+    historia: 'HU-10',
     descripcion:
-      'Pantalla pública de un comercio. Reúne su nombre, rubro, descripción, dirección y galería de hasta cinco fotos con epígrafe, y ofrece el contacto directo por mensajería. Es el destino de la guía y el punto donde la visita y el clic de contacto quedan registrados como actividad del negocio, sin presumir que el mensaje fue enviado.',
+      'Pantalla de armado de la solicitud. Muestra los productos seleccionados de un único negocio con sus cantidades y precios, y genera el resumen que se enviará por mensajería. La confirmación registra la solicitud con una referencia única sin reservar stock, y deriva a la pantalla de confirmación con esa referencia.',
   },
   {
-    archivo: 'P23.png',
-    titulo: 'Mi negocio',
-    historia: 'HU-02',
+    archivo: 'P13.png',
+    titulo: 'Registrar venta',
+    historia: 'HU-13',
     descripcion:
-      'Panel del comerciante. Concentra el registro y el ingreso con correo y contraseña, la carga del nombre, la descripción, la dirección, el rubro y el número de contacto, la ubicación tomada del dispositivo o ingresada por coordenadas, y la administración de hasta cinco fotos. El negocio permanece en borrador hasta que su responsable decide publicarlo.',
-  },
-  {
-    archivo: 'P24.png',
-    titulo: 'Actividad de tu negocio',
-    historia: 'HU-18',
-    descripcion:
-      'Pantalla de resultados del comerciante. Informa, para los últimos siete o treinta días y en hora de Córdoba, cuántas veces su tarjeta apareció en la guía, cuántas personas abrieron su perfil y cuántas eligieron contactarlo, con un gráfico día a día y el detalle en tabla. Cierra el recorrido iniciado en el descubrimiento.',
+      'Pantalla del comerciante para convertir una solicitud en venta. Permite ajustar los artículos efectivamente vendidos antes de confirmar, y al registrarla descuenta el stock de cada producto en la misma operación. Cierra el recorrido iniciado en el descubrimiento y alimenta las métricas del negocio.',
   },
 ];
 
@@ -616,23 +616,23 @@ export const trazabilidadIntro = [
 // Filas derivadas de las fichas de caso y del bloque rfextra de tools/catalog.json.
 export const trazabilidad = [
   ['RF-01', 'A-01', 'HU-01', 'UserAccount, UserRole', ''],
-  ['RF-02', 'A-02', 'HU-02', 'Business, BusinessCategory, BusinessActivity', 'P23'],
+  ['RF-02', 'A-02', 'HU-02', 'Business, BusinessCategory, BusinessActivity', ''],
   ['RF-03', 'A-03', 'HU-03', 'Publication, BusinessActivity, Product', ''],
   ['RF-04', 'A-04', 'HU-04', 'Product, ProductCategory, Inventory', ''],
-  ['RF-05', 'A-05', 'HU-05', 'Product, ProductCategory', ''],
+  ['RF-05', 'A-05', 'HU-05', 'Product, ProductCategory', 'P05'],
   ['RF-06', 'A-06', 'HU-06', 'Inventory, StockMovement, Product', ''],
-  ['RF-07', 'A-07', 'HU-07', 'DiscoveryRequest, RankingConfiguration, RankingCandidate, OrganicImpression, Business', 'P21'],
+  ['RF-07', 'A-07', 'HU-07', 'DiscoveryRequest, RankingConfiguration, RankingCandidate, OrganicImpression, Business', 'P07'],
   ['RF-08', 'A-08', 'HU-08', 'Product, Inventory, RankingCandidate, OrganicImpression', ''],
-  ['RF-09', 'A-09', 'HU-09', 'Business, Product, Publication, Interaction', 'P22'],
-  ['RF-10', 'A-10', 'HU-10', 'OrderRequest, OrderItem, Interaction', ''],
+  ['RF-09', 'A-09', 'HU-09', 'Business, Product, Publication, Interaction', ''],
+  ['RF-10', 'A-10', 'HU-10', 'OrderRequest, OrderItem, Interaction', 'P10'],
   ['RF-11', 'A-10', 'HU-11', 'OrderRequest, OrderItem, Sale', ''],
   ['RF-12', 'A-10', 'HU-12', 'OrderRequest, AuditEvent', ''],
-  ['RF-13', 'A-11', 'HU-13', 'Sale, SaleItem, StockMovement, Inventory, OrderRequest', ''],
+  ['RF-13', 'A-11', 'HU-13', 'Sale, SaleItem, StockMovement, Inventory, OrderRequest', 'P13'],
   ['RF-14', 'A-11', 'HU-14', 'Sale, SaleItem, StockMovement, AuditEvent', ''],
   ['RF-15', 'A-12', 'HU-15', 'Plan, PlanCapability, Subscription, AuditEvent', ''],
   ['RF-16', 'A-12', 'HU-16', 'AdCampaign, Publication, Product', ''],
   ['RF-17', 'A-12', 'HU-17', 'AdCampaign, AdImpression, AuditEvent', ''],
-  ['RF-18', 'A-13', 'HU-18', 'Interaction, OrderRequest, Sale, OrganicImpression, AdImpression', 'P24'],
+  ['RF-18', 'A-13', 'HU-18', 'Interaction, OrderRequest, Sale, OrganicImpression, AdImpression', ''],
   ['RF-19', 'A-15', 'HU-19', 'UserAccount, Business, Publication, BusinessCategory, ProductCategory, AuditEvent', ''],
   ['RF-20', 'A-14', 'HU-20', 'RankingConfiguration, DiscoveryRequest, RankingCandidate, OrganicImpression', ''],
   ['RF-21', 'A-14', 'HU-21', 'RankingCandidate, OrganicImpression, AdImpression, RankingConfiguration', ''],

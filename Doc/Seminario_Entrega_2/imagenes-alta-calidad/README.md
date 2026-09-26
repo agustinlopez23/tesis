@@ -13,10 +13,10 @@ La numeracion coincide con la del documento, donde la Entrega 1 cierra en la Fig
 | --- | --- | --- | --- | --- |
 | 3 | Diagrama de clases del prototipo | `figura-03-diagrama-de-clases` | 4400x3391, 1026 KB | `Doc/model/figures/UML-completo.svg` |
 | 4 | Diagrama de entidad-relacion del prototipo | `figura-04-diagrama-entidad-relacion` | 4400x3348, 1021 KB | `Doc/model/figures/ER-completo.svg` |
-| 5 | Prototipo de interfaz: Explorar negocios | `figura-05-prototipo-P21-explorar-negocios` | 4400x3400, 342 KB | `Doc/Seminario_Entrega_2/pantallas/P21.svg` |
-| 6 | Prototipo de interfaz: Perfil del negocio | `figura-06-prototipo-P22-perfil-del-negocio` | 4400x3400, 319 KB | `Doc/Seminario_Entrega_2/pantallas/P22.svg` |
-| 7 | Prototipo de interfaz: Mi negocio | `figura-07-prototipo-P23-mi-negocio` | 4400x3400, 322 KB | `Doc/Seminario_Entrega_2/pantallas/P23.svg` |
-| 8 | Prototipo de interfaz: Actividad de tu negocio | `figura-08-prototipo-P24-actividad-de-tu-negocio` | 4400x3400, 338 KB | `Doc/Seminario_Entrega_2/pantallas/P24.svg` |
+| 5 | Prototipo de interfaz: Asistencia de catalogo | `figura-05-prototipo-P05-asistencia-de-catalogo` | 4400x3400, 348 KB | `Doc/Seminario_Entrega_2/pantallas/P05.svg` |
+| 6 | Prototipo de interfaz: Descubri tu zona | `figura-06-prototipo-P07-descubri-tu-zona` | 4400x3400, 364 KB | `Doc/Seminario_Entrega_2/pantallas/P07.svg` |
+| 7 | Prototipo de interfaz: Tu solicitud | `figura-07-prototipo-P10-tu-solicitud` | 4400x3400, 336 KB | `Doc/Seminario_Entrega_2/pantallas/P10.svg` |
+| 8 | Prototipo de interfaz: Registrar venta | `figura-08-prototipo-P13-registrar-venta` | 4400x3400, 371 KB | `Doc/Seminario_Entrega_2/pantallas/P13.svg` |
 | 9 | Diagrama de arquitectura del prototipo | `figura-09-diagrama-de-arquitectura` | 4400x4450, 657 KB | `Doc/Seminario_Entrega_2/figuras/arquitectura.svg` |
 
 Esta carpeta es un derivado: se regenera con el script y no se edita a mano. Si cambia una
