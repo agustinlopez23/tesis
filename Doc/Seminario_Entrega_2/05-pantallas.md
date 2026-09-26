@@ -241,3 +241,51 @@ Recorrido: Ejecutar experimento → P20; Exportar evidencia → P20.
 Alternativa: Sin juicios de relevancia no se calcula nDCG como resultado válido.
 
 Fuente: elaboración propia.
+
+## P21 — Explorar negocios
+
+![P21 Explorar negocios](pantallas/P21.svg)
+
+CU-21. La guía de tu zona.
+
+Recorrido: Conocer el negocio → P22; Contactar por WhatsApp → P21.
+
+Alternativa: Sin resultados: probá otra zona o quitá un filtro. Si el navegador no comparte la ubicación, la zona se elige a mano.
+
+Fuente: elaboración propia.
+
+## P22 — Perfil del negocio
+
+![P22 Perfil del negocio](pantallas/P22.svg)
+
+CU-22. Conocé su propuesta.
+
+Recorrido: Contactar por WhatsApp → P22; Volver a la guía → P21.
+
+Alternativa: El negocio no existe o una foto no carga: la pantalla lo informa y ofrece reintentar.
+
+Fuente: elaboración propia.
+
+## P23 — Mi negocio
+
+![P23 Mi negocio](pantallas/P23.svg)
+
+CU-23. Publicá y mantené tu comercio.
+
+Recorrido: Guardar negocio → P23; Administrar fotos → P23.
+
+Alternativa: Sesión vencida: el panel lo informa y pide volver a ingresar antes de guardar.
+
+Fuente: elaboración propia.
+
+## P24 — Actividad de tu negocio
+
+![P24 Actividad de tu negocio](pantallas/P24.svg)
+
+CU-24. Qué pasó con tu publicación.
+
+Recorrido: Actualizar → P24; Ver datos por día → P24.
+
+Alternativa: Sin actividad en el período: si el negocio está en borrador, la pantalla sugiere publicarlo.
+
+Fuente: elaboración propia.

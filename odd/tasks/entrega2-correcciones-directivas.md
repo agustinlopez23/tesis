@@ -111,6 +111,25 @@ una parte del prototipo. El documento de Scrum no tenia esa seccion.
 - [x] T4.4 Renderizar la seccion en `build-entrega2-scrum.mjs`.
 - [x] T4.5 Regenerar, verificar y commit de unidad de trabajo.
 
+### T5 — Prototipos fieles a lo construido
+
+El usuario decidio que los cuatro prototipos muestren unicamente pantallas ya
+construidas. Se aceptan las consecuencias: el recorrido solicitud a venta deja de tener
+maqueta y queda sostenido por texto, historias y diagramas.
+
+- [x] T5.1 Relevar con CodeGraph lo construido: rutas /explorar, /negocios/[id],
+      /mi-negocio y /estado, con fotos, metricas de actividad y marca real `cerca.`.
+- [x] T5.2 Agregar P21 a P24 a `screens.json` describiendo solo funcionalidad existente,
+      sin tocar P01 a P20, que documentan el sistema disenado y son referidas por las
+      fichas de caso de uso.
+- [x] T5.3 Diferenciar el marco de las maquetas construidas en `render-figures.mjs`:
+      marca `cerca.`, navegacion real de dos entradas y rotulo "Pantalla construida".
+- [x] T5.4 Reemplazar `pantallas` y `pantallasIntro` del documento de Scrum.
+- [x] T5.5 Reapuntar la columna de prototipo de la matriz: RF-02 a P23, RF-07 a P21,
+      RF-09 a P22 y RF-18 a P24; RF-05, RF-10 y RF-13 quedan sin maqueta.
+- [x] T5.6 Actualizar `export-imagenes.mjs` y regenerar la carpeta de alta calidad.
+- [x] T5.7 Regenerar, verificar y commit de unidad de trabajo.
+
 ## Criterios de aceptacion
 
 - `verify.py` pasa sin fallos tras cada unidad de trabajo.
@@ -147,6 +166,9 @@ una parte del prototipo. El documento de Scrum no tenia esa seccion.
   sin alcance declarado. Matriz de 23 filas RF -> alcance -> HU -> entidades -> prototipo,
   validada por script: los 23 RF aparecen una sola vez, los 16 alcances tienen cobertura y no
   hay referencias colgadas. verify.py sale 0.
+- T5 cerrado: los cuatro prototipos del documento de Scrum son ahora pantallas construidas
+  (P21 explorar, P22 perfil, P23 mi negocio, P24 actividad). verify.py sale 0 con 24 maquetas,
+  55 SVG y un docx de 45 imagenes. Las maquetas del sistema disenado quedaron intactas.
 
 ## Proximo paso
 

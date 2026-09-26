@@ -27,10 +27,10 @@ if (!Number.isInteger(ANCHO) || ANCHO < 600 || ANCHO > 20000) {
 const figuras = [
   { n: 3, slug: 'diagrama-de-clases', titulo: 'Diagrama de clases del prototipo', svg: resolve(raiz, 'Doc/model/figures/UML-completo.svg') },
   { n: 4, slug: 'diagrama-entidad-relacion', titulo: 'Diagrama de entidad-relacion del prototipo', svg: resolve(raiz, 'Doc/model/figures/ER-completo.svg') },
-  { n: 5, slug: 'prototipo-P05-asistencia-de-catalogo', titulo: 'Prototipo de interfaz: Asistencia de catalogo', svg: resolve(entrega, 'pantallas/P05.svg') },
-  { n: 6, slug: 'prototipo-P07-descubri-tu-zona', titulo: 'Prototipo de interfaz: Descubri tu zona', svg: resolve(entrega, 'pantallas/P07.svg') },
-  { n: 7, slug: 'prototipo-P10-tu-solicitud', titulo: 'Prototipo de interfaz: Tu solicitud', svg: resolve(entrega, 'pantallas/P10.svg') },
-  { n: 8, slug: 'prototipo-P13-registrar-venta', titulo: 'Prototipo de interfaz: Registrar venta', svg: resolve(entrega, 'pantallas/P13.svg') },
+  { n: 5, slug: 'prototipo-P21-explorar-negocios', titulo: 'Prototipo de interfaz: Explorar negocios', svg: resolve(entrega, 'pantallas/P21.svg') },
+  { n: 6, slug: 'prototipo-P22-perfil-del-negocio', titulo: 'Prototipo de interfaz: Perfil del negocio', svg: resolve(entrega, 'pantallas/P22.svg') },
+  { n: 7, slug: 'prototipo-P23-mi-negocio', titulo: 'Prototipo de interfaz: Mi negocio', svg: resolve(entrega, 'pantallas/P23.svg') },
+  { n: 8, slug: 'prototipo-P24-actividad-de-tu-negocio', titulo: 'Prototipo de interfaz: Actividad de tu negocio', svg: resolve(entrega, 'pantallas/P24.svg') },
   { n: 9, slug: 'diagrama-de-arquitectura', titulo: 'Diagrama de arquitectura del prototipo', svg: resolve(entrega, 'figuras/arquitectura.svg') },
 ];
 
