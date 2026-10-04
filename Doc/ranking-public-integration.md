@@ -1,8 +1,9 @@
 # Contrato propuesto de integración del ranking · 21/09/2026
 
-**Diseño parcial: historial, lector completo y adaptador implementados al 04/10/2026.**
-Los endpoints de ranking y snapshots siguen propuestos.
-Depende de una política evaluada y versionada. BLL define interfaces y reglas,
+**Persistencia interna implementada al 04/10/2026:** historial, lector, adaptador,
+snapshots/ledger transaccionales, paginación revalidada y purga automática.
+Los endpoints, cursores protegidos, controles de carga e interfaz siguen pendientes.
+Activar depende de una política evaluada y versionada. BLL define interfaces y reglas,
 DAL implementa transacciones/PostGIS, API valida HTTP/protege tokens y Next
 administra navegación. Se mantiene ADR-001. Activación deshabilitada por defecto.
 
@@ -15,7 +16,8 @@ migración marca todos los registros anteriores como desconocidos, también borr
 `ActivityContext` identifica negocio/posición/versión, pero no todos los elegibles.
 Los eventos de actividad actuales no permiten reconstruir oportunidades históricas.
 `IRankingCandidateRepository` ya aporta una lectura interna completa separada de
-la guía. `MagazineRankingCandidates` la adapta al motor; falta persistir oportunidades.
+la guía. `MagazineRankingCandidates` la adapta al motor; `RankingSnapshotService`
+coordina persistencia y `RankingSnapshotPages` revalida páginas actuales.
 
 Primer corte propuesto: **revista**, rubro obligatorio, zonas predefinidas y radio
 fijo 4 km, sin texto ni coordenadas del dispositivo. R=1 para los elegibles del
@@ -74,6 +76,17 @@ al ledger: presupuesto cero para toda esa oportunidad, razón own-business-previ
 no quitar solo su tarjeta y desbalancear el presupuesto. No es protección contra bots.
 
 ## Snapshot, idempotencia y paginación
+
+Implementación interna: cuatro tablas SQL administradas por `AddRankingSnapshots`,
+fuera del modelo de entidades EF. DAL toma bloqueo transaccional por requestId y
+luego actualiza la secuencia del contexto; el callback BLL consulta/calcula sobre
+la misma conexión/transacción. Read Committed ve los saldos confirmados después
+de esperar el contexto. Fallos/cancelación revierten también secuencia.
+Snapshot conserva IDs y vínculo efímero; oportunidad JSON conserva la traza sin
+requestId ni dueño, con contribuciones consultables por contexto/tiempo.
+Reintento conserva la política original aunque cambie la configuración del servidor.
+Pruebas actuales: 99/99 BLL y 72/72 HTTP/PostGIS. El contrato HTTP siguiente aún
+no está expuesto; la guía mantiene su orden anterior.
 
 Propuesta HTTP: `POST /public/ranking-snapshots` recibe zoneId, categoryId,
 radiusKm=4 y requestId aleatorio estable durante reintentos de esa consulta.

@@ -5,9 +5,13 @@
 Entrega 2 realizada por el usuario. Desarrollo retomado con adaptador interno
 `MagazineRankingCandidates`: tres zonas públicas/rubro/4 km, contexto versionado,
 R=1, sin truncar candidatos e historia desconocida explícita con N=0 en el motor.
-Verificación: **95/95 BLL/evaluación y 62/62 HTTP/PostGIS**. Evidencia:
-`changes/archive/2026-10-04-magazine-ranking-candidates/verify-report.md`.
-Sigue implementar snapshots/ledger persistente; ranking público deshabilitado.
+Snapshots/ledger internos completados: transacción, deduplicación concurrente,
+secuencia, traza reproducible, previsualización propia en cero y purga automática.
+Páginas estables revalidan elegibilidad sin rellenar huecos ni sumar exposición.
+Verificación: **99/99 BLL/evaluación y 72/72 HTTP/PostGIS**. Evidencia:
+`changes/archive/2026-10-04-ranking-snapshots/verify-report.md`.
+Siguen endpoints/cursor protegido, controles de carga y UI; ranking público
+deshabilitado hasta evaluación/política. Catálogo/pedidos siguen pendientes.
 
 ## Estado anterior — 2026-09-22
 

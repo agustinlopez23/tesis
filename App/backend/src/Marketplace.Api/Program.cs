@@ -15,6 +15,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton<ActivityTokens>();
 builder.Services.AddHostedService<ActivityRetentionWorker>();
+builder.Services.AddHostedService<RankingRetentionWorker>();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;

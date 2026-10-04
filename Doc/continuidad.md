@@ -1,21 +1,26 @@
 # Punto de continuidad — 04/10/2026
 
-El usuario confirmó que ya realizó la Entrega 2 y pidió continuar la app.
-Adaptador `MagazineRankingCandidates` completado: tres zonas públicas, rubro,
-radio 4 km y contexto versionado; todos los elegibles llegan al motor con R=1.
-Historia desconocida conserva PublishedAt=null y recibe N=0. Dueños solo internos.
-Sin endpoints nuevos ni cambio en el orden público. Verificación actual:
-**95/95 BLL/evaluación y 62/62 HTTP/PostGIS**, con 14 casos nuevos y dos recorridos
-integrados extendidos. Evidencia en
-`../openspec/changes/archive/2026-10-04-magazine-ranking-candidates/verify-report.md`.
+El usuario ya realizó la Entrega 2 y quiere avanzar para terminar la app.
+Completada la persistencia interna del ranking de revista: creación atómica de
+snapshot/oportunidad/contribuciones/secuencia; reintentos concurrentes deduplicados;
+traza completa reproducible sin datos del visitante; previsualización propia en cero.
+Listas de 30 minutos, historial de 30 días, purga al arranque/cada hora. Paginación
+20/20/5 revalida datos actuales, conserva huecos/posiciones y no suma exposición.
+El adaptador previo conserva historia desconocida como null, con N=0.
+**99/99 BLL/evaluación y 72/72 HTTP/PostGIS**, sin omitidas. Evidencia:
+`../openspec/changes/archive/2026-10-04-ranking-snapshots/verify-report.md`.
 
-Próximo incremento: snapshots y ledger persistente según
-`ranking-public-integration.md`, con transacción, idempotencia, secuencia por
-contexto y expiración. Siguen pendientes anotaciones humanas/política evaluada;
-no activar ranking público ni alterar el borrador previo. Luego catálogo y pedidos.
-Rama de trabajo `feat/magazine-ranking-candidates`, creada sobre el cierre de
-`docs/entrega2-scrum`. Docker/PostGIS iniciado para bases temporales; no se migró
-ni arrancó la demo. Consultar git para el commit vigente.
+Próximo incremento del ranking: endpoints y cursores protegidos, validaciones y
+límites operativos, luego interfaz. Servicios actuales son internos; guía vigente
+sin cambios. La activación sigue requiriendo anotaciones humanas/política evaluada.
+No alterar paquetes ni borrador previo. Para avanzar funcionalidad comercial
+quedan catálogo, capacidades por plan, pedidos, ventas/stock y publicidad.
+Rama `feat/ranking-snapshot-persistence`, derivada de `feat/magazine-ranking-candidates`;
+seis unidades locales con pruebas/documentación, sin push ni PR. Consultar git.
+Nueva migración `20261004100000_AddRankingSnapshots`: tablas SQL internas fuera
+del modelo EF, reversible y probada solo en bases temporales. Aplicar migraciones
+habituales antes de usar backend actualizado. Docker/PostGIS activo; demo no
+migrada ni reiniciada. Contrato actualizado en `ranking-public-integration.md`.
 
 ## Registro anterior — 22/09/2026 (histórico)
 

@@ -22,6 +22,14 @@ El lector interno `IRankingCandidateRepository` recupera todos los elegibles por
 rubro/radio con distancia e historial, sin paginar antes del futuro ranking.
 Está registrado en IoC; la guía sigue usando su consulta y orden vigentes.
 
+`RankingSnapshotService` guarda listas y exposición en una transacción, con
+reintentos deduplicados y trazas reproducibles. `RankingSnapshotPages` lee páginas
+estables y revalida elegibilidad actual. Son servicios internos, sin endpoints.
+La migración `AddRankingSnapshots` crea las cuatro tablas SQL de infraestructura;
+aplicarla con el comando de migración habitual antes de arrancar este backend.
+Las listas vencen a los 30 minutos y el historial a los 30 días; un worker purga
+al iniciar/cada hora. [Contrato y límites](../Doc/ranking-public-integration.md).
+
 El visitante puede elegir Centro (Plaza San Martín), Nueva Córdoba (Buen Pastor)
 o Alberdi (Plaza Colón), o pulsar **Usar mi ubicación**. Las zonas son puntos de
 referencia, no límites barriales. El radio va de 500 m a 50 km en la interfaz.
