@@ -23,3 +23,9 @@
    de componentes y orden usando la traza JSON. No guarda requestId, dueño ni email
    en oportunidades. Previsualización propia conserva 45 contribuciones en cero y
    no altera saldos. Un reintento conserva la política de la lista original.
+
+5. Paginación: RED por servicio ausente; GREEN 1/1 RankingSnapshotPageTests.
+   Recorrido 20/20/5, repetición sin contribuciones nuevas, datos públicos actuales,
+   exclusión por despublicación/suspensión/rubro/distancia, posiciones conservadas,
+   página vacía intermedia y negocio nuevo diferido. Offsets inválidos y expiración
+   rechazan la lectura. El repositorio revalida la página en un único SELECT.

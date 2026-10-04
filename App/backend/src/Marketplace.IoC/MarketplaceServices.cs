@@ -24,6 +24,8 @@ public static class MarketplaceServices
         services.AddScoped<MagazineRankingCandidates>();
         services.AddScoped<IRankingSnapshotStore, RankingSnapshotStore>();
         services.AddScoped<RankingSnapshotService>();
+        services.AddScoped<IRankingPageRepository, RankingPageRepository>();
+        services.AddScoped<RankingSnapshotPages>();
         services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
         services.AddScoped<AuthenticationService>();
         services.AddScoped<BusinessService>();
