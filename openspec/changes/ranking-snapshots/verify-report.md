@@ -10,3 +10,10 @@
    RankingStorageSchemaTests. Migrar/revertir/remigrar preserva categorías y no
    deja cambios EF pendientes. Unicidad requestId, rangos y cascada comprobados.
    Migración aplicada solo a bases temporales, sin tocar la demo.
+
+3. Almacenamiento: RED 5 fallos antes de implementar; GREEN 5/5
+   RankingSnapshotStoreTests/RankingRetentionTests. Tres solicitudes concurrentes
+   con el mismo ID construyen una vez; cuatro IDs distintos ven secuencias 1–4 y
+   saldos confirmados 0–3. Fallo de restricción después de insertar snapshot revierte
+   todo, incluida secuencia. Cancelación también revierte. TTL exacto, ventana
+   abierta de 30 días, aislamiento de contexto y purga con cascada comprobados.
