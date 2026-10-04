@@ -34,7 +34,8 @@ public sealed class BusinessRanker
                 !double.IsFinite(x.Received) || x.Received < 0))
             throw new ArgumentException("Invalid candidates or exposure history.");
 
-        var scored = items.Where(x => x.Published && !x.Suspended && x.PublishedAt <= context.At &&
+        var scored = items.Where(x => x.Published && !x.Suspended &&
+            (x.PublishedAt is null || x.PublishedAt <= context.At) &&
             x.Relevance >= configuration.MinimumRelevance &&
             (context.RadiusKm is null || x.DistanceKm is { } d && d <= context.RadiusKm))
             .Select(x => Score(x, context, variant, history)).ToArray();
@@ -54,7 +55,8 @@ public sealed class BusinessRanker
         var balance = history.GetValueOrDefault(item.Id);
         var deficit = balance is null ? 0 : Math.Clamp(
             (balance.Expected - balance.Received) / Math.Max(balance.Expected, 1), 0, 1);
-        var newcomer = Math.Max(0, 1 - (context.At - item.PublishedAt).TotalDays / configuration.NewcomerDays);
+        var newcomer = item.PublishedAt is { } publishedAt
+            ? Math.Max(0, 1 - (context.At - publishedAt).TotalDays / configuration.NewcomerDays) : 0;
         var activityWeight = variant == RankingVariant.EquityActivity ? configuration.ActivityWeight : 0;
         var newcomerWeight = variant is RankingVariant.EquityOnly or RankingVariant.EquityRotation
             ? 0 : configuration.NewcomerWeight;

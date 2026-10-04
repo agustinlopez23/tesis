@@ -1,7 +1,7 @@
 # Contrato propuesto de integración del ranking · 21/09/2026
 
-**Diseño parcial: historial y lector completo implementados el 22/09/2026.**
-El adaptador, endpoints de ranking y snapshots siguen propuestos.
+**Diseño parcial: historial, lector completo y adaptador implementados al 04/10/2026.**
+Los endpoints de ranking y snapshots siguen propuestos.
 Depende de una política evaluada y versionada. BLL define interfaces y reglas,
 DAL implementa transacciones/PostGIS, API valida HTTP/protege tokens y Next
 administra navegación. Se mantiene ADR-001. Activación deshabilitada por defecto.
@@ -15,7 +15,7 @@ migración marca todos los registros anteriores como desconocidos, también borr
 `ActivityContext` identifica negocio/posición/versión, pero no todos los elegibles.
 Los eventos de actividad actuales no permiten reconstruir oportunidades históricas.
 `IRankingCandidateRepository` ya aporta una lectura interna completa separada de
-la guía. Falta conectarla al motor y a la persistencia de oportunidades.
+la guía. `MagazineRankingCandidates` la adapta al motor; falta persistir oportunidades.
 
 Primer corte propuesto: **revista**, rubro obligatorio, zonas predefinidas y radio
 fijo 4 km, sin texto ni coordenadas del dispositivo. R=1 para los elegibles del
@@ -27,9 +27,9 @@ generador de etiquetas sintéticas no es un buscador textual productivo.
 
 `FirstPublishedAt` se escribe una sola vez al pasar a publicado; editar,
 despublicar y republicar no reinician edad. Históricos sin evidencia se marcan de
-edad desconocida; el adaptador pendiente deberá asignar N=0. No usar CreatedAt.
+edad desconocida; el adaptador conserva PublishedAt=null y el motor asigna N=0. No usar CreatedAt.
 Conservar esa marca también al republicarlos: null no significa «nunca publicado».
-El motor/adaptador deberá representar esa ausencia explícitamente. Para nuevos
+El motor/adaptador representa esa ausencia explícitamente. Para nuevos
 borradores sí registrar el instante de su primera publicación futura.
 
 ## Candidatos y oportunidad histórica
@@ -39,7 +39,15 @@ rubro y radio válidos; sin corte top 20 previo. Un SELECT DAL/PostGIS mantiene 
 vista consistente. IDs únicos y valores finitos; fallo de integridad aborta la lectura.
 Devuelve ID de negocio/dueño interno, distancia y fecha/marca histórica. Su orden
 por ID es técnico; no calcula ranking ni guarda oportunidades. El lector admite
-DiscoveryArea válida; el coordinador pendiente restringirá revista a zonas y 4 km.
+DiscoveryArea válida; el adaptador restringe revista a zonas y 4 km.
+El adaptador usa centro/nueva-cordoba/alberdi, con los mismos puntos públicos de
+la guía. Clave invariante: `magazine/{zone}/category/{id}/radius/4/eligibility/v1`.
+Cambiar puntos o reglas requiere versionar elegibilidad. R=1 y actividad=0;
+conserva dueños internamente, sin DTO público. Toma hora del servidor tras leer
+y aborta ante historia incoherente, fecha futura, IDs inválidos/duplicados,
+distancia fuera de radio o cancelación. No elige política ni actualiza exposición.
+Evidencia: 95/95 BLL/evaluación y 62/62 HTTP/PostGIS el 04/10, incluidos
+45 candidatos y desconocidos republicados.
 Un límite operativo de candidatos no autoriza truncamiento silencioso: devolver
 error recuperable o ofrecer guía vigente con modo y versión distintos.
 

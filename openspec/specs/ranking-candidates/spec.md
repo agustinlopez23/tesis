@@ -15,6 +15,6 @@ devolver una lista parcial. Nuevas lecturas reflejan elegibilidad vigente; una
 lista anterior no se actualiza ni constituye un snapshot persistente.
 
 La guía pública mantiene sus contratos, orden y paginación. Este contrato interno
-no activa ranking ni amplía superficies públicas. El coordinador de revista deberá
-restringir a zonas predefinidas y 4 km; el adaptador pendiente dará N=0 a desconocidos.
+no activa ranking ni amplía superficies públicas. El adaptador de revista restringe
+a zonas predefinidas y 4 km; conserva historia desconocida para que el motor dé N=0.
 Un límite operativo futuro debe fallar explícitamente; nunca truncar candidatos.

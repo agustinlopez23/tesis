@@ -41,7 +41,9 @@ context: |
   Faltan anotación humana, material de reserva, runner final e implementación de snapshots.
   Primera publicación persistente implementada con historia desconocida para registros
   anteriores. Lector BLL/DAL de candidatos completos implementado; 62/62 HTTP/PostGIS.
-  Siguiente incremento: adaptador con historia desconocida N=0 y contexto de revista.
+  Adaptador de revista implementado el 04/10: contexto por zona/rubro/4 km,
+  historia desconocida explícita N=0. Verificado: 95/95 BLL y 62/62 HTTP/PostGIS.
+  Siguiente incremento: snapshots y ledger persistente sin activar ranking público.
 
   Idioma: documentación en español; identificadores técnicos de código en
   inglés.

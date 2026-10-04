@@ -47,6 +47,15 @@ public sealed class BusinessRankerTests
     }
 
     [Fact]
+    public void Unknown_publication_history_remains_eligible_without_newcomer_bonus()
+    {
+        var unknown = Candidate(1) with { PublishedAt = null };
+        var result = Assert.Single(Rank([unknown], RankingVariant.EquityNewcomer));
+        Assert.Equal(0, result.Newcomer);
+        Assert.Equal(Rank([Candidate(1)], RankingVariant.EquityNewcomer)[0].Score, result.Score);
+    }
+
+    [Fact]
     public void Activity_is_an_explicit_bounded_ablation()
     {
         var a = Candidate(1);

@@ -109,6 +109,12 @@ public sealed class BusinessPublicationHistoryTests(OnboardingFixture fixture) :
                 new DiscoveryArea(-31.4167, -64.1833, 4), default), x => x.Id == id);
             Assert.Null(candidate.FirstPublishedAt);
             Assert.True(candidate.PublicationHistoryUnknown);
+            var input = await scope.ServiceProvider.GetRequiredService<MagazineRankingCandidates>()
+                .PrepareAsync("centro", 1, 17, 0, default);
+            Assert.Null(Assert.Single(input.Candidates, x => x.Id == id).PublishedAt);
+            var ranked = new BusinessRanker(new()).Rank(input.Candidates, input.Context,
+                RankingVariant.EquityNewcomer, new Dictionary<Guid, ExposureBalance>());
+            Assert.Equal(0, Assert.Single(ranked, x => x.Id == id).Newcomer);
         }
     }
 

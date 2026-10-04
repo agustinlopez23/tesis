@@ -1,4 +1,23 @@
-# Punto de continuidad — 22/09/2026
+# Punto de continuidad — 04/10/2026
+
+El usuario confirmó que ya realizó la Entrega 2 y pidió continuar la app.
+Adaptador `MagazineRankingCandidates` completado: tres zonas públicas, rubro,
+radio 4 km y contexto versionado; todos los elegibles llegan al motor con R=1.
+Historia desconocida conserva PublishedAt=null y recibe N=0. Dueños solo internos.
+Sin endpoints nuevos ni cambio en el orden público. Verificación actual:
+**95/95 BLL/evaluación y 62/62 HTTP/PostGIS**, con 14 casos nuevos y dos recorridos
+integrados extendidos. Evidencia en
+`../openspec/changes/archive/2026-10-04-magazine-ranking-candidates/verify-report.md`.
+
+Próximo incremento: snapshots y ledger persistente según
+`ranking-public-integration.md`, con transacción, idempotencia, secuencia por
+contexto y expiración. Siguen pendientes anotaciones humanas/política evaluada;
+no activar ranking público ni alterar el borrador previo. Luego catálogo y pedidos.
+Rama de trabajo `feat/magazine-ranking-candidates`, creada sobre el cierre de
+`docs/entrega2-scrum`. Docker/PostGIS iniciado para bases temporales; no se migró
+ni arrancó la demo. Consultar git para el commit vigente.
+
+## Registro anterior — 22/09/2026 (histórico)
 
 Sesión continuada: historial de publicación y lector de candidatos completos implementados. El usuario
 prioriza avanzar por incrementos completos sin confirmaciones rutinarias.

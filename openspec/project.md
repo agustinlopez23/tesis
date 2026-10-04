@@ -1,6 +1,15 @@
 # Contexto SDD de la tesis
 
-## Estado vigente — 2026-09-22
+## Estado vigente — 2026-10-04
+
+Entrega 2 realizada por el usuario. Desarrollo retomado con adaptador interno
+`MagazineRankingCandidates`: tres zonas públicas/rubro/4 km, contexto versionado,
+R=1, sin truncar candidatos e historia desconocida explícita con N=0 en el motor.
+Verificación: **95/95 BLL/evaluación y 62/62 HTTP/PostGIS**. Evidencia:
+`changes/archive/2026-10-04-magazine-ranking-candidates/verify-report.md`.
+Sigue implementar snapshots/ledger persistente; ranking público deshabilitado.
+
+## Estado anterior — 2026-09-22
 
 Implementados: scaffold, onboarding de responsables y guía pública de negocios,
 búsqueda textual/rubro, descubrimiento por ubicación y rediseño visual Cerca (nombre de trabajo).
