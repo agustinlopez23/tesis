@@ -17,3 +17,9 @@
    saldos confirmados 0–3. Fallo de restricción después de insertar snapshot revierte
    todo, incluida secuencia. Cancelación también revierte. TTL exacto, ventana
    abierta de 30 días, aislamiento de contexto y purga con cascada comprobados.
+
+4. Coordinación: RED por servicio ausente; GREEN 1/1 RankingSnapshotServiceTests.
+   IoC/PostGIS → 45 candidatos → traza → relectura en otro scope. Reproducción exacta
+   de componentes y orden usando la traza JSON. No guarda requestId, dueño ni email
+   en oportunidades. Previsualización propia conserva 45 contribuciones en cero y
+   no altera saldos. Un reintento conserva la política de la lista original.

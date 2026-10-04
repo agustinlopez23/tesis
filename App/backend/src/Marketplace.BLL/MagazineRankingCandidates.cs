@@ -12,16 +12,8 @@ public sealed class MagazineRankingCandidates(IRankingCandidateRepository reposi
     public async Task<MagazineRankingInput> PrepareAsync(string zoneId, short categoryId, int seed, long sequence,
         CancellationToken cancellationToken)
     {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(categoryId);
         ArgumentOutOfRangeException.ThrowIfNegative(sequence);
-        // Public reference points match discovery-location.ts; changing them requires a new eligibility version.
-        DiscoveryArea area = zoneId switch
-        {
-            "centro" => new(-31.416281, -64.184022, 4),
-            "nueva-cordoba" => new(-31.423889, -64.186389, 4),
-            "alberdi" => new(-31.4093, -64.19555, 4),
-            _ => throw new ArgumentException("Unknown magazine zone.", nameof(zoneId))
-        };
+        var (key, area) = ResolveScope(zoneId, categoryId);
         cancellationToken.ThrowIfCancellationRequested();
         var rows = await repository.GetEligibleAsync(categoryId, area, cancellationToken);
         cancellationToken.ThrowIfCancellationRequested();
@@ -38,9 +30,22 @@ public sealed class MagazineRankingCandidates(IRankingCandidateRepository reposi
                 throw new InvalidOperationException("Invalid magazine ranking candidate data.");
             candidates.Add(new(row.Id, 1, row.DistanceKm, row.FirstPublishedAt));
         }
-        var key = string.Create(CultureInfo.InvariantCulture,
-            $"magazine/{zoneId}/category/{categoryId}/radius/4/eligibility/v1");
         return new(new(key, at, area.RadiusKm, seed, sequence), candidates.AsReadOnly(),
             new ReadOnlyDictionary<Guid, Guid>(owners));
+    }
+
+    public static (string Key, DiscoveryArea Area) ResolveScope(string zoneId, short categoryId)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(categoryId);
+        // Public reference points match discovery-location.ts; changing them requires a new eligibility version.
+        DiscoveryArea area = zoneId switch
+        {
+            "centro" => new(-31.416281, -64.184022, 4),
+            "nueva-cordoba" => new(-31.423889, -64.186389, 4),
+            "alberdi" => new(-31.4093, -64.19555, 4),
+            _ => throw new ArgumentException("Unknown magazine zone.", nameof(zoneId))
+        };
+        return (string.Create(CultureInfo.InvariantCulture,
+            $"magazine/{zoneId}/category/{categoryId}/radius/4/eligibility/v1"), area);
     }
 }
