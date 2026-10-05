@@ -8,6 +8,53 @@ namespace Marketplace.Api.Tests;
 public sealed class SalesTests(OnboardingFixture fixture) : IClassFixture<OnboardingFixture>
 {
     [Fact]
+    public async Task Product_discovery_paginates_literal_search_and_revalidates_stock_and_plan()
+    {
+        var (owner, business, product) = await Setup(); using var client = owner; using var guest = fixture.Client();
+        var query = $"cafe%20{business:N}";
+        await Scalar($"UPDATE catalog_products SET name='Café {business:N}' WHERE id=$1", product);
+        for (var i = 0; i < 21; i++) await Product(owner, business, $"Café {business:N} {i:00}");
+        var response = await guest.GetAsync($"/public/products?q={query}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("no-store", response.Headers.CacheControl?.ToString());
+        var first = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var second = await guest.GetFromJsonAsync<JsonElement>($"/public/products?q={query}&page=2");
+        Assert.Equal(20, first.GetProperty("items").GetArrayLength());
+        Assert.Equal(2, second.GetProperty("items").GetArrayLength());
+        Assert.Equal(22, first.GetProperty("items").EnumerateArray().Concat(second.GetProperty("items").EnumerateArray()).Select(p => p.GetProperty("id").GetGuid()).Distinct().Count());
+        var literal = await guest.GetFromJsonAsync<JsonElement>("/public/products?q=%25");
+        Assert.Empty(literal.GetProperty("items").EnumerateArray());
+        (await Adjust(owner, business, product, 0, 0)).EnsureSuccessStatusCode();
+        var after = await guest.GetFromJsonAsync<JsonElement>($"/public/products?q={query}&page=2");
+        Assert.Single(after.GetProperty("items").EnumerateArray());
+        await Scalar("UPDATE business_subscriptions SET ends_at=now()-interval '1 second' WHERE business_id=$1", business);
+        after = await guest.GetFromJsonAsync<JsonElement>($"/public/products?q={query}");
+        Assert.Empty(after.GetProperty("items").EnumerateArray());
+    }
+
+    [Fact]
+    public async Task Product_discovery_validates_location_and_excludes_hidden_products_and_owners()
+    {
+        var (owner, business, product) = await Setup(); using var client = owner; using var guest = fixture.Client();
+        await Scalar($"UPDATE businesses SET name='{business:N}' WHERE id=$1", business);
+        foreach (var query in new[] { "page=0", "lat=-31", "lat=-31&lon=-64&radiusKm=0", "lat=91&lon=0&radiusKm=2" })
+            Assert.Equal(HttpStatusCode.BadRequest, (await guest.GetAsync("/public/products?" + query)).StatusCode);
+        var nearby = await guest.GetFromJsonAsync<JsonElement>($"/public/products?q={business:N}&lat=-31.4167&lon=-64.1833&radiusKm=0.1&category=Gastronom%C3%ADa");
+        Assert.Single(nearby.GetProperty("items").EnumerateArray());
+        Assert.True(nearby.GetProperty("items")[0].GetProperty("distanceKm").GetDouble() < 0.1);
+        var far = await guest.GetFromJsonAsync<JsonElement>("/public/products?lat=0&lon=0&radiusKm=1");
+        Assert.Empty(far.GetProperty("items").EnumerateArray());
+        foreach (var sql in new[] { "UPDATE catalog_products SET status='draft' WHERE business_id=$1", "UPDATE catalog_products SET status='published',available=false WHERE business_id=$1", "UPDATE businesses SET status='draft' WHERE id=$1", "UPDATE user_accounts SET is_suspended=true WHERE id=(SELECT owner_id FROM businesses WHERE id=$1)" })
+        {
+            await Scalar(sql, business);
+            var hidden = await guest.GetFromJsonAsync<JsonElement>($"/public/products?q={business:N}");
+            Assert.Empty(hidden.GetProperty("items").EnumerateArray());
+            await Scalar("UPDATE catalog_products SET status='published',available=true WHERE business_id=$1", business);
+            await Scalar("UPDATE businesses SET status='published' WHERE id=$1", business);
+        }
+    }
+
+    [Fact]
     public async Task Commerce_metrics_keep_cohort_conversion_and_period_sales_separate()
     {
         var (owner, business, product) = await Setup(); using var client = owner;

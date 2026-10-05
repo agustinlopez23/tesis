@@ -5,7 +5,8 @@
 > WhatsApp, enlace privado y atención/cancelación auditadas desde el negocio.
 > Ventas y stock completados: ajustes auditados, líneas finales por origen,
 > descuento atómico y anulación con devolución explícita. Aún pendientes:
-> IA, publicidad y ranking/búsqueda global de productos.
+> IA, publicidad y ranking experimental de productos. La búsqueda global ya
+> permite texto, rubro y cercanía, orden alfabético/distancia y catálogos elegibles.
 > Métricas comerciales privadas disponibles: cohortes de solicitudes y ventas
 > por período, con exclusión de anuladas e importes separados por origen/moneda.
 > Impulso habilita catálogo y Presencia el perfil; solicitudes existentes siguen

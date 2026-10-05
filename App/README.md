@@ -469,6 +469,16 @@ ventas e importes usan fecha de registro de venta y excluyen anuladas. Importes
 separados por moneda y origen. No son pagos verificados ni evaluación experimental.
 Se verifican con el mismo harness `--sales`; no requieren migración adicional.
 
+Desde Explorar, «Buscar productos entre negocios» abre `/productos`. Texto,
+rubro, zona/ubicación y radio filtran catálogos elegibles; orden alfabético o por
+distancia, páginas de 20. Las tarjetas conducen al catálogo del negocio para
+solicitar. Stock conocido cero se excluye; el ranking experimental sigue cerrado.
+La URL conserva filtros sin publicar coordenadas del dispositivo.
+
+La suite API limita a dos las clases xUnit simultáneas para reducir carga al crear
+y migrar bases PostGIS aisladas. Las pruebas de ventas/ranking siguen lanzando sus
+operaciones concurrentes internas. Evitar ejecutarla junto con builds intensivos.
+
 El scaffold archivado está en
 `../openspec/changes/archive/2026-09-08-scaffold-backend-frontend/`; el onboarding
 y su evidencia están en

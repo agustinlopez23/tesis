@@ -67,7 +67,7 @@ app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =
 }));
 app.Use(async (context, next) =>
 {
-    if (context.Request.Path.StartsWithSegments("/public/ranking-snapshots") || new[] { "/orders", "/sales", "/inventory", "/commerce" }.Any(segment => context.Request.Path.Value?.Contains(segment, StringComparison.Ordinal) == true))
+    if (context.Request.Path.StartsWithSegments("/public/ranking-snapshots") || context.Request.Path.StartsWithSegments("/public/products") || new[] { "/orders", "/sales", "/inventory", "/commerce" }.Any(segment => context.Request.Path.Value?.Contains(segment, StringComparison.Ordinal) == true))
         context.Response.OnStarting(() =>
         {
             context.Response.Headers.CacheControl = "no-store";
@@ -81,6 +81,7 @@ app.MapBusinessProfiles();
 app.MapCatalog();
 app.MapOrders();
 app.MapSales();
+app.MapProductDiscovery();
 app.MapBusinessActivity();
 app.MapRankingSnapshots();
 

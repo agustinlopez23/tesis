@@ -2,6 +2,7 @@ type RouteParameters = { params: Promise<{ path: string[] }> };
 
 const allowedRoutes: Record<string, RegExp[]> = {
   GET: [
+    /^public\/products$/,
     /^businesses\/[0-9a-f-]{36}\/commerce$/i,
     /^businesses\/[0-9a-f-]{36}\/(inventory(\/movements)?|sales(\/[0-9a-f-]{36})?)$/i,
     /^public\/orders\/[0-9a-f-]{36}$/i,
@@ -79,6 +80,10 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
     let offset = 0;
     for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
     const upstreamUrl = new URL(path, baseUrl);
+    if (path === "public/products") {
+      const query = new URL(request.url).searchParams;
+      for (const key of ["page", "q", "category", "lat", "lon", "radiusKm"]) if (query.has(key)) upstreamUrl.searchParams.set(key, query.get(key)!);
+    }
     if (path.endsWith("/commerce")) {
       const days = new URL(request.url).searchParams.get("days");
       if (days !== null) upstreamUrl.searchParams.set("days", days);

@@ -627,3 +627,6 @@
 .commerce-counts div, .commerce-amount { padding: 1rem; background: #f7f4ec; border-radius: 12px; }
 .commerce-counts dd { margin: .5rem 0 0; font-size: 1.5rem; font-weight: 700; }
 .commerce-amount { margin: .75rem 0; }
+.product-discovery > h1 { margin: 1rem 0; font-size: clamp(2rem, 5vw, 3.5rem); }
+.product-discovery > .catalog-search { margin-top: 2rem; }
+.product-discovery .product-card h2 { font-size: 1.3rem; }

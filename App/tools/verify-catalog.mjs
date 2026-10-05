@@ -167,6 +167,11 @@ try {
     assert.equal(Number((await sql(`SELECT count(*) FROM sales WHERE business_id='${business}'`)).trim()), 1);
     assert.equal(Number((await sql(`SELECT count(*) FROM inventory_movements WHERE business_id='${business}'`)).trim()), 3);
     salesInfo = { saleId, orderId, key, reference: sourceOrder.reference };
+    const found = await request("/public/products?q=cafe&lat=-31.416281&lon=-64.184022&radiusKm=1");
+    assert.equal(found.status, 200); assert.equal(found.headers.get("cache-control"), "no-store");
+    const discovery = await found.json(); assert.equal(discovery.items[0].id, product); assert.equal(discovery.order, "distance");
+    assert.equal(discovery.items[0].distanceKm, 0);
+    assert.equal((await (await request("/public/products?q=cafe&lat=0&lon=0&radiusKm=1")).json()).items.length, 0);
   }
   const stopFile = resolve(artifacts, `stop-${database}`);
   await writeFile(resolve(artifacts, "session.json"), JSON.stringify({ webOrigin, business, product, owner, admin, stopFile, orderInfo, salesInfo }, null, 2));

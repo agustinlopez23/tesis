@@ -1,5 +1,17 @@
 # Punto de continuidad — 05/10/2026
 
+Búsqueda global de productos completada en `feat/product-discovery`, base `ef20283`.
+`/productos`: texto literal/sin acentos, rubro, zona o ubicación/radio, páginas de
+20, distancia PostGIS y enlace al catálogo. Elegibilidad viva por plan/publicación/
+titular/stock. Orden explícito alfabético o por distancia; no ranking experimental.
+**131/131 API y 109/109 frontend**, lint/build/integración/navegador correctos.
+Tras interrupción de PostgreSQL, runner acotado a dos clases; suite repetida verde
+y base temporal residual eliminada. Demo intacta. Evidencia:
+`../openspec/changes/archive/2026-10-05-product-discovery/verify-report.md`.
+Sigue publicidad con gestión manual y asistencia opcional; falta evidencia humana.
+
+## Métricas completadas previamente
+
 Métricas comerciales completadas en `feat/commerce-metrics`, desde `23bd605`:
 cohorte de solicitudes, contactos y conversión hasta ahora; ventas por fecha de
 registro, anuladas separadas e importes por origen/moneda. 7/30 días de Córdoba,

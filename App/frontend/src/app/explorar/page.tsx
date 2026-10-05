@@ -92,6 +92,7 @@ export default function Explore() {
     <section className="discovery-hero" aria-labelledby="discovery-title">
       <div className="hero-copy"><p className="eyebrow"><span className="tiny-spark">✳</span> Tu ciudad, a la vuelta</p>
         <h1 id="discovery-title">Hay mucho por <br/>descubrir. <br/><em>Y está cerca.</em></h1>
+        <Link className="text-link" href="/productos">Buscar productos entre negocios <Icon name="arrow" /></Link>
         <p className="hero-description">Ese café que todavía no conocés. El almacén de siempre.<br className="desktop-break"/> Encontrá tu próximo favorito en Córdoba.</p>
         <a className="text-link" href="#negocios">Conocé los negocios <Icon name="arrow" /></a>
         <div className="hero-footnote"><span className="mini-icon"><Icon name="store" /></span><span>Comercios locales.<br/><strong>Conexiones de verdad.</strong></span></div>
