@@ -72,6 +72,7 @@ app.Use(async (context, next) =>
 app.UseRateLimiter();
 app.UseMiddleware<RankingConcurrencyMiddleware>();
 app.MapBusinessProfiles();
+app.MapCatalog();
 app.MapBusinessActivity();
 app.MapRankingSnapshots();
 
