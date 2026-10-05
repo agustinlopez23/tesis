@@ -1,5 +1,6 @@
 using Marketplace.BLL;
 using Marketplace.DAL;
+using Marketplace.Integrations;
 using Marketplace.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,10 @@ public static class MarketplaceServices
         services.AddScoped<BusinessService>();
         services.AddScoped<ICatalogRepository, CatalogRepository>();
         services.AddScoped<CatalogService>();
+        services.AddScoped<CatalogDraftService>();
+        services.AddSingleton<ICatalogDraftProvider>(_ => new OpenAiCatalogDraftProvider(
+            new HttpClient(new SocketsHttpHandler { AllowAutoRedirect = false, PooledConnectionLifetime = TimeSpan.FromMinutes(5) }),
+            new CatalogAiOptions(configuration.GetValue("CatalogAi:Enabled", false), configuration["CatalogAi:ApiKey"], configuration["CatalogAi:Model"])));
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<OrderService>();
         services.AddScoped<ISalesRepository, SalesRepository>();

@@ -23,6 +23,9 @@ builder.Services.AddHostedService<RankingRetentionWorker>();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("catalog-assistance", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = 6, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
     options.AddPolicy("orders-create", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
         PermitLimit = 120, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
     }));
@@ -69,6 +72,8 @@ app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =
 }));
 app.Use(async (context, next) =>
 {
+    if (context.Request.Path.Value?.EndsWith("/catalog-assistance", StringComparison.Ordinal) == true)
+        context.Response.Headers.CacheControl = "no-store";
     if (context.Request.Path.StartsWithSegments("/public/ranking-snapshots") || context.Request.Path.StartsWithSegments("/public/products") || new[] { "/orders", "/sales", "/inventory", "/commerce", "/campaign" }.Any(segment => context.Request.Path.Value?.Contains(segment, StringComparison.Ordinal) == true))
         context.Response.OnStarting(() =>
         {

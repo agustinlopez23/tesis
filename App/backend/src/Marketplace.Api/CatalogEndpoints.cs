@@ -1,6 +1,7 @@
 using Marketplace.BLL;
 using Marketplace.DTOs;
 using Microsoft.AspNetCore.Http.Features;
+using System.Text.Json;
 
 namespace Marketplace.Api;
 
@@ -11,6 +12,23 @@ public static class CatalogEndpoints
         // A shared filter validates sessions, live roles and CSRF before any private handler.
         var owner = app.MapGroup("/businesses/{id:guid}").AddEndpointFilter(Authorize(false));
         var admin = app.MapGroup("/admin").AddEndpointFilter(Authorize(true));
+        owner.MapGet("/catalog-assistance", async (Guid id, HttpContext http, CatalogDraftService drafts, CancellationToken ct) =>
+            Found(await drafts.Availability(id, User(http).Id, ct)));
+        owner.MapPost("/catalog-assistance", async (Guid id, HttpContext http, CatalogDraftService drafts, CancellationToken ct) => {
+            if (!http.Request.HasJsonContentType()) return Results.BadRequest();
+            var bytes = new byte[8193]; var size = await http.Request.Body.ReadAtLeastAsync(bytes, bytes.Length, false, ct);
+            if (size > 8192) return Results.StatusCode(413);
+            CatalogDraftRequest? body;
+            try { body = JsonSerializer.Deserialize<CatalogDraftRequest>(bytes.AsSpan(0, size), JsonSerializerOptions.Web); }
+            catch (JsonException) { return Results.BadRequest(); }
+            if (body == null) return Results.BadRequest();
+            var result = await drafts.Generate(id, User(http).Id, body, ct);
+            return Results.Json((object?)result.Draft ?? new { message = result.Status switch {
+                400 => "Escribí entre 3 y 1500 caracteres y confirmá el envío al proveedor.",
+                403 => "Necesitás un plan vigente para preparar productos.",
+                404 => "No encontramos el negocio.",
+                _ => "La asistencia no está disponible. Podés continuar con la carga manual." } }, statusCode: result.Status);
+        }).RequireRateLimiting("catalog-assistance");
         owner.MapGet("/plan", async (Guid id, HttpContext http, CatalogService catalog, CancellationToken ct) =>
             Found(await catalog.PlanAsync(id, User(http).Id, ct)));
         owner.MapGet("/products", async (Guid id, HttpContext http, CatalogService catalog, CancellationToken ct) =>
