@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { catalogApi, catalogError } from "./catalog-api";
 import { useSaleOperation } from "./use-sale-operation";
+import { businessChanged, useBusinessRefresh } from "./business-refresh";
 
 type Item = { productId: string; name: string; quantity: number | null; version: number };
 type Movement = { operationId: string; productId: string; productName: string; delta: number; balance: number; reason: string; createdAt: string };
@@ -16,8 +17,9 @@ function Inventory({ business }: { business: string }) {
   const [history, setHistory] = useState<Movement[]>([]), [page, setPage] = useState(1), [more, setMore] = useState(false);
   const [attempt, setAttempt] = useState(0), [error, setError] = useState(""), [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(true);
-  const operation = useSaleOperation(`cerca-stock:${business}`, () => { setSuccess("Ajuste guardado."); setSelected(null); refresh(); });
+  const operation = useSaleOperation(`cerca-stock:${business}`, () => { setSuccess("Ajuste guardado."); setSelected(null); businessChanged(business); });
   function refresh() { setLoading(true); setError(""); setAttempt(n => n + 1); }
+  useBusinessRefresh(business, refresh);
   useEffect(() => {
     const controller = new AbortController();
     void Promise.all([catalogApi(`/businesses/${business}/inventory`, "GET", undefined, controller.signal), catalogApi(`/businesses/${business}/inventory/movements?page=${page}`, "GET", undefined, controller.signal)])

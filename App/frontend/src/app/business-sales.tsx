@@ -5,6 +5,7 @@ import { catalogApi, catalogError } from "./catalog-api";
 import { money } from "./order-api";
 import SaleEditor from "./sale-editor";
 import { useSaleOperation } from "./use-sale-operation";
+import { businessChanged, useBusinessRefresh } from "./business-refresh";
 
 type Sale = { id: string; orderId: string | null; orderReference: string | null; createdAt: string; voidedAt: string | null; voidReason: string | null;
   lines: { productId: string; name: string; quantity: number; unitPrice: number; currency: string; origin: string; returnedQuantity: number }[];
@@ -19,6 +20,7 @@ function SalesList({ business }: { business: string }) {
   const [attempt, setAttempt] = useState(0), [loading, setLoading] = useState(true), [error, setError] = useState("");
   const [creating, setCreating] = useState(false), [selected, setSelected] = useState<Sale | null>(null), [notice, setNotice] = useState("");
   function refresh() { setError(""); setLoading(true); setAttempt(n => n + 1); }
+  useBusinessRefresh(business, refresh);
   useEffect(() => {
     const controller = new AbortController();
     void catalogApi(`/businesses/${business}/sales?page=${page}`, "GET", undefined, controller.signal).then(async response => {
@@ -44,7 +46,7 @@ function SalesList({ business }: { business: string }) {
 }
 function VoidSale({ business, sale, onSaved }: { business: string; sale: Sale; onSaved: () => void }) {
   const [reason, setReason] = useState(""), [returns, setReturns] = useState<Record<string, number>>({});
-  const operation = useSaleOperation(`cerca-void:${business}:${sale.id}`, onSaved);
+  const operation = useSaleOperation(`cerca-void:${business}:${sale.id}`, () => { businessChanged(business); onSaved(); });
   return <form className="catalog-form" onSubmit={e => { e.preventDefault(); void operation.submit(() => ({ path: `/businesses/${business}/sales/${sale.id}/void`, body: {
     operationId: crypto.randomUUID(), reason: reason.trim(), returns: Object.entries(returns).filter(([, quantity]) => quantity > 0).map(([productId, quantity]) => ({ productId, quantity })) } })); }}>
     <h3>Anular venta {sale.orderReference}</h3><p>Esta operación es definitiva. Indicá solo unidades efectivamente devueltas: cero conserva el stock actual. La solicitud vinculada quedará cancelada.</p>

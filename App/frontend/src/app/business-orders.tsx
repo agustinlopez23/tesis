@@ -5,6 +5,7 @@ import { catalogApi, catalogError } from "./catalog-api";
 import { Order, orderStatus } from "./order-api";
 import OrderReceipt from "./order-receipt";
 import SaleEditor from "./sale-editor";
+import { businessChanged, useBusinessRefresh } from "./business-refresh";
 
 type Summary = Pick<Order, "id" | "reference" | "customerName" | "createdAt" | "status" | "contactReceivedAt">;
 export default function BusinessOrders({ id }: { id: string }) {
@@ -38,6 +39,7 @@ function OrderList({ business }: { business: string }) {
     return () => controller.abort();
   }, [business, filter, page, attempt]);
   function refresh() { setError(""); setLoading(true); setAttempt(n => n + 1); }
+  useBusinessRefresh(business, refresh);
   return <>
     <p>Una solicitud puede existir aunque el cliente todavía no haya enviado el mensaje. Podés resolver las recibidas aunque venza tu plan.</p>
     <form className="catalog-search" onSubmit={e => { e.preventDefault(); setFilter({ reference: draft.reference.trim(), status: draft.status }); setPage(1); refresh(); }}>
@@ -67,6 +69,7 @@ function OrderManager({ business, id, onSaved }: { business: string; id: string;
   const [loading, setLoading] = useState(true);
   const [attempt, setAttempt] = useState(0);
   const path = `/businesses/${business}/orders/${id}`;
+  useBusinessRefresh(business, () => { setError(""); setAttempt(n => n + 1); });
   useEffect(() => {
     const controller = new AbortController();
     void catalogApi(path, "GET", undefined, controller.signal).then(async response => {
@@ -84,7 +87,7 @@ function OrderManager({ business, id, onSaved }: { business: string; id: string;
       const response = await catalogApi(path, "PUT", { version: order.version, status, contactReceived: contact });
       if (!response.ok) throw new Error(await catalogError(response));
       const data: Order = await response.json(); setOrder(data); setStatus(data.status); setContact(!!data.contactReceivedAt);
-      setSuccess("Estado guardado."); onSaved();
+      setSuccess("Estado guardado."); businessChanged(business); onSaved();
     } catch (error) { setError(error instanceof Error ? error.message : "No pudimos guardar el estado."); }
     finally { setPending(false); }
   }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { catalogApi, catalogError } from "./catalog-api";
 import { money } from "./order-api";
+import { useBusinessRefresh } from "./business-refresh";
 
 type Metrics = { days: number; from: string; asOf: string; orders: number; contactsReceived: number; converted: number;
   conversionRate: number | null; activeSales: number; voidedSales: number; amounts: Record<string, Record<string, number>> };
@@ -22,6 +23,7 @@ function Results({ business }: { business: string }) {
     return () => controller.abort();
   }, [business, days, attempt]);
   function refresh(value = days) { setData(null); setError(""); setLoading(true); setDays(value); setAttempt(n => n + 1); }
+  useBusinessRefresh(business, refresh);
   return <>
     <div className="catalog-toolbar">{[7, 30].map(value => <button className="button button-outline" key={value} aria-pressed={days === value} onClick={() => refresh(value)}>{value} días</button>)}<button className="text-link" disabled={loading} onClick={() => refresh()}>Actualizar resultados comerciales</button></div>
     {error && <p role="alert">{error}</p>}{loading && <p role="status">Consultando resultados…</p>}

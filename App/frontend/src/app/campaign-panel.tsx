@@ -7,6 +7,7 @@ import { Campaign, campaignState } from "./campaign-api";
 import { useSaleOperation } from "./use-sale-operation";
 import CampaignEditor from "./campaign-editor";
 import { money } from "./order-api";
+import { useBusinessRefresh } from "./business-refresh";
 
 export default function CampaignPanel({ business, admin = false }: { business?: string; admin?: boolean }) {
   const [open, setOpen] = useState(admin);
@@ -19,6 +20,7 @@ function CampaignList({ business, admin }: { business?: string; admin: boolean }
   const [editing, setEditing] = useState<Campaign | "new" | null>(null), [selected, setSelected] = useState<Campaign | null>(null), [metrics, setMetrics] = useState<Campaign | null>(null);
   const path = admin ? "/admin/campaigns" : `/businesses/${business}/campaigns`;
   function refresh() { setError(""); setLoading(true); setAttempt(n => n + 1); }
+  useBusinessRefresh(business ?? "", refresh);
   function saved() { setEditing(null); setSelected(null); setMetrics(null); refresh(); }
   useEffect(() => {
     const controller = new AbortController();
@@ -62,9 +64,11 @@ function CampaignAction({ campaign, admin, onSaved }: { campaign: Campaign; admi
 type Metrics = { eventDays: number; impressions: number; clicks: number; orders: number; activeSales: number; amounts: Record<string, Record<string, number>>; changes: { version: number; action: string; reason: string; createdAt: string }[] };
 function CampaignResults({ campaign }: { campaign: Campaign }) {
   const [data, setData] = useState<Metrics | null>(null), [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+  useBusinessRefresh(campaign.businessId, () => { setData(null); setError(""); setAttempt(n => n + 1); });
   useEffect(() => { const controller = new AbortController(); void catalogApi(`/businesses/${campaign.businessId}/campaigns/${campaign.id}/metrics`, "GET", undefined, controller.signal).then(async response => {
     if (!response.ok) throw new Error(await catalogError(response)); const value = await response.json(); if (!controller.signal.aborted) setData(value);
-  }).catch(e => { if (!controller.signal.aborted) setError(e.message); }); return () => controller.abort(); }, [campaign]);
+  }).catch(e => { if (!controller.signal.aborted) setError(e.message); }); return () => controller.abort(); }, [campaign, attempt]);
   return <section><h3>Resultados de {campaign.title}</h3>{error ? <p role="alert">{error}</p> : !data ? <p role="status">Consultando resultados…</p> : <>
     <p>Últimos {data.eventDays} días: {data.impressions} apariciones visibles · {data.clicks} clics.</p><p>Historial de la campaña: {data.orders} solicitudes · {data.activeSales} ventas vigentes reportadas.</p>
     {Object.entries(data.amounts).map(([origin, totals]) => <div key={origin}><strong>{origin === "requested" ? "Productos solicitados" : "Acordado en conversación"}</strong>{Object.entries(totals).map(([currency, total]) => <p key={currency}>{money(total, currency)}</p>)}</div>)}

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { catalogApi, catalogError, Product } from "./catalog-api";
 import { money } from "./order-api";
 import { useSaleOperation } from "./use-sale-operation";
+import { businessChanged } from "./business-refresh";
 
 type Line = { productId: string; name: string; quantity: number; unitPrice: number; currency: string; origin: string };
 type SourceOrder = { id: string; version: number; lines: Omit<Line, "origin">[] };
@@ -13,7 +14,7 @@ export default function SaleEditor({ business, order, onSaved }: { business: str
   const [selected, setSelected] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const operation = useSaleOperation(`cerca-sale:${business}:${order?.id ?? "direct"}`, onSaved);
+  const operation = useSaleOperation(`cerca-sale:${business}:${order?.id ?? "direct"}`, () => { businessChanged(business); onSaved(); });
   useEffect(() => {
     const controller = new AbortController();
     void catalogApi(`/businesses/${business}/products`, "GET", undefined, controller.signal).then(async response => {

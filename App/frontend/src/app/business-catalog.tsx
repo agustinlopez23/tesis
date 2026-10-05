@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { catalogApi, catalogError, Plan, Product, priceLabel } from "./catalog-api";
 import CatalogAssistance from "./catalog-assistance";
+import { businessChanged, useBusinessRefresh } from "./business-refresh";
 
 export default function BusinessCatalog({ id }: { id: string }) {
   const [open, setOpen] = useState(false);
@@ -41,6 +42,7 @@ function CatalogEditor({ id }: { id: string }) {
     return () => controller.abort();
   }, [id, attempt]);
   function refresh() { setError(""); setLoading(true); setAttempt((n) => n + 1); }
+  useBusinessRefresh(id, refresh);
   function edit(product?: Product) {
     setEditing(product ?? { id: crypto.randomUUID(), name: "", description: "", category: "", price: 0, currency: "ARS", available: true, status: "draft", version: 0, hasPhoto: false });
     setPrice(product ? String(product.price) : ""); setError(""); setSuccess("");
@@ -48,6 +50,7 @@ function CatalogEditor({ id }: { id: string }) {
   function saved(product: Product) {
     setProducts((items) => [...items.filter((p) => p.id !== product.id), product].sort((a, b) => a.name.localeCompare(b.name)));
     setEditing(product); setPrice(String(product.price));
+    businessChanged(id);
   }
   async function handleResponse(response: Response) {
     if (!response.ok) {

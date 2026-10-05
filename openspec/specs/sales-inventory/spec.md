@@ -53,3 +53,15 @@ JSON máximo 16 KiB. Listas de ventas/movimientos paginadas de 20 con orden esta
 filtros privados por solicitud/producto respectivamente. No hay pagos, reembolsos,
 comprobantes fiscales, reservas ni afirmación de venta verificada por WhatsApp.
 No se purga historia. Downgrade MUST rechazar saldos, movimientos o ventas existentes.
+
+## Paneles abiertos del mismo negocio
+
+Después de confirmar una venta, anulación o ajuste, los paneles abiertos en la
+misma pestaña MUST consultar otra vez inventario, solicitudes, ventas, catálogo,
+resultados comerciales y campañas del negocio afectado. Otro negocio no se
+actualiza. Crear un producto MUST incorporarlo al inventario abierto sin recargar.
+
+Escenario: con cuatro unidades y los paneles abiertos, vender dos muestra dos
+unidades y una venta vigente; anular devolviendo una muestra tres unidades,
+la solicitud cancelada y cero ventas vigentes. No requiere actualización manual.
+Esta sincronización no ofrece notificaciones entre dispositivos o pestañas.
