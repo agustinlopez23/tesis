@@ -1,7 +1,7 @@
 namespace Marketplace.DTOs;
 
 public sealed record OrderLineRequest(Guid ProductId, int Quantity, int ExpectedVersion);
-public sealed record CreateOrderRequest(Guid RequestId, string? AccessKey, string? CustomerName, OrderLineRequest[]? Lines);
+public sealed record CreateOrderRequest(Guid RequestId, string? AccessKey, string? CustomerName, OrderLineRequest[]? Lines, string? CampaignToken = null);
 public sealed record UpdateOrderRequest(int Version, string? Status, bool ContactReceived);
 public sealed record OrderLineResponse(Guid ProductId, string Name, decimal UnitPrice, string Currency, int Quantity);
 public sealed record OrderResponse(Guid Id, Guid BusinessId, string Reference, string CustomerName,

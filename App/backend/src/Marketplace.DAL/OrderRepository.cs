@@ -10,7 +10,7 @@ public sealed class OrderRepository(MarketplaceDbContext db, TimeProvider clock)
     private Task<BusinessProfile?> Lock(Guid business, CancellationToken ct) => db.Businesses
         .FromSqlInterpolated($"SELECT * FROM businesses WHERE id = {business} FOR UPDATE").SingleOrDefaultAsync(ct);
 
-    public async Task<OrderResult> CreateAsync(Guid business, CreateOrderRequest request, string keyHash, string requestHash, CancellationToken ct)
+    public async Task<OrderResult> CreateAsync(Guid business, CreateOrderRequest request, string keyHash, string requestHash, Guid? campaign, CancellationToken ct)
     {
         await using var tx = await db.Database.BeginTransactionAsync(ct);
         var profile = await Lock(business, ct);
@@ -26,6 +26,9 @@ public sealed class OrderRepository(MarketplaceDbContext db, TimeProvider clock)
             !await db.BusinessSubscriptions.AnyAsync(s => s.BusinessId == business && s.RevokedAt == null && s.StartsAt <= now && s.EndsAt > now, ct))
             return new(OrderResultStatus.Unavailable);
         var requestedLines = request.Lines!;
+        if (request.CampaignToken != null && (campaign == null || !await CampaignRepository.Eligible(db, now).AnyAsync(c =>
+            c.Id == campaign && c.BusinessId == business && (c.ProductId == null || requestedLines.Select(l => l.ProductId).Contains(c.ProductId.Value)), ct)))
+            return new(OrderResultStatus.AttributionUnavailable);
         var ids = requestedLines.Select(x => x.ProductId).ToArray();
         var products = await db.CatalogProducts.Where(p => p.BusinessId == business && ids.Contains(p.Id)).ToDictionaryAsync(p => p.Id, ct);
         var balances = await db.InventoryBalances.Where(b => ids.Contains(b.ProductId)).ToDictionaryAsync(b => b.ProductId, ct);
@@ -33,7 +36,7 @@ public sealed class OrderRepository(MarketplaceDbContext db, TimeProvider clock)
         if (requestedLines.Any(line => !products.TryGetValue(line.ProductId, out var product) || product.Status != "published" ||
             !product.Available || product.Version != line.ExpectedVersion)) return new(OrderResultStatus.Conflict);
         var order = new CustomerOrder {
-            Id = request.RequestId, BusinessId = business, Reference = "CE-" + request.RequestId.ToString("N")[..12].ToUpperInvariant(),
+            Id = request.RequestId, BusinessId = business, CampaignId = campaign, Source = campaign == null ? "catalog" : "campaign", Reference = "CE-" + request.RequestId.ToString("N")[..12].ToUpperInvariant(),
             CustomerName = request.CustomerName!, BusinessName = profile.Name, WhatsApp = profile.WhatsApp,
             AccessKeyHash = keyHash, RequestHash = requestHash, CreatedAt = now, UpdatedAt = now, AccessExpiresAt = now.AddDays(30),
             Lines = requestedLines.Select(line => new OrderLine {

@@ -50,6 +50,7 @@ public static class OrderEndpoints
         OrderResultStatus.NotFound => Results.NotFound(),
         OrderResultStatus.Unavailable => Results.Json(new { message = "Este negocio no está recibiendo nuevas solicitudes de productos." }, statusCode: 403),
         OrderResultStatus.Conflict => Results.Conflict(new { message = "Los datos cambiaron. Actualizá y revisá la selección o el estado antes de continuar." }),
+        OrderResultStatus.AttributionUnavailable => Results.Conflict(new { message = "La campaña ya no está disponible. Abrí el catálogo desde el perfil del negocio para volver a solicitar." }),
         _ => Results.BadRequest(new { message = "Indicá tu nombre y entre 1 y 20 productos distintos, con cantidades de 1 a 99." })
     };
     private static async Task<(T? Body, bool TooLarge)> Read<T>(HttpRequest request, CancellationToken ct)
