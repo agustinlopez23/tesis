@@ -21,6 +21,12 @@ builder.Services.AddHostedService<RankingRetentionWorker>();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("orders-create", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = 120, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
+    options.AddPolicy("orders-read", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = 600, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
     options.AddPolicy("ranking-create", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
         PermitLimit = builder.Configuration.GetValue("Ranking:CreatePermitLimit", 60),
         Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
@@ -61,7 +67,7 @@ app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =
 }));
 app.Use(async (context, next) =>
 {
-    if (context.Request.Path.StartsWithSegments("/public/ranking-snapshots"))
+    if (context.Request.Path.StartsWithSegments("/public/ranking-snapshots") || context.Request.Path.Value?.Contains("/orders", StringComparison.Ordinal) == true)
         context.Response.OnStarting(() =>
         {
             context.Response.Headers.CacheControl = "no-store";
@@ -73,6 +79,7 @@ app.UseRateLimiter();
 app.UseMiddleware<RankingConcurrencyMiddleware>();
 app.MapBusinessProfiles();
 app.MapCatalog();
+app.MapOrders();
 app.MapBusinessActivity();
 app.MapRankingSnapshots();
 
