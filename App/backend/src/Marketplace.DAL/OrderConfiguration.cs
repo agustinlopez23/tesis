@@ -10,7 +10,7 @@ internal static class OrderConfiguration
         model.Entity<CustomerOrder>(e =>
         {
             e.ToTable("customer_orders", t => {
-                t.HasCheckConstraint("CK_order_status", "status IN ('pending','in_attention','cancelled')");
+                t.HasCheckConstraint("CK_order_status", "status IN ('pending','in_attention','cancelled','converted')");
                 t.HasCheckConstraint("CK_order_source", "source = 'catalog'");
                 t.HasCheckConstraint("CK_order_version", "version > 0");
                 t.HasCheckConstraint("CK_order_hashes", "access_key_hash ~ '^[0-9a-f]{64}$' AND request_hash ~ '^[0-9a-f]{64}$'");

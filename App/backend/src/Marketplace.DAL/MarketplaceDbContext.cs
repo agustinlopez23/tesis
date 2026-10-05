@@ -20,11 +20,16 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<CustomerOrder> CustomerOrders => Set<CustomerOrder>();
     public DbSet<OrderLine> OrderLines => Set<OrderLine>();
     public DbSet<OrderChange> OrderChanges => Set<OrderChange>();
+    public DbSet<InventoryBalance> InventoryBalances => Set<InventoryBalance>();
+    public DbSet<InventoryMovement> InventoryMovements => Set<InventoryMovement>();
+    public DbSet<Sale> Sales => Set<Sale>();
+    public DbSet<SaleLine> SaleLines => Set<SaleLine>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         CatalogConfiguration.Configure(modelBuilder);
         OrderConfiguration.Configure(modelBuilder);
+        SalesConfiguration.Configure(modelBuilder);
         modelBuilder.ApplyConfiguration(new BusinessActivityConfiguration());
         modelBuilder.Entity<BusinessPhoto>(entity =>
         {

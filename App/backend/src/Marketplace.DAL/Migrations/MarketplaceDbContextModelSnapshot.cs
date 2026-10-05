@@ -480,9 +480,103 @@ namespace Marketplace.DAL.Migrations
 
                             t.HasCheckConstraint("CK_order_source", "source = 'catalog'");
 
-                            t.HasCheckConstraint("CK_order_status", "status IN ('pending','in_attention','cancelled')");
+                            t.HasCheckConstraint("CK_order_status", "status IN ('pending','in_attention','cancelled','converted')");
 
                             t.HasCheckConstraint("CK_order_version", "version > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Marketplace.Models.InventoryBalance", b =>
+                {
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer")
+                        .HasColumnName("version");
+
+                    b.HasKey("ProductId");
+
+                    b.ToTable("inventory_balances", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_inventory_quantity", "quantity BETWEEN 0 AND 1000000");
+
+                            t.HasCheckConstraint("CK_inventory_version", "version > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Marketplace.Models.InventoryMovement", b =>
+                {
+                    b.Property<Guid>("OperationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("operation_id");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("actor_id");
+
+                    b.Property<int>("Balance")
+                        .HasColumnType("integer")
+                        .HasColumnName("balance");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("business_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("Delta")
+                        .HasColumnType("integer")
+                        .HasColumnName("delta");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("reason");
+
+                    b.Property<string>("RequestHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("request_hash");
+
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sale_id");
+
+                    b.HasKey("OperationId", "ProductId");
+
+                    b.HasIndex("ActorId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SaleId");
+
+                    b.HasIndex("BusinessId", "CreatedAt", "OperationId");
+
+                    b.ToTable("inventory_movements", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_movement_balance", "balance BETWEEN 0 AND 1000000");
+
+                            t.HasCheckConstraint("CK_movement_kind", "kind IN ('adjustment','sale','return')");
                         });
                 });
 
@@ -624,6 +718,126 @@ namespace Marketplace.DAL.Migrations
                         {
                             Id = (short)2,
                             Name = "administrator"
+                        });
+                });
+
+            modelBuilder.Entity("Marketplace.Models.Sale", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("actor_id");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("business_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("OrderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_id");
+
+                    b.Property<string>("RequestHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("request_hash");
+
+                    b.Property<string>("VoidHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("void_hash");
+
+                    b.Property<Guid?>("VoidOperationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("void_operation_id");
+
+                    b.Property<string>("VoidReason")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("void_reason");
+
+                    b.Property<DateTimeOffset?>("VoidedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("voided_at");
+
+                    b.Property<Guid?>("VoidedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("voided_by");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActorId");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.HasIndex("VoidedBy");
+
+                    b.HasIndex("BusinessId", "CreatedAt", "Id");
+
+                    b.ToTable("sales", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Models.SaleLine", b =>
+                {
+                    b.Property<Guid>("SaleId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sale_id");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("currency");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Origin")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("origin");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<int>("ReturnedQuantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("returned_quantity");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("unit_price");
+
+                    b.HasKey("SaleId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("sale_lines", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_sale_origin", "origin IN ('requested','conversation','direct')");
+
+                            t.HasCheckConstraint("CK_sale_price", "unit_price >= 0 AND currency IN ('ARS','USD')");
+
+                            t.HasCheckConstraint("CK_sale_quantity", "quantity BETWEEN 1 AND 99 AND returned_quantity BETWEEN 0 AND quantity");
                         });
                 });
 
@@ -794,6 +1008,41 @@ namespace Marketplace.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Marketplace.Models.InventoryBalance", b =>
+                {
+                    b.HasOne("Marketplace.Models.CatalogProduct", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Marketplace.Models.InventoryMovement", b =>
+                {
+                    b.HasOne("Marketplace.Models.UserAccount", null)
+                        .WithMany()
+                        .HasForeignKey("ActorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.BusinessProfile", null)
+                        .WithMany()
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.CatalogProduct", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.Sale", null)
+                        .WithMany()
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Marketplace.Models.OrderChange", b =>
                 {
                     b.HasOne("Marketplace.Models.UserAccount", null)
@@ -830,6 +1079,46 @@ namespace Marketplace.DAL.Migrations
                         .WithOne("Photo")
                         .HasForeignKey("Marketplace.Models.ProductPhoto", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Marketplace.Models.Sale", b =>
+                {
+                    b.HasOne("Marketplace.Models.UserAccount", null)
+                        .WithMany()
+                        .HasForeignKey("ActorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.BusinessProfile", null)
+                        .WithMany()
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.CustomerOrder", null)
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Marketplace.Models.UserAccount", null)
+                        .WithMany()
+                        .HasForeignKey("VoidedBy")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Marketplace.Models.SaleLine", b =>
+                {
+                    b.HasOne("Marketplace.Models.CatalogProduct", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.Sale", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("SaleId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
 
@@ -876,6 +1165,11 @@ namespace Marketplace.DAL.Migrations
             modelBuilder.Entity("Marketplace.Models.Role", b =>
                 {
                     b.Navigation("Accounts");
+                });
+
+            modelBuilder.Entity("Marketplace.Models.Sale", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("Marketplace.Models.UserAccount", b =>
