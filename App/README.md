@@ -291,13 +291,17 @@ consulta, conservado al reintentar), `zoneId` (`centro`, `nueva-cordoba` o
 `FrontendOrigin` y `X-Requested-With: marketplace`. Cuerpo máximo 4096 bytes;
 otros campos/filtros se rechazan. Crea con 201; reintento con 200; conflicto 409.
 
-La respuesta ofrece `items`, `measurement`, `expiresAt`, `rankingVersion`,
+La respuesta ofrece `items`, `measurement`, `expiresAt`, `rankingVersion`, `cursor`,
 `hasMore` y `nextCursor`. Usar este último en
 `GET /public/ranking-snapshots/page?cursor=...`, sin agregar filtros. Cursor
 inválido: 400; vencido/retirado: 410. Todas las respuestas son no-store.
 Política local de prueba: EquityOnly, parámetros por defecto, semilla 17; el
 hash identifica esa política sin afirmar que esté evaluada. La guía y UI actuales
-no consumen estas rutas; todavía no existe proxy Next para ellas.
+no consumen estas rutas. El proxy Next admite estas dos rutas en desarrollo:
+`RANKING_PREVIEW_ENABLED=true` permite POST; GET local permite terminar cursores
+vigentes aunque se apague creación. Producción rechaza ambas aun con esa opción.
+El backend requiere su propia habilitación. `cursor` permite releer la página
+actual vía GET, incluida la primera, sin crear otra oportunidad ni renovar TTL.
 
 Cuotas por proceso: `Ranking__CreatePermitLimit=60` y
 `Ranking__PagePermitLimit=600` por minuto, sin cola; exceso devuelve 429.

@@ -3,6 +3,7 @@ type RouteParameters = { params: Promise<{ path: string[] }> };
 const allowedRoutes: Record<string, RegExp[]> = {
   GET: [
     /^public\/businesses$/,
+    /^public\/ranking-snapshots\/page$/,
     /^public\/businesses\/[0-9a-f-]{36}(\/photos\/[1-5])?$/i,
     /^auth\/session$/,
     /^business-categories$/,
@@ -11,17 +12,26 @@ const allowedRoutes: Record<string, RegExp[]> = {
     /^businesses\/[0-9a-f-]{36}\/photos(\/[1-5])?$/i,
     /^businesses\/[0-9a-f-]{36}\/activity$/i,
   ],
-  POST: [/^auth\/(register|login|logout)$/, /^businesses$/, /^public\/events$/],
+  POST: [/^auth\/(register|login|logout)$/, /^businesses$/, /^public\/events$/, /^public\/ranking-snapshots$/],
   PUT: [/^businesses\/[0-9a-f-]{36}$/i, /^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i],
   DELETE: [/^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i],
 };
 
 async function forward(request: Request, context: RouteParameters): Promise<Response> {
+  const response = await forwardRequest(request, context);
+  response.headers.set("Cache-Control", "no-store");
+  return response;
+}
+
+async function forwardRequest(request: Request, context: RouteParameters): Promise<Response> {
   const { path: segments } = await context.params;
   const path = segments.join("/");
   if (!allowedRoutes[request.method]?.some((route) => route.test(path))) {
     return new Response(null, { status: 404 });
   }
+  const ranking = path === "public/ranking-snapshots" || path === "public/ranking-snapshots/page";
+  if (ranking && (!isRankingPreviewEnvironment() || (request.method === "POST" && !rankingPreviewEnabled())))
+    return new Response(null, { status: 404 });
 
   const appOrigin = process.env.APP_ORIGIN;
   if (!appOrigin) return Response.json({ message: "Configuración incompleta." }, { status: 503 });
@@ -39,7 +49,7 @@ async function forward(request: Request, context: RouteParameters): Promise<Resp
   if (cookie) headers.set("Cookie", cookie);
 
   try {
-    const maxBody = path === "public/events" ? 4096 : 5 * 1024 * 1024 + 65536;
+    const maxBody = path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
     if (Number(request.headers.get("content-length")) > maxBody) return new Response(null, { status: 413 });
     // Bound streamed/chunked uploads too, before buffering them for the API.
     const chunks: Uint8Array[] = [];
@@ -58,14 +68,14 @@ async function forward(request: Request, context: RouteParameters): Promise<Resp
     let offset = 0;
     for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
     const upstreamUrl = new URL(path, baseUrl);
-    if (path === "public/businesses" || path.endsWith("/activity")) upstreamUrl.search = new URL(request.url).search;
+    if (ranking || path === "public/businesses" || path.endsWith("/activity")) upstreamUrl.search = new URL(request.url).search;
     const upstream = await fetch(upstreamUrl.toString(), {
       method: request.method,
       headers,
       body: request.method === "GET" ? undefined : body,
       cache: "no-store",
       redirect: "manual",
-      signal: AbortSignal.timeout(30000),
+      signal: AbortSignal.any([request.signal, AbortSignal.timeout(30000)]),
     });
     const responseHeaders = new Headers({ "Cache-Control": "no-store" });
     const responseType = upstream.headers.get("content-type");
@@ -94,3 +104,4 @@ export const GET = forward;
 export const POST = forward;
 export const PUT = forward;
 export const DELETE = forward;
+import { isRankingPreviewEnvironment, rankingPreviewEnabled } from "@/lib/ranking-preview";

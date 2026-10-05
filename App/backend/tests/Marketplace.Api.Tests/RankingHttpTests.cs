@@ -37,6 +37,9 @@ public sealed partial class RankingHttpTests(OnboardingFixture fixture) : IClass
         Assert.Equal(HttpStatusCode.Created, created.StatusCode);
         AssertNoStore(created);
         var first = await created.Content.ReadFromJsonAsync<JsonElement>();
+        var firstCursor = first.GetProperty("cursor").GetString();
+        var reread = await client.GetAsync(Route + "/page?cursor=" + Uri.EscapeDataString(firstCursor!));
+        Assert.Equal(Ids(first), Ids(await reread.Content.ReadFromJsonAsync<JsonElement>()));
         var retry = await client.PostAsJsonAsync(Route, request);
         Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
         var replay = await retry.Content.ReadFromJsonAsync<JsonElement>();
@@ -44,6 +47,8 @@ public sealed partial class RankingHttpTests(OnboardingFixture fixture) : IClass
         Assert.Equal(Ids(first), Ids(replay));
         Assert.Equal(first.GetProperty("rankingVersion").GetString(), replay.GetProperty("rankingVersion").GetString());
         var second = await ReadPage(client, first);
+        var currentSecond = await client.GetAsync(Route + "/page?cursor=" + Uri.EscapeDataString(second.GetProperty("cursor").GetString()!));
+        Assert.Equal(Ids(second), Ids(await currentSecond.Content.ReadFromJsonAsync<JsonElement>()));
         var third = await ReadPage(client, second);
         Assert.Equal(new[] { 20, 20, 5 }, new[] { Ids(first).Length, Ids(second).Length, Ids(third).Length });
         Assert.False(third.GetProperty("hasMore").GetBoolean());

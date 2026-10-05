@@ -54,7 +54,7 @@ public static class RankingHttpEndpoints
         if (result.Status == SnapshotStatus.Conflict) return Results.Conflict();
         if (result.Status == SnapshotStatus.Expired) return Gone();
         var page = await pages.ReadAsync(result.Snapshot!.Id, 0, ct);
-        return page is null ? Gone() : Results.Json(PublicPage(page, cursors, measurement),
+        return page is null ? Gone() : Results.Json(PublicPage(page, 0, cursors, measurement),
             statusCode: result.Status == SnapshotStatus.Created ? 201 : 200);
     }
 
@@ -75,14 +75,15 @@ public static class RankingHttpEndpoints
         catch (ArgumentException) { return Results.BadRequest(); }
         if (page is null) return Gone();
         if (page.ExpiresAt != cursor.ExpiresAt) return Results.BadRequest();
-        return Results.Ok(PublicPage(page, cursors, measurement));
+        return Results.Ok(PublicPage(page, cursor.Offset, cursors, measurement));
     }
 
-    private static PublicRankingPage PublicPage(RankingSnapshotPage page, RankingCursorTokens cursors, ActivityTokens measurement) =>
+    private static PublicRankingPage PublicPage(RankingSnapshotPage page, int currentOffset, RankingCursorTokens cursors, ActivityTokens measurement) =>
         new(page.Items.Select(x => x.Business).ToArray(), page.ExpiresAt, page.PolicyHash, page.NextOffset.HasValue,
             page.NextOffset is { } offset ? cursors.Issue(new(page.SnapshotId, offset, page.ExpiresAt)) : null,
             page.Items.ToDictionary(x => x.Business.Id,
-                x => measurement.Issue(new(x.Business.Id, "directory", x.Position, page.PolicyHash))));
+                x => measurement.Issue(new(x.Business.Id, "directory", x.Position, page.PolicyHash))),
+            cursors.Issue(new(page.SnapshotId, currentOffset, page.ExpiresAt)));
 
     private static bool IsPreviewEnvironment(IWebHostEnvironment environment) =>
         environment.IsDevelopment() || environment.IsEnvironment("Testing");
