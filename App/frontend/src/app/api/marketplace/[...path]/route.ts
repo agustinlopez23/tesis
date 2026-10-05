@@ -2,6 +2,9 @@ type RouteParameters = { params: Promise<{ path: string[] }> };
 
 const allowedRoutes: Record<string, RegExp[]> = {
   GET: [
+    /^(public\/)?businesses\/[0-9a-f-]{36}\/products(\/[0-9a-f-]{36}\/photo)?$/i,
+    /^businesses\/[0-9a-f-]{36}\/plan$/i,
+    /^admin\/businesses(\/[0-9a-f-]{36}\/plan)?$/i,
     /^public\/businesses$/,
     /^public\/ranking-snapshots\/page$/,
     /^public\/businesses\/[0-9a-f-]{36}(\/photos\/[1-5])?$/i,
@@ -12,9 +15,9 @@ const allowedRoutes: Record<string, RegExp[]> = {
     /^businesses\/[0-9a-f-]{36}\/photos(\/[1-5])?$/i,
     /^businesses\/[0-9a-f-]{36}\/activity$/i,
   ],
-  POST: [/^auth\/(register|login|logout)$/, /^businesses$/, /^public\/events$/, /^public\/ranking-snapshots$/],
-  PUT: [/^businesses\/[0-9a-f-]{36}$/i, /^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i],
-  DELETE: [/^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i],
+  POST: [/^auth\/(register|login|logout)$/, /^businesses$/, /^public\/events$/, /^public\/ranking-snapshots$/, /^admin\/businesses\/[0-9a-f-]{36}\/subscriptions\/[0-9a-f-]{36}\/revoke$/i],
+  PUT: [/^businesses\/[0-9a-f-]{36}$/i, /^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i, /^businesses\/[0-9a-f-]{36}\/products\/[0-9a-f-]{36}(\/photo)?$/i, /^admin\/businesses\/[0-9a-f-]{36}\/subscriptions\/[0-9a-f-]{36}$/i],
+  DELETE: [/^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i, /^businesses\/[0-9a-f-]{36}\/products\/[0-9a-f-]{36}\/photo$/i],
 };
 
 async function forward(request: Request, context: RouteParameters): Promise<Response> {
@@ -68,7 +71,7 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
     let offset = 0;
     for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
     const upstreamUrl = new URL(path, baseUrl);
-    if (ranking || path === "public/businesses" || path.endsWith("/activity")) upstreamUrl.search = new URL(request.url).search;
+    if (ranking || path === "public/businesses" || path.endsWith("/activity") || path.includes("/products") || path === "admin/businesses") upstreamUrl.search = new URL(request.url).search;
     const upstream = await fetch(upstreamUrl.toString(), {
       method: request.method,
       headers,

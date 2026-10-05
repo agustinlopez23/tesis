@@ -564,3 +564,35 @@
     .location-summary span { display: block; }
   }
 }
+/* Catalog and manual plan management share the existing Cerca form palette. */
+.catalog-panel, .public-catalog { margin-top: 2rem; padding: clamp(1rem, 3vw, 2rem); border: 1px solid #deddd5; border-radius: 18px; background: #fffefb; }
+.catalog-heading, .catalog-toolbar { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem; }
+.catalog-heading h2 { margin: .4rem 0; }
+.catalog-notice { padding: 1rem; background: #f5efdd; border-radius: 10px; line-height: 1.6; }
+.catalog-owner-list { margin: 1.5rem 0; }
+.catalog-owner-list article { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #e8e6de; overflow-wrap: anywhere; }
+.catalog-owner-list article p { margin: .4rem 0; font-size: .9rem; }
+.catalog-form { padding-top: 1rem; border-top: 1px solid #e8e6de; }
+.catalog-form fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.catalog-form label, .catalog-search label, .catalog-photo-editor label { display: grid; gap: .5rem; margin-bottom: 1rem; font-size: .9rem; font-weight: 600; }
+.catalog-form input, .catalog-form textarea, .catalog-form select, .catalog-search input { width: 100%; min-width: 0; padding: .8rem; border: 1px solid #cccac1; border-radius: 8px; background: white; font: inherit; }
+.catalog-form textarea { min-height: 90px; resize: vertical; }
+.catalog-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.catalog-photo-editor { margin-top: 1.5rem; }
+.catalog-photo-editor img { object-fit: cover; border-radius: 12px; margin-bottom: 1rem; max-width: 100%; }
+.catalog-photo-editor input { max-width: 100%; }
+.catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.2rem; margin: 1.5rem 0; }
+.product-card { border: 1px solid #e8e6de; border-radius: 14px; overflow: hidden; }
+.product-card img { width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover; }
+.product-card-copy { padding: 1.25rem; overflow-wrap: anywhere; }
+.product-card-copy h3 { margin: .5rem 0; }
+.product-card-copy p { line-height: 1.6; white-space: pre-wrap; }
+.product-availability { display: block; margin-top: .7rem; font-size: .85rem; }
+.catalog-search { display: flex; gap: 1rem; align-items: end; margin: 1.5rem 0; }
+.catalog-search label { flex: 1; margin: 0; }
+.admin-plans { padding-top: 3rem; padding-bottom: 4rem; max-width: 1000px; }
+@media (max-width: 700px) {
+  .catalog-fields, .catalog-grid { grid-template-columns: 1fr; }
+  .catalog-search, .catalog-owner-list article { align-items: stretch; flex-direction: column; }
+  .catalog-heading .button { width: 100%; }
+}
