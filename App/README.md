@@ -1,5 +1,62 @@
 # Prototipo del marketplace local
 
+## Catálogo y planes manuales
+
+En **Mi negocio → Editar negocio → Administrar catálogo** se consulta el plan y
+se crean/editan productos con nombre, descripción, categoría, precio ARS/USD,
+disponibilidad y estado. Guardar antes de subir la foto. Archivar conserva el
+producto; publicado aparece en el perfil público si negocio y plan están habilitados.
+La disponibilidad es declarada: todavía no hay cantidades de stock ni pedidos.
+
+El plan Impulso vigente habilita escrituras y lectura pública. Presencia conserva
+perfil y lectura privada del catálogo. Vencer/revocar oculta productos y fotos en
+la siguiente petición; conserva todo el historial. No cambia el ranking orgánico.
+
+Aplicar la migración habitual antes de ejecutar esta versión, incluida
+`20261005025720_AddBusinessCatalog`. El rol `administrator` existe sin asignaciones
+automáticas. Un operador del entorno puede otorgarlo a una cuenta registrada y
+habilitada, usando psql con la variable `admin_email` de esa cuenta:
+
+```sql
+INSERT INTO user_account_roles (user_id, role_id)
+SELECT id, 2 FROM user_accounts
+WHERE email = lower(:'admin_email') AND NOT is_suspended
+ON CONFLICT DO NOTHING
+RETURNING user_id;
+```
+
+Verificar la cuenta y el resultado en el entorno objetivo. No hay endpoint público
+para elevar roles. Ingresar con esa cuenta y abrir **Administrar planes** desde el
+panel, o `/administracion/planes`. Allí se buscan negocios, registran períodos y
+revocan vigencias con motivo. Fechas de entrada en hora local del dispositivo;
+inicio incluido, fin excluido. El prototipo no procesa el cobro.
+
+Catálogo: `GET /businesses/{id}/plan`, `GET /businesses/{id}/products`,
+`PUT /businesses/{id}/products/{uuid}`; para crear, `version: 0`, para editar,
+versión recibida. GET/PUT/DELETE de foto en `.../{uuid}/photo`; subida multipart
+`file` + `version`, retiro con `?version=N`. UUID estable evita altas duplicadas;
+409 exige actualizar lista antes de resolver una edición en conflicto.
+
+Público: `GET /public/businesses/{id}/products?page=1&q=...` y fotos en
+`.../{uuid}/photo`. Veinte por página, orden alfabético; búsqueda dentro del negocio.
+Administrador: `GET /admin/businesses?q=...&page=1`, `GET .../{id}/plan`,
+`PUT .../{id}/subscriptions/{uuid}` con `startsAt`, `endsAt`, `reason` y
+`POST .../{id}/subscriptions/{uuid}/revoke` con `reason`. La repetición idéntica de
+activación/revocación conserva la operación original; no admite solapamientos.
+
+Verificación integrada, tras compilar backend Release y frontend:
+`node App/tools/verify-catalog.mjs` desde la raíz. Usa base generada y puertos
+3200/5280, y elimina la base al terminar. `--serve` conserva hasta 20 minutos para
+revisión visual; `.tools/catalog/session.json` contiene cuentas temporales y un
+`stopFile` para terminar antes. No ejecutar otra compilación del backend mientras
+esté sirviendo: Windows bloquea DLL cargadas.
+
+[Contrato, límites y rollback](../openspec/specs/business-catalog/spec.md).
+Down se bloquea cuando existen productos, vigencias o administradores asignados;
+revertir código conserva el esquema aditivo para evitar pérdida de datos.
+
+## Base implementada
+
 Backend ASP.NET Core en siete proyectos de aplicación y frontend Next.js. La página inicial
 presenta la guía de descubrimiento con la identidad visual de trabajo **Cerca**. El backend
 ya incluye el primer corte de negocio: registro, ingreso y sesión revocable del
