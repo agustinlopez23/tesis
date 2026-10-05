@@ -28,5 +28,11 @@ y avance de 20 aunque una página quede vacía. Relectura no suma exposición.
 Lista desconocida/vencida no entrega página. Offsets negativos/no múltiplos de
 20/fuera de lista son inválidos. Lista vacía admite offset 0 sin siguiente página.
 
-Servicios internos registrados, sin endpoints ni cambio del orden público.
-Exponerlos requiere política evaluada, cursor protegido, controles de carga y UI.
+La lectura histórica materializa como máximo límite+1 saldos agregados por negocio,
+incluidos los ya inelegibles. Límite predeterminado 10.000, configurable 1–100.000.
+Excederlo rechaza toda la creación, revierte la secuencia y permite reintentar.
+Replays vigentes no reconstruyen candidatos/saldos. No se acota el trabajo SQL
+necesario para agregar contribuciones de los 30 días del contexto.
+
+Servicios expuestos solo mediante previsualización local, según `ranking-http`;
+sin cambio del orden de la guía. La activación requiere política evaluada y UI.

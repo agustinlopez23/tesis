@@ -18,3 +18,13 @@
   usan no-store. Creación y lectura tienen cuotas globales separadas, sin colas.
 - Política/semilla no vienen del cliente. Dueño se resuelve desde sesión real;
   inclusión de negocio propio conserva toda la oportunidad con exposición cero.
+- Exceso de candidatos o saldos históricos: 503 sin detalles internos, no-store,
+  sin snapshot/exposición parcial ni avance de secuencia. Mismo requestId reintentable.
+- Cupos por proceso independientes de 4 POST/16 GET simultáneos; configurables
+  entre 1 y 64 cada uno. Exceso: 429 sin cola, aun desde otro cliente. Liberación
+  tras éxito, error o cancelación, incluida la serialización de respuesta.
+- Límites de candidatos/saldos/concurrencia inválidos impiden el arranque.
+- Carga local de 1.000 elegibles con 4 POST/16 GET simultáneos conserva 50 páginas
+  completas; 17 listas dejan 17 oportunidades y 17.000 contribuciones, también
+  cuando se abandonan 16 listas. Leer/reintentar no crea contribuciones adicionales.
+  Esta evidencia no certifica capacidad productiva ni control distribuido.

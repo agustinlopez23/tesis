@@ -249,8 +249,9 @@ El [contrato de integración](ranking-public-integration.md)
 describe candidatos históricos y paginación estable. Historial de publicación y
 lector completo implementados el 22/09; adaptador, snapshots y ledger internos
 completados el 04/10. HTTP con cursores protegidos disponible solo como
-previsualización local explícita, sin activación productiva. Faltan controles
-de capacidad/carga, proxy/UI y política evaluada.
+previsualización local explícita, sin activación productiva. Límites operativos
+de candidatos, saldos y concurrencia verificados con carga local. Faltan proxy/UI,
+política evaluada y dimensionamiento del despliegue productivo.
 
 ## 10. Métricas de producto y atribución
 

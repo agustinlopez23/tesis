@@ -3,10 +3,12 @@
 **Persistencia interna implementada al 04/10/2026:** historial, lector, adaptador,
 snapshots/ledger transaccionales, paginación revalidada y purga automática.
 **HTTP local implementado el 04/10/2026:** POST/GET, cursores protegidos, validación,
-no-store, errores y cuotas por proceso. 83/83 API/HTTP/PostGIS. Solo Development/
+no-store, errores y cuotas por proceso. 100/100 API/HTTP/PostGIS. Solo Development/
 Testing con `Ranking:PreviewEnabled=true`; Production permanece cerrado incluso
 con esa opción. Política local de prueba EquityOnly/default/17, sin aprobación.
-Controles de candidatos/memoria/carga y proxy/interfaz siguen pendientes.
+**Capacidad local verificada el 04/10/2026:** candidatos y saldos acotados,
+concurrencia separada POST/GET y carga con 1.000 negocios. Proxy/interfaz pendientes;
+el dimensionamiento productivo todavía requiere medición en su despliegue real.
 Activar depende de una política evaluada y versionada. BLL define interfaces y reglas,
 DAL implementa transacciones/PostGIS, API valida HTTP/protege tokens y Next
 administra navegación. Se mantiene ADR-001. Activación deshabilitada por defecto.
@@ -127,12 +129,22 @@ Tras expirar, un requestId conocido responde 410; tras purgar la asociación no
 puede garantizarse deduplicación: el cliente debe emitir ID nuevo, no reintentar
 una operación vencida. Límite explícito, no garantía de exactamente una vez ilimitada.
 
-Cuotas iniciales por proceso: 60 POST/minuto y 600 GET/minuto, sin cola, exceso
-429 también no-store. Configuración en `App/README.md`; no se midió capacidad ni
-se implementó limitación distribuida. Snapshot y tokens no sustituyen controles
-de abuso. Antes de activar: probar
-límites de tasa/memoria/candidatos y latencia con carga, incluidas listas creadas
-y abandonadas; asignación modelada puede manipularse creando nuevas consultas.
+Cuotas iniciales por proceso: 60 POST/minuto y 600 GET/minuto. Cupos simultáneos
+independientes: 4 POST y 16 GET, sin cola; exceso 429 no-store. Se liberan al
+completar, fallar o cancelar, incluida la serialización de la respuesta.
+Máximos por creación: 1.000 candidatos y 10.000 saldos históricos por contexto,
+incluidos negocios ya inelegibles. DAL materializa límite+1 para detectar exceso;
+si lo hay, rechaza todo con 503 y rollback, sin truncar ni avanzar secuencia.
+Reintentar el mismo requestId es seguro; un replay vigente no reconstruye la lista.
+La agregación SQL de saldos sigue procesando el historial de 30 días del contexto;
+el límite de filas materializadas no acota ese trabajo de base ni la retención total.
+Configuración y rangos en `App/README.md`; valores inválidos impiden el arranque.
+Carga local verificada con 1.000 negocios, 17 listas (16 abandonadas tras página 1),
+4 creaciones/16 lecturas simultáneas, paginación completa y replay sin nuevos aportes.
+Ver [evidencia](../openspec/changes/archive/2026-10-04-ranking-capacity/verify-report.md).
+No hay limitación distribuida; antes de activar, dimensionar latencia y memoria en
+el despliegue real. Snapshot y tokens no sustituyen controles de abuso; asignación
+modelada puede manipularse creando nuevas consultas.
 Fallo transaccional: no devolver una lista experimental parcialmente registrada.
 UI permite reintentar o usar guía vigente, identificada con su versión real.
 

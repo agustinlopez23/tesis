@@ -310,11 +310,12 @@ Los saldos incluyen negocios que ya no son elegibles. Concurrencia por proceso:
 1–64 cada uno. Cupos independientes, sin cola; exceso devuelve 429 no-store.
 Los permisos se liberan al completar, fallar o cancelar la solicitud, incluida
 la serialización de la respuesta. La configuración inválida impide el arranque.
-Son límites iniciales; la carga sigue en verificación.
+Verificación local: 1.000 candidatos, 17 listas y solicitudes simultáneas a
+4 POST/16 GET; [evidencia y límites de la medición](../openspec/changes/archive/2026-10-04-ranking-capacity/verify-report.md).
 Desactivar PreviewEnabled cierra creación y permite terminar listas de 30 minutos.
 `Ranking__WithdrawPages=true` retira inmediatamente creación y lectura con 410
 (creación ya desactivada mantiene 404). Antes de producción faltan evaluación,
-controles de capacidad y gestión compartida de claves Data Protection.
+dimensionamiento productivo y gestión compartida de claves Data Protection.
 
 ## Evidencia y mantenimiento
 

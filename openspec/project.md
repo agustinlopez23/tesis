@@ -2,13 +2,16 @@
 
 ## Estado vigente — 2026-10-04
 
-Incremento más reciente: cursores protegidos y endpoints POST/GET de snapshots
-para Development/Testing con habilitación explícita; producción cerrada.
-Valida origen/cuerpo/filtros, distingue 400/409/410 y conserva no-store, posiciones
-y TTL. Cuotas separadas por proceso y retirada de emergencia. **83/83 API/HTTP/
-PostGIS**, sin omitidas. Evidencia: `changes/archive/2026-10-04-ranking-http-preview/verify-report.md`.
-Quedan límites de candidatos/memoria, carga/concurrencia y proxy/UI; activación
-productiva sujeta a anotaciones y política evaluada. Demo sin cambios.
+Incremento más reciente: capacidad del ranking local. Máximos de 1.000 candidatos
+y 10.000 saldos por contexto, exceso 503 con rollback, sin truncar; reintento seguro.
+Cupos independientes de 4 POST/16 GET simultáneos, sin cola, recuperación tras
+éxito/error/cancelación y validación al arrancar. Carga integrada con 1.000 negocios,
+17 listas y 50 páginas; integridad conservada. **100/100 API/HTTP/PostGIS y 99/99
+BLL/evaluación**, cero omitidas. Evidencia: `changes/archive/2026-10-04-ranking-capacity/verify-report.md`.
+Se conservan cursores, TTL, cuotas por minuto y retirada de emergencia del HTTP local.
+Solo Development/Testing con habilitación explícita; producción cerrada.
+Queda proxy/UI; activación productiva sujeta a anotaciones, política evaluada y
+dimensionamiento del despliegue real. Demo sin cambios.
 
 Estado previo dentro del mismo día:
 

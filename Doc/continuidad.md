@@ -1,17 +1,26 @@
 # Punto de continuidad — 04/10/2026
 
-Completado el incremento HTTP en `feat/ranking-http-preview`, desde `02af9d6`.
-Cursores protegidos con TTL absoluto, POST/GET locales, validación, no-store,
-reintentos, 400/409/410, cuotas separadas 60/600 por minuto y retirada de emergencia.
-**83/83 API/HTTP/PostGIS**, sin omitidas; BLL mantiene evidencia previa 99/99.
+Completado el incremento de capacidad en `feat/ranking-capacity`, desde `56a238e`.
+Candidatos y saldos históricos acotados: exceso rechaza toda creación con 503 y
+rollback; reintento con mismo requestId seguro. Cupos separados de 4 POST/16 GET
+simultáneos, sin cola, 429 no-store y recuperación tras éxito/error/cancelación.
+Configuración validada al arrancar. Carga local de 1.000 negocios: 17 listas,
+50 páginas completas, sin pérdida ni duplicación de exposición al leer/reintentar.
+**100/100 API/HTTP/PostGIS y 99/99 BLL/evaluación**, sin omitidas ni advertencias.
 Política de previsualización EquityOnly/default/17, sin aprobación experimental.
 Solo Development/Testing con `Ranking:PreviewEnabled=true`; Production cerrado.
-Tres unidades locales, sin push/PR; consultar git para el último hash.
-Evidencia: `../openspec/changes/archive/2026-10-04-ranking-http-preview/verify-report.md`.
-Próximo incremento: límites de candidatos/memoria, concurrencia y pruebas de carga;
-después proxy/UI. La activación productiva requiere política evaluada/anotaciones.
+Tres unidades locales: `ddc4c3a` lecturas acotadas, `072164a` concurrencia y cierre
+con carga/documentación; consultar git para el último hash. Sin push/PR.
+Evidencia: `../openspec/changes/archive/2026-10-04-ranking-capacity/verify-report.md`.
+Próximo incremento: proxy/UI de previsualización. La activación productiva requiere
+política evaluada/anotaciones y dimensionamiento real; carga HTTP en proceso
+no certifica memoria pico, varias instancias ni agregado SQL a escala de 30 días.
 Paquetes humanos y borrador intactos. Demo sin migrar/reiniciar/habilitar.
 Contrato y configuración en `ranking-public-integration.md` y `../App/README.md`.
+
+Incremento HTTP anterior: cursores protegidos con TTL absoluto, POST/GET locales,
+validación, no-store, reintentos, 400/409/410, cuotas 60/600 por minuto y retirada.
+Evidencia: `../openspec/changes/archive/2026-10-04-ranking-http-preview/verify-report.md`.
 
 ## Persistencia interna completada previamente
 
