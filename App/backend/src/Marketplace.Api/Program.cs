@@ -14,6 +14,7 @@ builder.Services.AddMarketplace(builder.Configuration);
 builder.Services.AddProblemDetails();
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton<ActivityTokens>();
+builder.Services.AddSingleton<RankingCursorTokens>();
 builder.Services.AddHostedService<ActivityRetentionWorker>();
 builder.Services.AddHostedService<RankingRetentionWorker>();
 builder.Services.AddRateLimiter(options =>
@@ -49,6 +50,7 @@ app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =
 app.UseRateLimiter();
 app.MapBusinessProfiles();
 app.MapBusinessActivity();
+app.MapRankingSnapshots();
 
 app.MapGet("/health/live", () => Results.Json(new { status = "ok" }));
 
