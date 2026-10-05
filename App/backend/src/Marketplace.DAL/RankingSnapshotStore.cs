@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marketplace.DAL;
 
-public sealed class RankingSnapshotStore(MarketplaceDbContext database, TimeProvider clock) : IRankingSnapshotStore
+public sealed class RankingSnapshotStore(MarketplaceDbContext database, TimeProvider clock, RankingReadLimits limits) : IRankingSnapshotStore
 {
     public async Task<SnapshotResult> CreateAsync(Guid requestId, string contextKey,
         Func<long, CancellationToken, Task<RankingOpportunity>> build, CancellationToken ct)
@@ -66,7 +66,8 @@ public sealed class RankingSnapshotStore(MarketplaceDbContext database, TimeProv
             FROM ranking_contributions c JOIN ranking_opportunities o ON o.id = c.opportunity_id
             WHERE o.context_key = {contextKey} AND o.occurred_at > {at.AddDays(-30)} AND o.occurred_at <= {at}
             GROUP BY c.business_id
-            """).ToListAsync(ct);
+            """).Take(limits.MaxBalanceRows + 1).ToListAsync(ct);
+        if (rows.Count > limits.MaxBalanceRows) throw new RankingCapacityException();
         return rows.ToDictionary(x => x.Id, x => new ExposureBalance(x.Expected, x.Received));
     }
 

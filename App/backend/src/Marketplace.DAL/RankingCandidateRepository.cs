@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marketplace.DAL;
 
-public sealed class RankingCandidateRepository(MarketplaceDbContext database) : IRankingCandidateRepository
+public sealed class RankingCandidateRepository(MarketplaceDbContext database, RankingReadLimits limits) : IRankingCandidateRepository
 {
     public async Task<IReadOnlyList<EligibleRankingBusiness>> GetEligibleAsync(
         short categoryId, DiscoveryArea area, CancellationToken cancellationToken)
@@ -14,7 +14,7 @@ public sealed class RankingCandidateRepository(MarketplaceDbContext database) : 
         if (!area.IsValid) throw new ArgumentException("Invalid discovery area.", nameof(area));
         cancellationToken.ThrowIfCancellationRequested();
 
-        // A single statement sees one database snapshot. No pagination or silent cap.
+        // The extra row detects overload in the same statement; never rank a partial pool.
         var candidates = await database.Database.SqlQuery<EligibleRankingBusiness>($"""
             SELECT b.id AS "Id", b.owner_id AS "OwnerId",
                 ST_Distance(b.location, ST_SetSRID(ST_MakePoint({area.Longitude}, {area.Latitude}), 4326)::geography) / 1000 AS "DistanceKm",
@@ -25,7 +25,9 @@ public sealed class RankingCandidateRepository(MarketplaceDbContext database) : 
             WHERE b.status = 'published' AND NOT u.is_suspended
               AND b.category_id = {categoryId}
               AND ST_DWithin(b.location, ST_SetSRID(ST_MakePoint({area.Longitude}, {area.Latitude}), 4326)::geography, {area.RadiusKm * 1000})
-            """).OrderBy(x => x.Id).ToListAsync(cancellationToken);
+            """).OrderBy(x => x.Id).Take(limits.MaxCandidates + 1).ToListAsync(cancellationToken);
+
+        if (candidates.Count > limits.MaxCandidates) throw new RankingCapacityException();
 
         var ids = new HashSet<Guid>();
         foreach (var candidate in candidates)

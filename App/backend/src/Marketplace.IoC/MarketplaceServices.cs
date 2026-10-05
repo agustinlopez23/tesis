@@ -20,6 +20,9 @@ public static class MarketplaceServices
         });
         services.AddScoped<IIdentityRepository, IdentityRepository>();
         services.AddScoped<IBusinessRepository, BusinessRepository>();
+        services.AddSingleton(provider => new RankingReadLimits(
+            provider.GetRequiredService<IConfiguration>().GetValue("Ranking:MaxCandidates", 1000),
+            provider.GetRequiredService<IConfiguration>().GetValue("Ranking:MaxBalanceRows", 10000)));
         services.AddScoped<IRankingCandidateRepository, RankingCandidateRepository>();
         services.AddScoped<MagazineRankingCandidates>();
         services.AddScoped<IRankingSnapshotStore, RankingSnapshotStore>();

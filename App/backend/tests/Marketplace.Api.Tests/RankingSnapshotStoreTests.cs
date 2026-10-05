@@ -28,7 +28,7 @@ public sealed class RankingSnapshotStoreTests(OnboardingFixture fixture) : IClas
         async Task<SnapshotResult> Create()
         {
             using var scope = fixture.Factory.Services.CreateScope();
-            var store = new RankingSnapshotStore(scope.ServiceProvider.GetRequiredService<MarketplaceDbContext>(), new Clock());
+            var store = new RankingSnapshotStore(scope.ServiceProvider.GetRequiredService<MarketplaceDbContext>(), new Clock(), new RankingReadLimits());
             return await store.CreateAsync(request, key, (seq, _) =>
             {
                 Interlocked.Increment(ref builds);
@@ -42,7 +42,7 @@ public sealed class RankingSnapshotStoreTests(OnboardingFixture fixture) : IClas
         Assert.Single(results.Select(x => x.Snapshot!.Id).Distinct());
         using var read = fixture.Factory.Services.CreateScope();
         var db = read.ServiceProvider.GetRequiredService<MarketplaceDbContext>();
-        var repository = new RankingSnapshotStore(db, new Clock());
+        var repository = new RankingSnapshotStore(db, new Clock(), new RankingReadLimits());
         var conflict = await repository.CreateAsync(request, key + "-other", (_, _) => throw new Exception("must not build"), default);
         Assert.Equal(SnapshotStatus.Conflict, conflict.Status);
         var snapshot = await repository.FindAsync(results[0].Snapshot!.Id, default);
@@ -59,7 +59,7 @@ public sealed class RankingSnapshotStoreTests(OnboardingFixture fixture) : IClas
         async Task<(long Sequence, double Previous)> Create()
         {
             using var scope = fixture.Factory.Services.CreateScope();
-            var store = new RankingSnapshotStore(scope.ServiceProvider.GetRequiredService<MarketplaceDbContext>(), new Clock());
+            var store = new RankingSnapshotStore(scope.ServiceProvider.GetRequiredService<MarketplaceDbContext>(), new Clock(), new RankingReadLimits());
             (long, double) observed = default;
             await store.CreateAsync(Guid.NewGuid(), key, async (seq, ct) =>
             {
@@ -79,7 +79,7 @@ public sealed class RankingSnapshotStoreTests(OnboardingFixture fixture) : IClas
     {
         using var scope = fixture.Factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<MarketplaceDbContext>();
-        var store = new RankingSnapshotStore(db, new Clock());
+        var store = new RankingSnapshotStore(db, new Clock(), new RankingReadLimits());
         var key = Guid.NewGuid().ToString();
         var request = Guid.NewGuid();
         await Assert.ThrowsAsync<PostgresException>(() => store.CreateAsync(request, key, (seq, _) =>
@@ -102,7 +102,7 @@ public sealed class RankingSnapshotStoreTests(OnboardingFixture fixture) : IClas
     {
         using var scope = fixture.Factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<MarketplaceDbContext>();
-        var store = new RankingSnapshotStore(db, new Clock());
+        var store = new RankingSnapshotStore(db, new Clock(), new RankingReadLimits());
         var key = Guid.NewGuid().ToString();
         var request = Guid.NewGuid();
         using var cancellation = new CancellationTokenSource();

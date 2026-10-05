@@ -301,7 +301,12 @@ no consumen estas rutas; todavía no existe proxy Next para ellas.
 
 Cuotas por proceso: `Ranking__CreatePermitLimit=60` y
 `Ranking__PagePermitLimit=600` por minuto, sin cola; exceso devuelve 429.
-Son límites iniciales, sin pruebas de carga ni límite de candidatos aún.
+Cada creación admite hasta `Ranking__MaxCandidates=1000` candidatos y
+`Ranking__MaxBalanceRows=10000` saldos históricos por contexto. Rangos válidos:
+1–10000 y 1–100000 respectivamente. Una fila adicional produce 503 y rollback;
+nunca se clasifica un prefijo. Se puede reintentar con el mismo requestId.
+Los saldos incluyen negocios que ya no son elegibles. Son límites iniciales;
+la concurrencia y la carga siguen en verificación.
 Desactivar PreviewEnabled cierra creación y permite terminar listas de 30 minutos.
 `Ranking__WithdrawPages=true` retira inmediatamente creación y lectura con 410
 (creación ya desactivada mantiene 404). Antes de producción faltan evaluación,

@@ -19,7 +19,7 @@ public sealed class RankingRetentionTests(OnboardingFixture fixture) : IClassFix
         using var scope = fixture.Factory.Services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<MarketplaceDbContext>();
         var clock = new Clock();
-        var store = new RankingSnapshotStore(db, clock);
+        var store = new RankingSnapshotStore(db, clock, new RankingReadLimits());
         var key = "retention";
         var request = Guid.NewGuid();
         var business = Guid.NewGuid();

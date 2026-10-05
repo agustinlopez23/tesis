@@ -39,8 +39,16 @@ public static class RankingHttpEndpoints
             body.CategoryId <= 0 || body.RadiusKm != 4) return Results.BadRequest();
         if (!(await businesses.GetCategoriesAsync(ct)).Any(x => x.Id == body.CategoryId)) return Results.BadRequest();
         var actor = await auth.GetSessionAsync(request.Cookies["marketplace_session"], ct);
-        var result = await service.CreateAsync(body.RequestId, body.ZoneId, body.CategoryId,
-            RankingVariant.EquityOnly, new(), 17, actor?.Id, ct);
+        SnapshotResult result;
+        try
+        {
+            result = await service.CreateAsync(body.RequestId, body.ZoneId, body.CategoryId,
+                RankingVariant.EquityOnly, new(), 17, actor?.Id, ct);
+        }
+        catch (RankingCapacityException)
+        {
+            return Results.Json(new { message = "La lista supera la capacidad disponible. Usá la guía de negocios." }, statusCode: 503);
+        }
         if (result.Status == SnapshotStatus.Conflict) return Results.Conflict();
         if (result.Status == SnapshotStatus.Expired) return Gone();
         var page = await pages.ReadAsync(result.Snapshot!.Id, 0, ct);
