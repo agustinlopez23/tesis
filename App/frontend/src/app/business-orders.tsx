@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { catalogApi, catalogError } from "./catalog-api";
 import { Order, orderStatus } from "./order-api";
 import OrderReceipt from "./order-receipt";
+import SaleEditor from "./sale-editor";
 
 type Summary = Pick<Order, "id" | "reference" | "customerName" | "createdAt" | "status" | "contactReceivedAt">;
 export default function BusinessOrders({ id }: { id: string }) {
@@ -41,7 +42,7 @@ function OrderList({ business }: { business: string }) {
     <p>Una solicitud puede existir aunque el cliente todavía no haya enviado el mensaje. Podés resolver las recibidas aunque venza tu plan.</p>
     <form className="catalog-search" onSubmit={e => { e.preventDefault(); setFilter({ reference: draft.reference.trim(), status: draft.status }); setPage(1); refresh(); }}>
       <label>Referencia de solicitud<input maxLength={40} placeholder="CE-…" value={draft.reference} onChange={e => setDraft({ ...draft, reference: e.target.value })} /></label>
-      <label>Filtrar por estado<select value={draft.status} onChange={e => setDraft({ ...draft, status: e.target.value })}><option value="">Todos</option><option value="pending">Pendiente</option><option value="in_attention">En atención</option><option value="cancelled">Cancelada</option></select></label>
+      <label>Filtrar por estado<select value={draft.status} onChange={e => setDraft({ ...draft, status: e.target.value })}><option value="">Todos</option><option value="pending">Pendiente</option><option value="in_attention">En atención</option><option value="cancelled">Cancelada</option><option value="converted">Convertida en venta</option></select></label>
       <button className="button button-outline">Buscar solicitudes</button>
     </form>
     {error && <p role="alert" className="error">{error}</p>}
@@ -57,6 +58,7 @@ function OrderList({ business }: { business: string }) {
 
 function OrderManager({ business, id, onSaved }: { business: string; id: string; onSaved: () => void }) {
   const [order, setOrder] = useState<Order | null>(null);
+  const [selling, setSelling] = useState(false);
   const [status, setStatus] = useState("pending");
   const [contact, setContact] = useState(false);
   const [error, setError] = useState("");
@@ -91,8 +93,11 @@ function OrderManager({ business, id, onSaved }: { business: string; id: string;
     <button className="text-link" disabled={pending || loading} onClick={() => { setError(""); setLoading(true); setAttempt(n => n + 1); }}>Actualizar esta solicitud</button>
     {loading ? <p role="status">Consultando detalle…</p> : order && <>
       <OrderReceipt order={order} />
-      <form className="catalog-form" onSubmit={e => { e.preventDefault(); void save(); }}><fieldset disabled={pending || loading || order.status === "cancelled"}>
-        <label>Estado de la solicitud<select value={status} onChange={e => setStatus(e.target.value)}><option value="pending" disabled={order.status !== "pending"}>Pendiente</option><option value="in_attention">En atención</option><option value="cancelled">Cancelada</option></select></label>
+      {order.status !== "cancelled" && order.status !== "converted" && <button className="button button-outline" onClick={() => setSelling(!selling)}>{selling ? "Cerrar registro de venta" : "Registrar venta de esta solicitud"}</button>}
+      {selling && order.status !== "cancelled" && order.status !== "converted" && <SaleEditor key={order.version} business={business} order={order} onSaved={() => { setSelling(false); setLoading(true); setAttempt(n => n + 1); onSaved(); }} />}
+      {order.status === "converted" && <p>Venta registrada. Podés consultar su detalle y anularla desde Ventas reportadas.</p>}
+      <form className="catalog-form" onSubmit={e => { e.preventDefault(); void save(); }}><fieldset disabled={pending || loading || order.status === "cancelled" || order.status === "converted"}>
+        <label>Estado de la solicitud<select value={status} onChange={e => setStatus(e.target.value)}><option value="pending" disabled={order.status !== "pending"}>Pendiente</option><option value="in_attention">En atención</option><option value="cancelled">Cancelada</option>{order.status === "converted" && <option value="converted">Convertida en venta</option>}</select></label>
         <label className="order-contact-check"><input type="checkbox" checked={contact} disabled={!!order.contactReceivedAt} onChange={e => setContact(e.target.checked)} />Confirmo que recibí el contacto del cliente</label>
         <p className="field-help">Confirmar contacto deja constancia y no se puede desmarcar. Cancelar es definitivo y no modifica stock.</p>
         <button className="button button-primary" type="submit">Guardar estado</button>

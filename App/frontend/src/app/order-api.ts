@@ -6,7 +6,7 @@ export type Order = {
 };
 export type OrderIntent = { requestId: string; accessKey: string; customerName: string;
   lines: { productId: string; quantity: number; expectedVersion: number }[] };
-export const orderStatus = (value: string) => ({ pending: "Pendiente", in_attention: "En atención", cancelled: "Cancelada" }[value] ?? value);
+export const orderStatus = (value: string) => ({ pending: "Pendiente", in_attention: "En atención", cancelled: "Cancelada", converted: "Convertida en venta" }[value] ?? value);
 export const money = (value: number, currency: string) => new Intl.NumberFormat("es-AR", { style: "currency", currency, currencyDisplay: "code" }).format(value);
 export function orderMessage(order: Order) {
   const text = (value: string) => value.replace(/\s+/g, " ").trim();

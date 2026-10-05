@@ -436,6 +436,33 @@ credenciales de esa sesión temporal. Contrato y límites en
 
 ## Evidencia y mantenimiento
 
+### Ventas e inventario
+
+En `/mi-negocio`, editar el negocio y abrir Inventario. Cada producto empieza
+«Sin cargar»: registrar su cantidad real y un motivo antes de vender. Los ajustes
+posteriores suman o restan unidades y conservan actor, fecha y saldo resultante.
+
+Desde una solicitud pendiente o en atención, elegir «Registrar venta de esta
+solicitud», revisar productos/cantidades/precios finales y origen de cada línea.
+La confirmación descuenta todas las unidades o rechaza todo por conflicto.
+Ventas reportadas permite consultar el resultado o registrar una venta presencial
+sin atribución a solicitudes. Esta última requiere plan vigente.
+
+Para anular, indicar motivo y unidades realmente devueltas; los campos empiezan
+en cero y no hay reposición automática. La venta queda conservada y una solicitud
+vinculada termina cancelada. La anulación es definitiva y no permite una segunda
+venta para la misma solicitud. Importes siempre separados por moneda y origen.
+
+Ante respuesta perdida, reabrir el mismo formulario y reintentar: la identidad
+queda guardada en esa pestaña. No borrar sus datos durante una operación pendiente.
+Ante conflicto de versión, actualizar y volver a seleccionar el producto/solicitud.
+
+Migración `20261005114423_AddSalesInventory`; downgrade poblado bloqueado.
+Reproducción integrada: `node App/tools/verify-catalog.mjs --sales`, con builds
+Release/production previos y PostGIS activo. `--serve` habilita navegador temporal;
+sesión y stopFile en `.tools/sales/session.json`, puertos 3200/5280. Limpieza al salir.
+Contrato en [`sales-inventory/spec.md`](../openspec/specs/sales-inventory/spec.md).
+
 El scaffold archivado está en
 `../openspec/changes/archive/2026-09-08-scaffold-backend-frontend/`; el onboarding
 y su evidencia están en
