@@ -26,3 +26,8 @@ WhatsApp ni se modificó, migró o reinició la demo.
 
 Repetición final completa tras corregir la prueba histórica: **138/138 API**, sin
 omitidas. Frontend **114/114**. No cambios pendientes del modelo EF.
+
+Revisión de cierre posterior: una resolución comercial sobre campaña ya vencida
+devolvía 409 por reutilizar el control de contratación. Prueba ampliada roja 409 →
+verde 200; el control de fecha/cupo ahora se aplica solo a pago o reanudación.
+Registrar resolución no reactiva difusión ni modifica fechas.

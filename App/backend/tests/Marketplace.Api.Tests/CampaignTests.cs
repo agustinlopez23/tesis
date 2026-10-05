@@ -111,6 +111,8 @@ public sealed class CampaignTests(OnboardingFixture fixture) : IClassFixture<Onb
         Assert.Empty((await Public(guest, "nueva-cordoba")).GetProperty("items").EnumerateArray());
         Assert.Equal(1L, await Scalar("SELECT count(*) FROM campaigns WHERE id=$1 AND paid_at IS NOT NULL", id));
         Assert.Equal(HttpStatusCode.OK, (await owner.GetAsync($"/businesses/{business}/campaigns/{id}/metrics")).StatusCode);
+        await Scalar("UPDATE campaigns SET ends_at=now()-interval '1 second' WHERE id=$1", id);
+        Assert.Equal(HttpStatusCode.OK, (await Action(admin, id, 3, "resolve")).StatusCode);
     }
 
     [Fact]

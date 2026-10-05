@@ -86,7 +86,7 @@ public sealed class CampaignRepository(MarketplaceDbContext db, TimeProvider clo
             "resolve" when admin => campaign.Status,
             _ => null };
         if (next == null) return new(409);
-        if (next == "scheduled")
+        if (body.Action is "confirm_payment" or "resume")
         {
             // All reservations of a zone share this lock, including different businesses.
             await db.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock(hashtext({campaign.ZoneId}))", ct);
