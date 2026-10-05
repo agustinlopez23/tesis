@@ -2,6 +2,7 @@ type RouteParameters = { params: Promise<{ path: string[] }> };
 
 const allowedRoutes: Record<string, RegExp[]> = {
   GET: [
+    /^businesses\/[0-9a-f-]{36}\/catalog-assistance$/i,
     /^public\/campaigns(\/[0-9a-f-]{36}(\/image)?)?$/i,
     /^businesses\/[0-9a-f-]{36}\/campaigns(\/[0-9a-f-]{36}\/metrics)?$/i,
     /^admin\/campaigns$/,
@@ -29,6 +30,7 @@ const allowedRoutes: Record<string, RegExp[]> = {
 };
 
 allowedRoutes.POST.push(/^public\/campaign-events$/);
+allowedRoutes.POST.push(/^businesses\/[0-9a-f-]{36}\/catalog-assistance$/i);
 allowedRoutes.PUT.push(/^businesses\/[0-9a-f-]{36}\/campaigns\/[0-9a-f-]{36}(\/pause)?$/i, /^admin\/campaigns\/[0-9a-f-]{36}\/actions$/i);
 
 async function forward(request: Request, context: RouteParameters): Promise<Response> {
@@ -67,7 +69,7 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
   }
 
   try {
-    const maxBody = /\/(orders|sales|inventory|campaigns|campaign-events)(\/|$)/.test(path) ? 16384 : path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
+    const maxBody = path.endsWith("/catalog-assistance") ? 8192 : /\/(orders|sales|inventory|campaigns|campaign-events)(\/|$)/.test(path) ? 16384 : path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
     if (Number(request.headers.get("content-length")) > maxBody) return new Response(null, { status: 413 });
     // Bound streamed/chunked uploads too, before buffering them for the API.
     const chunks: Uint8Array[] = [];

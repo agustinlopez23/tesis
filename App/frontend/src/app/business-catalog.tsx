@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { catalogApi, catalogError, Plan, Product, priceLabel } from "./catalog-api";
+import CatalogAssistance from "./catalog-assistance";
 
 export default function BusinessCatalog({ id }: { id: string }) {
   const [open, setOpen] = useState(false);
@@ -93,6 +94,7 @@ function CatalogEditor({ id }: { id: string }) {
     {editing && <form className="catalog-form" onSubmit={save}>
       <h3>{editing.version ? "Editar producto" : "Nuevo producto"}</h3>
       <fieldset disabled={pending || !plan?.catalogEnabled || loading}>
+        <CatalogAssistance key={editing.id} business={id} onApply={draft => setEditing({ ...editing, ...draft })} />
         <label>Nombre del producto<input required maxLength={160} value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></label>
         <label>Descripción del producto<textarea maxLength={2000} value={editing.description} onChange={(e) => setEditing({ ...editing, description: e.target.value })} /></label>
         <label>Categoría del producto<input required maxLength={80} value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} /></label>
