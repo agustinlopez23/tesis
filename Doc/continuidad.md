@@ -1,3 +1,34 @@
+# Punto de continuidad ? 05/10/2026
+
+Completado cat?logo por negocio y planes manuales en `feat/business-catalog`,
+derivada de `feat/ranking-preview-ui`. Gesti?n privada bajo demanda desde editar
+negocio, productos con precio ARS/USD, disponibilidad declarada, borrador/publicado/
+archivado y foto procesada. Cat?logo p?blico en perfil con b?squeda local y p?ginas
+alfab?ticas de 20. Sin stock cuantitativo, pedidos ni ranking global de productos.
+
+Administrador: `/administracion/planes`, per?odos manuales no superpuestos,
+revocaci?n auditada y rol vivo. Registro p?blico no otorga administraci?n; asignaci?n
+inicial operativa documentada en `App/README.md`. Expirar/revocar oculta cat?logo y
+bloquea escrituras, conservando lectura privada y productos. No altera ranking.
+Migraci?n `20261005025720_AddBusinessCatalog`, aplicada solo en bases temporales;
+Down protege datos/historial/roles. Demo sin migrar ni reiniciar.
+
+Validaci?n: **110/110 API/HTTP/PostGIS y 90/90 frontend**, build/lint correctos.
+Integraci?n Next production+API real y Playwright 1440/390/320 px: crear/publicar,
+foto, b?squeda local, activaci?n/revocaci?n e historial. Bases temporales eliminadas.
+`node App/tools/verify-catalog.mjs` reproduce el flujo (`--serve` para navegador).
+Commits locales por unidad; consultar Git. Sin push/PR. Evidencia:
+`../openspec/changes/archive/2026-10-05-business-catalog/verify-report.md`.
+Unidades: `0c5cb25` almacenamiento, `fc0ffee` API, `13d1baa` catálogo público,
+`e3ba78c` paneles; el commit siguiente registra harness/evidencia y continuidad.
+
+Pr?ximo incremento: solicitudes de productos de un negocio y resumen para WhatsApp,
+con referencia estable, precios hist?ricos y acceso privado al estado. Luego ventas
+con stock at?mico. Siguen pendientes IA opcional, b?squeda/ranking global de
+productos, publicidad y evaluaci?n humana/final. Ranking productivo sigue cerrado.
+
+## Registro anterior ? 04/10/2026
+
 # Punto de continuidad — 04/10/2026
 
 Completado proxy/UI local de ranking en `feat/ranking-preview-ui`, desde `37cad23`.

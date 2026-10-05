@@ -1,5 +1,13 @@
 # PRD — Revista hiperlocal y SaaS para comercios
 
+> Estado al 05/10/2026: cat?logo por negocio y capacidades por plan implementados
+> localmente, con gesti?n de per?odos por administrador, archivo/fotos, consulta
+> p?blica y preservaci?n al vencer. Cat?logo alfab?tico con b?squeda dentro del
+> negocio; no incluye a?n stock, pedidos, IA ni ranking/b?squeda global de productos.
+> La distribuci?n implementada usa Impulso para cat?logo y Presencia para perfil;
+> precios y otras capacidades comerciales siguen sujetos al alcance pendiente.
+
+
 Versión: 0.4 · Fecha: 2026-09-07 · Estado: borrador para revisión de producto.
 
 Este documento reúne las decisiones del usuario y adapta la propuesta del seminario al producto actual. Los requisitos del MVP son una propuesta concreta de implementación; las decisiones abiertas no se consideran aprobadas. No acredita funcionalidades implementadas ni resultados experimentales.
