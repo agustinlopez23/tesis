@@ -305,8 +305,12 @@ Cada creación admite hasta `Ranking__MaxCandidates=1000` candidatos y
 `Ranking__MaxBalanceRows=10000` saldos históricos por contexto. Rangos válidos:
 1–10000 y 1–100000 respectivamente. Una fila adicional produce 503 y rollback;
 nunca se clasifica un prefijo. Se puede reintentar con el mismo requestId.
-Los saldos incluyen negocios que ya no son elegibles. Son límites iniciales;
-la concurrencia y la carga siguen en verificación.
+Los saldos incluyen negocios que ya no son elegibles. Concurrencia por proceso:
+`Ranking__CreateConcurrencyLimit=4` y `Ranking__PageConcurrencyLimit=16`, con rango
+1–64 cada uno. Cupos independientes, sin cola; exceso devuelve 429 no-store.
+Los permisos se liberan al completar, fallar o cancelar la solicitud, incluida
+la serialización de la respuesta. La configuración inválida impide el arranque.
+Son límites iniciales; la carga sigue en verificación.
 Desactivar PreviewEnabled cierra creación y permite terminar listas de 30 minutos.
 `Ranking__WithdrawPages=true` retira inmediatamente creación y lectura con 410
 (creación ya desactivada mantiene 404). Antes de producción faltan evaluación,

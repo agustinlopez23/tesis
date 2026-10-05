@@ -15,6 +15,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton<ActivityTokens>();
 builder.Services.AddSingleton<RankingCursorTokens>();
+builder.Services.AddSingleton<RankingConcurrencyLimits>();
 builder.Services.AddHostedService<ActivityRetentionWorker>();
 builder.Services.AddHostedService<RankingRetentionWorker>();
 builder.Services.AddRateLimiter(options =>
@@ -42,6 +43,9 @@ builder.Services.AddRateLimiter(options =>
         }));
 });
 var app = builder.Build();
+// Reject invalid capacity settings before accepting traffic, even with preview disabled.
+_ = app.Services.GetRequiredService<RankingReadLimits>();
+_ = app.Services.GetRequiredService<RankingConcurrencyLimits>();
 app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =>
 {
     var error = context.Features.Get<IExceptionHandlerFeature>()?.Error;
@@ -66,6 +70,7 @@ app.Use(async (context, next) =>
     await next(context);
 });
 app.UseRateLimiter();
+app.UseMiddleware<RankingConcurrencyMiddleware>();
 app.MapBusinessProfiles();
 app.MapBusinessActivity();
 app.MapRankingSnapshots();

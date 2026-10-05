@@ -12,8 +12,10 @@ public static class RankingHttpEndpoints
 
     public static void MapRankingSnapshots(this WebApplication app)
     {
-        app.MapPost("/public/ranking-snapshots", Create).RequireRateLimiting("ranking-create");
-        app.MapGet("/public/ranking-snapshots/page", ReadPage).RequireRateLimiting("ranking-page");
+        app.MapPost("/public/ranking-snapshots", Create).RequireRateLimiting("ranking-create")
+            .WithMetadata(new RankingConcurrencyPolicy(true));
+        app.MapGet("/public/ranking-snapshots/page", ReadPage).RequireRateLimiting("ranking-page")
+            .WithMetadata(new RankingConcurrencyPolicy(false));
     }
 
     private static async Task<IResult> Create(HttpRequest request, HttpResponse response,
