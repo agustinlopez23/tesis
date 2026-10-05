@@ -26,7 +26,8 @@ public sealed class OrderSchemaTests(OnboardingFixture fixture) : IClassFixture<
         var migrator = db.GetService<IMigrator>();
         var error = await Assert.ThrowsAsync<PostgresException>(() => migrator.MigrateAsync("20261005025720_AddBusinessCatalog"));
         Assert.Equal(PostgresErrorCodes.CheckViolation, error.SqlState);
-        Assert.Single(await db.CustomerOrders.ToListAsync());
+        // A newer empty migration may already have rolled back before the order guard.
+        Assert.Single(await db.CustomerOrders.Select(o => o.Id).ToListAsync());
         // This fixture order only: exercise the supported empty downgrade.
         await db.CustomerOrders.ExecuteDeleteAsync();
         await migrator.MigrateAsync("20261005025720_AddBusinessCatalog");

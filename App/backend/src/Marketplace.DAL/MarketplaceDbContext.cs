@@ -24,12 +24,16 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<InventoryMovement> InventoryMovements => Set<InventoryMovement>();
     public DbSet<Sale> Sales => Set<Sale>();
     public DbSet<SaleLine> SaleLines => Set<SaleLine>();
+    public DbSet<Campaign> Campaigns => Set<Campaign>();
+    public DbSet<CampaignChange> CampaignChanges => Set<CampaignChange>();
+    public DbSet<CampaignEvent> CampaignEvents => Set<CampaignEvent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         CatalogConfiguration.Configure(modelBuilder);
         OrderConfiguration.Configure(modelBuilder);
         SalesConfiguration.Configure(modelBuilder);
+        CampaignConfiguration.Configure(modelBuilder);
         modelBuilder.ApplyConfiguration(new BusinessActivityConfiguration());
         modelBuilder.Entity<BusinessPhoto>(entity =>
         {

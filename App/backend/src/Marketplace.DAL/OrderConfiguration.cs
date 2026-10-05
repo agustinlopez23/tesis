@@ -11,13 +11,15 @@ internal static class OrderConfiguration
         {
             e.ToTable("customer_orders", t => {
                 t.HasCheckConstraint("CK_order_status", "status IN ('pending','in_attention','cancelled','converted')");
-                t.HasCheckConstraint("CK_order_source", "source = 'catalog'");
+                t.HasCheckConstraint("CK_order_source", "(source = 'catalog' AND campaign_id IS NULL) OR (source = 'campaign' AND campaign_id IS NOT NULL)");
                 t.HasCheckConstraint("CK_order_version", "version > 0");
                 t.HasCheckConstraint("CK_order_hashes", "access_key_hash ~ '^[0-9a-f]{64}$' AND request_hash ~ '^[0-9a-f]{64}$'");
             });
             e.HasKey(x => x.Id);
             e.Property(x => x.Id).HasColumnName("id");
             e.Property(x => x.BusinessId).HasColumnName("business_id");
+            e.Property(x => x.CampaignId).HasColumnName("campaign_id");
+            e.HasOne<Campaign>().WithMany().HasForeignKey(x => x.CampaignId).OnDelete(DeleteBehavior.Restrict);
             e.Property(x => x.Reference).HasColumnName("reference").HasMaxLength(15);
             e.HasIndex(x => x.Reference).IsUnique();
             e.Property(x => x.CustomerName).HasColumnName("customer_name").HasMaxLength(80);

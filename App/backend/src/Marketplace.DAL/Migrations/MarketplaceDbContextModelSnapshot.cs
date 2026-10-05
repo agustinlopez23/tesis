@@ -310,6 +310,196 @@ namespace Marketplace.DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Marketplace.Models.Campaign", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("approved_at");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("business_id");
+
+                    b.Property<string>("Conditions")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("conditions");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("description");
+
+                    b.Property<DateTimeOffset>("EndsAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ends_at");
+
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("bytea")
+                        .HasColumnName("image");
+
+                    b.Property<DateTimeOffset?>("PaidAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("paid_at");
+
+                    b.Property<string>("PaymentReference")
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("payment_reference");
+
+                    b.Property<int?>("PhotoSlot")
+                        .HasColumnType("integer")
+                        .HasColumnName("photo_slot");
+
+                    b.Property<Guid?>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.Property<string>("SaveHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("save_hash");
+
+                    b.Property<DateTimeOffset>("StartsAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("starts_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasColumnName("title");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer")
+                        .HasColumnName("version");
+
+                    b.Property<string>("ZoneId")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)")
+                        .HasColumnName("zone_id");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("BusinessId", "CreatedAt", "Id");
+
+                    b.HasIndex("ZoneId", "StartsAt", "EndsAt");
+
+                    b.ToTable("campaigns", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_campaign_dates", "ends_at > starts_at AND ends_at <= starts_at + interval '30 days'");
+
+                            t.HasCheckConstraint("CK_campaign_destination", "(product_id IS NOT NULL AND photo_slot IS NULL) OR (product_id IS NULL AND photo_slot BETWEEN 1 AND 5)");
+
+                            t.HasCheckConstraint("CK_campaign_image", "image IS NULL OR octet_length(image) <= 1048576");
+
+                            t.HasCheckConstraint("CK_campaign_status", "status IN ('draft','pending_review','awaiting_payment','scheduled','paused','rejected')");
+
+                            t.HasCheckConstraint("CK_campaign_zone", "zone_id IN ('centro','nueva-cordoba','alberdi')");
+                        });
+                });
+
+            modelBuilder.Entity("Marketplace.Models.CampaignChange", b =>
+                {
+                    b.Property<Guid>("OperationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("operation_id");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(24)
+                        .HasColumnType("character varying(24)")
+                        .HasColumnName("action");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("actor_id");
+
+                    b.Property<Guid>("CampaignId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("campaign_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("reason");
+
+                    b.Property<string>("RequestHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("request_hash");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer")
+                        .HasColumnName("version");
+
+                    b.HasKey("OperationId");
+
+                    b.HasIndex("ActorId");
+
+                    b.HasIndex("CampaignId", "Version")
+                        .IsUnique();
+
+                    b.ToTable("campaign_changes", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Models.CampaignEvent", b =>
+                {
+                    b.Property<Guid>("CampaignId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("campaign_id");
+
+                    b.Property<Guid>("ContextId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("context_id");
+
+                    b.Property<string>("Kind")
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("kind");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.HasKey("CampaignId", "ContextId", "Kind");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.ToTable("campaign_events", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_campaign_event_kind", "kind IN ('impression','click')");
+                        });
+                });
+
             modelBuilder.Entity("Marketplace.Models.CatalogProduct", b =>
                 {
                     b.Property<Guid>("Id")
@@ -415,6 +605,10 @@ namespace Marketplace.DAL.Migrations
                         .HasColumnType("character varying(160)")
                         .HasColumnName("business_name");
 
+                    b.Property<Guid?>("CampaignId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("campaign_id");
+
                     b.Property<DateTimeOffset?>("ContactReceivedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("contact_received_at");
@@ -469,6 +663,8 @@ namespace Marketplace.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CampaignId");
+
                     b.HasIndex("Reference")
                         .IsUnique();
 
@@ -478,7 +674,7 @@ namespace Marketplace.DAL.Migrations
                         {
                             t.HasCheckConstraint("CK_order_hashes", "access_key_hash ~ '^[0-9a-f]{64}$' AND request_hash ~ '^[0-9a-f]{64}$'");
 
-                            t.HasCheckConstraint("CK_order_source", "source = 'catalog'");
+                            t.HasCheckConstraint("CK_order_source", "(source = 'catalog' AND campaign_id IS NULL) OR (source = 'campaign' AND campaign_id IS NOT NULL)");
 
                             t.HasCheckConstraint("CK_order_status", "status IN ('pending','in_attention','cancelled','converted')");
 
@@ -990,6 +1186,44 @@ namespace Marketplace.DAL.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("Marketplace.Models.Campaign", b =>
+                {
+                    b.HasOne("Marketplace.Models.BusinessProfile", null)
+                        .WithMany()
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.CatalogProduct", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Marketplace.Models.CampaignChange", b =>
+                {
+                    b.HasOne("Marketplace.Models.UserAccount", null)
+                        .WithMany()
+                        .HasForeignKey("ActorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.Campaign", null)
+                        .WithMany()
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Marketplace.Models.CampaignEvent", b =>
+                {
+                    b.HasOne("Marketplace.Models.Campaign", null)
+                        .WithMany()
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Marketplace.Models.CatalogProduct", b =>
                 {
                     b.HasOne("Marketplace.Models.BusinessProfile", null)
@@ -1006,6 +1240,11 @@ namespace Marketplace.DAL.Migrations
                         .HasForeignKey("BusinessId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Marketplace.Models.Campaign", null)
+                        .WithMany()
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Marketplace.Models.InventoryBalance", b =>

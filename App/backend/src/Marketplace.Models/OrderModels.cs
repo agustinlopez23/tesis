@@ -4,6 +4,7 @@ public sealed class CustomerOrder
 {
     public Guid Id { get; set; }
     public Guid BusinessId { get; set; }
+    public Guid? CampaignId { get; set; }
     public required string Reference { get; set; }
     public required string CustomerName { get; set; }
     public required string BusinessName { get; set; }
