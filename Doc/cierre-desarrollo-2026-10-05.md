@@ -4,6 +4,9 @@ El núcleo comercial está implementado y probado localmente. La asistencia de I
 está preparada, desactivada hasta configurar un modelo y credenciales. La tesis
 todavía necesita evaluación humana; este cierre técnico no demuestra su hipótesis.
 
+**Demo actualizada:** http://localhost:3000. Migraciones aplicadas con respaldo
+restaurado y datos conservados; [estado y reinicio](demo-local-2026-10-05.md).
+
 | Recorrido | Dónde usarlo | Estado |
 | --- | --- | --- |
 | Negocios y productos por texto, rubro y cercanía | `/explorar`, `/productos` | Implementado; orden alfabético/distancia |
@@ -27,9 +30,9 @@ dobles explícitos; no se hicieron llamadas pagas ni se acreditó calidad factua
 Los cambios están en commits locales de las ramas encadenadas hasta
 `fix/playwright-commerce-flow`. La [revisión Playwright](qa-playwright-2026-10-05.md)
 corrigió paneles obsoletos, selección con precio viejo y mensajes de acceso/sesión.
-Sin push, despliegue, migración ni reinicio de la
-demo existente. Las bases generadas para verificar fueron eliminadas. Para correr
-la versión nueva hay que aplicar las migraciones y recompilar según [App/README](../App/README.md).
+Sin push ni despliegue público. Después de esa revisión se actualizó y encendió
+la demo existente, con respaldo verificado y las siete migraciones pendientes.
+Las bases temporales de pruebas y restauración fueron eliminadas.
 
 ## Pendientes que impiden declarar todo terminado
 

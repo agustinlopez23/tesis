@@ -13,6 +13,10 @@ Contratos en specs; estado en `../Doc/continuidad.md`. Sigue prueba real
 de IA, evaluación humana/final y ranking experimental de productos. 2286 juicios
 pendientes comprobados; no hay activación experimental productiva.
 
+Demo local actualizada en 3000/API 5080, con respaldo restaurado y doce migraciones
+aplicadas. Se conservaron tres negocios, una cuenta y fotos. No se cargaron planes
+ni productos ni se habilitó IA/ranking. Operación: `../Doc/demo-local-2026-10-05.md`.
+
 ## Estado anterior — 2026-10-04
 
 Completado `ranking-preview-ui`: `/revista` local con proxy cerrado en producción,

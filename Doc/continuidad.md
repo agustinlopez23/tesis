@@ -1,6 +1,12 @@
 # Punto de continuidad — 05/10/2026
 
 **Estado actual: [cierre local y pendientes reales](cierre-desarrollo-2026-10-05.md).**
+**Demo actualizada y encendida:** http://localhost:3000, API 5080. Siete migraciones
+aplicadas sobre `marketplace`, con respaldo restaurado y conservación de los tres
+negocios, la cuenta y las fotos verificada. [Operación y reinicio](demo-local-2026-10-05.md).
+IA/ranking experimental desactivados; sin nuevos roles, planes o productos.
+Este estado reemplaza las notas históricas de demo intacta/detenida siguientes.
+
 Última revisión: [recorrido Playwright](qa-playwright-2026-10-05.md), rama
 `fix/playwright-commerce-flow`. Corregidos paneles obsoletos, recuperación del
 conflicto de precio y mensajes de acceso/sesión; **123/123 frontend**, lint/build
