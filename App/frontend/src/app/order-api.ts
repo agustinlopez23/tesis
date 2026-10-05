@@ -4,7 +4,7 @@ export type Order = {
   lines: { productId: string; name: string; quantity: number; unitPrice: number; currency: string }[];
   totals: Record<string, number>;
 };
-export type OrderIntent = { requestId: string; accessKey: string; customerName: string;
+export type OrderIntent = { requestId: string; accessKey: string; customerName: string; campaignToken?: string;
   lines: { productId: string; quantity: number; expectedVersion: number }[] };
 export const orderStatus = (value: string) => ({ pending: "Pendiente", in_attention: "En atención", cancelled: "Cancelada", converted: "Convertida en venta" }[value] ?? value);
 export const money = (value: number, currency: string) => new Intl.NumberFormat("es-AR", { style: "currency", currency, currencyDisplay: "code" }).format(value);

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { catalogApi, catalogError, Product } from "./catalog-api";
 import { newOrderKey, Order, OrderIntent, readOrder } from "./order-api";
+import { campaignAttribution } from "./campaign-api";
 
 export type Selection = { product: Product; quantity: number };
 export function useOrderCart(businessId: string) {
@@ -58,7 +59,7 @@ export function useOrderCart(businessId: string) {
     if (!intent && (!selection.length || !name.trim())) { setError("Indicá tu nombre y seleccioná productos."); return; }
     setPending(true); setError("");
     const attempt = intent ?? { requestId: crypto.randomUUID(), accessKey: newOrderKey(), customerName: name.trim(),
-      lines: selection.map(x => ({ productId: x.product.id, quantity: x.quantity, expectedVersion: x.product.version })) };
+      lines: selection.map(x => ({ productId: x.product.id, quantity: x.quantity, expectedVersion: x.product.version })), campaignToken: campaignAttribution(businessId) };
     try {
       // Persist before POST: a lost response or reload must keep the same identity/key.
       sessionStorage.setItem(storageKey, JSON.stringify(attempt)); setIntent(attempt);

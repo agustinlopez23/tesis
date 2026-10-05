@@ -2,6 +2,9 @@ type RouteParameters = { params: Promise<{ path: string[] }> };
 
 const allowedRoutes: Record<string, RegExp[]> = {
   GET: [
+    /^public\/campaigns(\/[0-9a-f-]{36}(\/image)?)?$/i,
+    /^businesses\/[0-9a-f-]{36}\/campaigns(\/[0-9a-f-]{36}\/metrics)?$/i,
+    /^admin\/campaigns$/,
     /^public\/products$/,
     /^businesses\/[0-9a-f-]{36}\/commerce$/i,
     /^businesses\/[0-9a-f-]{36}\/(inventory(\/movements)?|sales(\/[0-9a-f-]{36})?)$/i,
@@ -24,6 +27,9 @@ const allowedRoutes: Record<string, RegExp[]> = {
   PUT: [/^businesses\/[0-9a-f-]{36}\/(inventory\/adjustments\/[0-9a-f-]{36}|sales\/[0-9a-f-]{36}(\/void)?)$/i, /^businesses\/[0-9a-f-]{36}\/orders\/[0-9a-f-]{36}$/i, /^businesses\/[0-9a-f-]{36}$/i, /^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i, /^businesses\/[0-9a-f-]{36}\/products\/[0-9a-f-]{36}(\/photo)?$/i, /^admin\/businesses\/[0-9a-f-]{36}\/subscriptions\/[0-9a-f-]{36}$/i],
   DELETE: [/^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i, /^businesses\/[0-9a-f-]{36}\/products\/[0-9a-f-]{36}\/photo$/i],
 };
+
+allowedRoutes.POST.push(/^public\/campaign-events$/);
+allowedRoutes.PUT.push(/^businesses\/[0-9a-f-]{36}\/campaigns\/[0-9a-f-]{36}(\/pause)?$/i, /^admin\/campaigns\/[0-9a-f-]{36}\/actions$/i);
 
 async function forward(request: Request, context: RouteParameters): Promise<Response> {
   const response = await forwardRequest(request, context);
@@ -61,7 +67,7 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
   }
 
   try {
-    const maxBody = /\/(orders|sales|inventory)(\/|$)/.test(path) ? 16384 : path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
+    const maxBody = /\/(orders|sales|inventory|campaigns|campaign-events)(\/|$)/.test(path) ? 16384 : path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
     if (Number(request.headers.get("content-length")) > maxBody) return new Response(null, { status: 413 });
     // Bound streamed/chunked uploads too, before buffering them for the API.
     const chunks: Uint8Array[] = [];
@@ -80,6 +86,11 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
     let offset = 0;
     for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
     const upstreamUrl = new URL(path, baseUrl);
+    if (path.endsWith("/campaigns")) {
+      const key = path === "public/campaigns" ? "zone" : "page";
+      const value = new URL(request.url).searchParams.get(key);
+      if (value !== null) upstreamUrl.searchParams.set(key, value);
+    }
     if (path === "public/products") {
       const query = new URL(request.url).searchParams;
       for (const key of ["page", "q", "category", "lat", "lon", "radiusKm"]) if (query.has(key)) upstreamUrl.searchParams.set(key, query.get(key)!);

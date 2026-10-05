@@ -7,6 +7,7 @@ import { catalogApi } from "./catalog-api";
 import { money } from "./order-api";
 import { areaParams, DiscoveryLocation, distanceLabel, readArea } from "./explorar/discovery-location";
 import { LocationFilter } from "./explorar/location-filter";
+import SponsoredCampaigns from "./sponsored-campaigns";
 import { SiteFooter, SiteHeader } from "./ui";
 
 type Product = { id: string; businessId: string; businessName: string; businessCategory: string; name: string; description: string; category: string;
@@ -61,6 +62,7 @@ export default function ProductDiscovery() {
       <label>Rubro del negocio<select value={filters.category} onChange={e => navigate({ ...filters, category: e.target.value, page: 1 })}><option value="">Todos los rubros</option>{categories.map(category => <option key={category}>{category}</option>)}</select></label>
     </form>
     <LocationFilter area={filters.area} onChange={area => navigate({ ...filters, area, page: 1 })} />
+    <SponsoredCampaigns zone={filters.area?.kind === "zone" ? filters.area.zone ?? null : null} />
     {notice && <p role="status">Volvé a elegir tu ubicación para buscar cerca de vos; las coordenadas no se comparten en el enlace.</p>}
     <div className="catalog-toolbar"><p>{filters.area ? "Ordenados por distancia en línea recta." : "Ordenados alfabéticamente."} Precios informados por cada negocio.</p><button className="text-link" onClick={() => navigate(filters)}>Actualizar productos</button></div>
     {error ? <p role="alert">No pudimos consultar los productos. Actualizá para reintentar.</p> : !data ? <p role="status">Buscando productos…</p> : <>

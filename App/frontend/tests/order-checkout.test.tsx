@@ -74,6 +74,25 @@ it("el mensaje mantiene totales separados por moneda", () => {
   expect(message).toContain("ARS"); expect(message).toContain("USD");
   expect(message).toContain("Solicitud CE-123");
 });
+it("atribuye únicamente el contexto explícito del mismo negocio y lo congela al confirmar", async () => {
+  sessionStorage.clear(); window.history.replaceState({}, "", "/negocios/b1?campaign=c1");
+  sessionStorage.setItem("cerca-campaign:c1", JSON.stringify({ businessId: "b1", token: "signed-context", expires: Date.now() + 60000 }));
+  const bodies: string[] = [];
+  vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+    if (init?.method === "POST") { bodies.push(String(init.body)); throw new Error("respuesta perdida"); }
+    return Response.json({ items: [product], page: 1, hasNextPage: false });
+  });
+  render(<PublicCatalog id="b1" />);
+  fireEvent.click(await screen.findByRole("button", { name: "Agregar Café" }));
+  fireEvent.change(screen.getByLabelText("Tu nombre o alias"), { target: { value: "Ana" } });
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar solicitud" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Reintentá");
+  window.history.replaceState({}, "", "/negocios/b1"); sessionStorage.removeItem("cerca-campaign:c1");
+  fireEvent.click(screen.getByRole("button", { name: "Reintentar solicitud" }));
+  await waitFor(() => expect(bodies).toHaveLength(2));
+  expect(JSON.parse(bodies[0]).campaignToken).toBe("signed-context"); expect(bodies[1]).toBe(bodies[0]);
+  window.history.replaceState({}, "", "/");
+});
 it("una clave distinta en el mismo enlace vuelve a validar y retira el resumen anterior", async () => {
   window.history.replaceState({}, "", "/pedido/order1#clave=" + "a".repeat(64));
   vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(Response.json(order)).mockResolvedValueOnce(new Response(null, { status: 404 }));

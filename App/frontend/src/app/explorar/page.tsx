@@ -6,6 +6,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { categoryStyle, Icon, SiteFooter, SiteHeader } from "../ui";
 import { areaParams, DiscoveryLocation, readArea } from "./discovery-location";
 import { LocationFilter } from "./location-filter";
+import SponsoredCampaigns from "../sponsored-campaigns";
 import { BusinessCard, type Business } from "../business-card";
 
 type Directory = { items: Business[]; hasMore: boolean; measurement?: Record<string, string> };
@@ -112,6 +113,7 @@ export default function Explore() {
         <button className="button button-primary" type="submit">Buscar <Icon name="arrow" /></button>
       </form>
       <LocationFilter key={JSON.stringify(filters.area)} area={filters.area} onChange={(area) => navigate({ ...filters, page: 1, area })} />
+      <SponsoredCampaigns zone={filters.area?.kind === "zone" ? filters.area.zone ?? null : null} />
       {locationNotice && <p className="location-note" role="status">Este enlace no incluye la ubicación del dispositivo. Elegí una zona o usá tu ubicación para ver distancias.</p>}
       <div className="category-filters" role="group" aria-label="Filtrar por rubro">
         <button className={"category-chip " + (!filters.category ? "selected" : "")} aria-pressed={!filters.category} onClick={() => navigate({ ...filters, page: 1, category: "" })}><Icon name="grid" />Todos los rubros</button>
