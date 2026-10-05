@@ -302,6 +302,10 @@ no consumen estas rutas. El proxy Next admite estas dos rutas en desarrollo:
 vigentes aunque se apague creación. Producción rechaza ambas aun con esa opción.
 El backend requiere su propia habilitación. `cursor` permite releer la página
 actual vía GET, incluida la primera, sin crear otra oportunidad ni renovar TTL.
+Antes de usar medición desde la revista se requiere la migración
+`20261005020557_AllowRankingActivityVersions`: admite el hash de política en
+actividad, conservando las versiones anteriores. Downgrade bloqueado mientras
+queden eventos con hash; esperar su retención/purga en lugar de borrar atribución.
 
 Cuotas por proceso: `Ranking__CreatePermitLimit=60` y
 `Ranking__PagePermitLimit=600` por minuto, sin cola; exceso devuelve 429.

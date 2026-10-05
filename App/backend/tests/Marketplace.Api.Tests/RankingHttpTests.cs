@@ -40,6 +40,22 @@ public sealed partial class RankingHttpTests(OnboardingFixture fixture) : IClass
         var firstCursor = first.GetProperty("cursor").GetString();
         var reread = await client.GetAsync(Route + "/page?cursor=" + Uri.EscapeDataString(firstCursor!));
         Assert.Equal(Ids(first), Ids(await reread.Content.ReadFromJsonAsync<JsonElement>()));
+        var measuredId = Ids(first)[0];
+        var visitId = Guid.NewGuid();
+        var token = first.GetProperty("measurement").GetProperty(measuredId.ToString()).GetString();
+        foreach (var (kind, surface) in new[] { ("impression", "directory"), ("profile_view", "profile"), ("contact", "profile") })
+        {
+            var activity = new { token, visitId, kind, surface };
+            Assert.Equal(HttpStatusCode.NoContent, (await client.PostAsJsonAsync("/public/events", activity)).StatusCode);
+            Assert.Equal(HttpStatusCode.NoContent, (await client.PostAsJsonAsync("/public/events", activity)).StatusCode);
+        }
+        var measured = await db.BusinessActivity.Where(x => x.VisitId == visitId).ToArrayAsync();
+        Assert.Equal(3, measured.Length);
+        Assert.All(measured, item => {
+            Assert.Equal(first.GetProperty("rankingVersion").GetString(), item.RankingVersion);
+            Assert.Equal(1, item.Position);
+            Assert.Equal("directory", item.Source);
+        });
         var retry = await client.PostAsJsonAsync(Route, request);
         Assert.Equal(HttpStatusCode.OK, retry.StatusCode);
         var replay = await retry.Content.ReadFromJsonAsync<JsonElement>();

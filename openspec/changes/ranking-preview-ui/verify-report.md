@@ -28,3 +28,24 @@ sin almacenar tarjetas ni poner tokens en URL. Frontera React/fetch simulada:
 429/503/502, cancelación y respuesta tardía, huecos, popstate, cambio de versión,
 vencimiento local y actualización con nueva identidad. Integración real pendiente
 de presentación. Rollback: hook use-ranking-preview y sus pruebas, sin tocar proxy.
+
+Unidad de navegación: `1bdf7e1`.
+
+## Compatibilidad de medición descubierta en navegador
+
+Playwright encontró 503 en `/public/events`: varchar(40) y CK_activity_context
+solo admitían name-v1/distance-v1, mientras el token del ranking lleva SHA-256.
+RED: Http_pages_retries ampliado espera 204 y recibe 503 al enviar una impresión.
+Se amplía ranking_version a 64 y el CHECK acepta hash hexadecimal únicamente
+para directory con posición válida y contexto no nulo. No altera deduplicación,
+exclusión del dueño, reporte ni presupuesto del ranking.
+Migración `20261005020557_AllowRankingActivityVersions`, generada con EF local;
+Designer automático explica el tamaño de esta unidad. Down falla explícitamente
+mientras existan eventos con hash; no trunca ni descarta atribución para revertir.
+Rollback de aplicación: revertir uso de tokens de ranking y conservar esquema
+compatible; downgrade solo después de retención/purga de sus eventos.
+GREEN **9/9 HTTP/PostGIS**, cero omitidas, con
+`.tools/test-publication-history.ps1 -Filter 'FullyQualifiedName~Http_pages_retries|FullyQualifiedName~RankingActivitySchemaTests|FullyQualifiedName~BusinessActivityTests|FullyQualifiedName~RankingStorageSchemaTests'`.
+Incluye impresión/visita/contacto duplicados que conservan tres eventos, versión
+real/posición, restricciones inválidas, bloqueo de downgrade sin pérdida y
+Down/Up posterior conservando actividad anterior. EF sin cambios pendientes.

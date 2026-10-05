@@ -16,6 +16,10 @@ Un cambio de filtros invalida la lista anterior; respuestas tardías se descarta
 Las tarjetas reutilizan perfil/contacto y tokens emitidos por el backend.
 
 Verificar frontend y backend afectados, build/lint, integración Next/API/PostGIS
-y Playwright en escritorio/móvil. Tres unidades previstas: contrato/proxy,
-estado/navegación con pruebas, presentación y verificación integrada.
-Rollback por unidad documentado con evidencia; sin migraciones ni datos de demo.
+y Playwright en escritorio/móvil. Unidades: contrato/proxy, estado/navegación,
+compatibilidad de actividad, presentación y cierre integrado.
+La revisión de navegador descubrió que business_activity rechazaba hashes de
+política: se amplía a varchar(64) y se permite hash hexadecimal solo con source
+directory/posición válida. Migración aditiva con downgrade bloqueado mientras
+haya hashes, evitando pérdida de atribución. Aplicar únicamente en bases de prueba
+durante este incremento; demo intacta. Rollback por unidad documentado con evidencia.
