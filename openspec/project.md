@@ -3,10 +3,12 @@
 ## Estado vigente — 2026-10-05
 
 Catálogo/planes, solicitudes, ventas/inventario, métricas comerciales, búsqueda
-global de productos y campañas manuales implementados localmente. **138/138 API y
-114/114 frontend**, lint/build/integración/navegador correctos. Contratos en specs;
-estado y evidencia en `../Doc/continuidad.md`. Sigue asistencia opcional de catálogo
-y evaluación humana/final del ranking. No hay activación experimental productiva.
+global y campañas manuales implementados. Asistencia opcional preparada y
+desactivada hasta configurar modelo/clave; borrador revisable sin auto publicación.
+**148 API, 99 BLL/evaluación y 117 frontend**, lint/build/integración/navegador
+correctos. Contratos en specs; estado en `../Doc/continuidad.md`. Sigue prueba real
+de IA, evaluación humana/final y ranking experimental de productos. 2286 juicios
+pendientes comprobados; no hay activación experimental productiva.
 
 ## Estado anterior — 2026-10-04
 

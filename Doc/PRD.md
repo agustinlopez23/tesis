@@ -5,7 +5,9 @@
 > WhatsApp, enlace privado y atención/cancelación auditadas desde el negocio.
 > Ventas y stock completados: ajustes auditados, líneas finales por origen,
 > descuento atómico y anulación con devolución explícita. Aún pendientes:
-> IA y ranking experimental de productos. Publicidad implementada con revisión,
+> configuración/prueba real de IA y ranking experimental de productos. La asistencia
+> de redacción ya tiene interfaz, consentimiento, borrador editable y adaptador
+> desactivado hasta configurar modelo/clave. Publicidad implementada con revisión,
 > pago manual, tres cupos superpuestos por zona, rotación por minuto, atribución
 > y métricas. Pausa/elegibilidad ocultan sin extender automáticamente el período;
 > resolución comercial administrativa auditada. La búsqueda global ya

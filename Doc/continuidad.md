@@ -1,5 +1,23 @@
 # Punto de continuidad — 05/10/2026
 
+**Estado actual: [cierre local y pendientes reales](cierre-desarrollo-2026-10-05.md).**
+Completados catálogo/planes, solicitudes, ventas/stock, métricas, descubrimiento
+global y campañas. Asistencia opcional preparada en `feat/catalog-draft-assistance`
+desde `7f412cd`, con corrección posterior `7a3567f`: borrador editable, consentimiento,
+confirmación, fallback, adaptador OpenAI desactivado hasta configurar modelo/clave.
+**148 API + 99 BLL/evaluación + 117 frontend**, lint/build/integración/navegador
+correctos. No migraciones nuevas para IA. Sin credenciales reales ni llamadas pagas.
+Evidencia: `../openspec/changes/archive/2026-10-05-catalog-draft-assistance/verify-report.md`.
+
+Recolección humana verificada de nuevo: 2286 juicios pendientes, 1143 pares y cero
+comparados. No inventar anotaciones ni declarar validada la hipótesis. Falta
+configuración/prueba real de IA, selección/congelamiento/reserva/evaluación final y
+ranking experimental de productos. Producción experimental cerrada. Demo intacta;
+servidores temporales detenidos y bases eliminadas. Las secciones siguientes son
+históricas y sus indicaciones de siguiente paso quedan reemplazadas por este estado.
+
+## Campañas completadas previamente
+
 Campañas completadas en `feat/sponsored-campaigns`, base `1fe510b`. Preparación,
 revisión/pago manual, cupos/rotación por zona, anuncios separados, promociones
 gratuitas con imagen revisada, métricas y atribución de solicitudes. Pausa y retiro

@@ -76,9 +76,36 @@ Down bloquea datos/atribuciones existentes. Prueba aislada tras build:
 `node App/tools/verify-catalog.mjs --campaigns` (opcional `--serve`, artefactos en
 `.tools/campaigns`). Incluye verificaciones previas de catálogo, pedidos y ventas.
 
+## Ayuda opcional para redactar productos
+
+Dentro del editor de producto, **Ayuda para redactar** permite ingresar hechos,
+aceptar su envío a OpenAI, revisar/editar la sugerencia y usarla en el formulario.
+No guarda ni publica automáticamente. Precio, stock y estado se completan a mano.
+Sin proveedor disponible, se conserva la carga manual.
+
+Desactivada por defecto. Para habilitarla en el proceso backend, configurar
+`CatalogAi__Enabled=true`, `CatalogAi__Model` con un modelo de la cuenta compatible
+con Responses/Structured Outputs y `CatalogAi__ApiKey` mediante el gestor de
+secretos del entorno. No colocar la clave en Next, Git ni archivos de ejemplo.
+Endpoint fijo `https://api.openai.com/v1/responses`; no se admiten hosts arbitrarios.
+No se eligió modelo ni se realizó una llamada paga durante este desarrollo.
+
+Se envía solo el texto consentido, sin leer datos privados del negocio. `store:false`
+desactiva almacenamiento de respuestas para recuperación vía API; no significa
+retención cero de todos los registros del proveedor. Límites locales: seis POST
+por minuto, dos generaciones simultáneas, 12 s, respuesta 128 KiB y 1000 tokens de
+salida solicitados. Sin reintentos automáticos. Estos límites son por instancia;
+no equivalen a presupuesto mensual ni garantizan calidad factual.
+
+GET/POST `/businesses/{id}/catalog-assistance`, privado, no-store, JSON 8 KiB;
+POST `{facts, consent:true}` devuelve `{name,description,category}` o error con
+carga manual disponible. [Contrato](../openspec/specs/catalog-draft-assistance/spec.md).
+Integración comprobada con transporte simulado; falta verificar credenciales,
+modelo y calidad real antes de habilitarla para comerciantes.
+
 ## Base implementada
 
-Backend ASP.NET Core en siete proyectos de aplicación y frontend Next.js. La página inicial
+Backend ASP.NET Core en ocho proyectos de aplicación y frontend Next.js. La página inicial
 presenta la guía de descubrimiento con la identidad visual de trabajo **Cerca**. El backend
 ya incluye el primer corte de negocio: registro, ingreso y sesión revocable del
 responsable y alta/edición de negocios, persistidos en PostgreSQL/PostGIS. El

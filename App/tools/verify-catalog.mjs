@@ -65,7 +65,7 @@ try {
   const dll = resolve(apiDir, "bin/Release/net10.0/Marketplace.Api.dll");
   const apiEnv = { DOTNET_ROOT: resolve(root, ".tools/dotnet"),
     ConnectionStrings__Marketplace: `Host=127.0.0.1;Port=55432;Database=${database};Username=marketplace;Password=${password}`,
-    ASPNETCORE_ENVIRONMENT: "Testing", ASPNETCORE_URLS: apiOrigin, FrontendOrigin: webOrigin, Auth__PermitLimit: "1000" };
+    ASPNETCORE_ENVIRONMENT: "Testing", ASPNETCORE_URLS: apiOrigin, FrontendOrigin: webOrigin, Auth__PermitLimit: "1000", CatalogAi__Enabled: "false" };
   await run(dotnet, [dll, "--migrate"], apiDir, apiEnv);
   const api = start("api", dotnet, [dll], apiDir, apiEnv);
   await ready(apiOrigin + "/health/live", api);
@@ -92,6 +92,9 @@ try {
   const period = { startsAt: new Date(Date.now() - 60000).toISOString(), endsAt: new Date(Date.now() + 86400000).toISOString(), reason: "Verificación aislada del catálogo" };
   assert.equal((await request(`/admin/businesses/${business}/subscriptions/${subscription}`, "PUT", period, owner.cookie)).status, 403);
   assert.equal((await request(`/admin/businesses/${business}/subscriptions/${subscription}`, "PUT", period, admin.cookie)).status, 200);
+  const assistance = await request(`/businesses/${business}/catalog-assistance`, "GET", undefined, owner.cookie);
+  assert.equal(assistance.status, 200); assert.equal((await assistance.json()).enabled, false);
+  assert.equal((await request(`/businesses/${business}/catalog-assistance`, "POST", { facts: "Café en granos 250 g", consent: true }, owner.cookie)).status, 503);
   assert.equal((await request(productPath, "PUT", value, owner.cookie)).status, 200);
   assert.equal((await request(productPath, "PUT", value, owner.cookie)).status, 409);
   const visible = await request(`/public/businesses/${business}/products?q=Caf%C3%A9&page=1`);

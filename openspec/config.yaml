@@ -51,9 +51,11 @@ context: |
   memoria, carga y proxy/UI; activación sujeta a evaluación/política.
   Catálogo, planes manuales, pedidos y ventas/inventario completados al 05/10/2026.
   Métricas, descubrimiento global de productos y campañas manuales completados.
-  Validación actual: 138/138 API/HTTP/PostGIS y 114/114 frontend; lint/build y
-  navegador correctos. Continuidad vigente en Doc/continuidad.md. Siguen IA opcional y
-  evaluación humana/final. No activar ranking productivo sin evidencia.
+  Asistencia opcional implementada y desactivada hasta configurar modelo/clave;
+  probada con transporte simulado. Validación actual: 148 API, 99 BLL/evaluación
+  y 117 frontend; lint/build/navegador correctos. Estado en Doc/continuidad.md.
+  Siguen prueba real de IA, evaluación humana/final y ranking experimental de
+  productos. 2286 juicios humanos pendientes. No activar ranking sin evidencia.
 
   Idioma: documentación en español; identificadores técnicos de código en
   inglés.
