@@ -28,7 +28,7 @@ public static class OrderEndpoints
             return await next(context);
         });
         owner.MapGet("", async (Guid business, int? page, string? reference, string? status, HttpContext http, OrderService orders, CancellationToken ct) =>
-            page is < 1 or > 10000 || reference?.Length > 40 || status is not (null or "pending" or "in_attention" or "cancelled")
+            page is < 1 or > 10000 || reference?.Length > 40 || status is not (null or "pending" or "in_attention" or "cancelled" or "converted")
                 ? Results.BadRequest() : Found(await orders.ListAsync(business, Owner(http), page ?? 1, reference ?? "", status, ct)));
         owner.MapGet("/{id:guid}", async (Guid business, Guid id, HttpContext http, OrderService orders, CancellationToken ct) =>
             Found(await orders.OwnedAsync(business, id, Owner(http), ct)));

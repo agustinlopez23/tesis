@@ -87,7 +87,9 @@ public sealed class CatalogRepository(MarketplaceDbContext db, TimeProvider cloc
         var items = await db.CatalogProducts.AsNoTracking().Where(p => p.BusinessId == businessId && p.Status == "published" &&
             Eligible(businessId, now).Any() && (p.Name.ToLower().Contains(query.ToLower()) ||
             p.Description.ToLower().Contains(query.ToLower()) || p.Category.ToLower().Contains(query.ToLower())))
-            .OrderBy(p => p.Name).ThenBy(p => p.Id).Skip((page - 1) * 20).Take(21).Select(Projection).ToListAsync(ct);
+            .OrderBy(p => p.Name).ThenBy(p => p.Id).Skip((page - 1) * 20).Take(21)
+            .Select(p => new ProductResponse(p.Id, p.Name, p.Description, p.Category, p.Price, p.Currency,
+                p.Available && !db.InventoryBalances.Any(b => b.ProductId == p.Id && b.Quantity == 0), p.Status, p.Version, p.Photo != null)).ToListAsync(ct);
         return new(items.Take(20).ToArray(), page, items.Count > 20);
     }
 

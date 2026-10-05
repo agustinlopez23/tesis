@@ -28,6 +28,8 @@ public sealed class OrderRepository(MarketplaceDbContext db, TimeProvider clock)
         var requestedLines = request.Lines!;
         var ids = requestedLines.Select(x => x.ProductId).ToArray();
         var products = await db.CatalogProducts.Where(p => p.BusinessId == business && ids.Contains(p.Id)).ToDictionaryAsync(p => p.Id, ct);
+        var balances = await db.InventoryBalances.Where(b => ids.Contains(b.ProductId)).ToDictionaryAsync(b => b.ProductId, ct);
+        if (requestedLines.Any(line => balances.TryGetValue(line.ProductId, out var balance) && balance.Quantity < line.Quantity)) return new(OrderResultStatus.Conflict);
         if (requestedLines.Any(line => !products.TryGetValue(line.ProductId, out var product) || product.Status != "published" ||
             !product.Available || product.Version != line.ExpectedVersion)) return new(OrderResultStatus.Conflict);
         var order = new CustomerOrder {
@@ -77,7 +79,7 @@ public sealed class OrderRepository(MarketplaceDbContext db, TimeProvider clock)
         if ((await Lock(business, ct))?.OwnerId != owner) return new(OrderResultStatus.NotFound);
         var order = await db.CustomerOrders.Include(x => x.Lines).SingleOrDefaultAsync(x => x.Id == id && x.BusinessId == business, ct);
         if (order is null) return new(OrderResultStatus.NotFound);
-        if (order.Version != request.Version || order.ContactReceivedAt != null && !request.ContactReceived ||
+        if (order.Status == "converted" || order.Version != request.Version || order.ContactReceivedAt != null && !request.ContactReceived ||
             order.Status == "cancelled" && (request.Status != "cancelled" || request.ContactReceived != (order.ContactReceivedAt != null)) ||
             order.Status == "in_attention" && request.Status == "pending") return new(OrderResultStatus.Conflict);
         if (order.Status == request.Status && request.ContactReceived == (order.ContactReceivedAt != null))

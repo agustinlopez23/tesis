@@ -67,7 +67,7 @@ app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =
 }));
 app.Use(async (context, next) =>
 {
-    if (context.Request.Path.StartsWithSegments("/public/ranking-snapshots") || context.Request.Path.Value?.Contains("/orders", StringComparison.Ordinal) == true)
+    if (context.Request.Path.StartsWithSegments("/public/ranking-snapshots") || new[] { "/orders", "/sales", "/inventory" }.Any(segment => context.Request.Path.Value?.Contains(segment, StringComparison.Ordinal) == true))
         context.Response.OnStarting(() =>
         {
             context.Response.Headers.CacheControl = "no-store";
@@ -80,6 +80,7 @@ app.UseMiddleware<RankingConcurrencyMiddleware>();
 app.MapBusinessProfiles();
 app.MapCatalog();
 app.MapOrders();
+app.MapSales();
 app.MapBusinessActivity();
 app.MapRankingSnapshots();
 
