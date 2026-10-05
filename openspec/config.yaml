@@ -53,7 +53,10 @@ context: |
   Métricas, descubrimiento global de productos y campañas manuales completados.
   Asistencia opcional implementada y desactivada hasta configurar modelo/clave;
   probada con transporte simulado. Validación actual: 148 API, 99 BLL/evaluación
-  y 117 frontend; lint/build/navegador correctos. Estado en Doc/continuidad.md.
+  y 123 frontend; lint/build/navegador correctos. Revisión Playwright corrigió
+  paneles obsoletos, selección con precio viejo y mensajes de acceso/sesión.
+  API/BLL mantienen validación previa; harness comercial repetido con éxito.
+  Estado y evidencia en Doc/continuidad.md y Doc/qa-playwright-2026-10-05.md.
   Siguen prueba real de IA, evaluación humana/final y ranking experimental de
   productos. 2286 juicios humanos pendientes. No activar ranking sin evidencia.
 

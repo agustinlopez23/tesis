@@ -5,8 +5,11 @@
 Catálogo/planes, solicitudes, ventas/inventario, métricas comerciales, búsqueda
 global y campañas manuales implementados. Asistencia opcional preparada y
 desactivada hasta configurar modelo/clave; borrador revisable sin auto publicación.
-**148 API, 99 BLL/evaluación y 117 frontend**, lint/build/integración/navegador
-correctos. Contratos en specs; estado en `../Doc/continuidad.md`. Sigue prueba real
+**148 API, 99 BLL/evaluación y 123 frontend**, lint/build/integración/navegador
+correctos. Revisión Playwright posterior corrigió paneles obsoletos, selección con
+precio viejo y mensajes de acceso/sesión; API/BLL conservan la validación anterior.
+Evidencia en `../Doc/qa-playwright-2026-10-05.md`.
+Contratos en specs; estado en `../Doc/continuidad.md`. Sigue prueba real
 de IA, evaluación humana/final y ranking experimental de productos. 2286 juicios
 pendientes comprobados; no hay activación experimental productiva.
 

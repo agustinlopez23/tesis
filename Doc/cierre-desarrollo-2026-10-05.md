@@ -15,15 +15,19 @@ todavía necesita evaluación humana; este cierre técnico no demuestra su hipó
 | Redacción asistida | Editor de producto → Ayuda para redactar | Implementación preparada; proveedor real pendiente |
 | Ranking experimental | `/revista` en desarrollo con flags | Solo previsualización; producción cerrada |
 
-Verificación acumulada actual: **364 pruebas aprobadas**: 148 API/HTTP/PostGIS/
-adaptador, 99 BLL/evaluación y 117 frontend, sin omitidas. Lint y compilación Next
+Verificación acumulada actual: **370 pruebas aprobadas**: 148 API/HTTP/PostGIS/
+adaptador, 99 BLL/evaluación y 123 frontend, sin omitidas. API/BLL corresponden al
+último incremento; la revisión Playwright repitió frontend y harness comercial.
+Lint y compilación Next
 correctos. Después de la suite completa se amplió la regresión de resolución de
 campaña vencida: seis pruebas de campañas aprobadas tras corregirla. Recorridos
 reales Next/API/PostGIS, reintentos y pantallas 1440/390/320 comprobados. IA usa
 dobles explícitos; no se hicieron llamadas pagas ni se acreditó calidad factual.
 
 Los cambios están en commits locales de las ramas encadenadas hasta
-`feat/catalog-draft-assistance`. Sin push, despliegue, migración ni reinicio de la
+`fix/playwright-commerce-flow`. La [revisión Playwright](qa-playwright-2026-10-05.md)
+corrigió paneles obsoletos, selección con precio viejo y mensajes de acceso/sesión.
+Sin push, despliegue, migración ni reinicio de la
 demo existente. Las bases generadas para verificar fueron eliminadas. Para correr
 la versión nueva hay que aplicar las migraciones y recompilar según [App/README](../App/README.md).
 

@@ -1,6 +1,14 @@
 # Punto de continuidad — 05/10/2026
 
 **Estado actual: [cierre local y pendientes reales](cierre-desarrollo-2026-10-05.md).**
+Última revisión: [recorrido Playwright](qa-playwright-2026-10-05.md), rama
+`fix/playwright-commerce-flow`. Corregidos paneles obsoletos, recuperación del
+conflicto de precio y mensajes de acceso/sesión; **123/123 frontend**, lint/build
+y harness comercial aprobados. Tres sesiones aisladas cerradas; demo intacta.
+API/BLL conservan los resultados previos indicados debajo. Sin push ni despliegue.
+
+## Cierre anterior de implementación
+
 Completados catálogo/planes, solicitudes, ventas/stock, métricas, descubrimiento
 global y campañas. Asistencia opcional preparada en `feat/catalog-draft-assistance`
 desde `7f412cd`, con corrección posterior `7a3567f`: borrador editable, consentimiento,
