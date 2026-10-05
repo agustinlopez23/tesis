@@ -4,6 +4,17 @@ import OwnerOnboarding from "../src/app/owner-onboarding";
 
 Element.prototype.scrollIntoView = vi.fn();
 
+it("explica las credenciales incorrectas sin revelar si existe la cuenta", async () => {
+  vi.spyOn(globalThis, "fetch").mockImplementation(async () => new Response(null, { status: 401 }));
+  render(<OwnerOnboarding />);
+  fireEvent.click(screen.getByRole("button", { name: "Ya tengo cuenta" }));
+  fireEvent.change(screen.getByLabelText("Correo"), { target: { value: "ana@example.test" } });
+  fireEvent.change(screen.getByLabelText("Contraseña"), { target: { value: "clave-incorrecta" } });
+  fireEvent.click(screen.getByRole("button", { name: "Ingresar" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Revisá el correo y la contraseña e intentá nuevamente.");
+  expect(screen.getByLabelText("Correo")).toHaveValue("ana@example.test");
+});
+
 it("muestra el error de registro sin borrar datos no sensibles", async () => {
   vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response('{"message":"El correo ya está registrado."}', {
     status: 409, headers: { "Content-Type": "application/json" },

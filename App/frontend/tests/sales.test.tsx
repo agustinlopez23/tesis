@@ -7,6 +7,20 @@ import BusinessSales from "../src/app/business-sales";
 const product = { id: "p1", name: "Café", price: 100, currency: "ARS" };
 const sale = { id: "s1", orderId: "o1", orderReference: "CE-123", createdAt: "2026-10-05T00:00:00Z", voidedAt: null,
   lines: [{ productId: "p1", name: "Café", quantity: 1, unitPrice: 100, currency: "ARS", origin: "requested", returnedQuantity: 0 }], totals: { requested: { ARS: 100 } } };
+it("una sesión vencida indica cómo ingresar y conserva la operación para reintentar", async () => {
+  sessionStorage.clear(); const saved = vi.fn(); const requests: string[] = [];
+  vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+    if (init?.method !== "PUT") return Response.json([product]);
+    requests.push(String(init.body)); return requests.length === 1 ? new Response(null, { status: 401 }) : Response.json(sale);
+  });
+  render(<SaleEditor business="b1" order={{ id: "o1", version: 1, lines: [{ productId: "p1", name: "Café", quantity: 1, unitPrice: 100, currency: "ARS" }] }} onSaved={saved} />);
+  await waitFor(() => expect(screen.getByRole("button", { name: "Registrar venta" })).toBeEnabled());
+  fireEvent.click(screen.getByRole("button", { name: "Registrar venta" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Tu sesión venció");
+  expect(sessionStorage.getItem("cerca-sale:b1:o1")).not.toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Reintentar venta" }));
+  await waitFor(() => expect(saved).toHaveBeenCalledOnce()); expect(requests[0]).toBe(requests[1]);
+});
 it("anular una venta no supone devolución y exige motivo explícito", async () => {
   sessionStorage.clear();
   const fetcher = vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => init?.method === "PUT"

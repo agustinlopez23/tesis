@@ -27,6 +27,7 @@ export function useSaleOperation(storageKey: string, onSaved: (data: unknown) =>
       const response = await catalogApi(operation.path, "PUT", operation.body);
       if (!response.ok) {
         const message = await catalogError(response);
+        if (response.status === 401) { setError(message); return; }
         if ([400, 403, 404, 409].includes(response.status)) {
           sessionStorage.removeItem(storageKey); setIntent(null); setError(message); return;
         }

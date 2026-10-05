@@ -16,6 +16,10 @@ guarda como hash y vence a las ocho horas. GET `/auth/session` devuelve identida
 o 401. POST `/auth/logout` revoca la sesión y elimina la cookie de forma idempotente.
 Las contraseñas usan PasswordHasher de ASP.NET Core.
 
+Un ingreso rechazado con 401 MUST indicar que se revisen correo y contraseña,
+sin afirmar cuál es incorrecto ni revelar si la cuenta existe. Conservar el correo
+para poder corregir los datos y reintentar.
+
 ## Protección de solicitudes
 
 Los métodos con efectos requieren Origin exactamente igual al origen configurado

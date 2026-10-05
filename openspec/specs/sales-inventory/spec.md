@@ -41,6 +41,10 @@ La identidad y el cuerpo completo de cada operación se guardan en sessionStorag
 antes de escribir. Reintentos idénticos MUST recuperar el resultado aun tras
 recarga o pérdida de respuesta. Otro contenido con el mismo UUID da 409.
 
+Si la escritura devuelve 401, la interfaz MUST indicar que hay que volver a
+ingresar y conservar la operación completa. Iniciar sesión y reintentar envía
+la misma identidad y cuerpo; no habilita una operación nueva por ese error.
+
 ## Anulación y límites
 
 Anular requiere UUID propio, motivo y cantidades efectivamente devueltas. Cero

@@ -76,6 +76,7 @@ export default function OwnerOnboarding() {
         setMode("login");
       }
       const login = await api("/auth/login", "POST", { email: identity.email, password: identity.password });
+      if (login.status === 401) return setError("Revisá el correo y la contraseña e intentá nuevamente.");
       if (!login.ok) return setError(await responseMessage(login));
       setIdentity((current) => ({ ...current, password: "" }));
       await enterPanel(await login.json());
