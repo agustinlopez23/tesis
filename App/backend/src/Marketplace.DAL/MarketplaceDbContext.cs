@@ -14,9 +14,13 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<BusinessProfile> Businesses => Set<BusinessProfile>();
     public DbSet<BusinessPhoto> BusinessPhotos => Set<BusinessPhoto>();
     public DbSet<BusinessActivity> BusinessActivity => Set<BusinessActivity>();
+    public DbSet<BusinessSubscription> BusinessSubscriptions => Set<BusinessSubscription>();
+    public DbSet<CatalogProduct> CatalogProducts => Set<CatalogProduct>();
+    public DbSet<ProductPhoto> ProductPhotos => Set<ProductPhoto>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        CatalogConfiguration.Configure(modelBuilder);
         modelBuilder.ApplyConfiguration(new BusinessActivityConfiguration());
         modelBuilder.Entity<BusinessPhoto>(entity =>
         {
@@ -53,7 +57,7 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
             entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
             entity.Property(x => x.Name).HasColumnName("name").HasMaxLength(50).IsRequired();
             entity.HasIndex(x => x.Name).IsUnique();
-            entity.HasData(new Role { Id = 1, Name = "business_owner" });
+            entity.HasData(new Role { Id = 1, Name = "business_owner" }, new Role { Id = 2, Name = "administrator" });
         });
         modelBuilder.Entity<UserAccountRole>(entity =>
         {
