@@ -1,6 +1,11 @@
 # Punto de continuidad — 05/10/2026
 
 **Estado actual: [cierre local y pendientes reales](cierre-desarrollo-2026-10-05.md).**
+**Recorrido comercial en demo completado:** solicitud `CE-FFFDC9F41FD5` convertida
+en venta ficticia de dos arroces por ARS 4400; saldo 30 → 28, métricas y seguimiento
+correctos. Seed ejecutado antes y después: conserva venta y saldo sin duplicados.
+[Guion de presentación](guion-demo.md), evidencia local `.tools/seed-demo/flow-result.json`.
+
 **Seed de demostración cargado:** rama `feat/demo-seed`, archivo
 `App/seed/demo.json`, comando `App/tools/seed-demo.ps1`. Tres negocios nuevos,
 doce productos, planes y stock; cuentas titular/admin con credenciales aleatorias

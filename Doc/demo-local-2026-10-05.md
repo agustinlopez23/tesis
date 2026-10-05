@@ -1,5 +1,9 @@
 # Demo local actualizada — 05/10/2026
 
+**Recorrido de ejemplo listo:** una solicitud convertida y una venta ficticia por
+ARS 4400 en el almacén del seed; arroz con 28 unidades y 13 movimientos totales.
+La repetición posterior del seed preservó ese estado. [Guion para mostrarlo](guion-demo.md).
+
 **Actualización posterior:** [seed](../App/seed/README.md) cargado y repetido sin
 duplicados: 6 negocios totales, 3 cuentas, 12 productos, 3 planes y 12 saldos.
 Los datos anteriores permanecen intactos. Credenciales de titular/admin en
