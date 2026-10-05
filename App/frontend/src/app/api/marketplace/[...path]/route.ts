@@ -2,6 +2,8 @@ type RouteParameters = { params: Promise<{ path: string[] }> };
 
 const allowedRoutes: Record<string, RegExp[]> = {
   GET: [
+    /^public\/orders\/[0-9a-f-]{36}$/i,
+    /^businesses\/[0-9a-f-]{36}\/orders(\/[0-9a-f-]{36})?$/i,
     /^(public\/)?businesses\/[0-9a-f-]{36}\/products(\/[0-9a-f-]{36}\/photo)?$/i,
     /^businesses\/[0-9a-f-]{36}\/plan$/i,
     /^admin\/businesses(\/[0-9a-f-]{36}\/plan)?$/i,
@@ -15,8 +17,8 @@ const allowedRoutes: Record<string, RegExp[]> = {
     /^businesses\/[0-9a-f-]{36}\/photos(\/[1-5])?$/i,
     /^businesses\/[0-9a-f-]{36}\/activity$/i,
   ],
-  POST: [/^auth\/(register|login|logout)$/, /^businesses$/, /^public\/events$/, /^public\/ranking-snapshots$/, /^admin\/businesses\/[0-9a-f-]{36}\/subscriptions\/[0-9a-f-]{36}\/revoke$/i],
-  PUT: [/^businesses\/[0-9a-f-]{36}$/i, /^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i, /^businesses\/[0-9a-f-]{36}\/products\/[0-9a-f-]{36}(\/photo)?$/i, /^admin\/businesses\/[0-9a-f-]{36}\/subscriptions\/[0-9a-f-]{36}$/i],
+  POST: [/^public\/businesses\/[0-9a-f-]{36}\/orders$/i, /^auth\/(register|login|logout)$/, /^businesses$/, /^public\/events$/, /^public\/ranking-snapshots$/, /^admin\/businesses\/[0-9a-f-]{36}\/subscriptions\/[0-9a-f-]{36}\/revoke$/i],
+  PUT: [/^businesses\/[0-9a-f-]{36}\/orders\/[0-9a-f-]{36}$/i, /^businesses\/[0-9a-f-]{36}$/i, /^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i, /^businesses\/[0-9a-f-]{36}\/products\/[0-9a-f-]{36}(\/photo)?$/i, /^admin\/businesses\/[0-9a-f-]{36}\/subscriptions\/[0-9a-f-]{36}$/i],
   DELETE: [/^businesses\/[0-9a-f-]{36}\/photos\/[1-5]$/i, /^businesses\/[0-9a-f-]{36}\/products\/[0-9a-f-]{36}\/photo$/i],
 };
 
@@ -50,9 +52,13 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
   const cookie = request.headers.get("cookie");
   if (contentType) headers.set("Content-Type", contentType);
   if (cookie) headers.set("Cookie", cookie);
+  if (/^public\/orders\//.test(path)) {
+    const key = request.headers.get("x-order-key");
+    if (key && /^[0-9a-f]{64}$/.test(key)) headers.set("X-Order-Key", key);
+  }
 
   try {
-    const maxBody = path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
+    const maxBody = path.includes("/orders") ? 16384 : path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
     if (Number(request.headers.get("content-length")) > maxBody) return new Response(null, { status: 413 });
     // Bound streamed/chunked uploads too, before buffering them for the API.
     const chunks: Uint8Array[] = [];
@@ -72,6 +78,10 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
     for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.byteLength; }
     const upstreamUrl = new URL(path, baseUrl);
     if (ranking || path === "public/businesses" || path.endsWith("/activity") || path.includes("/products") || path === "admin/businesses") upstreamUrl.search = new URL(request.url).search;
+    if (path.startsWith("businesses/") && path.endsWith("/orders")) {
+      const query = new URL(request.url).searchParams;
+      for (const key of ["page", "reference", "status"]) if (query.has(key)) upstreamUrl.searchParams.set(key, query.get(key)!);
+    }
     const upstream = await fetch(upstreamUrl.toString(), {
       method: request.method,
       headers,
