@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
 import Image from "next/image";
 import { catalogApi, Product, priceLabel } from "./catalog-api";
 import { useOrderCart } from "./use-order-cart";
@@ -8,6 +8,7 @@ import OrderCheckout from "./order-checkout";
 
 export default function PublicCatalog({ id }: { id: string }) {
   const cart = useOrderCart(id);
+  const reconcile = useEffectEvent((products: Product[]) => cart.reconcile(products));
   const [items, setItems] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [more, setMore] = useState(false);
@@ -24,7 +25,7 @@ export default function PublicCatalog({ id }: { id: string }) {
         if (!response.ok) throw new Error();
         const data = await response.json();
         if (!Array.isArray(data.items)) throw new Error();
-        if (!controller.signal.aborted) { setItems(data.items); setMore(data.hasNextPage); setState("ready"); }
+        if (!controller.signal.aborted) { setItems(data.items); setMore(data.hasNextPage); setState("ready"); reconcile(data.items); }
       } catch { if (!controller.signal.aborted) { setItems([]); setState("error"); } }
     }
     void load();

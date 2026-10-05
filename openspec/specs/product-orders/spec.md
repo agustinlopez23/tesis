@@ -21,6 +21,18 @@ perdida permite recuperar/reintentar sin cambiar identidad. Al recargar consulta
 el estado sin volver a enviar POST. Un intento confirmado y vencido libera la
 selección para una nueva solicitud.
 
+Al actualizar el catálogo, una selección todavía editable MUST incorporar precio,
+moneda y versión de los productos seleccionados presentes en la respuesta, y
+retirar los que ahora estén no disponibles. Mostrar aviso para revisar antes de
+confirmar; no enviar una solicitud automáticamente ni permitir confirmar vacía.
+La ausencia en una página o búsqueda no implica retirada del producto. Intentos
+pendientes de respuesta y solicitudes guardadas MUST conservar su contenido.
+
+Escenario: el precio cambia después de seleccionar y la API rechaza con 409;
+actualizar catálogo muestra el importe vigente y la siguiente confirmación envía
+su versión actual. Si se perdió una respuesta, actualizar y reintentar conserva
+la identidad, clave, cantidades y versiones del intento original.
+
 ## Acceso y contacto
 
 La referencia legible MUST ser única y no otorgar acceso. La clave se conserva

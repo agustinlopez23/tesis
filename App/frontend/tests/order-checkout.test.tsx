@@ -9,19 +9,45 @@ const order = { id: "order1", reference: "CE-123", businessId: "b1", businessNam
   createdAt: "2026-10-05T00:00:00Z", accessExpiresAt: "2026-11-04T00:00:00Z", status: "pending", version: 1, contactReceivedAt: null, canContact: true,
   lines: [{ productId: "p1", name: "Café", unitPrice: 1250.5, currency: "ARS", quantity: 2 }], totals: { ARS: 2501 } };
 
+it("actualizar catálogo renueva la selección y permite resolver un conflicto de precio", async () => {
+  sessionStorage.clear(); let version = 1; const attempts: number[] = [];
+  vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+    if (init?.method === "POST") {
+      const sent = JSON.parse(String(init.body)); attempts.push(sent.lines[0].expectedVersion);
+      return sent.lines[0].expectedVersion === version ? Response.json(order, { status: 201 }) : Response.json({ message: "Los datos cambiaron" }, { status: 409 });
+    }
+    return Response.json({ items: [{ ...product, version, price: version === 1 ? 1250.5 : 1500 }], page: 1, hasNextPage: false });
+  });
+  render(<PublicCatalog id="b1" />);
+  fireEvent.click(await screen.findByRole("button", { name: "Agregar Café" }));
+  fireEvent.change(screen.getByLabelText("Tu nombre o alias"), { target: { value: "Ana" } }); version = 2;
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar solicitud" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Los datos cambiaron");
+  fireEvent.click(screen.getByRole("button", { name: "Actualizar catálogo" }));
+  expect(await screen.findByText(/Actualizamos tu selección/)).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar solicitud" }));
+  expect(await screen.findByRole("link", { name: "Consultar mi solicitud" })).toBeInTheDocument();
+  expect(attempts).toEqual([1, 2]);
+});
+
 it("reintenta la misma solicitud después de perder la respuesta y preserva identidad al recargar", async () => {
   sessionStorage.clear();
+  let version = 1;
   const calls: string[] = [];
   vi.spyOn(globalThis, "fetch").mockImplementation(async (url, init) => {
     if (init?.method === "POST") { calls.push(String(init.body)); throw new Error("Lost response"); }
     if (String(url).includes("/public/orders/")) return new Response(null, { status: 404 });
-    return Response.json({ items: [product], page: 1, hasNextPage: false });
+    return Response.json({ items: [{ ...product, version }], page: 1, hasNextPage: false });
   });
   const first = render(<PublicCatalog id="b1" />);
   fireEvent.click(await screen.findByRole("button", { name: "Agregar Café" }));
   fireEvent.change(screen.getByLabelText("Tu nombre o alias"), { target: { value: "Ana" } });
   fireEvent.click(screen.getByRole("button", { name: "Confirmar solicitud" }));
   expect(await screen.findByRole("alert")).toHaveTextContent("Reintentá");
+  version = 2;
+  fireEvent.click(screen.getByRole("button", { name: "Actualizar catálogo" }));
+  await screen.findByRole("button", { name: "Agregar Café" });
+  expect(screen.queryByText(/Actualizamos tu selección/)).not.toBeInTheDocument();
   first.unmount();
   render(<PublicCatalog id="b1" />);
   fireEvent.click(await screen.findByRole("button", { name: "Reintentar solicitud" }));
@@ -30,6 +56,17 @@ it("reintenta la misma solicitud después de perder la respuesta y preserva iden
   const payload = JSON.parse(calls[0]);
   expect(payload.accessKey).toMatch(/^[0-9a-f]{64}$/);
   expect(payload.lines[0]).toEqual({ productId: "p1", quantity: 1, expectedVersion: 1 });
+});
+it("retira de la selección un producto que dejó de estar disponible al actualizar", async () => {
+  sessionStorage.clear(); let available = true;
+  vi.spyOn(globalThis, "fetch").mockImplementation(async () => Response.json({ items: [{ ...product, available }], page: 1, hasNextPage: false }));
+  render(<PublicCatalog id="b1" />);
+  fireEvent.click(await screen.findByRole("button", { name: "Agregar Café" }));
+  available = false;
+  fireEvent.click(screen.getByRole("button", { name: "Actualizar catálogo" }));
+  expect(await screen.findByText(/Actualizamos tu selección/)).toBeInTheDocument();
+  expect(screen.queryByLabelText("Cantidad de Café")).not.toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Confirmar solicitud" })).toBeDisabled();
 });
 it("muestra el resumen guardado y no incluye la clave privada en WhatsApp", async () => {
   sessionStorage.clear();

@@ -14,6 +14,7 @@ export function useOrderCart(businessId: string) {
   const [pending, setPending] = useState(false);
   const [restoring, setRestoring] = useState(true);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
   const storageKey = `cerca-order-intent:${businessId}`;
   useEffect(() => {
     const controller = new AbortController();
@@ -54,10 +55,22 @@ export function useOrderCart(businessId: string) {
     setSelection(items => quantity === 0 ? items.filter(x => x.product.id !== id)
       : items.map(x => x.product.id === id ? { ...x, quantity: Math.max(1, Math.min(99, Math.trunc(quantity) || 1)) } : x));
   }
+  function reconcile(products: Product[]) {
+    if (pending || intent || order || restoring || !selection.length) return;
+    let changed = false;
+    const next = selection.flatMap(item => {
+      const current = products.find(p => p.id === item.product.id);
+      if (!current) return [item]; // Other pages/searches may contain the selected product.
+      if (!current.available) { changed = true; return []; }
+      if (current.version === item.product.version && current.price === item.product.price && current.currency === item.product.currency) return [item];
+      changed = true; return [{ ...item, product: current }];
+    });
+    if (changed) { setSelection(next); setError(""); setNotice("Actualizamos tu selección con los datos actuales. Revisá la disponibilidad, las cantidades y los precios antes de confirmar."); }
+  }
   async function submit() {
     if (pending || restoring || order) return;
     if (!intent && (!selection.length || !name.trim())) { setError("Indicá tu nombre y seleccioná productos."); return; }
-    setPending(true); setError("");
+    setPending(true); setError(""); setNotice("");
     const attempt = intent ?? { requestId: crypto.randomUUID(), accessKey: newOrderKey(), customerName: name.trim(),
       lines: selection.map(x => ({ productId: x.product.id, quantity: x.quantity, expectedVersion: x.product.version })), campaignToken: campaignAttribution(businessId) };
     try {
@@ -80,7 +93,7 @@ export function useOrderCart(businessId: string) {
   function reset() {
     if (!order) return;
     try { sessionStorage.removeItem(storageKey); } catch { setError("No pudimos preparar una nueva solicitud."); return; }
-    setOrder(null); setIntent(null); setSelection([]); setError("");
+    setOrder(null); setIntent(null); setSelection([]); setError(""); setNotice("");
   }
-  return { selection, name, setName, intent, order, pending, restoring, error, add, quantity, submit, reset };
+  return { selection, name, setName, intent, order, pending, restoring, error, notice, add, quantity, submit, reset, reconcile };
 }
