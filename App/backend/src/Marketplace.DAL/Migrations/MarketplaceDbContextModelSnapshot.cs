@@ -388,6 +388,194 @@ namespace Marketplace.DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Marketplace.Models.CustomerOrder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("AccessExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("access_expires_at");
+
+                    b.Property<string>("AccessKeyHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("access_key_hash");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("business_id");
+
+                    b.Property<string>("BusinessName")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasColumnName("business_name");
+
+                    b.Property<DateTimeOffset?>("ContactReceivedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("contact_received_at");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("customer_name");
+
+                    b.Property<string>("Reference")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasColumnName("reference");
+
+                    b.Property<string>("RequestHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("request_hash");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("source");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer")
+                        .HasColumnName("version");
+
+                    b.Property<string>("WhatsApp")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)")
+                        .HasColumnName("whatsapp");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Reference")
+                        .IsUnique();
+
+                    b.HasIndex("BusinessId", "CreatedAt", "Id");
+
+                    b.ToTable("customer_orders", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_order_hashes", "access_key_hash ~ '^[0-9a-f]{64}$' AND request_hash ~ '^[0-9a-f]{64}$'");
+
+                            t.HasCheckConstraint("CK_order_source", "source = 'catalog'");
+
+                            t.HasCheckConstraint("CK_order_status", "status IN ('pending','in_attention','cancelled')");
+
+                            t.HasCheckConstraint("CK_order_version", "version > 0");
+                        });
+                });
+
+            modelBuilder.Entity("Marketplace.Models.OrderChange", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_id");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("integer")
+                        .HasColumnName("version");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("actor_id");
+
+                    b.Property<bool>("ContactReceived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("contact_received");
+
+                    b.Property<string>("FromStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("from_status");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at");
+
+                    b.Property<string>("ToStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("to_status");
+
+                    b.HasKey("OrderId", "Version");
+
+                    b.HasIndex("ActorId");
+
+                    b.ToTable("order_changes", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Models.OrderLine", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("order_id");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("product_id");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("currency");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("ProductVersion")
+                        .HasColumnType("integer")
+                        .HasColumnName("product_version");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("unit_price");
+
+                    b.HasKey("OrderId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("order_lines", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_order_line_currency", "currency IN ('ARS','USD')");
+
+                            t.HasCheckConstraint("CK_order_line_price", "unit_price >= 0");
+
+                            t.HasCheckConstraint("CK_order_line_quantity", "quantity BETWEEN 1 AND 99");
+                        });
+                });
+
             modelBuilder.Entity("Marketplace.Models.ProductPhoto", b =>
                 {
                     b.Property<Guid>("ProductId")
@@ -597,6 +785,45 @@ namespace Marketplace.DAL.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Marketplace.Models.CustomerOrder", b =>
+                {
+                    b.HasOne("Marketplace.Models.BusinessProfile", null)
+                        .WithMany()
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Marketplace.Models.OrderChange", b =>
+                {
+                    b.HasOne("Marketplace.Models.UserAccount", null)
+                        .WithMany()
+                        .HasForeignKey("ActorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.CustomerOrder", null)
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Marketplace.Models.OrderLine", b =>
+                {
+                    b.HasOne("Marketplace.Models.CustomerOrder", null)
+                        .WithMany("Lines")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Marketplace.Models.CatalogProduct", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Marketplace.Models.ProductPhoto", b =>
                 {
                     b.HasOne("Marketplace.Models.CatalogProduct", null)
@@ -639,6 +866,11 @@ namespace Marketplace.DAL.Migrations
             modelBuilder.Entity("Marketplace.Models.CatalogProduct", b =>
                 {
                     b.Navigation("Photo");
+                });
+
+            modelBuilder.Entity("Marketplace.Models.CustomerOrder", b =>
+                {
+                    b.Navigation("Lines");
                 });
 
             modelBuilder.Entity("Marketplace.Models.Role", b =>

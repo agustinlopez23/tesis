@@ -17,10 +17,14 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<BusinessSubscription> BusinessSubscriptions => Set<BusinessSubscription>();
     public DbSet<CatalogProduct> CatalogProducts => Set<CatalogProduct>();
     public DbSet<ProductPhoto> ProductPhotos => Set<ProductPhoto>();
+    public DbSet<CustomerOrder> CustomerOrders => Set<CustomerOrder>();
+    public DbSet<OrderLine> OrderLines => Set<OrderLine>();
+    public DbSet<OrderChange> OrderChanges => Set<OrderChange>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         CatalogConfiguration.Configure(modelBuilder);
+        OrderConfiguration.Configure(modelBuilder);
         modelBuilder.ApplyConfiguration(new BusinessActivityConfiguration());
         modelBuilder.Entity<BusinessPhoto>(entity =>
         {
