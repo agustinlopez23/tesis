@@ -3,8 +3,11 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { catalogApi, Product, priceLabel } from "./catalog-api";
+import { useOrderCart } from "./use-order-cart";
+import OrderCheckout from "./order-checkout";
 
 export default function PublicCatalog({ id }: { id: string }) {
+  const cart = useOrderCart(id);
   const [items, setItems] = useState<Product[]>([]);
   const [page, setPage] = useState(1);
   const [more, setMore] = useState(false);
@@ -27,7 +30,7 @@ export default function PublicCatalog({ id }: { id: string }) {
     void load();
     return () => controller.abort();
   }, [id, page, query, attempt]);
-  if (state === "hidden") return null;
+  if (state === "hidden") return <OrderCheckout cart={cart} />;
   function reload() { setState("loading"); setItems([]); setAttempt((n) => n + 1); }
   return <section className="public-catalog" aria-labelledby="catalog-title">
     <div className="catalog-heading"><div><p className="eyebrow">Para descubrir</p><h2 id="catalog-title">Productos del negocio</h2></div><button className="text-link" disabled={state === "loading"} onClick={reload}>Actualizar catálogo</button></div>
@@ -40,8 +43,10 @@ export default function PublicCatalog({ id }: { id: string }) {
       <div className="catalog-grid">{items.map((p) => <article className="product-card" key={p.id}>
         {p.hasPhoto && <Image src={`/api/marketplace/public/businesses/${id}/products/${p.id}/photo?v=${p.version}`} alt={p.name} width={400} height={300} unoptimized />}
         <div className="product-card-copy"><span className="eyebrow">{p.category}</span><h3>{p.name}</h3><p>{p.description}</p><strong>{priceLabel(p)}</strong><span className="product-availability">{p.available ? "Disponible" : "No disponible"}</span></div>
+        <button type="button" className="button button-outline product-add" aria-label={`Agregar ${p.name}`} disabled={!p.available || cart.pending || cart.restoring || !!cart.intent || !!cart.order} onClick={() => cart.add(p)}>Agregar a la solicitud</button>
       </article>)}</div>
       <nav className="catalog-toolbar" aria-label="Páginas del catálogo"><button className="button button-outline" disabled={page === 1} onClick={() => { setState("loading"); setItems([]); setPage(page - 1); }}>Anterior</button><span>Página {page}</span><button className="button button-outline" disabled={!more} onClick={() => { setState("loading"); setItems([]); setPage(page + 1); }}>Siguiente</button></nav>
     </>}
+    <OrderCheckout cart={cart} />
   </section>;
 }

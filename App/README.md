@@ -398,6 +398,42 @@ Desactivar PreviewEnabled cierra creación y permite terminar listas de 30 minut
 (creación ya desactivada mantiene 404). Antes de producción faltan evaluación,
 dimensionamiento productivo y gestión compartida de claves Data Protection.
 
+## Solicitudes de productos y WhatsApp
+
+En el perfil público de un negocio con catálogo habilitado, agregar productos,
+revisar cantidades y precios, indicar nombre o alias y confirmar. La solicitud
+queda guardada antes de abrir WhatsApp. Se puede copiar el resumen y conservar
+«Consultar mi solicitud», un enlace privado válido por 30 días. Abrir WhatsApp
+no confirma envío ni venta. Los totales mantienen ARS y USD separados.
+
+En `/mi-negocio`, editar el negocio y abrir «Ver solicitudes». Filtrar por estado
+o referencia, abrir el detalle y marcar atención, contacto recibido o cancelación.
+Los cambios quedan auditados. El titular conserva acceso aunque venza el plan.
+La cancelación es definitiva y no se permite desmarcar contacto recibido.
+
+Una respuesta perdida permite reintentar con la misma identidad; recargar la
+pestaña intenta recuperar el pedido. No borrar los datos de esa pestaña durante
+un reintento pendiente. Si el catálogo cambió, actualizarlo y quitar/agregar el
+producto permite revisar su nuevo precio. Guardar el enlace privado antes de
+preparar otra solicitud: su clave no se incluye en el mensaje de WhatsApp.
+
+Requiere `20261005111735_AddProductOrders`. Su downgrade rechaza datos existentes;
+no elimina solicitudes para revertir esquema. Acceso privado vencido no borra
+historia. No se aplica esta migración a la demo automáticamente.
+
+Con PostgreSQL/PostGIS activo y backend Release/frontend production compilados:
+
+```powershell
+node App/tools/verify-catalog.mjs --orders
+```
+
+Usa puertos 3200/5280 y una base temporal que elimina al finalizar. `--serve`
+mantiene la sesión hasta 20 minutos para navegador; `.tools/orders/session.json`
+indica `stopFile` para terminar antes. Artefactos locales ignorados pueden contener
+credenciales de esa sesión temporal. Contrato y límites en
+[`product-orders/spec.md`](../openspec/specs/product-orders/spec.md); evidencia en
+[`verify-report.md`](../openspec/changes/archive/2026-10-05-product-orders/verify-report.md).
+
 ## Evidencia y mantenimiento
 
 El scaffold archivado está en
