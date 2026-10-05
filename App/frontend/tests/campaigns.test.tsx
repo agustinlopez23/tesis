@@ -1,0 +1,52 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { expect, it, vi } from "vitest";
+import CampaignPanel from "../src/app/campaign-panel";
+import SponsoredCampaigns from "../src/app/sponsored-campaigns";
+import CampaignEditor from "../src/app/campaign-editor";
+const campaign = { id: "c1", businessId: "b1", businessName: "Local", productId: "p1", photoSlot: null, hasImage: false, title: "Café de la zona", description: "Paquete 250 g", conditions: "Hasta agotar unidades", zoneId: "centro", startsAt: "2026-10-05T00:00:00Z", endsAt: "2026-10-06T00:00:00Z", status: "pending_review", deliveryState: "pending_review", version: 1, paymentReference: null, token: "protected-context" };
+it("carga el catálogo privado y reintenta el mismo anuncio tras perder la respuesta", async () => {
+  sessionStorage.clear(); const saved = vi.fn(); let attempts = 0;
+  const fetcher = vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => {
+    if (init?.method !== "PUT") return Response.json([{ id: "p1", name: "Café" }]);
+    if (++attempts === 1) throw new Error("respuesta perdida");
+    return Response.json(campaign);
+  });
+  render(<CampaignEditor business="b1" onSaved={saved} />);
+  expect(await screen.findByRole("option", { name: "Café" })).toBeInTheDocument();
+  await waitFor(() => expect(screen.getByRole("button", { name: "Guardar campaña" })).toBeEnabled());
+  fireEvent.change(screen.getByLabelText("Producto anunciado"), { target: { value: "p1" } });
+  fireEvent.change(screen.getByLabelText("Título del anuncio"), { target: { value: "Café nuevo" } });
+  fireEvent.change(screen.getByLabelText("Descripción del anuncio"), { target: { value: "Oferta del día" } });
+  fireEvent.change(screen.getByLabelText("Condiciones de la propuesta"), { target: { value: "Hasta agotar stock" } });
+  fireEvent.click(screen.getByRole("button", { name: "Guardar campaña" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("Reintentá");
+  fireEvent.click(screen.getByRole("button", { name: "Reintentar campaña" }));
+  await waitFor(() => expect(saved).toHaveBeenCalledOnce());
+  const writes = fetcher.mock.calls.filter(([, init]) => init?.method === "PUT");
+  expect(writes[0][0]).toBe(writes[1][0]); expect(writes[0][1]?.body).toBe(writes[1][1]?.body);
+});
+it("el administrador revisa contenido sin confundir aprobación y pago", async () => {
+  sessionStorage.clear();
+  const fetcher = vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => init?.method === "PUT" ? Response.json({ ...campaign, status: "awaiting_payment", version: 2 }) : Response.json({ items: [campaign], page: 1, hasNextPage: false }));
+  render(<CampaignPanel admin />);
+  fireEvent.click(await screen.findByRole("button", { name: "Gestionar Café de la zona" }));
+  await waitFor(() => expect(screen.getByRole("button", { name: "Guardar decisión" })).toBeEnabled());
+  fireEvent.change(screen.getByLabelText("Decisión administrativa"), { target: { value: "approve" } });
+  fireEvent.change(screen.getByLabelText("Motivo de la decisión"), { target: { value: "Contenido revisado" } });
+  fireEvent.click(screen.getByRole("button", { name: "Guardar decisión" }));
+  await waitFor(() => expect(fetcher.mock.calls.some(([, init]) => init?.method === "PUT")).toBe(true));
+  const body = JSON.parse(String(fetcher.mock.calls.find(([, init]) => init?.method === "PUT")![1]!.body));
+  expect(body.action).toBe("approve"); expect(body.paymentReference).toBeNull();
+});
+it("anuncios solo con zona explícita y conserva contexto al abrir catálogo", async () => {
+  sessionStorage.clear();
+  const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ items: [campaign] }));
+  const first = render(<SponsoredCampaigns zone={null} />);
+  expect(fetcher).not.toHaveBeenCalled(); first.unmount();
+  render(<SponsoredCampaigns zone="centro" />);
+  expect(await screen.findByText("Patrocinado")).toBeInTheDocument();
+  const link = screen.getByRole("link", { name: "Ver Café de la zona" });
+  expect(link).toHaveAttribute("href", "/negocios/b1?campaign=c1#catalog-title");
+  fireEvent.click(link);
+  expect(JSON.parse(sessionStorage.getItem("cerca-campaign:c1")!).token).toBe("protected-context");
+});
