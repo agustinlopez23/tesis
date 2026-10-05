@@ -1,33 +1,41 @@
-# Punto de continuidad ? 05/10/2026
+# Punto de continuidad — 05/10/2026
 
-Completado cat?logo por negocio y planes manuales en `feat/business-catalog`,
-derivada de `feat/ranking-preview-ui`. Gesti?n privada bajo demanda desde editar
-negocio, productos con precio ARS/USD, disponibilidad declarada, borrador/publicado/
-archivado y foto procesada. Cat?logo p?blico en perfil con b?squeda local y p?ginas
-alfab?ticas de 20. Sin stock cuantitativo, pedidos ni ranking global de productos.
+Completadas solicitudes de productos en `feat/product-orders`, desde `58a0efd`.
+Selección de un negocio, cantidades, nombre/alias, confirmación con referencia y
+precios históricos, resumen para WhatsApp y enlace privado válido por 30 días.
+Reintentos conservan identidad incluso después de perder la respuesta. Panel del
+titular con filtros, atención, contacto recibido y cancelación auditados; funciona
+para solicitudes existentes aunque venza el plan. No registra venta ni stock.
 
-Administrador: `/administracion/planes`, per?odos manuales no superpuestos,
-revocaci?n auditada y rol vivo. Registro p?blico no otorga administraci?n; asignaci?n
-inicial operativa documentada en `App/README.md`. Expirar/revocar oculta cat?logo y
-bloquea escrituras, conservando lectura privada y productos. No altera ranking.
-Migraci?n `20261005025720_AddBusinessCatalog`, aplicada solo en bases temporales;
-Down protege datos/historial/roles. Demo sin migrar ni reiniciar.
+Validación: **120/120 API/HTTP/PostGIS y 100/100 frontend**, build/lint correctos.
+Integración real y Playwright 1440/390/320 px, pérdida de respuesta tras guardar
+sin duplicados, cambios de estado y privacidad del enlace. Bases temporales
+eliminadas. Migración `20261005111735_AddProductOrders`, Down poblado bloqueado.
+Demo sin migrar ni reiniciar. Commits locales por unidad; sin push/PR/despliegue.
+Reproducir con `node App/tools/verify-catalog.mjs --orders` (`--serve` para navegador).
+Evidencia: `../openspec/changes/archive/2026-10-05-product-orders/verify-report.md`.
 
-Validaci?n: **110/110 API/HTTP/PostGIS y 90/90 frontend**, build/lint correctos.
-Integraci?n Next production+API real y Playwright 1440/390/320 px: crear/publicar,
-foto, b?squeda local, activaci?n/revocaci?n e historial. Bases temporales eliminadas.
-`node App/tools/verify-catalog.mjs` reproduce el flujo (`--serve` para navegador).
-Commits locales por unidad; consultar Git. Sin push/PR. Evidencia:
-`../openspec/changes/archive/2026-10-05-business-catalog/verify-report.md`.
-Unidades: `0c5cb25` almacenamiento, `fc0ffee` API, `13d1baa` catálogo público,
-`e3ba78c` paneles; el commit siguiente registra harness/evidencia y continuidad.
+Próximo incremento: registrar ventas vinculadas a solicitudes y stock atómico,
+incluyendo concurrencia, idempotencia y correcciones auditadas. Siguen pendientes
+IA opcional, búsqueda/ranking global de productos, publicidad y evaluación humana/
+final. Ranking productivo permanece cerrado.
 
-Pr?ximo incremento: solicitudes de productos de un negocio y resumen para WhatsApp,
-con referencia estable, precios hist?ricos y acceso privado al estado. Luego ventas
-con stock at?mico. Siguen pendientes IA opcional, b?squeda/ranking global de
-productos, publicidad y evaluaci?n humana/final. Ranking productivo sigue cerrado.
+## Catálogo y planes completados previamente — 05/10/2026
 
-## Registro anterior ? 04/10/2026
+Catálogo por negocio y planes manuales en `feat/business-catalog`, derivada de
+`feat/ranking-preview-ui`. Gestión privada, precios ARS/USD, disponibilidad
+declarada, borrador/publicado/archivado y foto procesada. Perfil público con
+búsqueda local y páginas alfabéticas de 20. Administración en
+`/administracion/planes`, períodos sin superposición y revocación auditada.
+Expirar/revocar oculta catálogo y bloquea escrituras conservando datos privados.
+Asignación inicial del rol documentada en `App/README.md`; registro no lo otorga.
+Migración `20261005025720_AddBusinessCatalog`, solo en bases temporales.
+
+Validación de ese incremento: 110/110 API y 90/90 frontend, build/lint e integración
+real correctos. Unidades `0c5cb25`, `fc0ffee`, `13d1baa`, `e3ba78c` y cierre
+`58a0efd`. Evidencia: `../openspec/changes/archive/2026-10-05-business-catalog/verify-report.md`.
+
+## Registro anterior — 04/10/2026
 
 # Punto de continuidad — 04/10/2026
 

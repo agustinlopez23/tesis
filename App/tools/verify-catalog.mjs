@@ -6,7 +6,8 @@ import { resolve } from "node:path";
 import assert from "node:assert/strict";
 
 const root = resolve(import.meta.dirname, "../..");
-const artifacts = resolve(root, ".tools/catalog");
+const ordersEnabled = process.argv.includes("--orders");
+const artifacts = resolve(root, ordersEnabled ? ".tools/orders" : ".tools/catalog");
 const database = `catalog_smoke_${Date.now()}_${randomBytes(3).toString("hex")}`;
 const compose = ["compose", "--env-file", resolve(root, "App/.env.local"), "-f", resolve(root, "App/compose.yaml")];
 const children = [], logs = {};
@@ -43,9 +44,9 @@ async function ready(url, child) {
   throw new Error("Service startup timed out.");
 }
 const sql = statement => run("docker", [...compose, "exec", "-T", "database", "psql", "-U", "marketplace", "-d", created ? database : "postgres", "-v", "ON_ERROR_STOP=1", "-tAc", statement]);
-async function request(path, method = "GET", body, cookie) {
+async function request(path, method = "GET", body, cookie, headers = {}) {
   return fetch(webOrigin + "/api/marketplace" + path, { method, headers: { Origin: webOrigin,
-    "X-Requested-With": "marketplace", "Content-Type": "application/json", ...(cookie ? { Cookie: cookie } : {}) },
+    "X-Requested-With": "marketplace", "Content-Type": "application/json", ...(cookie ? { Cookie: cookie } : {}), ...headers },
     body: body === undefined ? undefined : JSON.stringify(body), signal: AbortSignal.timeout(30000) });
 }
 try {
@@ -101,10 +102,38 @@ try {
   assert.equal((await request(`/public/businesses/${business}/products`)).status, 404);
   assert.equal((await (await request(`/businesses/${business}/products`, "GET", undefined, owner.cookie)).json()).length, 1);
   assert.equal((await request(`/admin/businesses/${business}/subscriptions/${randomUUID()}`, "PUT", period, admin.cookie)).status, 200);
+  let orderInfo;
+  if (ordersEnabled) {
+    const requestId = randomUUID(), accessKey = randomBytes(32).toString("hex");
+    const body = { requestId, accessKey, customerName: "Cliente de prueba", lines: [{ productId: product, quantity: 2, expectedVersion: 3 }] };
+    const path = `/public/businesses/${business}/orders`;
+    const created = await request(path, "POST", body);
+    assert.equal(created.status, 201);
+    const saved = await created.json();
+    assert.equal(saved.totals.ARS, 25000);
+    assert.equal((await request(path, "POST", body)).status, 200);
+    assert.equal((await request(`/public/orders/${requestId}`)).status, 404);
+    const read = () => request(`/public/orders/${requestId}`, "GET", undefined, undefined, { "X-Order-Key": accessKey });
+    assert.equal((await read()).status, 200);
+    assert.equal((await request(productPath, "PUT", { ...value, version: 3, price: 13000 }, owner.cookie)).status, 200);
+    assert.equal((await (await read()).json()).totals.ARS, 25000);
+    const filtered = await request(`/businesses/${business}/orders?reference=${saved.reference}&status=pending`, "GET", undefined, owner.cookie);
+    assert.equal((await filtered.json()).items.length, 1);
+    await sql(`UPDATE business_subscriptions SET revoked_at=now(), revoked_by=granted_by, revocation_reason='Order test' WHERE business_id='${business}' AND revoked_at IS NULL`);
+    assert.equal((await request(path, "POST", body)).status, 200);
+    assert.equal((await request(path, "POST", { ...body, requestId: randomUUID() })).status, 403);
+    assert.equal((await request(`/businesses/${business}/orders/${requestId}`, "PUT", { version: 1, status: "in_attention", contactReceived: true }, owner.cookie)).status, 200);
+    assert.equal((await (await read()).json()).status, "in_attention");
+    assert.equal((await request(`/businesses/${business}/orders/${requestId}`, "PUT", { version: 2, status: "cancelled", contactReceived: true }, owner.cookie)).status, 200);
+    assert.equal((await (await read()).json()).canContact, false);
+    assert.equal(Number((await sql(`SELECT count(*) FROM customer_orders WHERE business_id='${business}'`)).trim()), 1);
+    assert.equal((await request(`/admin/businesses/${business}/subscriptions/${randomUUID()}`, "PUT", period, admin.cookie)).status, 200);
+    orderInfo = { id: requestId, key: accessKey, reference: saved.reference };
+  }
   const stopFile = resolve(artifacts, `stop-${database}`);
-  await writeFile(resolve(artifacts, "session.json"), JSON.stringify({ webOrigin, business, product, owner, admin, stopFile }, null, 2));
-  await writeFile(resolve(artifacts, "result.json"), JSON.stringify({ passed: true, database, checks: ["proxy", "plan", "authorization", "catalog", "archive", "revocation", "preservation"], at: new Date().toISOString() }, null, 2));
-  console.log("Catalog integration passed; isolated browser session ready at " + webOrigin);
+  await writeFile(resolve(artifacts, "session.json"), JSON.stringify({ webOrigin, business, product, owner, admin, stopFile, orderInfo }, null, 2));
+  await writeFile(resolve(artifacts, "result.json"), JSON.stringify({ passed: true, database, checks: ["proxy", "plan", "authorization", "catalog", "archive", "revocation", "preservation", ...(process.argv.includes("--orders") ? ["order-snapshot", "order-replay", "private-key", "owner-attention", "contact-received", "cancellation", "order-after-plan-expiry"] : [])], at: new Date().toISOString() }, null, 2));
+  console.log((ordersEnabled ? "Catalog and orders" : "Catalog") + " integration passed; isolated browser session ready at " + webOrigin);
   if (process.argv.includes("--serve")) for (let i = 0; i < 1200; i++) {
     try { await access(stopFile); break; } catch {}
     await wait(1000);

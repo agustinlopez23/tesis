@@ -1,11 +1,12 @@
 # PRD — Revista hiperlocal y SaaS para comercios
 
-> Estado al 05/10/2026: cat?logo por negocio y capacidades por plan implementados
-> localmente, con gesti?n de per?odos por administrador, archivo/fotos, consulta
-> p?blica y preservaci?n al vencer. Cat?logo alfab?tico con b?squeda dentro del
-> negocio; no incluye a?n stock, pedidos, IA ni ranking/b?squeda global de productos.
-> La distribuci?n implementada usa Impulso para cat?logo y Presencia para perfil;
-> precios y otras capacidades comerciales siguen sujetos al alcance pendiente.
+> Estado al 05/10/2026: catálogo por negocio, planes manuales y solicitudes de
+> productos implementados localmente. Selección, precios históricos, resumen de
+> WhatsApp, enlace privado y atención/cancelación auditadas desde el negocio.
+> Aún pendientes: ventas, stock, IA y ranking/búsqueda global de productos.
+> Impulso habilita catálogo y Presencia el perfil; solicitudes existentes siguen
+> gestionables al vencer. Precios y otras capacidades comerciales siguen sujetos
+> al alcance pendiente. Evidencia y siguiente unidad en `continuidad.md`.
 
 
 Versión: 0.4 · Fecha: 2026-09-07 · Estado: borrador para revisión de producto.

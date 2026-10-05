@@ -196,10 +196,13 @@ categorías semilla y alta/listado/consulta/edición de negocios propios con
 español. Verificación: backend 10/10, frontend 25/25, lint y build aprobados, más
 recorrido integrado sobre base temporal. No hay despliegue público configurado.
 
-## Incremento 05/10/2026 ? cat?logo y planes
+## Incremento 05/10/2026 — catálogo, planes y solicitudes
 
-Cat?logo por negocio y per?odos manuales auditados completados. Perfil p?blico,
-edici?n con versiones y foto procesada, preservaci?n ante vencimiento. API/PostGIS
-110/110 y frontend 90/90, build/lint e integraci?n real correctos. Rama local
-`feat/business-catalog`; demo sin migrar. Ver `specs/business-catalog/spec.md` y
-`../Doc/continuidad.md`. Siguen pedidos, stock y alcance comercial/experimental restante.
+Catálogo por negocio, períodos manuales auditados y solicitudes completados.
+Perfil público, edición versionada, foto procesada y preservación al vencer.
+Solicitudes con precios históricos, reintentos sin duplicados, resumen para
+WhatsApp, acceso privado por 30 días y gestión auditada del titular.
+API/PostGIS 120/120 y frontend 100/100; build/lint e integración real correctos.
+Rama local `feat/product-orders`; demo sin migrar. Ver
+`specs/business-catalog/spec.md`, `specs/product-orders/spec.md` y
+`../Doc/continuidad.md`. Siguen ventas/stock y alcance comercial/experimental restante.
