@@ -49,7 +49,11 @@ context: |
   cuotas separadas y retirada. 83/83 API/HTTP/PostGIS. Solo Development/Testing
   con habilitación explícita; producción cerrada. Siguen límites de candidatos/
   memoria, carga y proxy/UI; activación sujeta a evaluación/política.
-  Catálogo y pedidos siguen pendientes.
+  Catálogo, planes manuales, pedidos y ventas/inventario completados al 05/10/2026.
+  Validación actual: 127/127 API/HTTP/PostGIS y 105/105 frontend; lint/build y
+  navegador correctos. Continuidad vigente en Doc/continuidad.md. Siguen métricas
+  comerciales, descubrimiento global de productos, publicidad, IA opcional y
+  evaluación humana/final. No activar ranking productivo sin evidencia.
 
   Idioma: documentación en español; identificadores técnicos de código en
   inglés.

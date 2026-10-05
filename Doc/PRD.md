@@ -3,7 +3,9 @@
 > Estado al 05/10/2026: catálogo por negocio, planes manuales y solicitudes de
 > productos implementados localmente. Selección, precios históricos, resumen de
 > WhatsApp, enlace privado y atención/cancelación auditadas desde el negocio.
-> Aún pendientes: ventas, stock, IA y ranking/búsqueda global de productos.
+> Ventas y stock completados: ajustes auditados, líneas finales por origen,
+> descuento atómico y anulación con devolución explícita. Aún pendientes:
+> IA, publicidad y ranking/búsqueda global de productos.
 > Impulso habilita catálogo y Presencia el perfil; solicitudes existentes siguen
 > gestionables al vencer. Precios y otras capacidades comerciales siguen sujetos
 > al alcance pendiente. Evidencia y siguiente unidad en `continuidad.md`.

@@ -1,5 +1,26 @@
 # Punto de continuidad — 05/10/2026
 
+Completadas ventas e inventario en `feat/sales-inventory`, desde `d6ae72b`.
+Saldo inicial explícito, ajustes auditados, ventas desde solicitudes con líneas
+finales y origen, venta presencial separada, descuento atómico e idempotente,
+anulación con devolución explícita. Catálogo público deshabilita productos con
+saldo conocido cero; solicitudes no reservan. Una venta por solicitud.
+
+Validación: **127/127 API/HTTP/PostGIS y 105/105 frontend**, lint/build correctos.
+Integración real y Playwright 1440/390/320, pérdida de respuesta después de guardar
+sin duplicación, anulación sin reposición y rechazo recuperable por stock.
+Migración `20261005114423_AddSalesInventory`, Down poblado bloqueado. Demo intacta;
+bases temporales eliminadas. Reproducción: `node App/tools/verify-catalog.mjs --sales`.
+Evidencia: `../openspec/changes/archive/2026-10-05-sales-inventory/verify-report.md`.
+
+El usuario pidió continuar con todos los pendientes sin confirmaciones rutinarias.
+Seguir por métricas comerciales y descubrimiento de productos; después publicidad
+y asistencia opcional. Evaluación humana y configuración del proveedor de IA
+requieren evidencia externa; se consultó de forma asíncrona mientras sigue el trabajo.
+No inventar anotaciones ni abrir ranking experimental en producción.
+
+## Solicitudes completadas previamente
+
 Completadas solicitudes de productos en `feat/product-orders`, desde `58a0efd`.
 Selección de un negocio, cantidades, nombre/alias, confirmación con referencia y
 precios históricos, resumen para WhatsApp y enlace privado válido por 30 días.

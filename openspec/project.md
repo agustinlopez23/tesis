@@ -205,4 +205,8 @@ WhatsApp, acceso privado por 30 días y gestión auditada del titular.
 API/PostGIS 120/120 y frontend 100/100; build/lint e integración real correctos.
 Rama local `feat/product-orders`; demo sin migrar. Ver
 `specs/business-catalog/spec.md`, `specs/product-orders/spec.md` y
-`../Doc/continuidad.md`. Siguen ventas/stock y alcance comercial/experimental restante.
+`../Doc/continuidad.md`. Ventas/stock completados en el incremento siguiente:
+ajustes auditados, líneas finales, transacciones sin stock negativo, replay y
+anulación con devolución explícita. API 127/127 y frontend 105/105. Rama
+`feat/sales-inventory`; ver `specs/sales-inventory/spec.md`. Sigue el alcance
+comercial/experimental restante, con ranking productivo cerrado.

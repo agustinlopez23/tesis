@@ -6,8 +6,9 @@ import { resolve } from "node:path";
 import assert from "node:assert/strict";
 
 const root = resolve(import.meta.dirname, "../..");
-const ordersEnabled = process.argv.includes("--orders");
-const artifacts = resolve(root, ordersEnabled ? ".tools/orders" : ".tools/catalog");
+const salesEnabled = process.argv.includes("--sales");
+const ordersEnabled = process.argv.includes("--orders") || salesEnabled;
+const artifacts = resolve(root, salesEnabled ? ".tools/sales" : ordersEnabled ? ".tools/orders" : ".tools/catalog");
 const database = `catalog_smoke_${Date.now()}_${randomBytes(3).toString("hex")}`;
 const compose = ["compose", "--env-file", resolve(root, "App/.env.local"), "-f", resolve(root, "App/compose.yaml")];
 const children = [], logs = {};
@@ -130,10 +131,39 @@ try {
     assert.equal((await request(`/admin/businesses/${business}/subscriptions/${randomUUID()}`, "PUT", period, admin.cookie)).status, 200);
     orderInfo = { id: requestId, key: accessKey, reference: saved.reference };
   }
+  let salesInfo;
+  if (salesEnabled) {
+    const inventory = `/businesses/${business}/inventory`;
+    const adjustment = `${inventory}/adjustments/${randomUUID()}`;
+    const opening = { productId: product, delta: 5, version: 0, reason: "Saldo inicial verificado" };
+    assert.equal((await request(adjustment, "PUT", opening, owner.cookie)).status, 200);
+    assert.equal((await request(adjustment, "PUT", opening, owner.cookie)).status, 200);
+    const orderId = randomUUID(), key = randomBytes(32).toString("hex");
+    const source = await request(`/public/businesses/${business}/orders`, "POST", { requestId: orderId, accessKey: key, customerName: "Venta integrada", lines: [{ productId: product, quantity: 2, expectedVersion: 4 }] });
+    assert.equal(source.status, 201);
+    const sourceOrder = await source.json();
+    const saleId = randomUUID(), path = `/businesses/${business}/sales/${saleId}`;
+    const body = { orderId, orderVersion: 1, lines: [{ productId: product, quantity: 2, unitPrice: 12000, currency: "ARS", origin: "requested" }] };
+    assert.equal((await request(path, "PUT", body, owner.cookie)).status, 201);
+    assert.equal((await request(path, "PUT", body, owner.cookie)).status, 200);
+    assert.equal((await (await request(inventory, "GET", undefined, owner.cookie)).json())[0].quantity, 3);
+    assert.equal((await (await request(`/public/orders/${orderId}`, "GET", undefined, undefined, { "X-Order-Key": key })).json()).status, "converted");
+    const oversized = { lines: [{ productId: product, quantity: 4, unitPrice: 12000, currency: "ARS", origin: "direct" }] };
+    assert.equal((await request(`/businesses/${business}/sales/${randomUUID()}`, "PUT", oversized, owner.cookie)).status, 409);
+    const voidBody = { operationId: randomUUID(), reason: "Una unidad fue devuelta", returns: [{ productId: product, quantity: 1 }] };
+    assert.equal((await request(path + "/void", "PUT", voidBody, owner.cookie)).status, 200);
+    assert.equal((await request(path + "/void", "PUT", voidBody, owner.cookie)).status, 200);
+    assert.equal((await (await request(inventory, "GET", undefined, owner.cookie)).json())[0].quantity, 4);
+    assert.equal((await (await request(`/public/orders/${orderId}`, "GET", undefined, undefined, { "X-Order-Key": key })).json()).status, "cancelled");
+    assert.equal(Number((await sql(`SELECT count(*) FROM sales WHERE business_id='${business}'`)).trim()), 1);
+    assert.equal(Number((await sql(`SELECT count(*) FROM inventory_movements WHERE business_id='${business}'`)).trim()), 3);
+    salesInfo = { saleId, orderId, key, reference: sourceOrder.reference };
+  }
   const stopFile = resolve(artifacts, `stop-${database}`);
-  await writeFile(resolve(artifacts, "session.json"), JSON.stringify({ webOrigin, business, product, owner, admin, stopFile, orderInfo }, null, 2));
+  await writeFile(resolve(artifacts, "session.json"), JSON.stringify({ webOrigin, business, product, owner, admin, stopFile, orderInfo, salesInfo }, null, 2));
   await writeFile(resolve(artifacts, "result.json"), JSON.stringify({ passed: true, database, checks: ["proxy", "plan", "authorization", "catalog", "archive", "revocation", "preservation", ...(process.argv.includes("--orders") ? ["order-snapshot", "order-replay", "private-key", "owner-attention", "contact-received", "cancellation", "order-after-plan-expiry"] : [])], at: new Date().toISOString() }, null, 2));
-  console.log((ordersEnabled ? "Catalog and orders" : "Catalog") + " integration passed; isolated browser session ready at " + webOrigin);
+  if (salesEnabled) await writeFile(resolve(artifacts, "sales-result.json"), JSON.stringify({ passed: true, checks: ["opening-replay", "linked-sale", "sale-replay", "atomic-stock", "overselling-rejected", "explicit-return", "void-replay", "private-order-state"], at: new Date().toISOString() }, null, 2));
+  console.log((salesEnabled ? "Catalog, orders and sales" : ordersEnabled ? "Catalog and orders" : "Catalog") + " integration passed; isolated browser session ready at " + webOrigin);
   if (process.argv.includes("--serve")) for (let i = 0; i < 1200; i++) {
     try { await access(stopFile); break; } catch {}
     await wait(1000);
