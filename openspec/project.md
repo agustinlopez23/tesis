@@ -14,8 +14,10 @@ de IA, evaluación humana/final y ranking experimental de productos. 2286 juicio
 pendientes comprobados; no hay activación experimental productiva.
 
 Demo local actualizada en 3000/API 5080, con respaldo restaurado y doce migraciones
-aplicadas. Se conservaron tres negocios, una cuenta y fotos. No se cargaron planes
-ni productos ni se habilitó IA/ranking. Operación: `../Doc/demo-local-2026-10-05.md`.
+aplicadas. Seed JSON/consola separado agrega tres negocios, doce productos, stock,
+planes ficticios y cuentas titular/admin, conservando los tres negocios, cuenta
+y fotos anteriores. Repetición y atomicidad verificadas: 3/3 pruebas de seed y
+Playwright. IA/ranking desactivados. Operación: `../Doc/demo-local-2026-10-05.md`.
 
 ## Estado anterior — 2026-10-04
 

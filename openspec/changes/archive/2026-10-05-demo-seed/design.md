@@ -6,7 +6,7 @@ JSON versionado con IDs estables. Transacción y advisory lock entre corridas.
 Solo inserta registros faltantes y comprueba pertenencia ante colisiones. No
 restablece roles ni planes revocados. Stock inicial conserva movimiento de ajuste.
 
-Unidad 1: consola, datos, contrato de uso y tres pruebas de integración, debajo
+Unidad 1 (`ee3875c`): consola, datos, contrato de uso y tres pruebas de integración, debajo
 de 400 líneas. Unidad 2: comando PowerShell que prepara credenciales aleatorias
 en `.tools/seed-demo/credentials.json`, documentación y evidencia de carga local.
 El wrapper conserva/restaura variables del proceso y no imprime contraseñas.

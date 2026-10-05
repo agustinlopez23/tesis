@@ -1,10 +1,17 @@
 # Punto de continuidad — 05/10/2026
 
 **Estado actual: [cierre local y pendientes reales](cierre-desarrollo-2026-10-05.md).**
+**Seed de demostración cargado:** rama `feat/demo-seed`, archivo
+`App/seed/demo.json`, comando `App/tools/seed-demo.ps1`. Tres negocios nuevos,
+doce productos, planes y stock; cuentas titular/admin con credenciales aleatorias
+en `.tools/seed-demo/credentials.json`. Repetición comprobada sin duplicados ni
+alterar datos anteriores; 3/3 pruebas de integración y Playwright correctos.
+[Instrucciones](../App/seed/README.md). Reemplaza la nota de demo sin catálogo.
+
 **Demo actualizada y encendida:** http://localhost:3000, API 5080. Siete migraciones
 aplicadas sobre `marketplace`, con respaldo restaurado y conservación de los tres
 negocios, la cuenta y las fotos verificada. [Operación y reinicio](demo-local-2026-10-05.md).
-IA/ranking experimental desactivados; sin nuevos roles, planes o productos.
+IA/ranking experimental desactivados. Datos iniciales complementados por el seed.
 Este estado reemplaza las notas históricas de demo intacta/detenida siguientes.
 
 Última revisión: [recorrido Playwright](qa-playwright-2026-10-05.md), rama

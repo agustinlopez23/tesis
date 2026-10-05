@@ -1,5 +1,12 @@
 # Prototipo del marketplace local
 
+## Cargar datos de demostración
+
+Con la base local migrada: `powershell -NoProfile -ExecutionPolicy Bypass -File
+App/tools/seed-demo.ps1` desde la raíz del repositorio. Agrega tres comercios,
+doce productos, stock inicial y planes ficticios. Se puede repetir sin duplicar
+ni restablecer ediciones. [Datos, accesos e instrucciones](seed/README.md).
+
 ## Catálogo y planes manuales
 
 En **Mi negocio → Editar negocio → Administrar catálogo** se consulta el plan y

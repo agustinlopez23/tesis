@@ -1,5 +1,11 @@
 # Demo local actualizada — 05/10/2026
 
+**Actualización posterior:** [seed](../App/seed/README.md) cargado y repetido sin
+duplicados: 6 negocios totales, 3 cuentas, 12 productos, 3 planes y 12 saldos.
+Los datos anteriores permanecen intactos. Credenciales de titular/admin en
+`.tools/seed-demo/credentials.json`. Respaldo previo: `.tools/demo-backups/20261005-131041/`.
+Las notas siguientes describen el estado anterior a esa carga.
+
 La versión de código `055a6ee` está ejecutándose en **http://localhost:3000**,
 con API en `http://localhost:5080` y PostgreSQL/PostGIS en 55432. Se aplicaron las
 siete migraciones pendientes; el historial tiene doce entradas y termina en
