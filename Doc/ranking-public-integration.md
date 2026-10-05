@@ -2,7 +2,11 @@
 
 **Persistencia interna implementada al 04/10/2026:** historial, lector, adaptador,
 snapshots/ledger transaccionales, paginación revalidada y purga automática.
-Los endpoints, cursores protegidos, controles de carga e interfaz siguen pendientes.
+**HTTP local implementado el 04/10/2026:** POST/GET, cursores protegidos, validación,
+no-store, errores y cuotas por proceso. 83/83 API/HTTP/PostGIS. Solo Development/
+Testing con `Ranking:PreviewEnabled=true`; Production permanece cerrado incluso
+con esa opción. Política local de prueba EquityOnly/default/17, sin aprobación.
+Controles de candidatos/memoria/carga y proxy/interfaz siguen pendientes.
 Activar depende de una política evaluada y versionada. BLL define interfaces y reglas,
 DAL implementa transacciones/PostGIS, API valida HTTP/protege tokens y Next
 administra navegación. Se mantiene ADR-001. Activación deshabilitada por defecto.
@@ -85,13 +89,15 @@ de esperar el contexto. Fallos/cancelación revierten también secuencia.
 Snapshot conserva IDs y vínculo efímero; oportunidad JSON conserva la traza sin
 requestId ni dueño, con contribuciones consultables por contexto/tiempo.
 Reintento conserva la política original aunque cambie la configuración del servidor.
-Pruebas actuales: 99/99 BLL y 72/72 HTTP/PostGIS. El contrato HTTP siguiente aún
-no está expuesto; la guía mantiene su orden anterior.
+Pruebas: 99/99 BLL previas; 83/83 API/HTTP/PostGIS actuales. El contrato HTTP
+siguiente está implementado para previsualización local; la guía conserva su orden.
 
-Propuesta HTTP: `POST /public/ranking-snapshots` recibe zoneId, categoryId,
+HTTP local: `POST /public/ranking-snapshots` recibe zoneId, categoryId,
 radiusKm=4 y requestId aleatorio estable durante reintentos de esa consulta.
 Validar Origin, encabezado X-Requested-With, tamaño y tipos como otras mutaciones.
-Respuesta contiene items públicos, expiresAt, rankingVersion y nextCursor.
+Respuesta contiene items públicos, measurement, expiresAt, rankingVersion,
+hasMore y nextCursor. Creación 201, reintento 200. Política no configurable por
+el cliente; rechaza propiedades desconocidas, rubros inexistentes y cuerpo >4096.
 `GET /public/ranking-snapshots/page?cursor=...` devuelve la siguiente página.
 Ambos no-store. La ruta GET actual continúa disponible para el orden vigente.
 
@@ -121,7 +127,10 @@ Tras expirar, un requestId conocido responde 410; tras purgar la asociación no
 puede garantizarse deduplicación: el cliente debe emitir ID nuevo, no reintentar
 una operación vencida. Límite explícito, no garantía de exactamente una vez ilimitada.
 
-Snapshot y tokens no sustituyen controles de abuso. Antes de activar: probar
+Cuotas iniciales por proceso: 60 POST/minuto y 600 GET/minuto, sin cola, exceso
+429 también no-store. Configuración en `App/README.md`; no se midió capacidad ni
+se implementó limitación distribuida. Snapshot y tokens no sustituyen controles
+de abuso. Antes de activar: probar
 límites de tasa/memoria/candidatos y latencia con carga, incluidas listas creadas
 y abandonadas; asignación modelada puede manipularse creando nuevas consultas.
 Fallo transaccional: no devolver una lista experimental parcialmente registrada.
@@ -137,7 +146,11 @@ pueden contener snapshotId y posición; aceptar v1 hasta su vencimiento máximo 
 30 minutos, sin inventar asociaciones históricas para ellos. La actividad privada
 mantiene su definición y no expone candidatos, componentes ni ledger.
 
-Al apagar la función, nuevas búsquedas usan guía vigente; cursores ya emitidos
+En previsualización, apagar `Ranking:PreviewEnabled` cierra POST con 404;
+cursores ya emitidos siguen legibles. `Ranking:WithdrawPages` cierra lectura y
+creación habilitada con 410. En producción ambas rutas permanecen cerradas.
+El siguiente comportamiento de UI aún está propuesto:
+al apagar la función, nuevas búsquedas usan guía vigente; cursores ya emitidos
 pueden terminar su TTL si el servicio está sano. Si hay retirada de emergencia,
 responder 410 y ofrecer reinicio, sin reordenar páginas en silencio.
 

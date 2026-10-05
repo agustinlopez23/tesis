@@ -1,5 +1,20 @@
 # Punto de continuidad — 04/10/2026
 
+Completado el incremento HTTP en `feat/ranking-http-preview`, desde `02af9d6`.
+Cursores protegidos con TTL absoluto, POST/GET locales, validación, no-store,
+reintentos, 400/409/410, cuotas separadas 60/600 por minuto y retirada de emergencia.
+**83/83 API/HTTP/PostGIS**, sin omitidas; BLL mantiene evidencia previa 99/99.
+Política de previsualización EquityOnly/default/17, sin aprobación experimental.
+Solo Development/Testing con `Ranking:PreviewEnabled=true`; Production cerrado.
+Tres unidades locales, sin push/PR; consultar git para el último hash.
+Evidencia: `../openspec/changes/archive/2026-10-04-ranking-http-preview/verify-report.md`.
+Próximo incremento: límites de candidatos/memoria, concurrencia y pruebas de carga;
+después proxy/UI. La activación productiva requiere política evaluada/anotaciones.
+Paquetes humanos y borrador intactos. Demo sin migrar/reiniciar/habilitar.
+Contrato y configuración en `ranking-public-integration.md` y `../App/README.md`.
+
+## Persistencia interna completada previamente
+
 El usuario ya realizó la Entrega 2 y quiere avanzar para terminar la app.
 Completada la persistencia interna del ranking de revista: creación atómica de
 snapshot/oportunidad/contribuciones/secuencia; reintentos concurrentes deduplicados;

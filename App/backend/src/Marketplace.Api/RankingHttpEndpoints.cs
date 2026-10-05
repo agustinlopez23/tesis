@@ -12,8 +12,8 @@ public static class RankingHttpEndpoints
 
     public static void MapRankingSnapshots(this WebApplication app)
     {
-        app.MapPost("/public/ranking-snapshots", Create);
-        app.MapGet("/public/ranking-snapshots/page", ReadPage);
+        app.MapPost("/public/ranking-snapshots", Create).RequireRateLimiting("ranking-create");
+        app.MapGet("/public/ranking-snapshots/page", ReadPage).RequireRateLimiting("ranking-page");
     }
 
     private static async Task<IResult> Create(HttpRequest request, HttpResponse response,
@@ -25,6 +25,7 @@ public static class RankingHttpEndpoints
         // Temporary local preview only. A production policy requires separate evaluated evidence.
         if (!IsPreviewEnvironment(environment) || !config.GetValue<bool>("Ranking:PreviewEnabled"))
             return Results.NotFound();
+        if (config.GetValue<bool>("Ranking:WithdrawPages")) return Gone();
         if (string.IsNullOrWhiteSpace(config["FrontendOrigin"]) || request.Headers.Origin != config["FrontendOrigin"] ||
             request.Headers["X-Requested-With"] != "marketplace") return Results.StatusCode(403);
         if (!request.HasJsonContentType() || request.Query.Count != 0) return Results.BadRequest();

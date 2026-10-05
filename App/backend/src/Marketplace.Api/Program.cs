@@ -20,6 +20,14 @@ builder.Services.AddHostedService<RankingRetentionWorker>();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("ranking-create", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = builder.Configuration.GetValue("Ranking:CreatePermitLimit", 60),
+        Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
+    options.AddPolicy("ranking-page", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = builder.Configuration.GetValue("Ranking:PagePermitLimit", 600),
+        Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
     options.AddPolicy("activity", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
         PermitLimit = 1200, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
     }));
@@ -47,6 +55,16 @@ app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =
         detail: databaseFailure ? "Intentá nuevamente en unos momentos." : "No pudimos completar la operación.")
         .ExecuteAsync(context);
 }));
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/public/ranking-snapshots"))
+        context.Response.OnStarting(() =>
+        {
+            context.Response.Headers.CacheControl = "no-store";
+            return Task.CompletedTask;
+        });
+    await next(context);
+});
 app.UseRateLimiter();
 app.MapBusinessProfiles();
 app.MapBusinessActivity();

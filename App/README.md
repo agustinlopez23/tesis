@@ -278,6 +278,35 @@ comprueba `/explorar`, revoca la sesión y elimina la base temporal al terminar.
 Las pruebas automatizadas de interfaz cubren tarjetas, enlace de WhatsApp,
 paginación y recuperación ante fallos; el script integrado comprueba HTTP.
 
+## Previsualización HTTP del ranking
+
+La creación experimental se habilita solo en `Development` o `Testing` mediante
+`Ranking__PreviewEnabled=true`. Por defecto está cerrada y en Production esa
+variable no habilita nada. No se activó en la demo. Requiere las migraciones del
+backend, incluida `20261004100000_AddRankingSnapshots`.
+
+`POST /public/ranking-snapshots` recibe JSON con `requestId` (UUID nuevo por
+consulta, conservado al reintentar), `zoneId` (`centro`, `nueva-cordoba` o
+`alberdi`), `categoryId` existente y `radiusKm: 4`. Exige `Origin` igual a
+`FrontendOrigin` y `X-Requested-With: marketplace`. Cuerpo máximo 4096 bytes;
+otros campos/filtros se rechazan. Crea con 201; reintento con 200; conflicto 409.
+
+La respuesta ofrece `items`, `measurement`, `expiresAt`, `rankingVersion`,
+`hasMore` y `nextCursor`. Usar este último en
+`GET /public/ranking-snapshots/page?cursor=...`, sin agregar filtros. Cursor
+inválido: 400; vencido/retirado: 410. Todas las respuestas son no-store.
+Política local de prueba: EquityOnly, parámetros por defecto, semilla 17; el
+hash identifica esa política sin afirmar que esté evaluada. La guía y UI actuales
+no consumen estas rutas; todavía no existe proxy Next para ellas.
+
+Cuotas por proceso: `Ranking__CreatePermitLimit=60` y
+`Ranking__PagePermitLimit=600` por minuto, sin cola; exceso devuelve 429.
+Son límites iniciales, sin pruebas de carga ni límite de candidatos aún.
+Desactivar PreviewEnabled cierra creación y permite terminar listas de 30 minutos.
+`Ranking__WithdrawPages=true` retira inmediatamente creación y lectura con 410
+(creación ya desactivada mantiene 404). Antes de producción faltan evaluación,
+controles de capacidad y gestión compartida de claves Data Protection.
+
 ## Evidencia y mantenimiento
 
 El scaffold archivado está en

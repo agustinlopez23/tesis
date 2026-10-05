@@ -45,8 +45,11 @@ context: |
   historia desconocida explícita N=0. Verificado: 95/95 BLL y 62/62 HTTP/PostGIS.
   Snapshots/ledger internos implementados: transacción, reintentos, secuencia,
   traza completa, paginación revalidada y purga automática. 99/99 BLL y 72/72 HTTP.
-  Siguiente incremento: endpoints/cursor protegido y controles, después UI;
-  activación sujeta a evaluación/política. Catálogo y pedidos siguen pendientes.
+  HTTP local implementado: POST/GET, cursores protegidos, no-store, validación,
+  cuotas separadas y retirada. 83/83 API/HTTP/PostGIS. Solo Development/Testing
+  con habilitación explícita; producción cerrada. Siguen límites de candidatos/
+  memoria, carga y proxy/UI; activación sujeta a evaluación/política.
+  Catálogo y pedidos siguen pendientes.
 
   Idioma: documentación en español; identificadores técnicos de código en
   inglés.

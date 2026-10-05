@@ -2,6 +2,16 @@
 
 ## Estado vigente — 2026-10-04
 
+Incremento más reciente: cursores protegidos y endpoints POST/GET de snapshots
+para Development/Testing con habilitación explícita; producción cerrada.
+Valida origen/cuerpo/filtros, distingue 400/409/410 y conserva no-store, posiciones
+y TTL. Cuotas separadas por proceso y retirada de emergencia. **83/83 API/HTTP/
+PostGIS**, sin omitidas. Evidencia: `changes/archive/2026-10-04-ranking-http-preview/verify-report.md`.
+Quedan límites de candidatos/memoria, carga/concurrencia y proxy/UI; activación
+productiva sujeta a anotaciones y política evaluada. Demo sin cambios.
+
+Estado previo dentro del mismo día:
+
 Entrega 2 realizada por el usuario. Desarrollo retomado con adaptador interno
 `MagazineRankingCandidates`: tres zonas públicas/rubro/4 km, contexto versionado,
 R=1, sin truncar candidatos e historia desconocida explícita con N=0 en el motor.
@@ -10,7 +20,7 @@ secuencia, traza reproducible, previsualización propia en cero y purga automát
 Páginas estables revalidan elegibilidad sin rellenar huecos ni sumar exposición.
 Verificación: **99/99 BLL/evaluación y 72/72 HTTP/PostGIS**. Evidencia:
 `changes/archive/2026-10-04-ranking-snapshots/verify-report.md`.
-Siguen endpoints/cursor protegido, controles de carga y UI; ranking público
+HTTP local completado en el incremento posterior; siguen controles de carga y UI; ranking público
 deshabilitado hasta evaluación/política. Catálogo/pedidos siguen pendientes.
 
 ## Estado anterior — 2026-09-22
