@@ -2,11 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { zones } from "../explorar/discovery-location";
+import type { Business } from "../business-card";
 
 export type RankingSelection = { zoneId: string; categoryId: number };
-export type RankingBusiness = { id: string; name: string; description: string; address: string;
-  category: string; whatsApp: string; distanceKm?: number; coverPhotoSlot?: number };
-export type RankingPage = { items: RankingBusiness[]; hasMore: boolean; cursor: string; nextCursor: string | null;
+export type RankingPage = { items: Business[]; hasMore: boolean; cursor: string; nextCursor: string | null;
   expiresAt: string; rankingVersion: string; measurement: Record<string, string> };
 type Navigation = { selection: RankingSelection; requestId: string; startedAt: number; page: number;
   cursors: string[]; expiresAt?: string; rankingVersion?: string };
@@ -40,6 +39,10 @@ export function useRankingPreview() {
   const [state, setState] = useState<State>(idle);
   const generation = useRef(0);
   const pending = useRef<AbortController | null>(null);
+  const cancel = useCallback(() => {
+    ++generation.current;
+    pending.current?.abort();
+  }, []);
   const load = useCallback(async (nav: Navigation, push = false) => {
     const current = ++generation.current;
     pending.current?.abort();
@@ -83,11 +86,10 @@ export function useRankingPreview() {
   }, []);
 
   const reset = useCallback(() => {
-    ++generation.current;
-    pending.current?.abort();
+    cancel();
     remember(null);
     setState(idle);
-  }, []);
+  }, [cancel]);
 
   useEffect(() => {
     function restore() {
@@ -99,10 +101,9 @@ export function useRankingPreview() {
     window.addEventListener("popstate", restore);
     return () => {
       window.removeEventListener("popstate", restore);
-      ++generation.current;
-      pending.current?.abort();
+      cancel();
     };
-  }, [load, reset]);
+  }, [load, reset, cancel]);
 
   useEffect(() => {
     if (!state.navigation || state.error === 410) return;
@@ -118,8 +119,9 @@ export function useRankingPreview() {
   return { ...state, reset,
     start: (selection: RankingSelection) => load({ selection, requestId: crypto.randomUUID(),
       startedAt: Date.now(), page: 1, cursors: [] }, true),
-    retry: () => state.navigation && load(state.navigation),
-    go: (page: number) => state.navigation?.cursors[page - 1] && !state.busy &&
-      load({ ...state.navigation, page }, true),
+    retry: async () => { if (state.navigation) await load(state.navigation); },
+    go: async (page: number) => {
+      if (state.navigation?.cursors[page - 1] && !state.busy) await load({ ...state.navigation, page }, true);
+    },
   };
 }

@@ -24,7 +24,7 @@ export function Icon({ name, className = "" }: { name: IconName; className?: str
   return <svg className={`icon ${className}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
 }
 
-export function SiteHeader({ active = "explore" }: { active?: "explore" | "owner" }) {
+export function SiteHeader({ active = "explore" }: { active?: "explore" | "owner" | "preview" }) {
   return <header className="site-header"><div className="container nav-inner">
     <Link className="brand" href="/" aria-label="Cerca, inicio"><span className="brand-symbol"><Icon name="store" /></span>cerca<span className="brand-dot">.</span></Link>
     <span className="location-label"><Icon name="pin" /> Córdoba, Argentina</span>

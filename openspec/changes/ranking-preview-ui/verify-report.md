@@ -49,3 +49,32 @@ GREEN **9/9 HTTP/PostGIS**, cero omitidas, con
 Incluye impresión/visita/contacto duplicados que conservan tres eventos, versión
 real/posición, restricciones inválidas, bloqueo de downgrade sin pérdida y
 Down/Up posterior conservando actividad anterior. EF sin cambios pendientes.
+
+Unidad de actividad: `bcf67d0` (452 líneas de Designer generadas por EF).
+
+## Presentación y navegación real
+
+`/revista` usa guard server-side y noindex; enlace de acceso solo con habilitación
+local. Zona/rubro obligatorios, acción explícita de creación, tarjetas compartidas
+con guía y medición original, foco en resultados, carga, huecos y errores con
+acciones de recuperación. 404/403 ofrecen guía; 400/409/410 actualización explícita;
+429/503/red reintentan identidad/cursor. No se muestran IDs/hash ni datos internos.
+**83/83 frontend**, `npm test`; `npm run lint` y `npm run build` correctos.
+Se corrigieron tipos de retorno de navegación detectados por build; no se omitieron
+tests del chequeo TypeScript. Pruebas de UI agregadas junto a implementación,
+sin atribuir RED: selección explícita bajo StrictMode, tarjetas/atribución,
+página vacía intermedia, estados 429/503/502/410/404, cambio de filtros y rubros.
+
+Playwright MCP contra Next dev/API/PostGIS temporal: 20/20/5 y 45 únicos,
+atrás/recarga y perfil→atrás conservan página 2 mediante relectura. Retirar un
+negocio desde el fixture reduce página 2 a 19, mantiene hueco y permite avanzar.
+Expirar snapshots en base produce 410 sin tarjetas ni regeneración automática;
+actualizar crea una nueva consulta. 429 inyectado en navegador seguido de
+reintento real confirma requestId idéntico y recuperación. Sin errores de página
+ni fallos de red inesperados tras corregir actividad. Los 410/429 inducidos generan
+las entradas de consola esperadas. Escritorio 1440px y móvil 390/320px sin overflow.
+Capturas inspeccionadas: `.tools/ranking-preview/desktop-initial.png`,
+`desktop-results.png`, `mobile-controls.png`, `mobile-results.png`, `mobile-expired.png`.
+Rollback UI: ruta/componente/CSS revista, enlace condicional de layout, extracción
+BusinessCard (reintegrable a Explore), pruebas y pequeños ajustes del hook;
+proxy y API pueden conservarse cerrados. Demo intacta.

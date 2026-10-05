@@ -297,7 +297,8 @@ La respuesta ofrece `items`, `measurement`, `expiresAt`, `rankingVersion`, `curs
 inválido: 400; vencido/retirado: 410. Todas las respuestas son no-store.
 Política local de prueba: EquityOnly, parámetros por defecto, semilla 17; el
 hash identifica esa política sin afirmar que esté evaluada. La guía y UI actuales
-no consumen estas rutas. El proxy Next admite estas dos rutas en desarrollo:
+conservan su orden; la vista local `/revista` consume estas rutas. El proxy Next
+admite estas dos rutas en desarrollo:
 `RANKING_PREVIEW_ENABLED=true` permite POST; GET local permite terminar cursores
 vigentes aunque se apague creación. Producción rechaza ambas aun con esa opción.
 El backend requiere su propia habilitación. `cursor` permite releer la página
@@ -306,6 +307,13 @@ Antes de usar medición desde la revista se requiere la migración
 `20261005020557_AllowRankingActivityVersions`: admite el hash de política en
 actividad, conservando las versiones anteriores. Downgrade bloqueado mientras
 queden eventos con hash; esperar su retención/purga en lugar de borrar atribución.
+
+Con la habilitación local aparece «Probar la revista de tu zona». En `/revista`,
+elegir zona/rubro y pulsar «Descubrir negocios». Reintentar conserva la consulta;
+«Actualizar resultados» crea otra. Anterior/siguiente/recarga vuelven a consultar
+la elegibilidad de la misma página. Los cursores quedan en el historial de esa
+pestaña, sin tarjetas cacheadas ni tokens en la URL. Vencimiento y retirada
+exigen actualización; los errores ofrecen la guía habitual.
 
 Cuotas por proceso: `Ranking__CreatePermitLimit=60` y
 `Ranking__PagePermitLimit=600` por minuto, sin cola; exceso devuelve 429.
