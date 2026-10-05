@@ -1,5 +1,15 @@
 # Punto de continuidad — 05/10/2026
 
+Campañas completadas en `feat/sponsored-campaigns`, base `1fe510b`. Preparación,
+revisión/pago manual, cupos/rotación por zona, anuncios separados, promociones
+gratuitas con imagen revisada, métricas y atribución de solicitudes. Pausa y retiro
+por elegibilidad; historial conservado. **138/138 API y 114/114 frontend**, lint,
+build, integración y navegador correctos. Migración solo en bases temporales;
+demo intacta. Evidencia: `../openspec/changes/archive/2026-10-05-sponsored-campaigns/verify-report.md`.
+Sigue asistencia opcional de catálogo; evaluación humana/final continúa pendiente.
+
+## Búsqueda completada previamente
+
 Búsqueda global de productos completada en `feat/product-discovery`, base `ef20283`.
 `/productos`: texto literal/sin acentos, rubro, zona o ubicación/radio, páginas de
 20, distancia PostGIS y enlace al catálogo. Elegibilidad viva por plan/publicación/

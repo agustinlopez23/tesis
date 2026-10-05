@@ -6,9 +6,10 @@ import { resolve } from "node:path";
 import assert from "node:assert/strict";
 
 const root = resolve(import.meta.dirname, "../..");
-const salesEnabled = process.argv.includes("--sales");
+const campaignsEnabled = process.argv.includes("--campaigns");
+const salesEnabled = process.argv.includes("--sales") || campaignsEnabled;
 const ordersEnabled = process.argv.includes("--orders") || salesEnabled;
-const artifacts = resolve(root, salesEnabled ? ".tools/sales" : ordersEnabled ? ".tools/orders" : ".tools/catalog");
+const artifacts = resolve(root, campaignsEnabled ? ".tools/campaigns" : salesEnabled ? ".tools/sales" : ordersEnabled ? ".tools/orders" : ".tools/catalog");
 const database = `catalog_smoke_${Date.now()}_${randomBytes(3).toString("hex")}`;
 const compose = ["compose", "--env-file", resolve(root, "App/.env.local"), "-f", resolve(root, "App/compose.yaml")];
 const children = [], logs = {};
@@ -173,8 +174,31 @@ try {
     assert.equal(discovery.items[0].distanceKm, 0);
     assert.equal((await (await request("/public/products?q=cafe&lat=0&lon=0&radiusKm=1")).json()).items.length, 0);
   }
+  let campaignInfo;
+  if (campaignsEnabled) {
+    const id = randomUUID(), path = `/businesses/${business}/campaigns/${id}`;
+    const draft = { version: 0, productId: product, photoSlot: null, title: "Café para compartir", description: "Descubrí los granos seleccionados del Patio.", conditions: "Paquete de 250 g. Consultá disponibilidad en el local.", zoneId: "centro", startsAt: new Date(Date.now() - 60000).toISOString(), endsAt: new Date(Date.now() + 86400000).toISOString(), status: "pending_review" };
+    assert.equal((await request(path, "PUT", draft, owner.cookie)).status, 200);
+    const action = (version, action) => ({ operationId: randomUUID(), version, action, reason: "Verificación local aislada", paymentReference: action === "confirm_payment" ? "TEST-NO-REAL-PAYMENT" : null });
+    assert.equal((await request(`/admin/campaigns/${id}/actions`, "PUT", action(1, "approve"), admin.cookie)).status, 200);
+    assert.equal((await (await request("/public/campaigns?zone=centro")).json()).items.length, 0);
+    assert.equal((await request(`/admin/campaigns/${id}/actions`, "PUT", action(2, "confirm_payment"), admin.cookie)).status, 200);
+    const ad = (await (await request("/public/campaigns?zone=centro")).json()).items[0];
+    assert.equal(ad.id, id);
+    for (let i = 0; i < 2; i++) assert.equal((await request("/public/campaign-events", "POST", { token: ad.token, kind: "impression" })).status, 204);
+    const body = { requestId: randomUUID(), accessKey: randomBytes(32).toString("hex"), customerName: "Consulta del anuncio", campaignToken: ad.token, lines: [{ productId: product, quantity: 1, expectedVersion: 4 }] };
+    assert.equal((await request(`/public/businesses/${business}/orders`, "POST", body)).status, 201);
+    const metrics = await (await request(path + "/metrics", "GET", undefined, owner.cookie)).json();
+    assert.equal(metrics.impressions, 1); assert.equal(metrics.orders, 1);
+    assert.equal((await request(path + "/pause", "PUT", action(3, "pause"), owner.cookie)).status, 200);
+    assert.equal((await (await request("/public/campaigns?zone=centro")).json()).items.length, 0);
+    assert.equal((await request(`/public/businesses/${business}/orders`, "POST", body)).status, 200);
+    assert.equal((await request(`/admin/campaigns/${id}/actions`, "PUT", action(4, "resume"), admin.cookie)).status, 200);
+    campaignInfo = { id, orderId: body.requestId };
+    await writeFile(resolve(artifacts, "campaigns-result.json"), JSON.stringify({ passed: true, checks: ["review-before-payment", "paid-delivery", "signed-context", "event-deduplication", "order-attribution", "pause-hides", "order-replay-after-pause", "resume"], at: new Date().toISOString() }, null, 2));
+  }
   const stopFile = resolve(artifacts, `stop-${database}`);
-  await writeFile(resolve(artifacts, "session.json"), JSON.stringify({ webOrigin, business, product, owner, admin, stopFile, orderInfo, salesInfo }, null, 2));
+  await writeFile(resolve(artifacts, "session.json"), JSON.stringify({ webOrigin, business, product, owner, admin, stopFile, orderInfo, salesInfo, campaignInfo }, null, 2));
   await writeFile(resolve(artifacts, "result.json"), JSON.stringify({ passed: true, database, checks: ["proxy", "plan", "authorization", "catalog", "archive", "revocation", "preservation", ...(process.argv.includes("--orders") ? ["order-snapshot", "order-replay", "private-key", "owner-attention", "contact-received", "cancellation", "order-after-plan-expiry"] : [])], at: new Date().toISOString() }, null, 2));
   if (salesEnabled) await writeFile(resolve(artifacts, "sales-result.json"), JSON.stringify({ passed: true, checks: ["opening-replay", "linked-sale", "sale-replay", "atomic-stock", "overselling-rejected", "explicit-return", "void-replay", "private-order-state"], at: new Date().toISOString() }, null, 2));
   console.log((salesEnabled ? "Catalog, orders and sales" : ordersEnabled ? "Catalog and orders" : "Catalog") + " integration passed; isolated browser session ready at " + webOrigin);

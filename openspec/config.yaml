@@ -50,9 +50,9 @@ context: |
   con habilitación explícita; producción cerrada. Siguen límites de candidatos/
   memoria, carga y proxy/UI; activación sujeta a evaluación/política.
   Catálogo, planes manuales, pedidos y ventas/inventario completados al 05/10/2026.
-  Validación actual: 127/127 API/HTTP/PostGIS y 105/105 frontend; lint/build y
-  navegador correctos. Continuidad vigente en Doc/continuidad.md. Siguen métricas
-  comerciales, descubrimiento global de productos, publicidad, IA opcional y
+  Métricas, descubrimiento global de productos y campañas manuales completados.
+  Validación actual: 138/138 API/HTTP/PostGIS y 114/114 frontend; lint/build y
+  navegador correctos. Continuidad vigente en Doc/continuidad.md. Siguen IA opcional y
   evaluación humana/final. No activar ranking productivo sin evidencia.
 
   Idioma: documentación en español; identificadores técnicos de código en

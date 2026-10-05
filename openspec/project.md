@@ -1,6 +1,14 @@
 # Contexto SDD de la tesis
 
-## Estado vigente — 2026-10-04
+## Estado vigente — 2026-10-05
+
+Catálogo/planes, solicitudes, ventas/inventario, métricas comerciales, búsqueda
+global de productos y campañas manuales implementados localmente. **138/138 API y
+114/114 frontend**, lint/build/integración/navegador correctos. Contratos en specs;
+estado y evidencia en `../Doc/continuidad.md`. Sigue asistencia opcional de catálogo
+y evaluación humana/final del ranking. No hay activación experimental productiva.
+
+## Estado anterior — 2026-10-04
 
 Completado `ranking-preview-ui`: `/revista` local con proxy cerrado en producción,
 selección explícita, navegación por cursor actual/siguiente, historial revalidado,

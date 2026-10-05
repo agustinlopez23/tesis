@@ -6,7 +6,8 @@ En **Mi negocio → Editar negocio → Administrar catálogo** se consulta el pl
 se crean/editan productos con nombre, descripción, categoría, precio ARS/USD,
 disponibilidad y estado. Guardar antes de subir la foto. Archivar conserva el
 producto; publicado aparece en el perfil público si negocio y plan están habilitados.
-La disponibilidad es declarada: todavía no hay cantidades de stock ni pedidos.
+La disponibilidad se combina con el stock cargado; las solicitudes y ventas se
+gestionan en los paneles del negocio descritos más abajo.
 
 El plan Impulso vigente habilita escrituras y lectura pública. Presencia conserva
 perfil y lectura privada del catálogo. Vencer/revocar oculta productos y fotos en
@@ -54,6 +55,26 @@ esté sirviendo: Windows bloquea DLL cargadas.
 [Contrato, límites y rollback](../openspec/specs/business-catalog/spec.md).
 Down se bloquea cuando existen productos, vigencias o administradores asignados;
 revertir código conserva el esquema aditivo para evitar pérdida de datos.
+
+## Campañas patrocinadas
+
+Mi negocio → Editar → Ver campañas permite preparar producto (plan vigente) o
+promoción (foto existente de galería, también plan gratuito). Se conserva una
+copia de imagen para revisión. Hasta 30 días y tres reservas superpuestas por
+zona; anuncios rotan cada minuto. Elegí zona manual en Explorar o Productos para
+ver Patrocinado, separado de resultados orgánicos.
+
+`/administracion/campanas` permite aprobar/rechazar contenido, registrar pago ya
+verificado mediante referencia, pausar/reanudar y registrar resolución comercial.
+No cobra. El titular puede pausar y consultar resultados. Vencimiento de plan,
+stock cero o suspensión ocultan sin prórroga automática; conservan historial.
+Eventos duran 30 días; solicitudes/ventas conservan vínculo, importes por moneda
+y origen. Ver [contrato](../openspec/specs/sponsored-campaigns/spec.md).
+
+Aplicar `20261005121814_AddSponsoredCampaigns` antes de ejecutar esta versión.
+Down bloquea datos/atribuciones existentes. Prueba aislada tras build:
+`node App/tools/verify-catalog.mjs --campaigns` (opcional `--serve`, artefactos en
+`.tools/campaigns`). Incluye verificaciones previas de catálogo, pedidos y ventas.
 
 ## Base implementada
 
