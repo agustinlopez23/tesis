@@ -1,0 +1,40 @@
+{
+  "businesses": [
+    {
+      "id": "de100000-0000-4000-8000-000000000001",
+      "name": "Demo · Almacén de la Plaza", "categoryId": 1,
+      "description": "Comercio ficticio para practicar compras y gestión de stock.",
+      "address": "Plaza San Martín · Centro · Córdoba", "latitude": -31.416281, "longitude": -64.184022,
+      "products": [
+        { "id": "de200000-0000-4000-8000-000000000001", "name": "Yerba mate 500 g", "description": "Paquete de yerba tradicional.", "category": "Infusiones", "price": 7500, "currency": "ARS", "stock": 20, "available": true, "status": "published" },
+        { "id": "de200000-0000-4000-8000-000000000002", "name": "Arroz largo fino 1 kg", "description": "Arroz seco en paquete cerrado.", "category": "Almacén", "price": 2300, "currency": "ARS", "stock": 30, "available": true, "status": "published" },
+        { "id": "de200000-0000-4000-8000-000000000003", "name": "Aceite de girasol 900 ml", "description": "Ejemplo de producto agotado.", "category": "Almacén", "price": 6000, "currency": "ARS", "stock": 0, "available": true, "status": "published" },
+        { "id": "de200000-0000-4000-8000-000000000004", "name": "Conserva de tomates 400 g", "description": "Ejemplo de disponibilidad pausada por el negocio.", "category": "Conservas", "price": 3200, "currency": "ARS", "stock": 10, "available": false, "status": "published" }
+      ]
+    },
+    {
+      "id": "de100000-0000-4000-8000-000000000002",
+      "name": "Demo · Café del Buen Pastor", "categoryId": 2,
+      "description": "Cafetería ficticia para probar catálogo, solicitudes y ventas.",
+      "address": "Buen Pastor · Nueva Córdoba · Córdoba", "latitude": -31.4257, "longitude": -64.1862,
+      "products": [
+        { "id": "de200000-0000-4000-8000-000000000005", "name": "Café en granos 250 g", "description": "Tueste medio, paquete de 250 gramos.", "category": "Café", "price": 13000, "currency": "ARS", "stock": 15, "available": true, "status": "published" },
+        { "id": "de200000-0000-4000-8000-000000000006", "name": "Medialunas por seis", "description": "Media docena para compartir.", "category": "Panadería", "price": 5500, "currency": "ARS", "stock": 12, "available": true, "status": "published" },
+        { "id": "de200000-0000-4000-8000-000000000007", "name": "Té en hebras 100 g", "description": "Borrador pendiente de revisión: no visible al público.", "category": "Infusiones", "price": 7000, "currency": "ARS", "stock": 8, "available": true, "status": "draft" },
+        { "id": "de200000-0000-4000-8000-000000000008", "name": "Chocolate de temporada", "description": "Ejemplo archivado que conserva sus existencias.", "category": "Dulces", "price": 9000, "currency": "ARS", "stock": 4, "available": true, "status": "archived" }
+      ]
+    },
+    {
+      "id": "de100000-0000-4000-8000-000000000003",
+      "name": "Demo · Tienda Alberdi", "categoryId": 3,
+      "description": "Tienda ficticia con precios ARS y USD para probar totales separados.",
+      "address": "Plaza Colón · Alberdi · Córdoba", "latitude": -31.4097, "longitude": -64.1989,
+      "products": [
+        { "id": "de200000-0000-4000-8000-000000000009", "name": "Remera de algodón", "description": "Remera lisa, talle M.", "category": "Remeras", "price": 18500, "currency": "ARS", "stock": 10, "available": true, "status": "published" },
+        { "id": "de200000-0000-4000-8000-000000000010", "name": "Buzo de frisa", "description": "Buzo gris, talle L.", "category": "Abrigos", "price": 42000, "currency": "ARS", "stock": 6, "available": true, "status": "published" },
+        { "id": "de200000-0000-4000-8000-000000000011", "name": "Bolso de lona", "description": "Ejemplo de artículo cotizado en dólares.", "category": "Accesorios", "price": 25, "currency": "USD", "stock": 5, "available": true, "status": "published" },
+        { "id": "de200000-0000-4000-8000-000000000012", "name": "Bufanda tejida", "description": "Bufanda de punto, color natural.", "category": "Accesorios", "price": 12500, "currency": "ARS", "stock": 8, "available": true, "status": "published" }
+      ]
+    }
+  ]
+}

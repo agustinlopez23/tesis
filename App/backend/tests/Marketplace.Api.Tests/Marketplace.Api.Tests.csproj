@@ -22,6 +22,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Marketplace.Api\Marketplace.Api.csproj" />
     <ProjectReference Include="..\..\src\Marketplace.DAL\Marketplace.DAL.csproj" />
+    <ProjectReference Include="..\..\tools\Marketplace.Seed\Marketplace.Seed.csproj" />
   </ItemGroup>
 
 </Project>
