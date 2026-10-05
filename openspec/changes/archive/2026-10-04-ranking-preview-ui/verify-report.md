@@ -78,3 +78,31 @@ Capturas inspeccionadas: `.tools/ranking-preview/desktop-initial.png`,
 Rollback UI: ruta/componente/CSS revista, enlace condicional de layout, extracción
 BusinessCard (reintegrable a Explore), pruebas y pequeños ajustes del hook;
 proxy y API pueden conservarse cerrados. Demo intacta.
+
+Unidad de presentación: `63957a2`.
+
+## Cierre integrado
+
+`node App/tools/verify-ranking-preview.mjs --serve` pasó con código 0 al cerrar:
+base temporal nueva, migraciones reales, 45 negocios por API, Next producción
+con flags activos retorna 404 en página/POST/GET. Next dev retorna 20/20/5 y
+45 únicos; reread/replay conserva una oportunidad. Impresión/visita/contacto
+enviados dos veces dejan exactamente tres eventos con hash de política.
+Los recorridos posteriores de Playwright terminan con cuatro oportunidades:
+una del harness, una del navegador, actualización tras 410 y recuperación del
+intento 429. Navegación/perfil/recarga no agregan oportunidades. Quedan 10 eventos
+observados con hash tras el recorrido, separados del ledger modelado.
+Procesos propios detenidos y base temporal eliminada al finalizar; capturas y
+metadatos locales en `.tools/ranking-preview/`. Logs persistidos con cursor redactado.
+El harness es repetible sin navegador; --serve permite revisión visual manual/MCP.
+
+Regresión final: **101/101 API/HTTP/PostGIS**, cero omitidas, 29 s, mediante
+`.tools/test-publication-history.ps1 -Filter 'FullyQualifiedName~Marketplace.Api.Tests'`.
+**83/83 frontend**, `npm test`; `npm run lint` sin advertencias y `npm run build`
+correcto con `/revista` dinámico. BLL/evaluación 99/99 conserva evidencia previa:
+no cambió su implementación en este incremento. `git diff --check` correcto.
+Cinco unidades locales sobre `37cad23`, sin push/PR. Archivado y sincronizado con
+especificaciones, contrato y continuidad. Demo y borrador/anotaciones intactos.
+Rollback del cierre: harness y documentos; para revertir toda la funcionalidad,
+deshabilitar primero flags y seguir las fronteras anteriores. Conservar migración
+de actividad mientras existan hashes evita pérdida de atribución.

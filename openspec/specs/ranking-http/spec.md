@@ -10,6 +10,8 @@
 - Reintento idéntico entrega lista original (200), primera creación 201,
   requestId con otro contexto 409; vínculo vencido 410. No agrega exposición.
 - GET `/public/ranking-snapshots/page?cursor=...` exige únicamente un cursor.
+  Cada respuesta incluye `cursor` de su página actual (también la primera) y
+  `nextCursor` cuando corresponda; ambos conservan vencimiento absoluto.
   Alteración, esquema inválido, mezcla de filtros o tamaño incorrecto: 400.
   Vencimiento auténtico, snapshot ausente o retirada de emergencia: 410.
 - Las páginas conservan huecos y posiciones. 45 elegibles entregan 20/20/5;

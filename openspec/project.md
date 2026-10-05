@@ -2,7 +2,21 @@
 
 ## Estado vigente — 2026-10-04
 
-Incremento más reciente: capacidad del ranking local. Máximos de 1.000 candidatos
+Completado `ranking-preview-ui`: `/revista` local con proxy cerrado en producción,
+selección explícita, navegación por cursor actual/siguiente, historial revalidado,
+reintento estable, vencimiento y recuperación. Tarjetas y atribución compartidas
+con guía. Compatibilidad de actividad requiere
+`20261005020557_AllowRankingActivityVersions`, aplicada solo en bases temporales.
+**83/83 frontend y 101/101 API/HTTP/PostGIS**, build/lint y Playwright a 1440/390/320px.
+Harness Next/API/PostGIS: 45 negocios, 20/20/5, replay sin nuevos aportes, medición
+deduplicada y 404 productivo aun con flags activos. Guía y demo conservan su estado.
+Evidencia: `changes/archive/2026-10-04-ranking-preview-ui/verify-report.md`.
+Siguiente incremento funcional: catálogo por negocio. Activación productiva del
+ranking requiere anotaciones/política evaluada, dimensionamiento y claves compartidas.
+
+Capacidad completada previamente:
+
+Capacidad del ranking local: máximos de 1.000 candidatos
 y 10.000 saldos por contexto, exceso 503 con rollback, sin truncar; reintento seguro.
 Cupos independientes de 4 POST/16 GET simultáneos, sin cola, recuperación tras
 éxito/error/cancelación y validación al arrancar. Carga integrada con 1.000 negocios,
@@ -10,7 +24,7 @@ Cupos independientes de 4 POST/16 GET simultáneos, sin cola, recuperación tras
 BLL/evaluación**, cero omitidas. Evidencia: `changes/archive/2026-10-04-ranking-capacity/verify-report.md`.
 Se conservan cursores, TTL, cuotas por minuto y retirada de emergencia del HTTP local.
 Solo Development/Testing con habilitación explícita; producción cerrada.
-Queda proxy/UI; activación productiva sujeta a anotaciones, política evaluada y
+Proxy/UI completado posteriormente; activación productiva sujeta a anotaciones, política evaluada y
 dimensionamiento del despliegue real. Demo sin cambios.
 
 Estado previo dentro del mismo día:

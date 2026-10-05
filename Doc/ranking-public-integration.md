@@ -3,12 +3,15 @@
 **Persistencia interna implementada al 04/10/2026:** historial, lector, adaptador,
 snapshots/ledger transaccionales, paginación revalidada y purga automática.
 **HTTP local implementado el 04/10/2026:** POST/GET, cursores protegidos, validación,
-no-store, errores y cuotas por proceso. 100/100 API/HTTP/PostGIS. Solo Development/
+no-store, errores y cuotas por proceso. 101/101 API/HTTP/PostGIS. Solo Development/
 Testing con `Ranking:PreviewEnabled=true`; Production permanece cerrado incluso
 con esa opción. Política local de prueba EquityOnly/default/17, sin aprobación.
 **Capacidad local verificada el 04/10/2026:** candidatos y saldos acotados,
-concurrencia separada POST/GET y carga con 1.000 negocios. Proxy/interfaz pendientes;
-el dimensionamiento productivo todavía requiere medición en su despliegue real.
+concurrencia separada POST/GET y carga con 1.000 negocios.
+**Proxy/interfaz local implementados el 04/10/2026:** `/revista`, selección explícita
+zona/rubro, historial por cursor, reintento y vencimiento; tarjetas y medición
+compatibles con la guía. 83/83 frontend, build/lint y Playwright escritorio/móvil.
+Producción sigue cerrada; dimensionamiento requiere medición en el despliegue real.
 Activar depende de una política evaluada y versionada. BLL define interfaces y reglas,
 DAL implementa transacciones/PostGIS, API valida HTTP/protege tokens y Next
 administra navegación. Se mantiene ADR-001. Activación deshabilitada por defecto.
@@ -91,17 +94,18 @@ de esperar el contexto. Fallos/cancelación revierten también secuencia.
 Snapshot conserva IDs y vínculo efímero; oportunidad JSON conserva la traza sin
 requestId ni dueño, con contribuciones consultables por contexto/tiempo.
 Reintento conserva la política original aunque cambie la configuración del servidor.
-Pruebas: 99/99 BLL previas; 83/83 API/HTTP/PostGIS actuales. El contrato HTTP
+Pruebas: 99/99 BLL previas; 101/101 API/HTTP/PostGIS actuales. El contrato HTTP
 siguiente está implementado para previsualización local; la guía conserva su orden.
 
 HTTP local: `POST /public/ranking-snapshots` recibe zoneId, categoryId,
 radiusKm=4 y requestId aleatorio estable durante reintentos de esa consulta.
 Validar Origin, encabezado X-Requested-With, tamaño y tipos como otras mutaciones.
-Respuesta contiene items públicos, measurement, expiresAt, rankingVersion,
+Respuesta contiene items públicos, measurement, expiresAt, rankingVersion, cursor,
 hasMore y nextCursor. Creación 201, reintento 200. Política no configurable por
 el cliente; rechaza propiedades desconocidas, rubros inexistentes y cuerpo >4096.
 `GET /public/ranking-snapshots/page?cursor=...` devuelve la siguiente página.
-Ambos no-store. La ruta GET actual continúa disponible para el orden vigente.
+Ambos no-store. `cursor` relee la página actual por GET, incluida la primera,
+sin renovar TTL ni crear oportunidades. La guía continúa con su orden vigente.
 
 Orden completo de IDs inmutable durante **30 minutos sin renovación**. Cursor
 protegido: snapshotId, offset de posiciones, tamaño fijo 20, versión y vencimiento;
@@ -161,10 +165,24 @@ mantiene su definición y no expone candidatos, componentes ni ledger.
 En previsualización, apagar `Ranking:PreviewEnabled` cierra POST con 404;
 cursores ya emitidos siguen legibles. `Ranking:WithdrawPages` cierra lectura y
 creación habilitada con 410. En producción ambas rutas permanecen cerradas.
-El siguiente comportamiento de UI aún está propuesto:
-al apagar la función, nuevas búsquedas usan guía vigente; cursores ya emitidos
-pueden terminar su TTL si el servicio está sano. Si hay retirada de emergencia,
-responder 410 y ofrecer reinicio, sin reordenar páginas en silencio.
+La vista `/revista` exige `RANKING_PREVIEW_ENABLED=true` del servidor Next y entorno
+development/test; su proxy siempre rechaza producción. Montarse no crea listas:
+el visitante elige zona/rubro y confirma. Cada consulta nueva/actualización crea
+requestId; reintentar conserva identidad. Cursor/contexto viven en history.state,
+sin tarjetas cacheadas ni tokens en URL. Atrás/recarga/perfil→atrás revalidan datos.
+La respuesta tardía de filtros anteriores se descarta; cancelar se propaga a API.
+Vencimiento local o 410 retira tarjetas y exige «Actualizar resultados». 429/503/red
+permite reintentar; 404 explica pausa y ofrece guía. No cambia el orden en silencio.
+Al deshabilitar creación, GET del proxy local permite terminar las páginas ya
+abiertas; una apertura nueva de `/revista` queda cerrada. Enlace de acceso local
+visible solo con habilitación; página noindex. No hay activación pública implícita.
+
+Medición: `20261005020557_AllowRankingActivityVersions` admite SHA-256 de política
+en ranking_version varchar(64), solo con source=directory/posición válida.
+Se conservan name-v1/distance-v1, deduplicación y exclusión del dueño. No se mezcla
+actividad observada con exposición modelada. Down se rechaza si quedan eventos
+con hash: esperar retención/purga, nunca truncar ni eliminar atribución para bajar.
+Evidencia: `../openspec/changes/archive/2026-10-04-ranking-preview-ui/verify-report.md`.
 
 Pruebas requeridas, con PostgreSQL/PostGIS temporal cuando corresponda:
 

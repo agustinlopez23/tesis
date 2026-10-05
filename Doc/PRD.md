@@ -250,8 +250,10 @@ describe candidatos históricos y paginación estable. Historial de publicación
 lector completo implementados el 22/09; adaptador, snapshots y ledger internos
 completados el 04/10. HTTP con cursores protegidos disponible solo como
 previsualización local explícita, sin activación productiva. Límites operativos
-de candidatos, saldos y concurrencia verificados con carga local. Faltan proxy/UI,
-política evaluada y dimensionamiento del despliegue productivo.
+de candidatos, saldos y concurrencia verificados con carga local. Proxy/UI de
+`/revista` disponibles solo con habilitación local: selección, navegación estable,
+reintento, vencimiento y medición. Faltan política evaluada y dimensionamiento
+del despliegue productivo para activar el ranking público.
 
 ## 10. Métricas de producto y atribución
 

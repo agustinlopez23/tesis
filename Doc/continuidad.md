@@ -1,5 +1,28 @@
 # Punto de continuidad — 04/10/2026
 
+Completado proxy/UI local de ranking en `feat/ranking-preview-ui`, desde `37cad23`.
+`/revista` permite elegir zona/rubro, recorrer listas por cursor, volver/recargar,
+reintentar sin duplicar y actualizar explícitamente tras vencimiento. Nueva
+respuesta `cursor` habilita GET de primera página. El acceso aparece solo con
+`RANKING_PREVIEW_ENABLED=true` en Next dev y `Ranking__PreviewEnabled=true` en API.
+Producción cerrado aunque se configuren ambos flags; guía pública sin cambio de orden.
+Pruebas: **83/83 frontend, 101/101 API/HTTP/PostGIS**, lint/build y Playwright
+1440/390/320 px correctos. Harness real con 45 negocios: 20/20/5, identidad estable,
+retiro de negocio, 410 y reintento 429 con mismo requestId; sin errores inesperados.
+Medición arreglada tras detectar 503 en navegador: migración
+`20261005020557_AllowRankingActivityVersions` admite hash de política sin perder
+compatibilidad; downgrade bloqueado mientras existan eventos de esa versión.
+Aplicada solo a bases temporales; demo intacta. No hay paquetes humanos modificados.
+Unidades locales: `9289572` contrato/proxy, `1bdf7e1` navegación, `bcf67d0` actividad,
+`63957a2` pantalla y cierre siguiente; consultar git. Sin push/PR.
+Evidencia: `../openspec/changes/archive/2026-10-04-ranking-preview-ui/verify-report.md`.
+Reproducción: `node App/tools/verify-ranking-preview.mjs` (Release/build previos).
+Para revisión visual agregar `--serve`; puerto 3100, base temporal eliminada al cerrar.
+Próximo incremento funcional: catálogo por negocio; ranking productivo permanece
+pendiente de anotaciones/política evaluada, dimensionamiento y claves compartidas.
+
+## Capacidad completada previamente
+
 Completado el incremento de capacidad en `feat/ranking-capacity`, desde `56a238e`.
 Candidatos y saldos históricos acotados: exceso rechaza toda creación con 503 y
 rollback; reintento con mismo requestId seguro. Cupos separados de 4 POST/16 GET
@@ -12,7 +35,7 @@ Solo Development/Testing con `Ranking:PreviewEnabled=true`; Production cerrado.
 Tres unidades locales: `ddc4c3a` lecturas acotadas, `072164a` concurrencia y cierre
 con carga/documentación; consultar git para el último hash. Sin push/PR.
 Evidencia: `../openspec/changes/archive/2026-10-04-ranking-capacity/verify-report.md`.
-Próximo incremento: proxy/UI de previsualización. La activación productiva requiere
+El proxy/UI se completó en el incremento posterior. La activación productiva requiere
 política evaluada/anotaciones y dimensionamiento real; carga HTTP en proceso
 no certifica memoria pico, varias instancias ni agregado SQL a escala de 30 días.
 Paquetes humanos y borrador intactos. Demo sin migrar/reiniciar/habilitar.

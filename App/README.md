@@ -296,8 +296,8 @@ La respuesta ofrece `items`, `measurement`, `expiresAt`, `rankingVersion`, `curs
 `GET /public/ranking-snapshots/page?cursor=...`, sin agregar filtros. Cursor
 inválido: 400; vencido/retirado: 410. Todas las respuestas son no-store.
 Política local de prueba: EquityOnly, parámetros por defecto, semilla 17; el
-hash identifica esa política sin afirmar que esté evaluada. La guía y UI actuales
-conservan su orden; la vista local `/revista` consume estas rutas. El proxy Next
+hash identifica esa política sin afirmar que esté evaluada. La guía conserva
+su orden; la vista local `/revista` consume estas rutas. El proxy Next
 admite estas dos rutas en desarrollo:
 `RANKING_PREVIEW_ENABLED=true` permite POST; GET local permite terminar cursores
 vigentes aunque se apague creación. Producción rechaza ambas aun con esa opción.
@@ -314,6 +314,14 @@ elegir zona/rubro y pulsar «Descubrir negocios». Reintentar conserva la consul
 la elegibilidad de la misma página. Los cursores quedan en el historial de esa
 pestaña, sin tarjetas cacheadas ni tokens en la URL. Vencimiento y retirada
 exigen actualización; los errores ofrecen la guía habitual.
+
+Verificación reproducible: con PostGIS local activo, backend compilado en Release
+y `npm run build` del frontend, ejecutar desde la raíz:
+`node App/tools/verify-ranking-preview.mjs`. Crea/migra/elimina una base temporal,
+siembra 45 negocios y verifica Next/API/medición, páginas 20/20/5, replay y cierre
+productivo aun con flag true. Usa puertos libres 3100/3101/5180; no reemplaza demo.
+`--serve` mantiene la vista de prueba para Playwright hasta 20 minutos o hasta
+crear el `stopFile` indicado en `.tools/ranking-preview/runtime.json`.
 
 Cuotas por proceso: `Ranking__CreatePermitLimit=60` y
 `Ranking__PagePermitLimit=600` por minuto, sin cola; exceso devuelve 429.
