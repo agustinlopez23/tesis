@@ -8,6 +8,46 @@ namespace Marketplace.Api.Tests;
 public sealed class SalesTests(OnboardingFixture fixture) : IClassFixture<OnboardingFixture>
 {
     [Fact]
+    public async Task Commerce_metrics_keep_cohort_conversion_and_period_sales_separate()
+    {
+        var (owner, business, product) = await Setup(); using var client = owner;
+        (await Adjust(owner, business, product, 10, 0)).EnsureSuccessStatusCode();
+        var currentOrder = await Order(business, product); var oldOrder = await Order(business, product);
+        await Scalar("UPDATE customer_orders SET created_at=now()-interval '40 days' WHERE id=$1", oldOrder);
+        foreach (var order in new[] { currentOrder, oldOrder })
+            (await owner.PutAsJsonAsync($"/businesses/{business}/sales/{Guid.NewGuid()}", new { orderId = order, orderVersion = 1, lines = new[] { Line(product, 1, 100m, "requested") } })).EnsureSuccessStatusCode();
+        var direct = Guid.NewGuid();
+        (await owner.PutAsJsonAsync($"/businesses/{business}/sales/{direct}", new { lines = new[] { Line(product, 1, 50m) } })).EnsureSuccessStatusCode();
+        var response = await owner.GetAsync($"/businesses/{business}/commerce?days=7");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("no-store", response.Headers.CacheControl?.ToString());
+        var metrics = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(1, metrics.GetProperty("orders").GetInt32());
+        Assert.Equal(1, metrics.GetProperty("converted").GetInt32());
+        Assert.Equal(1m, metrics.GetProperty("conversionRate").GetDecimal());
+        Assert.Equal(3, metrics.GetProperty("activeSales").GetInt32());
+        Assert.Equal(200m, metrics.GetProperty("amounts").GetProperty("requested").GetProperty("ARS").GetDecimal());
+        Assert.Equal(50m, metrics.GetProperty("amounts").GetProperty("direct").GetProperty("ARS").GetDecimal());
+        (await owner.PutAsJsonAsync($"/businesses/{business}/sales/{direct}/void", new { operationId = Guid.NewGuid(), reason = "Corrección comercial", returns = Array.Empty<object>() })).EnsureSuccessStatusCode();
+        metrics = await owner.GetFromJsonAsync<JsonElement>($"/businesses/{business}/commerce?days=7");
+        Assert.Equal(2, metrics.GetProperty("activeSales").GetInt32());
+        Assert.Equal(1, metrics.GetProperty("voidedSales").GetInt32());
+        Assert.False(metrics.GetProperty("amounts").TryGetProperty("direct", out _));
+    }
+
+    [Fact]
+    public async Task Commerce_metrics_restrict_owner_and_period_and_show_empty_cohort_as_unknown()
+    {
+        var (owner, business, _) = await Setup(); using var client = owner; using var guest = fixture.Client();
+        Assert.Equal(HttpStatusCode.Unauthorized, (await guest.GetAsync($"/businesses/{business}/commerce")).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await owner.GetAsync($"/businesses/{business}/commerce?days=8")).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await owner.GetAsync($"/businesses/{Guid.NewGuid()}/commerce")).StatusCode);
+        var metrics = await owner.GetFromJsonAsync<JsonElement>($"/businesses/{business}/commerce?days=30");
+        Assert.Equal(JsonValueKind.Null, metrics.GetProperty("conversionRate").ValueKind);
+        Assert.Equal(0, metrics.GetProperty("activeSales").GetInt32());
+    }
+
+    [Fact]
     public async Task Invalid_sale_lines_returns_and_untrusted_writes_do_not_change_inventory()
     {
         var (owner, business, product) = await Setup(); using var client = owner;

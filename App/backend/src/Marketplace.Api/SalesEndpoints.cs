@@ -18,6 +18,8 @@ public static class SalesEndpoints
             return await next(context);
         });
         group.MapGet("/inventory", async (Guid business, HttpContext http, SalesService service, CancellationToken ct) => Found(await service.Inventory(business, Owner(http), ct)));
+        group.MapGet("/commerce", async (Guid business, int? days, HttpContext http, CommerceService service, CancellationToken ct) =>
+            days is not (null or 7 or 30) ? Results.BadRequest() : Found(await service.Read(business, Owner(http), days ?? 7, ct)));
         group.MapGet("/inventory/movements", async (Guid business, Guid? productId, int? page, HttpContext http, SalesService service, CancellationToken ct) =>
             page is < 1 or > 10000 ? Results.BadRequest() : Found(await service.Movements(business, Owner(http), productId, page ?? 1, ct)));
         group.MapGet("/sales", async (Guid business, Guid? orderId, int? page, HttpContext http, SalesService service, CancellationToken ct) =>

@@ -6,6 +6,8 @@
 > Ventas y stock completados: ajustes auditados, líneas finales por origen,
 > descuento atómico y anulación con devolución explícita. Aún pendientes:
 > IA, publicidad y ranking/búsqueda global de productos.
+> Métricas comerciales privadas disponibles: cohortes de solicitudes y ventas
+> por período, con exclusión de anuladas e importes separados por origen/moneda.
 > Impulso habilita catálogo y Presencia el perfil; solicitudes existentes siguen
 > gestionables al vencer. Precios y otras capacidades comerciales siguen sujetos
 > al alcance pendiente. Evidencia y siguiente unidad en `continuidad.md`.

@@ -148,6 +148,12 @@ try {
     assert.equal((await request(path, "PUT", body, owner.cookie)).status, 200);
     assert.equal((await (await request(inventory, "GET", undefined, owner.cookie)).json())[0].quantity, 3);
     assert.equal((await (await request(`/public/orders/${orderId}`, "GET", undefined, undefined, { "X-Order-Key": key })).json()).status, "converted");
+    const commercePath = `/businesses/${business}/commerce?days=7`;
+    const commerce = await request(commercePath, "GET", undefined, owner.cookie);
+    assert.equal(commerce.headers.get("cache-control"), "no-store");
+    const metrics = await commerce.json();
+    assert.equal(metrics.orders, 2); assert.equal(metrics.converted, 1); assert.equal(metrics.conversionRate, 0.5);
+    assert.equal(metrics.amounts.requested.ARS, 24000);
     const oversized = { lines: [{ productId: product, quantity: 4, unitPrice: 12000, currency: "ARS", origin: "direct" }] };
     assert.equal((await request(`/businesses/${business}/sales/${randomUUID()}`, "PUT", oversized, owner.cookie)).status, 409);
     const voidBody = { operationId: randomUUID(), reason: "Una unidad fue devuelta", returns: [{ productId: product, quantity: 1 }] };
@@ -155,6 +161,9 @@ try {
     assert.equal((await request(path + "/void", "PUT", voidBody, owner.cookie)).status, 200);
     assert.equal((await (await request(inventory, "GET", undefined, owner.cookie)).json())[0].quantity, 4);
     assert.equal((await (await request(`/public/orders/${orderId}`, "GET", undefined, undefined, { "X-Order-Key": key })).json()).status, "cancelled");
+    const afterVoid = await (await request(commercePath, "GET", undefined, owner.cookie)).json();
+    assert.equal(afterVoid.activeSales, 0); assert.equal(afterVoid.voidedSales, 1);
+    assert.equal(afterVoid.converted, 0); assert.deepEqual(afterVoid.amounts, {});
     assert.equal(Number((await sql(`SELECT count(*) FROM sales WHERE business_id='${business}'`)).trim()), 1);
     assert.equal(Number((await sql(`SELECT count(*) FROM inventory_movements WHERE business_id='${business}'`)).trim()), 3);
     salesInfo = { saleId, orderId, key, reference: sourceOrder.reference };

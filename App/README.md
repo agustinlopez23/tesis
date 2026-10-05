@@ -463,6 +463,12 @@ Release/production previos y PostGIS activo. `--serve` habilita navegador tempor
 sesión y stopFile en `.tools/sales/session.json`, puertos 3200/5280. Limpieza al salir.
 Contrato en [`sales-inventory/spec.md`](../openspec/specs/sales-inventory/spec.md).
 
+Resultados comerciales, dentro de editar negocio, muestra 7/30 días calendario
+de Córdoba. La conversión sigue solicitudes creadas en ese período hasta ahora;
+ventas e importes usan fecha de registro de venta y excluyen anuladas. Importes
+separados por moneda y origen. No son pagos verificados ni evaluación experimental.
+Se verifican con el mismo harness `--sales`; no requieren migración adicional.
+
 El scaffold archivado está en
 `../openspec/changes/archive/2026-09-08-scaffold-backend-frontend/`; el onboarding
 y su evidencia están en

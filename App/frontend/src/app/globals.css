@@ -623,3 +623,7 @@
 .inventory-list li { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #deddd5; overflow-wrap: anywhere; }
 .inventory-list p, .sale-record p { margin: .5rem 0; }
 @media (max-width: 700px) { .sale-line { grid-template-columns: minmax(0, 1fr); } .sales-editor .button { width: 100%; } }
+.commerce-counts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 1.25rem 0; }
+.commerce-counts div, .commerce-amount { padding: 1rem; background: #f7f4ec; border-radius: 12px; }
+.commerce-counts dd { margin: .5rem 0 0; font-size: 1.5rem; font-weight: 700; }
+.commerce-amount { margin: .75rem 0; }

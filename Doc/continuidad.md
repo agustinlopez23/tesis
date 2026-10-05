@@ -1,5 +1,15 @@
 # Punto de continuidad — 05/10/2026
 
+Métricas comerciales completadas en `feat/commerce-metrics`, desde `23bd605`:
+cohorte de solicitudes, contactos y conversión hasta ahora; ventas por fecha de
+registro, anuladas separadas e importes por origen/moneda. 7/30 días de Córdoba,
+lectura consistente y privada, sin migración. **129/129 API y 107/107 frontend**,
+lint/build/integración y navegador correctos. Evidencia:
+`../openspec/changes/archive/2026-10-05-commerce-metrics/verify-report.md`.
+Continuar con descubrimiento global de productos, publicidad y asistencia opcional.
+
+## Ventas e inventario completados previamente
+
 Completadas ventas e inventario en `feat/sales-inventory`, desde `d6ae72b`.
 Saldo inicial explícito, ajustes auditados, ventas desde solicitudes con líneas
 finales y origen, venta presencial separada, descuento atómico e idempotente,

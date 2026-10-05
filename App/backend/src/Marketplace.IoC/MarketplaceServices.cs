@@ -38,6 +38,8 @@ public static class MarketplaceServices
         services.AddScoped<OrderService>();
         services.AddScoped<ISalesRepository, SalesRepository>();
         services.AddScoped<SalesService>();
+        services.AddScoped<ICommerceRepository, CommerceRepository>();
+        services.AddScoped<CommerceService>();
         services.AddScoped<IBusinessProfileRepository, BusinessProfileRepository>();
         services.AddScoped<IPhotoProcessor, PhotoProcessorAdapter>();
         services.AddScoped<BusinessProfileService>();
