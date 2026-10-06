@@ -7,6 +7,12 @@ App/tools/seed-demo.ps1` desde la raíz del repositorio. Agrega tres comercios,
 doce productos, stock inicial y planes ficticios. Se puede repetir sin duplicar
 ni restablecer ediciones. [Datos, accesos e instrucciones](seed/README.md).
 
+## Pruebas de navegador repetibles
+
+`npm --prefix App/tools run test:browser` desde la raíz ejecuta el flujo comercial
+en Chromium, Firefox y WebKit con una base temporal. Requiere builds y navegadores
+preparados; [instalación, cobertura y resultados](tools/README.md).
+
 ## Catálogo y planes manuales
 
 En **Mi negocio → Editar negocio → Administrar catálogo** se consulta el plan y

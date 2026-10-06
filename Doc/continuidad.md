@@ -1,6 +1,12 @@
 # Punto de continuidad — 05/10/2026
 
 **Estado actual: [cierre local y pendientes reales](cierre-desarrollo-2026-10-05.md).**
+**Matriz de navegadores automatizada:** Chromium/Firefox/WebKit pasan 10
+comprobaciones cada uno con `npm --prefix App/tools run test:browser`.
+Solicitudes, reintentos, ventas/anulación, stock/métricas, permisos y móvil.
+[Comando y límites](../App/tools/README.md). Base temporal eliminada; demo conserva
+6 negocios, 12 productos, arroz en 28 y 1 venta. Rama `test/cross-browser-commerce`.
+
 **Recorrido comercial en demo completado:** solicitud `CE-FFFDC9F41FD5` convertida
 en venta ficticia de dos arroces por ARS 4400; saldo 30 → 28, métricas y seguimiento
 correctos. Seed ejecutado antes y después: conserva venta y saldo sin duplicados.

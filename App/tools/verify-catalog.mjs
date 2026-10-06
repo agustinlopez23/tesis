@@ -9,6 +9,8 @@ const root = resolve(import.meta.dirname, "../..");
 const campaignsEnabled = process.argv.includes("--campaigns");
 const salesEnabled = process.argv.includes("--sales") || campaignsEnabled;
 const ordersEnabled = process.argv.includes("--orders") || salesEnabled;
+const browserNames = process.argv.filter(arg => arg.startsWith("--browser=")).map(arg => arg.slice(10));
+assert.ok(browserNames.every(name => ["chromium", "firefox", "webkit"].includes(name)), "Unknown browser name.");
 const artifacts = resolve(root, campaignsEnabled ? ".tools/campaigns" : salesEnabled ? ".tools/sales" : ordersEnabled ? ".tools/orders" : ".tools/catalog");
 const database = `catalog_smoke_${Date.now()}_${randomBytes(3).toString("hex")}`;
 const compose = ["compose", "--env-file", resolve(root, "App/.env.local"), "-f", resolve(root, "App/compose.yaml")];
@@ -205,6 +207,11 @@ try {
   await writeFile(resolve(artifacts, "result.json"), JSON.stringify({ passed: true, database, checks: ["proxy", "plan", "authorization", "catalog", "archive", "revocation", "preservation", ...(process.argv.includes("--orders") ? ["order-snapshot", "order-replay", "private-key", "owner-attention", "contact-received", "cancellation", "order-after-plan-expiry"] : [])], at: new Date().toISOString() }, null, 2));
   if (salesEnabled) await writeFile(resolve(artifacts, "sales-result.json"), JSON.stringify({ passed: true, checks: ["opening-replay", "linked-sale", "sale-replay", "atomic-stock", "overselling-rejected", "explicit-return", "void-replay", "private-order-state"], at: new Date().toISOString() }, null, 2));
   console.log((salesEnabled ? "Catalog, orders and sales" : ordersEnabled ? "Catalog and orders" : "Catalog") + " integration passed; isolated browser session ready at " + webOrigin);
+  if (process.argv.includes("--browsers")) {
+    assert.ok(campaignsEnabled, "Browser flow requires --campaigns.");
+    const { verifyBrowserFlow } = await import("./browser-flow.mjs");
+    await verifyBrowserFlow({ webOrigin, business, product, owner, admin }, artifacts, browserNames.length ? browserNames : undefined);
+  }
   if (process.argv.includes("--serve")) for (let i = 0; i < 1200; i++) {
     try { await access(stopFile); break; } catch {}
     await wait(1000);

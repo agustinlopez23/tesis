@@ -18,7 +18,7 @@ restaurado y datos conservados; [estado y reinicio](demo-local-2026-10-05.md).
 | Redacción asistida | Editor de producto → Ayuda para redactar | Implementación preparada; proveedor real pendiente |
 | Ranking experimental | `/revista` en desarrollo con flags | Solo previsualización; producción cerrada |
 
-Verificación acumulada actual: **370 pruebas aprobadas**: 148 API/HTTP/PostGIS/
+Suite base: **370 pruebas aprobadas**: 148 API/HTTP/PostGIS/
 adaptador, 99 BLL/evaluación y 123 frontend, sin omitidas. API/BLL corresponden al
 último incremento; la revisión Playwright repitió frontend y harness comercial.
 Lint y compilación Next
@@ -26,6 +26,11 @@ correctos. Después de la suite completa se amplió la regresión de resolución
 campaña vencida: seis pruebas de campañas aprobadas tras corregirla. Recorridos
 reales Next/API/PostGIS, reintentos y pantallas 1440/390/320 comprobados. IA usa
 dobles explícitos; no se hicieron llamadas pagas ni se acreditó calidad factual.
+
+Verificaciones posteriores: 3/3 pruebas de integración del seed y matriz
+Chromium/Firefox/WebKit con 10 comprobaciones por motor aprobadas. El recorrido
+comercial se puede repetir con [un comando](../App/tools/README.md), en base aislada.
+No sustituye la prueba en dispositivos físicos ni una auditoría de accesibilidad.
 
 Los cambios están en commits locales de las ramas encadenadas hasta
 `fix/playwright-commerce-flow`. La [revisión Playwright](qa-playwright-2026-10-05.md)

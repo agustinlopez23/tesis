@@ -1,0 +1,10 @@
+{
+  "name": "marketplace-verification-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:browser": "node verify-catalog.mjs --campaigns --browsers",
+    "install:browsers": "playwright install chromium firefox webkit"
+  },
+  "devDependencies": { "playwright": "1.63.0" }
+}
