@@ -54,6 +54,8 @@ Usa Chromium y axe 4.13.0, con todas sus reglas predeterminadas, sin exclusiones
 Recorre nueve estados en 1440/320 px: guía, productos, perfil, solicitud, registro,
 ingreso, editor de producto, métricas y administración de plan. Espera datos reales
 antes de analizar; también prueba con teclado «Saltar al contenido» y su foco.
+Comprueba navegación visible a 320/390/768/1440 px, enlaces de al menos 44 px de
+alto en móvil y acceso a Productos con Enter, incluida su sección activa.
 
 Guarda `.tools/campaigns/accessibility-result.json` y capturas
 `accessibility-*.png`. El comando falla ante violaciones o desbordamiento y limpia

@@ -1,5 +1,16 @@
 # Demo local actualizada — 05/10/2026
 
+**Actualización visual del 06/10:** frontend en
+`.tools/demo-runtime/20261006-market-polish/web`, disponible en http://localhost:3000.
+Mejor contraste, Productos en la navegación principal y encabezado móvil con
+enlaces visibles de 44 px. El iniciador `.tools/start-demo.ps1` usa esta copia al
+reiniciar; la versión anterior queda conservada para volver atrás. API y base
+mantienen su versión/datos. `webRelease` y `webBuildId` identifican el frontend en
+`.tools/ui-demo-processes.json`; `release`/`codeCommit` siguen identificando la API.
+Playwright comprobó navegación, catálogo del seed, acceso, contraste, móvil y API:
+cero excepciones JS/5xx. Evidencia: `20261006-market-polish/verification.json` y
+`products-mobile.png`, dentro de `.tools/demo-runtime/`.
+
 **Recorrido de ejemplo listo:** una solicitud convertida y una venta ficticia por
 ARS 4400 en el almacén del seed; arroz con 28 unidades y 13 movimientos totales.
 La repetición posterior del seed preservó ese estado. [Guion para mostrarlo](guion-demo.md).

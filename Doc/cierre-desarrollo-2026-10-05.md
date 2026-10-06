@@ -1,5 +1,11 @@
 # Estado de cierre local — 05/10/2026
 
+**Actualización del 06/10:** contraste corregido y navegación de productos visible
+en móvil/escritorio. Suite frontend 126/126; lint/build y 30 controles comerciales
+en tres motores aprobados. Axe: 18 análisis sin violaciones/desbordamiento y dos
+comprobaciones de teclado. Conserva inconclusos para revisión humana; no acredita
+conformidad WCAG. Demo local actualizada. Backend sin cambios en esta iteración.
+
 El núcleo comercial está implementado y probado localmente. La asistencia de IA
 está preparada, desactivada hasta configurar un modelo y credenciales. La tesis
 todavía necesita evaluación humana; este cierre técnico no demuestra su hipótesis.

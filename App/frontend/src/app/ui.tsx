@@ -30,6 +30,7 @@ export function SiteHeader({ active = "explore" }: { active?: "explore" | "owner
     <span className="location-label"><Icon name="pin" /> Córdoba, Argentina</span>
     <nav aria-label="Navegación principal">
       <Link className={`nav-link ${active === "explore" ? "active" : ""}`} href="/explorar" aria-current={active === "explore" ? "page" : undefined}>Explorar negocios</Link>
+      <Link className={`nav-link ${active === "products" ? "active" : ""}`} href="/productos" aria-current={active === "products" ? "page" : undefined}>Productos</Link>
       <Link className="button button-small button-dark" href="/mi-negocio" aria-current={active === "owner" ? "page" : undefined}>Mi negocio <Icon name="arrow" /></Link>
     </nav>
   </div></header>;

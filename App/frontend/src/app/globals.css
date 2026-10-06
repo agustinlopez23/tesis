@@ -445,13 +445,13 @@
   }
   @media (max-width: 600px) {
     .container { width: calc(100% - 36px); }
-    .nav-inner { gap: 8px; height: 72px; }
+    .nav-inner { flex-wrap: wrap; gap: 10px; height: auto; padding-block: 14px 10px; }
     .brand { font-size: 29px; }
     .brand-symbol { margin-right: 7px; padding: 6px; border-radius: 8px 8px 8px 2px; }
     .brand-symbol .icon { width: 21px; height: 21px; }
-    .nav-inner nav { gap: 14px; }
-    .nav-link { font-size: 11px; }
-    .nav-inner .button { padding: 10px 12px; min-height: 40px; font-size: 11px; }
+    .nav-inner nav { width: 100%; gap: 8px; justify-content: space-between; }
+    .nav-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 12px; white-space: nowrap; }
+    .nav-inner .button { padding: 10px 12px; min-height: 44px; font-size: 12px; white-space: nowrap; }
     .nav-inner .button .icon { display: none; }
     .discovery-hero { grid-template-columns: 1fr; gap: 25px; padding-top: 26px; padding-bottom: 32px; }
     .hero-copy { padding-block: 0; }
@@ -627,6 +627,7 @@
 .commerce-counts div, .commerce-amount { padding: 1rem; background: #f7f4ec; border-radius: 12px; }
 .commerce-counts dd { margin: .5rem 0 0; font-size: 1.5rem; font-weight: 700; }
 .commerce-amount { margin: .75rem 0; }
+.product-discovery { padding-block: clamp(2rem, 4vw, 3rem) 3rem; }
 .product-discovery > h1 { margin: 1rem 0; font-size: clamp(2rem, 5vw, 3.5rem); }
 .product-discovery > .catalog-search { margin-top: 2rem; }
 .product-discovery .product-card h2 { font-size: 1.3rem; }

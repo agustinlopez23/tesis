@@ -1,5 +1,12 @@
 # Punto de continuidad — 06/10/2026
 
+**Navegación mejorada:** Productos disponible en el encabezado compartido, sección
+activa anunciada y menú visible en dos filas en móvil. Mejor separación del título
+de productos. 126/126 frontend, lint/build, 18 análisis axe y 30 controles en tres
+motores correctos; navegación verificada a 320/390/768/1440 y con teclado.
+La demo en http://localhost:3000 ya usa estos cambios visuales; API y datos
+conservados. [Versión y reinicio](demo-local-2026-10-05.md).
+
 **Accesibilidad comercial:** corregido contraste en filtros, tarjetas, perfiles y
 métricas. `npm --prefix App/tools run test:accessibility`: nueve estados en dos
 anchos, 18/18 sin violaciones automáticas ni desbordamiento; salto al contenido

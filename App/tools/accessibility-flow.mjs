@@ -38,8 +38,22 @@ export async function verifyAccessibility(s, artifacts) {
     await page.waitForFunction(() => document.activeElement?.id === "contenido");
     report.keyboard.push("skip-link-focuses-main");
     await scan("explore");
-    await page.goto(s.webOrigin + "/productos");
+    const navigation = page.getByRole("navigation", { name: "Navegación principal" });
+    for (const width of [320, 390, 768, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+      for (const link of await navigation.getByRole("link").all()) {
+        const box = await link.boundingBox();
+        assert.ok(box && box.x >= 0 && box.x + box.width <= width, "Navigation must fit the viewport.");
+        if (width <= 390) assert.ok(box.height >= 44, "Mobile navigation needs a 44px touch target.");
+      }
+    }
+    await page.setViewportSize({ width: 320, height: 900 });
+    await navigation.getByRole("link", { name: "Productos", exact: true }).focus();
+    await page.keyboard.press("Enter");
     await page.getByRole("heading", { name: "Café de especialidad", exact: true }).waitFor();
+    assert.equal(await navigation.getByRole("link", { name: "Productos", exact: true }).getAttribute("aria-current"), "page");
+    report.keyboard.push("products-link-opens-and-announces-current-section");
     await scan("products");
     await page.goto(`${s.webOrigin}/negocios/${s.business}`);
     await page.getByRole("button", { name: "Agregar Café de especialidad" }).waitFor();
