@@ -46,3 +46,21 @@ formulario de acceso. No se necesitó modificar el comportamiento del producto.
 
 Referencias: [navegadores de Playwright](https://playwright.dev/docs/browsers) y
 [verificación Next/Playwright](https://nextjs.org/docs/app/guides/testing/playwright).
+
+## Accesibilidad y ancho móvil
+
+Con la misma preparación: `npm --prefix App/tools run test:accessibility`.
+Usa Chromium y axe 4.13.0, con todas sus reglas predeterminadas, sin exclusiones.
+Recorre nueve estados en 1440/320 px: guía, productos, perfil, solicitud, registro,
+ingreso, editor de producto, métricas y administración de plan. Espera datos reales
+antes de analizar; también prueba con teclado «Saltar al contenido» y su foco.
+
+Guarda `.tools/campaigns/accessibility-result.json` y capturas
+`accessibility-*.png`. El comando falla ante violaciones o desbordamiento y limpia
+los servicios/base temporales. El informe conserva los resultados inconclusos de
+axe para revisión humana, separados de las violaciones; no oculta esos hallazgos.
+Las capturas privadas contienen datos temporales y permanecen fuera de Git.
+
+No acredita conformidad WCAG completa: faltan lectores de pantalla, interacción
+completa por teclado, dispositivos físicos y revisión del contraste sobre imágenes.
+Referencia: [pruebas de accesibilidad con Playwright](https://playwright.dev/docs/accessibility-testing).

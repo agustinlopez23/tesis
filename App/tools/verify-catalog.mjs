@@ -207,6 +207,10 @@ try {
   await writeFile(resolve(artifacts, "result.json"), JSON.stringify({ passed: true, database, checks: ["proxy", "plan", "authorization", "catalog", "archive", "revocation", "preservation", ...(process.argv.includes("--orders") ? ["order-snapshot", "order-replay", "private-key", "owner-attention", "contact-received", "cancellation", "order-after-plan-expiry"] : [])], at: new Date().toISOString() }, null, 2));
   if (salesEnabled) await writeFile(resolve(artifacts, "sales-result.json"), JSON.stringify({ passed: true, checks: ["opening-replay", "linked-sale", "sale-replay", "atomic-stock", "overselling-rejected", "explicit-return", "void-replay", "private-order-state"], at: new Date().toISOString() }, null, 2));
   console.log((salesEnabled ? "Catalog, orders and sales" : ordersEnabled ? "Catalog and orders" : "Catalog") + " integration passed; isolated browser session ready at " + webOrigin);
+  if (process.argv.includes("--accessibility")) {
+    const { verifyAccessibility } = await import("./accessibility-flow.mjs");
+    await verifyAccessibility({ webOrigin, business, product, owner, admin }, artifacts);
+  }
   if (process.argv.includes("--browsers")) {
     assert.ok(campaignsEnabled, "Browser flow requires --campaigns.");
     const { verifyBrowserFlow } = await import("./browser-flow.mjs");

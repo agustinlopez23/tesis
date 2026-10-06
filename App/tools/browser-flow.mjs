@@ -126,7 +126,7 @@ async function exercise(browser, s, artifacts, result) {
     await page.goto(s.webOrigin + "/mi-negocio");
     await logout();
     await login(s.admin);
-    await page.goto(s.webOrigin + "/administracion/planes");
+    await page.getByRole("link", { name: "Administrar planes", exact: true }).click();
     await page.getByRole("button", { name: "Gestionar plan de Café del Patio", exact: true }).waitFor();
     result.checks.push("owner-denied-admin-allowed");
     assert.deepEqual(errors, []);

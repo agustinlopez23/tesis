@@ -11,7 +11,7 @@
 }
 
 @layer base {
-  :root { --paper: #faf9f6; --ink: #273d32; --muted: #6b7068; --line: #e3e4db; --accent: #b34830; --accent-hover: #963820; --cream: #f0eee5; --green: #254e3d; color-scheme: light; font-family: "Segoe UI", Arial, sans-serif; color: var(--ink); background: var(--paper); font-synthesis: none; }
+  :root { --paper: #faf9f6; --ink: #273d32; --muted: #596253; --line: #e3e4db; --accent: #b34830; --accent-hover: #963820; --cream: #f0eee5; --green: #254e3d; color-scheme: light; font-family: "Segoe UI", Arial, sans-serif; color: var(--ink); background: var(--paper); font-synthesis: none; }
   body { min-width: 0; }
   ::selection { background: #e9c7b8; color: #273d32; }
   :focus-visible { outline: 3px solid #b34830; outline-offset: 4px; }
@@ -251,7 +251,7 @@
   .sand { --category-bg: #eee9dd; --category-ink: #786342; }
   .business-cover { height: 125px; position: relative; overflow: hidden; background: var(--category-bg); color: var(--category-ink); padding: 22px; }
   .business-cover:after { content: ""; position: absolute; width: 190px; height: 190px; border: 1px solid currentColor; opacity: .13; border-radius: 50%; right: -18px; bottom: -110px; }
-  .cover-phrase { display: block; max-width: 155px; font: italic 18px/1.15 Georgia, serif; opacity: .9; }
+  .cover-phrase { display: block; max-width: 155px; font: italic 18px/1.15 Georgia, serif; }
   .business-cover > .icon { position: absolute; left: 23px; bottom: 18px; width: 24px; height: 24px; }
   .cover-monogram { position: absolute; right: 26px; bottom: -26px; font: 145px/1 Georgia, serif; color: var(--category-ink); opacity: .16; transform: rotate(-8deg); }
   .business-card-body { display: flex; flex-direction: column; flex: 1; padding: 22px; }
@@ -272,7 +272,7 @@
   .merchant-banner { display: flex; align-items: center; gap: 24px; padding: 32px; background: #efece2; border-radius: 12px; }
   .banner-icon { display: grid; place-items: center; background: #e0e2d0; border-radius: 12px; width: 72px; height: 72px; flex-shrink: 0; }
   .banner-icon .icon { width: 34px; height: 34px; color: #64714c; }
-  .merchant-banner .eyebrow { font-size: 9px; color: #6d754e; margin-bottom: 6px; }
+  .merchant-banner .eyebrow { font-size: 9px; color: #59633f; margin-bottom: 6px; }
   .merchant-banner h2 { font-size: 22px; letter-spacing: -.5px; font-weight: 600; }
   .merchant-banner p:not(.eyebrow) { font-size: 12px; color: var(--muted); margin-top: 7px; }
   .merchant-banner > .button { margin-left: auto; white-space: nowrap; }

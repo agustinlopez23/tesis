@@ -1,4 +1,11 @@
-# Punto de continuidad — 05/10/2026
+# Punto de continuidad — 06/10/2026
+
+**Accesibilidad comercial:** corregido contraste en filtros, tarjetas, perfiles y
+métricas. `npm --prefix App/tools run test:accessibility`: nueve estados en dos
+anchos, 18/18 sin violaciones automáticas ni desbordamiento; salto al contenido
+verificado con teclado. 123/123 frontend, lint/build y regresión comercial.
+Inconclusos de contraste sobre imágenes/decoración conservados para revisión
+humana; no acredita conformidad WCAG completa. [Comando](../App/tools/README.md).
 
 **Estado actual: [cierre local y pendientes reales](cierre-desarrollo-2026-10-05.md).**
 **Matriz de navegadores automatizada:** Chromium/Firefox/WebKit pasan 10
