@@ -6,6 +6,8 @@
    por negocio. Duplicados y valores inválidos DEBEN fallar explícitamente.
    Escenario: un suspendido, borrador, irrelevante, futuro o fuera del radio
    nunca se beneficia de deuda de exposición ni novedad.
+   Historia desconocida (PublishedAt=null) DEBE seguir elegible sin bonificación
+   de novedad; no equivale a fecha futura ni publicación reciente.
 2. El motor DEBE exponer los componentes y versión, usar proximidad separada
    del radio y prescindir de IA y plan. Sin ubicación DEBE usar mérito textual.
 3. La compensación DEBE usar solo historia del mismo contexto dentro de 30 días.

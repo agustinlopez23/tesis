@@ -1,8 +1,9 @@
 namespace Marketplace.BLL;
 
 public enum RankingVariant { Relevance, Proximity, Equity, EquityActivity, EquityOnly, EquityNewcomer, EquityRotation }
+// Null means publication history is unknown, not newly published.
 public sealed record RankingCandidate(Guid Id, double Relevance, double? DistanceKm,
-    DateTimeOffset PublishedAt, bool Published = true, bool Suspended = false, double Activity = 0);
+    DateTimeOffset? PublishedAt, bool Published = true, bool Suspended = false, double Activity = 0);
 public sealed record RankingContext(string Key, DateTimeOffset At, double? RadiusKm, int Seed, long Sequence);
 public sealed record ExposureBalance(double Expected, double Received);
 public sealed record RankedBusiness(Guid Id, double Relevance, double Proximity, double Merit,

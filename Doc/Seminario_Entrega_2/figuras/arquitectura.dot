@@ -1,0 +1,54 @@
+// Diagrama de arquitectura del prototipo (metodología Scrum).
+// Fuente de la pila tecnológica: Diseño Metodológico de la Entrega 1.
+// Render: node Doc/Seminario_Entrega_2/tools/render-arquitectura.mjs
+digraph Arquitectura {
+  graph [rankdir=TB, splines=ortho, nodesep=0.45, ranksep=0.55,
+         fontname="Times New Roman", fontsize=11, bgcolor="white", pad=0.25,
+         charset="UTF-8"];
+  node  [fontname="Times New Roman", fontsize=11, shape=box, style="filled,rounded",
+         fillcolor="#FFFFFF", color="#333333", margin="0.18,0.10"];
+  edge  [fontname="Times New Roman", fontsize=9, color="#333333", arrowsize=0.7];
+
+  subgraph cluster_cliente {
+    label="Capa de cliente";
+    style="rounded,filled"; fillcolor="#F4F6F8"; color="#8A94A0"; fontsize=11;
+    comerciante [label="Comerciante\n(navegador móvil / escritorio)", fillcolor="#E8EEF6"];
+    consumidor  [label="Consumidor\n(navegador móvil / escritorio)", fillcolor="#E8EEF6"];
+  }
+
+  subgraph cluster_front {
+    label="Vercel  ·  Aplicación web";
+    style="rounded,filled"; fillcolor="#F4F6F8"; color="#8A94A0"; fontsize=11;
+    front [label="Next.js sobre React\nCatálogo · Búsqueda · Mapa · Panel del comercio", fillcolor="#E3EFE6"];
+  }
+
+  subgraph cluster_api {
+    label="Railway / Render  ·  Backend ASP.NET Core (C#) en N capas";
+    style="rounded,filled"; fillcolor="#F4F6F8"; color="#8A94A0"; fontsize=11;
+    pres   [label="Capa de presentación\nAPI REST · Autenticación por token", fillcolor="#FBF0DC"];
+    nego   [label="Capa de lógica de negocio\nReglas del sistema  |  Motor de ranking orgánico\nS = w₁·Rel + w₂·Prox + w₃·Disp + w₄·Eq", fillcolor="#FBF0DC"];
+    datos  [label="Capa de acceso a datos\nEntity Framework Core", fillcolor="#FBF0DC"];
+    pres -> nego [label="  invoca"];
+    nego -> datos [label="  invoca"];
+  }
+
+  subgraph cluster_datos {
+    label="Supabase  ·  Capa de persistencia";
+    style="rounded,filled"; fillcolor="#F4F6F8"; color="#8A94A0"; fontsize=11;
+    db      [label="PostgreSQL + PostGIS\nCatálogo · Stock · Geolocalización\nHistorial de exposición", shape=cylinder, style=filled, fillcolor="#E6E3F2"];
+    storage [label="Almacenamiento de objetos\ncompatible con S3\n(fotografías de productos)", shape=cylinder, style=filled, fillcolor="#E6E3F2"];
+  }
+
+  subgraph cluster_ext {
+    label="Servicios externos";
+    style="rounded,filled"; fillcolor="#F4F6F8"; color="#8A94A0"; fontsize=11;
+    openai [label="API de OpenAI\nPropuesta de nombre, descripción\ny categoría a partir de la fotografía", fillcolor="#F6E6E6"];
+  }
+
+  comerciante -> front [label="  HTTPS"];
+  consumidor  -> front [label="  HTTPS"];
+  front -> pres  [label="  REST / JSON + token"];
+  datos -> db    [label="  SQL (EF Core)"];
+  pres  -> storage [label="  carga y lectura de imágenes (S3)"];
+  nego  -> openai  [label="  HTTPS / JSON"];
+}

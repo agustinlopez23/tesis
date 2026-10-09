@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 
 root = Path(__file__).resolve().parents[3]
 doc = root / 'Doc'
-delivery = doc / 'Entrega2'
+delivery = doc / 'Seminario_Entrega_2'
 model = json.loads((doc / 'model/model.json').read_text(encoding='utf-8'))
 catalog = json.loads((delivery / 'tools/catalog.json').read_text(encoding='utf-8'))
 screens = json.loads((delivery / 'tools/screens.json').read_text(encoding='utf-8'))

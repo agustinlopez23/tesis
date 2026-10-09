@@ -14,10 +14,32 @@ builder.Services.AddMarketplace(builder.Configuration);
 builder.Services.AddProblemDetails();
 builder.Services.AddDataProtection();
 builder.Services.AddSingleton<ActivityTokens>();
+builder.Services.AddSingleton<ICampaignTokens, CampaignTokens>();
+builder.Services.AddHostedService<CampaignRetentionWorker>();
+builder.Services.AddSingleton<RankingCursorTokens>();
+builder.Services.AddSingleton<RankingConcurrencyLimits>();
 builder.Services.AddHostedService<ActivityRetentionWorker>();
+builder.Services.AddHostedService<RankingRetentionWorker>();
 builder.Services.AddRateLimiter(options =>
 {
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy("catalog-assistance", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = 6, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
+    options.AddPolicy("orders-create", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = 120, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
+    options.AddPolicy("orders-read", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = 600, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
+    options.AddPolicy("ranking-create", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = builder.Configuration.GetValue("Ranking:CreatePermitLimit", 60),
+        Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
+    options.AddPolicy("ranking-page", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
+        PermitLimit = builder.Configuration.GetValue("Ranking:PagePermitLimit", 600),
+        Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
+    }));
     options.AddPolicy("activity", _ => RateLimitPartition.GetFixedWindowLimiter("global", _ => new FixedWindowRateLimiterOptions {
         PermitLimit = 1200, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
     }));
@@ -32,6 +54,9 @@ builder.Services.AddRateLimiter(options =>
         }));
 });
 var app = builder.Build();
+// Reject invalid capacity settings before accepting traffic, even with preview disabled.
+_ = app.Services.GetRequiredService<RankingReadLimits>();
+_ = app.Services.GetRequiredService<RankingConcurrencyLimits>();
 app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =>
 {
     var error = context.Features.Get<IExceptionHandlerFeature>()?.Error;
@@ -45,9 +70,28 @@ app.UseExceptionHandler(errorApplication => errorApplication.Run(async context =
         detail: databaseFailure ? "Intentá nuevamente en unos momentos." : "No pudimos completar la operación.")
         .ExecuteAsync(context);
 }));
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.Value?.EndsWith("/catalog-assistance", StringComparison.Ordinal) == true)
+        context.Response.Headers.CacheControl = "no-store";
+    if (context.Request.Path.StartsWithSegments("/public/ranking-snapshots") || context.Request.Path.StartsWithSegments("/public/products") || new[] { "/orders", "/sales", "/inventory", "/commerce", "/campaign" }.Any(segment => context.Request.Path.Value?.Contains(segment, StringComparison.Ordinal) == true))
+        context.Response.OnStarting(() =>
+        {
+            context.Response.Headers.CacheControl = "no-store";
+            return Task.CompletedTask;
+        });
+    await next(context);
+});
 app.UseRateLimiter();
+app.UseMiddleware<RankingConcurrencyMiddleware>();
 app.MapBusinessProfiles();
+app.MapCatalog();
+app.MapOrders();
+app.MapSales();
+app.MapProductDiscovery();
+app.MapCampaigns();
 app.MapBusinessActivity();
+app.MapRankingSnapshots();
 
 app.MapGet("/health/live", () => Results.Json(new { status = "ok" }));
 

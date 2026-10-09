@@ -14,9 +14,26 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<BusinessProfile> Businesses => Set<BusinessProfile>();
     public DbSet<BusinessPhoto> BusinessPhotos => Set<BusinessPhoto>();
     public DbSet<BusinessActivity> BusinessActivity => Set<BusinessActivity>();
+    public DbSet<BusinessSubscription> BusinessSubscriptions => Set<BusinessSubscription>();
+    public DbSet<CatalogProduct> CatalogProducts => Set<CatalogProduct>();
+    public DbSet<ProductPhoto> ProductPhotos => Set<ProductPhoto>();
+    public DbSet<CustomerOrder> CustomerOrders => Set<CustomerOrder>();
+    public DbSet<OrderLine> OrderLines => Set<OrderLine>();
+    public DbSet<OrderChange> OrderChanges => Set<OrderChange>();
+    public DbSet<InventoryBalance> InventoryBalances => Set<InventoryBalance>();
+    public DbSet<InventoryMovement> InventoryMovements => Set<InventoryMovement>();
+    public DbSet<Sale> Sales => Set<Sale>();
+    public DbSet<SaleLine> SaleLines => Set<SaleLine>();
+    public DbSet<Campaign> Campaigns => Set<Campaign>();
+    public DbSet<CampaignChange> CampaignChanges => Set<CampaignChange>();
+    public DbSet<CampaignEvent> CampaignEvents => Set<CampaignEvent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        CatalogConfiguration.Configure(modelBuilder);
+        OrderConfiguration.Configure(modelBuilder);
+        SalesConfiguration.Configure(modelBuilder);
+        CampaignConfiguration.Configure(modelBuilder);
         modelBuilder.ApplyConfiguration(new BusinessActivityConfiguration());
         modelBuilder.Entity<BusinessPhoto>(entity =>
         {
@@ -53,7 +70,7 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
             entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
             entity.Property(x => x.Name).HasColumnName("name").HasMaxLength(50).IsRequired();
             entity.HasIndex(x => x.Name).IsUnique();
-            entity.HasData(new Role { Id = 1, Name = "business_owner" });
+            entity.HasData(new Role { Id = 1, Name = "business_owner" }, new Role { Id = 2, Name = "administrator" });
         });
         modelBuilder.Entity<UserAccountRole>(entity =>
         {

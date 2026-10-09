@@ -41,6 +41,15 @@ public sealed class RankingCandidateTests(OnboardingFixture fixture) : IClassFix
         var distant = candidates.Single(x => x.Id == eligible[44].Id);
         Assert.InRange(distant.DistanceKm, .48, .50);
 
+        var input = await scope.ServiceProvider.GetRequiredService<MagazineRankingCandidates>()
+            .PrepareAsync("centro", 1, 17, 0, default);
+        var ranked = new BusinessRanker(new()).Rank(input.Candidates, input.Context,
+            RankingVariant.EquityNewcomer, new Dictionary<Guid, ExposureBalance>());
+        Assert.Equal(eligible.Select(x => x.Id).Order(), ranked.Select(x => x.Id).Order());
+        Assert.All(input.Candidates, x => Assert.Equal(
+            eligible.Single(b => b.Id == x.Id).FirstPublishedAt, x.PublishedAt));
+        Assert.All(input.OwnerIds.Values, id => Assert.Equal(owner.Id, id));
+
         eligible[0].Status = "draft";
         eligible[1].CategoryId = 2;
         eligible[2].Location = outside.Location;

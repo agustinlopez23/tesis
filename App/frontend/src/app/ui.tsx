@@ -24,12 +24,13 @@ export function Icon({ name, className = "" }: { name: IconName; className?: str
   return <svg className={`icon ${className}`} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>;
 }
 
-export function SiteHeader({ active = "explore" }: { active?: "explore" | "owner" }) {
+export function SiteHeader({ active = "explore" }: { active?: "explore" | "owner" | "preview" | "products" }) {
   return <header className="site-header"><div className="container nav-inner">
     <Link className="brand" href="/" aria-label="Cerca, inicio"><span className="brand-symbol"><Icon name="store" /></span>cerca<span className="brand-dot">.</span></Link>
     <span className="location-label"><Icon name="pin" /> Córdoba, Argentina</span>
     <nav aria-label="Navegación principal">
       <Link className={`nav-link ${active === "explore" ? "active" : ""}`} href="/explorar" aria-current={active === "explore" ? "page" : undefined}>Explorar negocios</Link>
+      <Link className={`nav-link ${active === "products" ? "active" : ""}`} href="/productos" aria-current={active === "products" ? "page" : undefined}>Productos</Link>
       <Link className="button button-small button-dark" href="/mi-negocio" aria-current={active === "owner" ? "page" : undefined}>Mi negocio <Icon name="arrow" /></Link>
     </nav>
   </div></header>;

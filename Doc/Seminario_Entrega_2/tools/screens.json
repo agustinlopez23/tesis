@@ -265,10 +265,10 @@
     "Confirmá lo efectivamente vendido",
     [
       "Origen · Solicitud ABC123 / Presencial",
-      "Productos finales · cantidades y precios editables",
+      "Líneas finales · quitar, cambiar o agregar productos",
+      "Cada línea: solicitada o acordada en la conversación",
       "Stock disponible al confirmar",
-      "Una venta vinculada por solicitud",
-      "La confirmación descuenta inventario"
+      "Una venta por solicitud · la confirmación descuenta inventario"
     ],
     [
       "Confirmar venta",

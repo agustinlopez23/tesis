@@ -11,7 +11,7 @@ internal sealed class BusinessActivityConfiguration : IEntityTypeConfiguration<B
         entity.ToTable("business_activity", table => {
             table.HasCheckConstraint("CK_activity_kind", "kind IN ('impression', 'profile_view', 'contact')");
             table.HasCheckConstraint("CK_activity_surface", "surface IN ('directory', 'profile') AND (kind <> 'impression' OR surface = 'directory') AND (kind <> 'profile_view' OR surface = 'profile')");
-            table.HasCheckConstraint("CK_activity_context", "(source IN ('directory', 'search') AND position BETWEEN 1 AND 200000 AND ranking_version IN ('name-v1', 'distance-v1')) OR (source = 'unknown' AND position IS NULL AND ranking_version IS NULL)");
+            table.HasCheckConstraint("CK_activity_context", "(source IN ('directory', 'search') AND position IS NOT NULL AND ranking_version IS NOT NULL AND position BETWEEN 1 AND 200000 AND (ranking_version IN ('name-v1', 'distance-v1') OR (source = 'directory' AND ranking_version ~ '^[0-9a-f]{64}$'))) OR (source = 'unknown' AND position IS NULL AND ranking_version IS NULL)");
         });
         entity.HasKey(x => new { x.VisitId, x.BusinessId, x.Kind, x.Surface });
         entity.Property(x => x.VisitId).HasColumnName("visit_id");
@@ -20,7 +20,7 @@ internal sealed class BusinessActivityConfiguration : IEntityTypeConfiguration<B
         entity.Property(x => x.Surface).HasColumnName("surface").HasMaxLength(20);
         entity.Property(x => x.Source).HasColumnName("source").HasMaxLength(20);
         entity.Property(x => x.Position).HasColumnName("position");
-        entity.Property(x => x.RankingVersion).HasColumnName("ranking_version").HasMaxLength(40);
+        entity.Property(x => x.RankingVersion).HasColumnName("ranking_version").HasMaxLength(64);
         entity.Property(x => x.OccurredAt).HasColumnName("occurred_at");
         entity.HasIndex(x => new { x.BusinessId, x.OccurredAt });
         entity.HasIndex(x => x.OccurredAt);

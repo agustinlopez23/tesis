@@ -1,0 +1,14 @@
+{
+  "name": "marketplace-verification-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test:accessibility": "node verify-catalog.mjs --campaigns --accessibility",
+    "test:browser": "node verify-catalog.mjs --campaigns --browsers",
+    "install:browsers": "playwright install chromium firefox webkit"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "playwright": "1.63.0"
+  }
+}

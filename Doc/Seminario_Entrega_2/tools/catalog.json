@@ -281,20 +281,20 @@
       "title": "Registrar venta y descontar stock",
       "actor": "Responsable del negocio",
       "obj": "OP-03",
-      "rf": "Registrar una venta vinculada a solicitud o presencial, conservar artículos finales y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo.",
+      "rf": "Registrar una venta vinculada a solicitud o presencial, conservar los artículos finales con el origen de cada línea y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo.",
       "pre": "Sesión autorizada; productos propios; solicitud no cancelada ni convertida cuando corresponda.",
       "steps": [
         "Abre una solicitud o inicia una venta presencial.",
-        "Confirma productos, cantidades y precios efectivamente acordados.",
+        "Confirma los productos, cantidades y precios efectivamente acordados, quitando, cambiando o agregando líneas respecto de la solicitud.",
         "El sistema valida idempotencia, propiedad y disponibilidad con control concurrente.",
-        "Guarda venta, líneas, movimientos y saldo dentro de una transacción.",
+        "Guarda venta, líneas con su origen, movimientos y saldo dentro de una transacción.",
         "Si existe solicitud la marca convertida y conserva la relación de origen."
       ],
       "alt": [
         "Stock insuficiente: rechazar toda la operación y permitir ajustar cantidades.",
         "Solicitud ya convertida o reintento: recuperar venta existente sin nuevo descuento."
       ],
-      "post": "Venta reportada y saldo consistentes; como máximo una venta por solicitud.",
+      "post": "Venta reportada y saldo consistentes; como máximo una venta por solicitud, con el origen declarado en cada línea.",
       "screen": "P13",
       "entities": "Sale, SaleItem, StockMovement, Inventory, OrderRequest",
       "priority": "Crítica"

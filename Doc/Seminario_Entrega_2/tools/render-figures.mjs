@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
-const dir = path.join(root, 'Doc/Entrega2');
+const dir = path.join(root, 'Doc/Seminario_Entrega_2');
 const require = createRequire(path.join(root, '.tools/documentation/package.json'));
 const { instance } = require('@viz-js/viz');
 const { Resvg } = require('@resvg/resvg-js');
@@ -72,8 +72,18 @@ await graph('componentes', `digraph G { graph [rankdir=LR,pad=0.4]; node [shape=
 let gallery = '<!doctype html><html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Maquetas del prototipo</title><style>body{font:16px Arial;background:#f5f3ec;color:#20382d;margin:32px}nav{display:flex;flex-wrap:wrap;gap:12px}a{color:#23674b}section{max-width:1100px;margin:40px auto}img{width:100%;height:auto}h1{font-size:34px}p{line-height:1.6}button{font:inherit}@media print{nav{display:none}section{break-before:page}}</style><h1>Maquetas del prototipo</h1><p>Propuesta visual estática. Los enlaces recorren pantallas de ejemplo; no guardan datos, envían mensajes ni ejecutan operaciones.</p><nav>';
 gallery += screens.map(([id, title]) => `<a href="#${id}">${id} · ${esc(title)}</a>`).join('') + '</nav>';
 let screenDoc = '# Prototipos de interfaces\n\nMaquetas estáticas de baja fidelidad, con datos ficticios. No implementan el producto ni conectan con servicios externos. Los enlaces solo permiten revisar el encadenamiento propuesto. [Abrir galería navegable](pantallas/index.html).\n';
+// El encabezado reproduce el de la aplicacion: marca, ciudad y las dos entradas de
+// navegacion reales. La barra lateral conserva las secciones del sistema disenado.
+const cabecera =
+  `<rect x="0" y="0" width="1100" height="70" fill="#183d2d"/>` +
+  text(35, 44, 'cerca.', 23, '#ffffff') +
+  text(140, 44, '·  Córdoba, Argentina', 14, '#c7ddcf', 40) +
+  text(700, 44, 'Explorar negocios', 14, '#e7f0ea', 40) +
+  `<rect x="880" y="20" width="185" height="33" rx="7" fill="#2f6f51"/>` +
+  text(898, 42, 'Mi negocio', 14, '#ffffff', 40);
+
 for (const [id, title, subtitle, rows, buttons, targets, error] of screens) {
-  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="850" viewBox="0 0 1100 850"><rect width="1100" height="850" fill="#f5f3ec"/><rect x="0" y="0" width="1100" height="70" fill="#183d2d"/>${text(35, 43, 'REVISTA LOCAL', 22, '#ffffff')}${text(800, 43, id + ' · Prototipo', 16, '#d6eadc')}<rect x="25" y="95" width="210" height="720" rx="12" fill="#e6ebe4"/>${text(45, 135, 'Explorar mi zona', 17)}${text(45, 190, 'Mi negocio', 17)}${text(45, 245, 'Pedidos y ventas', 17)}${text(45, 300, 'Publicidad', 17)}${text(45, 355, 'Planes', 17)}${text(45, 740, 'Datos de ejemplo', 13)}${text(270, 130, title, 32, '#183d2d', 46)}${text(270, 168, subtitle, 18, '#607367', 60)}`;
+  let svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="850" viewBox="0 0 1100 850"><rect width="1100" height="850" fill="#f5f3ec"/>${cabecera}<rect x="25" y="95" width="210" height="720" rx="12" fill="#e6ebe4"/>${text(45, 135, 'Explorar mi zona', 17)}${text(45, 190, 'Mi negocio', 17)}${text(45, 245, 'Pedidos y ventas', 17)}${text(45, 300, 'Publicidad', 17)}${text(45, 355, 'Planes', 17)}${text(45, 740, id + ' · Datos de ejemplo', 13)}${text(270, 130, title, 32, '#183d2d', 46)}${text(270, 168, subtitle, 18, '#607367', 60)}`;
   let y = 205;
   for (const row of rows) { svg += `<rect x="270" y="${y}" width="790" height="65" rx="9" fill="white" stroke="#d7dfd6"/>${text(290, y + 27, row, 16, '#23392f', 85)}`; y += 78; }
   let bx = 270;
@@ -87,4 +97,4 @@ for (const [id, title, subtitle, rows, buttons, targets, error] of screens) {
 gallery += '</html>';
 fs.writeFileSync(path.join(prot, 'index.html'), gallery);
 fs.writeFileSync(path.join(dir, '05-pantallas.md'), screenDoc);
-console.log('Figuras UML de casos, secuencias, componentes y despliegue; 20 maquetas SVG/PNG y galería generadas.');
+console.log(`Figuras UML de casos, secuencias, componentes y despliegue; ${screens.length} maquetas SVG/PNG y galería generadas.`);

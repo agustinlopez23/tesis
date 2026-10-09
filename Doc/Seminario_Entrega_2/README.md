@@ -20,7 +20,7 @@ La portada no incorpora datos personales del autor. Al integrar el trabajo final
 | Casos de uso, 8 secuencias, BPMN, componentes y despliegue con explicación | [04-diagramas.md](04-diagramas.md) |
 | Clases con operaciones | [Modelo de clases](../model/classes.md) |
 | DER por módulos y completo | [Modelo relacional](../model/ER.md) |
-| Diccionario de 203 campos, tipos y longitudes | [Diccionario por campo](../model/field-dictionary.md) |
+| Diccionario de 204 campos, tipos y longitudes | [Diccionario por campo](../model/field-dictionary.md) |
 | Reglas de integridad y decisiones de persistencia | [Diccionario de restricciones](../model/data-dictionary.md) |
 | Pantallas y encadenamiento | [05-pantallas.md](05-pantallas.md) |
 | RF → CU → pantalla/secuencia → entidades → verificación | [06-trazabilidad.md](06-trazabilidad.md) |
@@ -40,11 +40,13 @@ Las dependencias de documentación se instalan en `.tools/documentation`, separa
 
 ```powershell
 New-Item -ItemType Directory -Force .tools/documentation
-Copy-Item Doc/Entrega2/tools/package.json .tools/documentation/package.json
-Copy-Item Doc/Entrega2/tools/package-lock.json .tools/documentation/package-lock.json
+Copy-Item Doc/Seminario_Entrega_2/tools/package.json .tools/documentation/package.json
+Copy-Item Doc/Seminario_Entrega_2/tools/package-lock.json .tools/documentation/package-lock.json
 npm ci --prefix .tools/documentation --no-audit --no-fund
-node Doc/Entrega2/tools/build-all.mjs
-python Doc/Entrega2/tools/verify.py
+node Doc/Seminario_Entrega_2/tools/build-all.mjs
+node Doc/Seminario_Entrega_2/tools/render-arquitectura.mjs
+node Doc/Seminario_Entrega_2/tools/build-entrega2-scrum.mjs
+python Doc/Seminario_Entrega_2/tools/verify.py
 ```
 
 Editar el texto académico en Markdown. `tools/catalog.json` contiene la matriz de requisitos/casos usada para comprobar trazabilidad; si cambia una ficha, actualizar también esa definición. `tools/screens.json` controla las maquetas, `tools/sequences.json` las secuencias y `../model/model.json` el modelo y diccionario por campo. Los generadores reemplazan únicamente sus artefactos derivados.

@@ -175,6 +175,7 @@ class SaleItem {
   -sale_id: uuid
   -product_id: uuid
   -product_name_snapshot: string
+  -item_origin: string
   -quantity: int
   -unit_price: decimal
   -currency: string

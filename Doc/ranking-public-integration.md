@@ -1,8 +1,18 @@
 # Contrato propuesto de integración del ranking · 21/09/2026
 
-**Diseño parcial: historial y lector completo implementados el 22/09/2026.**
-El adaptador, endpoints de ranking y snapshots siguen propuestos.
-Depende de una política evaluada y versionada. BLL define interfaces y reglas,
+**Persistencia interna implementada al 04/10/2026:** historial, lector, adaptador,
+snapshots/ledger transaccionales, paginación revalidada y purga automática.
+**HTTP local implementado el 04/10/2026:** POST/GET, cursores protegidos, validación,
+no-store, errores y cuotas por proceso. 101/101 API/HTTP/PostGIS. Solo Development/
+Testing con `Ranking:PreviewEnabled=true`; Production permanece cerrado incluso
+con esa opción. Política local de prueba EquityOnly/default/17, sin aprobación.
+**Capacidad local verificada el 04/10/2026:** candidatos y saldos acotados,
+concurrencia separada POST/GET y carga con 1.000 negocios.
+**Proxy/interfaz local implementados el 04/10/2026:** `/revista`, selección explícita
+zona/rubro, historial por cursor, reintento y vencimiento; tarjetas y medición
+compatibles con la guía. 83/83 frontend, build/lint y Playwright escritorio/móvil.
+Producción sigue cerrada; dimensionamiento requiere medición en el despliegue real.
+Activar depende de una política evaluada y versionada. BLL define interfaces y reglas,
 DAL implementa transacciones/PostGIS, API valida HTTP/protege tokens y Next
 administra navegación. Se mantiene ADR-001. Activación deshabilitada por defecto.
 
@@ -15,7 +25,8 @@ migración marca todos los registros anteriores como desconocidos, también borr
 `ActivityContext` identifica negocio/posición/versión, pero no todos los elegibles.
 Los eventos de actividad actuales no permiten reconstruir oportunidades históricas.
 `IRankingCandidateRepository` ya aporta una lectura interna completa separada de
-la guía. Falta conectarla al motor y a la persistencia de oportunidades.
+la guía. `MagazineRankingCandidates` la adapta al motor; `RankingSnapshotService`
+coordina persistencia y `RankingSnapshotPages` revalida páginas actuales.
 
 Primer corte propuesto: **revista**, rubro obligatorio, zonas predefinidas y radio
 fijo 4 km, sin texto ni coordenadas del dispositivo. R=1 para los elegibles del
@@ -27,9 +38,9 @@ generador de etiquetas sintéticas no es un buscador textual productivo.
 
 `FirstPublishedAt` se escribe una sola vez al pasar a publicado; editar,
 despublicar y republicar no reinician edad. Históricos sin evidencia se marcan de
-edad desconocida; el adaptador pendiente deberá asignar N=0. No usar CreatedAt.
+edad desconocida; el adaptador conserva PublishedAt=null y el motor asigna N=0. No usar CreatedAt.
 Conservar esa marca también al republicarlos: null no significa «nunca publicado».
-El motor/adaptador deberá representar esa ausencia explícitamente. Para nuevos
+El motor/adaptador representa esa ausencia explícitamente. Para nuevos
 borradores sí registrar el instante de su primera publicación futura.
 
 ## Candidatos y oportunidad histórica
@@ -39,7 +50,15 @@ rubro y radio válidos; sin corte top 20 previo. Un SELECT DAL/PostGIS mantiene 
 vista consistente. IDs únicos y valores finitos; fallo de integridad aborta la lectura.
 Devuelve ID de negocio/dueño interno, distancia y fecha/marca histórica. Su orden
 por ID es técnico; no calcula ranking ni guarda oportunidades. El lector admite
-DiscoveryArea válida; el coordinador pendiente restringirá revista a zonas y 4 km.
+DiscoveryArea válida; el adaptador restringe revista a zonas y 4 km.
+El adaptador usa centro/nueva-cordoba/alberdi, con los mismos puntos públicos de
+la guía. Clave invariante: `magazine/{zone}/category/{id}/radius/4/eligibility/v1`.
+Cambiar puntos o reglas requiere versionar elegibilidad. R=1 y actividad=0;
+conserva dueños internamente, sin DTO público. Toma hora del servidor tras leer
+y aborta ante historia incoherente, fecha futura, IDs inválidos/duplicados,
+distancia fuera de radio o cancelación. No elige política ni actualiza exposición.
+Evidencia: 95/95 BLL/evaluación y 62/62 HTTP/PostGIS el 04/10, incluidos
+45 candidatos y desconocidos republicados.
 Un límite operativo de candidatos no autoriza truncamiento silencioso: devolver
 error recuperable o ofrecer guía vigente con modo y versión distintos.
 
@@ -67,12 +86,26 @@ no quitar solo su tarjeta y desbalancear el presupuesto. No es protección contr
 
 ## Snapshot, idempotencia y paginación
 
-Propuesta HTTP: `POST /public/ranking-snapshots` recibe zoneId, categoryId,
+Implementación interna: cuatro tablas SQL administradas por `AddRankingSnapshots`,
+fuera del modelo de entidades EF. DAL toma bloqueo transaccional por requestId y
+luego actualiza la secuencia del contexto; el callback BLL consulta/calcula sobre
+la misma conexión/transacción. Read Committed ve los saldos confirmados después
+de esperar el contexto. Fallos/cancelación revierten también secuencia.
+Snapshot conserva IDs y vínculo efímero; oportunidad JSON conserva la traza sin
+requestId ni dueño, con contribuciones consultables por contexto/tiempo.
+Reintento conserva la política original aunque cambie la configuración del servidor.
+Pruebas: 99/99 BLL previas; 101/101 API/HTTP/PostGIS actuales. El contrato HTTP
+siguiente está implementado para previsualización local; la guía conserva su orden.
+
+HTTP local: `POST /public/ranking-snapshots` recibe zoneId, categoryId,
 radiusKm=4 y requestId aleatorio estable durante reintentos de esa consulta.
 Validar Origin, encabezado X-Requested-With, tamaño y tipos como otras mutaciones.
-Respuesta contiene items públicos, expiresAt, rankingVersion y nextCursor.
+Respuesta contiene items públicos, measurement, expiresAt, rankingVersion, cursor,
+hasMore y nextCursor. Creación 201, reintento 200. Política no configurable por
+el cliente; rechaza propiedades desconocidas, rubros inexistentes y cuerpo >4096.
 `GET /public/ranking-snapshots/page?cursor=...` devuelve la siguiente página.
-Ambos no-store. La ruta GET actual continúa disponible para el orden vigente.
+Ambos no-store. `cursor` relee la página actual por GET, incluida la primera,
+sin renovar TTL ni crear oportunidades. La guía continúa con su orden vigente.
 
 Orden completo de IDs inmutable durante **30 minutos sin renovación**. Cursor
 protegido: snapshotId, offset de posiciones, tamaño fijo 20, versión y vencimiento;
@@ -100,9 +133,22 @@ Tras expirar, un requestId conocido responde 410; tras purgar la asociación no
 puede garantizarse deduplicación: el cliente debe emitir ID nuevo, no reintentar
 una operación vencida. Límite explícito, no garantía de exactamente una vez ilimitada.
 
-Snapshot y tokens no sustituyen controles de abuso. Antes de activar: probar
-límites de tasa/memoria/candidatos y latencia con carga, incluidas listas creadas
-y abandonadas; asignación modelada puede manipularse creando nuevas consultas.
+Cuotas iniciales por proceso: 60 POST/minuto y 600 GET/minuto. Cupos simultáneos
+independientes: 4 POST y 16 GET, sin cola; exceso 429 no-store. Se liberan al
+completar, fallar o cancelar, incluida la serialización de la respuesta.
+Máximos por creación: 1.000 candidatos y 10.000 saldos históricos por contexto,
+incluidos negocios ya inelegibles. DAL materializa límite+1 para detectar exceso;
+si lo hay, rechaza todo con 503 y rollback, sin truncar ni avanzar secuencia.
+Reintentar el mismo requestId es seguro; un replay vigente no reconstruye la lista.
+La agregación SQL de saldos sigue procesando el historial de 30 días del contexto;
+el límite de filas materializadas no acota ese trabajo de base ni la retención total.
+Configuración y rangos en `App/README.md`; valores inválidos impiden el arranque.
+Carga local verificada con 1.000 negocios, 17 listas (16 abandonadas tras página 1),
+4 creaciones/16 lecturas simultáneas, paginación completa y replay sin nuevos aportes.
+Ver [evidencia](../openspec/changes/archive/2026-10-04-ranking-capacity/verify-report.md).
+No hay limitación distribuida; antes de activar, dimensionar latencia y memoria en
+el despliegue real. Snapshot y tokens no sustituyen controles de abuso; asignación
+modelada puede manipularse creando nuevas consultas.
 Fallo transaccional: no devolver una lista experimental parcialmente registrada.
 UI permite reintentar o usar guía vigente, identificada con su versión real.
 
@@ -116,9 +162,27 @@ pueden contener snapshotId y posición; aceptar v1 hasta su vencimiento máximo 
 30 minutos, sin inventar asociaciones históricas para ellos. La actividad privada
 mantiene su definición y no expone candidatos, componentes ni ledger.
 
-Al apagar la función, nuevas búsquedas usan guía vigente; cursores ya emitidos
-pueden terminar su TTL si el servicio está sano. Si hay retirada de emergencia,
-responder 410 y ofrecer reinicio, sin reordenar páginas en silencio.
+En previsualización, apagar `Ranking:PreviewEnabled` cierra POST con 404;
+cursores ya emitidos siguen legibles. `Ranking:WithdrawPages` cierra lectura y
+creación habilitada con 410. En producción ambas rutas permanecen cerradas.
+La vista `/revista` exige `RANKING_PREVIEW_ENABLED=true` del servidor Next y entorno
+development/test; su proxy siempre rechaza producción. Montarse no crea listas:
+el visitante elige zona/rubro y confirma. Cada consulta nueva/actualización crea
+requestId; reintentar conserva identidad. Cursor/contexto viven en history.state,
+sin tarjetas cacheadas ni tokens en URL. Atrás/recarga/perfil→atrás revalidan datos.
+La respuesta tardía de filtros anteriores se descarta; cancelar se propaga a API.
+Vencimiento local o 410 retira tarjetas y exige «Actualizar resultados». 429/503/red
+permite reintentar; 404 explica pausa y ofrece guía. No cambia el orden en silencio.
+Al deshabilitar creación, GET del proxy local permite terminar las páginas ya
+abiertas; una apertura nueva de `/revista` queda cerrada. Enlace de acceso local
+visible solo con habilitación; página noindex. No hay activación pública implícita.
+
+Medición: `20261005020557_AllowRankingActivityVersions` admite SHA-256 de política
+en ranking_version varchar(64), solo con source=directory/posición válida.
+Se conservan name-v1/distance-v1, deduplicación y exclusión del dueño. No se mezcla
+actividad observada con exposición modelada. Down se rechaza si quedan eventos
+con hash: esperar retención/purga, nunca truncar ni eliminar atribución para bajar.
+Evidencia: `../openspec/changes/archive/2026-10-04-ranking-preview-ui/verify-report.md`.
 
 Pruebas requeridas, con PostgreSQL/PostGIS temporal cuando corresponda:
 

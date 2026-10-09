@@ -7,7 +7,7 @@ participant "Sales API" as API
 participant "SaleService (BLL)" as BLL
 participant "Repositorio transaccional (DAL)" as DAL
 database "PostgreSQL" as DB
-B -> UI : Confirmar artículos realmente vendidos
+B -> UI : Confirmar artículos realmente vendidos y su origen
 UI -> API : Venta y clave idempotente
 API -> BLL : Autorizar propietario y operación
 BLL -> DAL : Registrar venta atómica
@@ -18,7 +18,7 @@ DB --> DAL : Venta existente
 DAL -> DB : Finalizar sin nuevos movimientos
 DAL --> BLL : Resultado existente
 else Stock suficiente
-DAL -> DB : Insertar venta, líneas y movimientos
+DAL -> DB : Insertar venta, líneas con origen y movimientos
 DAL -> DB : Actualizar saldos y estado de solicitud
 DAL -> DB : Confirmar transacción
 DAL --> BLL : Venta registrada

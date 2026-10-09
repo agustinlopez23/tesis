@@ -19,6 +19,14 @@ El servidor emite comprobantes de 30 minutos a partir de resultados publicados: 
 ### Escenario: atribución disponible
 Al navegar explícitamente de tarjeta a perfil, mantener contexto en la pestaña hasta 5 minutos y en esa entrada del historial. Sin navegación comprobada, usar origen `unknown`. No guardar texto buscado ni coordenadas del visitante en eventos. Los comprobantes acreditan contexto servido, no autenticidad humana de la conducta.
 
+### Escenario: versión de ranking local
+La revista emite el hash SHA-256 de política y posición original en su token.
+Almacenar los 64 caracteres con source=directory y posición válida no nula;
+name-v1/distance-v1 siguen admitidos. Impresión, visita y contacto conservan
+deduplicación y exclusión del dueño. No modifican el ledger de exposición modelada.
+Downgrade de esquema se rechaza mientras existan eventos con hash; no truncar
+versiones ni descartar atribución. Tras retención/purga, Down/Up conserva eventos anteriores.
+
 ### Escenario: visibilidad cambia
 Antes de insertar, verificar negocio publicado, dueño no suspendido y actor autenticado distinto del dueño. Descartar evento no elegible con 204, sin crear fila. Conflictos de deduplicación también devuelven 204.
 

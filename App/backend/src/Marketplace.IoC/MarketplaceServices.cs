@@ -1,5 +1,6 @@
 using Marketplace.BLL;
 using Marketplace.DAL;
+using Marketplace.Integrations;
 using Marketplace.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -20,10 +21,34 @@ public static class MarketplaceServices
         });
         services.AddScoped<IIdentityRepository, IdentityRepository>();
         services.AddScoped<IBusinessRepository, BusinessRepository>();
+        services.AddSingleton(provider => new RankingReadLimits(
+            provider.GetRequiredService<IConfiguration>().GetValue("Ranking:MaxCandidates", 1000),
+            provider.GetRequiredService<IConfiguration>().GetValue("Ranking:MaxBalanceRows", 10000)));
         services.AddScoped<IRankingCandidateRepository, RankingCandidateRepository>();
+        services.AddScoped<MagazineRankingCandidates>();
+        services.AddScoped<IRankingSnapshotStore, RankingSnapshotStore>();
+        services.AddScoped<RankingSnapshotService>();
+        services.AddScoped<IRankingPageRepository, RankingPageRepository>();
+        services.AddScoped<RankingSnapshotPages>();
         services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
         services.AddScoped<AuthenticationService>();
         services.AddScoped<BusinessService>();
+        services.AddScoped<ICatalogRepository, CatalogRepository>();
+        services.AddScoped<CatalogService>();
+        services.AddScoped<CatalogDraftService>();
+        services.AddSingleton<ICatalogDraftProvider>(_ => new OpenAiCatalogDraftProvider(
+            new HttpClient(new SocketsHttpHandler { AllowAutoRedirect = false, PooledConnectionLifetime = TimeSpan.FromMinutes(5) }),
+            new CatalogAiOptions(configuration.GetValue("CatalogAi:Enabled", false), configuration["CatalogAi:ApiKey"], configuration["CatalogAi:Model"])));
+        services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<OrderService>();
+        services.AddScoped<ISalesRepository, SalesRepository>();
+        services.AddScoped<SalesService>();
+        services.AddScoped<ICommerceRepository, CommerceRepository>();
+        services.AddScoped<CommerceService>();
+        services.AddScoped<IProductDiscoveryRepository, ProductDiscoveryRepository>();
+        services.AddScoped<ProductDiscoveryService>();
+        services.AddScoped<ICampaignRepository, CampaignRepository>();
+        services.AddScoped<CampaignService>();
         services.AddScoped<IBusinessProfileRepository, BusinessProfileRepository>();
         services.AddScoped<IPhotoProcessor, PhotoProcessorAdapter>();
         services.AddScoped<BusinessProfileService>();

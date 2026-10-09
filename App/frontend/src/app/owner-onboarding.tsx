@@ -4,9 +4,15 @@ import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { Icon } from "./ui";
 import BusinessPhotos from "./business-photos";
+import BusinessCatalog from "./business-catalog";
+import BusinessOrders from "./business-orders";
+import BusinessInventory from "./business-inventory";
+import BusinessSales from "./business-sales";
+import CommerceMetrics from "./commerce-metrics";
+import CampaignPanel from "./campaign-panel";
 import { BusinessInsights } from "./business-insights";
 
-type Owner = { id: string; email: string; displayName: string };
+type Owner = { id: string; email: string; displayName: string; roles?: string[] };
 type Category = { id: number; name: string; slug: string };
 type Business = {
   id: string; name: string; description: string; address: string; categoryId: number;
@@ -70,6 +76,7 @@ export default function OwnerOnboarding() {
         setMode("login");
       }
       const login = await api("/auth/login", "POST", { email: identity.email, password: identity.password });
+      if (login.status === 401) return setError("Revisá el correo y la contraseña e intentá nuevamente.");
       if (!login.ok) return setError(await responseMessage(login));
       setIdentity((current) => ({ ...current, password: "" }));
       await enterPanel(await login.json());
@@ -179,6 +186,7 @@ export default function OwnerOnboarding() {
         <button className="button button-outline" type="button" disabled={pending} onClick={logout}><Icon name="logout" />Cerrar sesión</button></header>
       <div className="dashboard-summary"><div><Icon name="store" /><strong>{businesses.length}</strong><span>{businesses.length === 1 ? "negocio" : "negocios"}</span></div><div><span className="status-dot"/><strong>{published}</strong><span>publicados</span></div><div><span className="status-dot draft"/><strong>{businesses.length - published}</strong><span>en borrador</span></div><Link className="text-link" href="/explorar">Ver guía pública <Icon name="arrow" /></Link></div>
       <BusinessInsights businesses={businesses} />
+      {owner.roles?.includes("administrator") && <Link className="text-link" href="/administracion/planes">Administrar planes</Link>}
       {error && <p role="alert" className="error">{error}</p>}
       {success && <div role="status" className="success-message"><Icon name="check" />{success}<button type="button" className="icon-button" aria-label="Cerrar confirmación" onClick={() => setSuccess("")}><Icon name="close" /></button></div>}
       <div className="panel-grid">
@@ -214,7 +222,7 @@ export default function OwnerOnboarding() {
           <fieldset disabled={pending} className="publication-section"><legend><span>03</span> Elegí quién puede verlo</legend><label htmlFor="business-status">Estado</label><select id="business-status" value={business.status} onChange={(e) => setBusiness({ ...business, status: e.target.value })}><option value="draft">Borrador</option><option value="published">Publicado</option></select><p className="field-help">{business.status === "published" ? "Al guardar, tu negocio aparecerá en la guía pública con su WhatsApp." : "Solo vos vas a poder verlo. Podés publicarlo cuando esté listo."}</p></fieldset>
           <div className="form-actions">{business.id && <button className="button button-outline" disabled={pending} type="button" onClick={() => { setBusiness({ ...emptyBusiness, categoryId: String(categories[0]?.id ?? "") }); setError(""); setLocationMessage(""); }}>Cancelar edición</button>}<button className="button button-primary" disabled={pending || locating} type="submit">{pending ? "Guardando…" : "Guardar negocio"}<Icon name="check" /></button></div>
         </form>
-        {business.id ? <><BusinessPhotos key={business.id} id={business.id} />
+        {business.id ? <><BusinessOrders key={"orders-" + business.id} id={business.id} /><BusinessInventory key={"inventory-" + business.id} business={business.id} /><BusinessSales key={"sales-" + business.id} business={business.id} /><CommerceMetrics key={"commerce-" + business.id} business={business.id} /><CampaignPanel key={"campaigns-" + business.id} business={business.id} /><BusinessCatalog key={"catalog-" + business.id} id={business.id} /><BusinessPhotos key={business.id} id={business.id} />
           {businesses.find((item) => item.id === business.id)?.status === "published" && <Link className="text-link" href={"/negocios/" + business.id}>Ver perfil público <Icon name="arrow" /></Link>}</> :
           <p className="photo-save-hint"><Icon name="eye" />Guardá el negocio para agregar sus fotos. Podés empezar con un borrador.</p>}
         </div>

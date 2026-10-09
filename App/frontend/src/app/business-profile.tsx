@@ -1,4 +1,5 @@
 "use client";
+import PublicCatalog from "./public-catalog";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -47,6 +48,7 @@ export default function BusinessProfile({ id }: { id: string }) {
             <div className="profile-address"><Icon name="pin" /><div><strong>Dónde encontrarlo</strong><p>{profile.address || "Consultá la dirección por WhatsApp."}</p>{profile.address && <a className="text-link" href={"https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(profile.address + ", Córdoba, Argentina")} target="_blank" rel="noopener noreferrer">Buscar dirección en Maps <Icon name="arrow" /></a>}</div></div>
           </aside>
         </div>
+        <PublicCatalog key={profile.id} id={profile.id} />
       </>}
   </main><SiteFooter /></>;
 }

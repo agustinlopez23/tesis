@@ -16,7 +16,7 @@ Cada RF tiene al menos un caso de uso; cada caso tiene ficha, pantalla y entidad
 | RF-10 | CU-10 | P10 | S03 | OrderRequest, OrderItem, Interaction | Ejecutar flujo normal y alternativas A1/A2 de la ficha. |
 | RF-11 | CU-11 | P11 | S03 | OrderRequest, OrderItem, Sale | Ejecutar flujo normal y alternativas A1/A2 de la ficha. |
 | RF-12 | CU-12 | P12 | Ficha del caso | OrderRequest, AuditEvent | Ejecutar flujo normal y alternativas A1/A2 de la ficha. |
-| RF-13 | CU-13 | P13 | S04 | Sale, SaleItem, StockMovement, Inventory, OrderRequest | Ejecutar flujo normal y alternativas A1/A2 de la ficha. |
+| RF-13 | CU-13 | P13 | S04 | Sale, SaleItem, StockMovement, Inventory, OrderRequest | Ejecutar flujo normal y alternativas A1/A2 de la ficha, incluyendo una línea agregada en la conversación. |
 | RF-14 | CU-14 | P14 | S08 | Sale, SaleItem, StockMovement, AuditEvent | Ejecutar flujo normal y alternativas A1/A2 de la ficha. |
 | RF-15 | CU-15 | P15 | S06 | Plan, PlanCapability, Subscription, AuditEvent | Ejecutar flujo normal y alternativas A1/A2 de la ficha. |
 | RF-16 | CU-16 | P16 | S07 | AdCampaign, Publication, Product | Ejecutar flujo normal y alternativas A1/A2 de la ficha. |

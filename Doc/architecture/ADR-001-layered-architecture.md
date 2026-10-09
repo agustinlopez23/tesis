@@ -29,6 +29,7 @@ API, BLL y DAL son capas. Los demás proyectos son apoyos, no capas adicionales.
 | `Marketplace.DTOs` | Contratos de entrada y salida | Sin persistencia ni dependencias de infraestructura |
 | `Marketplace.Models` | Entidades y tipos del negocio | Sin dependencias de EF Core; mapeos en DAL |
 | `Marketplace.Utility` | Funciones transversales pequeñas, cuando sean necesarias | No es un contenedor de reglas, servicios o integraciones |
+| `Marketplace.Integrations` | Adaptador OpenAI para borradores de catálogo | Implementa contrato BLL; sin persistencia, ranking ni publicación |
 
 `Marketplace` es un nombre provisional. Utility se incorporó para normalizar
 imágenes mediante SkiaSharp: recibe bytes y devuelve bytes/dimensiones, sin
@@ -42,7 +43,8 @@ La flecha indica una referencia de proyecto permitida; no obliga a agregar refer
 Api  -> BLL, DTOs, IoC
 BLL  -> Models, DTOs
 DAL  -> BLL, Models
-IoC  -> BLL, DAL, Utility
+IoC  -> BLL, DAL, Utility, Integrations
+Integrations -> BLL, DTOs
 Models, DTOs -> sin referencias a las capas
 Utility     -> sin referencias a las capas
 ```
@@ -113,7 +115,9 @@ La autorización HTTP no reemplaza la comprobación de propiedad de los producto
 
 ## Integraciones externas
 
-Cuando se implementen OpenAI y almacenamiento, agregar `Marketplace.Integrations` para sus adaptadores. Este proyecto implementará interfaces de BLL y será registrado desde IoC. No ubicar esos clientes en DAL ni Utility.
+`Marketplace.Integrations` se incorporó el 05/10/2026 con el adaptador OpenAI de
+borradores de catálogo, desactivado hasta configurar modelo/clave. Implementa una
+interfaz BLL y se registra desde IoC. No se ubican clientes en DAL ni Utility.
 
 Este proyecto adicional se incorpora cuando exista la funcionalidad, no como requisito para el primer esqueleto.
 

@@ -1,4 +1,231 @@
-# Punto de continuidad — 22/09/2026
+# Punto de continuidad — 06/10/2026
+
+**Navegación mejorada:** Productos disponible en el encabezado compartido, sección
+activa anunciada y menú visible en dos filas en móvil. Mejor separación del título
+de productos. 126/126 frontend, lint/build, 18 análisis axe y 30 controles en tres
+motores correctos; navegación verificada a 320/390/768/1440 y con teclado.
+La demo en http://localhost:3000 ya usa estos cambios visuales; API y datos
+conservados. [Versión y reinicio](demo-local-2026-10-05.md).
+
+**Accesibilidad comercial:** corregido contraste en filtros, tarjetas, perfiles y
+métricas. `npm --prefix App/tools run test:accessibility`: nueve estados en dos
+anchos, 18/18 sin violaciones automáticas ni desbordamiento; salto al contenido
+verificado con teclado. 123/123 frontend, lint/build y regresión comercial.
+Inconclusos de contraste sobre imágenes/decoración conservados para revisión
+humana; no acredita conformidad WCAG completa. [Comando](../App/tools/README.md).
+
+**Estado actual: [cierre local y pendientes reales](cierre-desarrollo-2026-10-05.md).**
+**Matriz de navegadores automatizada:** Chromium/Firefox/WebKit pasan 10
+comprobaciones cada uno con `npm --prefix App/tools run test:browser`.
+Solicitudes, reintentos, ventas/anulación, stock/métricas, permisos y móvil.
+[Comando y límites](../App/tools/README.md). Base temporal eliminada; demo conserva
+6 negocios, 12 productos, arroz en 28 y 1 venta. Rama `test/cross-browser-commerce`.
+
+**Recorrido comercial en demo completado:** solicitud `CE-FFFDC9F41FD5` convertida
+en venta ficticia de dos arroces por ARS 4400; saldo 30 → 28, métricas y seguimiento
+correctos. Seed ejecutado antes y después: conserva venta y saldo sin duplicados.
+[Guion de presentación](guion-demo.md), evidencia local `.tools/seed-demo/flow-result.json`.
+
+**Seed de demostración cargado:** rama `feat/demo-seed`, archivo
+`App/seed/demo.json`, comando `App/tools/seed-demo.ps1`. Tres negocios nuevos,
+doce productos, planes y stock; cuentas titular/admin con credenciales aleatorias
+en `.tools/seed-demo/credentials.json`. Repetición comprobada sin duplicados ni
+alterar datos anteriores; 3/3 pruebas de integración y Playwright correctos.
+[Instrucciones](../App/seed/README.md). Reemplaza la nota de demo sin catálogo.
+
+**Demo actualizada y encendida:** http://localhost:3000, API 5080. Siete migraciones
+aplicadas sobre `marketplace`, con respaldo restaurado y conservación de los tres
+negocios, la cuenta y las fotos verificada. [Operación y reinicio](demo-local-2026-10-05.md).
+IA/ranking experimental desactivados. Datos iniciales complementados por el seed.
+Este estado reemplaza las notas históricas de demo intacta/detenida siguientes.
+
+Última revisión: [recorrido Playwright](qa-playwright-2026-10-05.md), rama
+`fix/playwright-commerce-flow`. Corregidos paneles obsoletos, recuperación del
+conflicto de precio y mensajes de acceso/sesión; **123/123 frontend**, lint/build
+y harness comercial aprobados. Tres sesiones aisladas cerradas; demo intacta.
+API/BLL conservan los resultados previos indicados debajo. Sin push ni despliegue.
+
+## Cierre anterior de implementación
+
+Completados catálogo/planes, solicitudes, ventas/stock, métricas, descubrimiento
+global y campañas. Asistencia opcional preparada en `feat/catalog-draft-assistance`
+desde `7f412cd`, con corrección posterior `7a3567f`: borrador editable, consentimiento,
+confirmación, fallback, adaptador OpenAI desactivado hasta configurar modelo/clave.
+**148 API + 99 BLL/evaluación + 117 frontend**, lint/build/integración/navegador
+correctos. No migraciones nuevas para IA. Sin credenciales reales ni llamadas pagas.
+Evidencia: `../openspec/changes/archive/2026-10-05-catalog-draft-assistance/verify-report.md`.
+
+Recolección humana verificada de nuevo: 2286 juicios pendientes, 1143 pares y cero
+comparados. No inventar anotaciones ni declarar validada la hipótesis. Falta
+configuración/prueba real de IA, selección/congelamiento/reserva/evaluación final y
+ranking experimental de productos. Producción experimental cerrada. Demo intacta;
+servidores temporales detenidos y bases eliminadas. Las secciones siguientes son
+históricas y sus indicaciones de siguiente paso quedan reemplazadas por este estado.
+
+## Campañas completadas previamente
+
+Campañas completadas en `feat/sponsored-campaigns`, base `1fe510b`. Preparación,
+revisión/pago manual, cupos/rotación por zona, anuncios separados, promociones
+gratuitas con imagen revisada, métricas y atribución de solicitudes. Pausa y retiro
+por elegibilidad; historial conservado. **138/138 API y 114/114 frontend**, lint,
+build, integración y navegador correctos. Migración solo en bases temporales;
+demo intacta. Evidencia: `../openspec/changes/archive/2026-10-05-sponsored-campaigns/verify-report.md`.
+Sigue asistencia opcional de catálogo; evaluación humana/final continúa pendiente.
+
+## Búsqueda completada previamente
+
+Búsqueda global de productos completada en `feat/product-discovery`, base `ef20283`.
+`/productos`: texto literal/sin acentos, rubro, zona o ubicación/radio, páginas de
+20, distancia PostGIS y enlace al catálogo. Elegibilidad viva por plan/publicación/
+titular/stock. Orden explícito alfabético o por distancia; no ranking experimental.
+**131/131 API y 109/109 frontend**, lint/build/integración/navegador correctos.
+Tras interrupción de PostgreSQL, runner acotado a dos clases; suite repetida verde
+y base temporal residual eliminada. Demo intacta. Evidencia:
+`../openspec/changes/archive/2026-10-05-product-discovery/verify-report.md`.
+Sigue publicidad con gestión manual y asistencia opcional; falta evidencia humana.
+
+## Métricas completadas previamente
+
+Métricas comerciales completadas en `feat/commerce-metrics`, desde `23bd605`:
+cohorte de solicitudes, contactos y conversión hasta ahora; ventas por fecha de
+registro, anuladas separadas e importes por origen/moneda. 7/30 días de Córdoba,
+lectura consistente y privada, sin migración. **129/129 API y 107/107 frontend**,
+lint/build/integración y navegador correctos. Evidencia:
+`../openspec/changes/archive/2026-10-05-commerce-metrics/verify-report.md`.
+Continuar con descubrimiento global de productos, publicidad y asistencia opcional.
+
+## Ventas e inventario completados previamente
+
+Completadas ventas e inventario en `feat/sales-inventory`, desde `d6ae72b`.
+Saldo inicial explícito, ajustes auditados, ventas desde solicitudes con líneas
+finales y origen, venta presencial separada, descuento atómico e idempotente,
+anulación con devolución explícita. Catálogo público deshabilita productos con
+saldo conocido cero; solicitudes no reservan. Una venta por solicitud.
+
+Validación: **127/127 API/HTTP/PostGIS y 105/105 frontend**, lint/build correctos.
+Integración real y Playwright 1440/390/320, pérdida de respuesta después de guardar
+sin duplicación, anulación sin reposición y rechazo recuperable por stock.
+Migración `20261005114423_AddSalesInventory`, Down poblado bloqueado. Demo intacta;
+bases temporales eliminadas. Reproducción: `node App/tools/verify-catalog.mjs --sales`.
+Evidencia: `../openspec/changes/archive/2026-10-05-sales-inventory/verify-report.md`.
+
+El usuario pidió continuar con todos los pendientes sin confirmaciones rutinarias.
+Seguir por métricas comerciales y descubrimiento de productos; después publicidad
+y asistencia opcional. Evaluación humana y configuración del proveedor de IA
+requieren evidencia externa; se consultó de forma asíncrona mientras sigue el trabajo.
+No inventar anotaciones ni abrir ranking experimental en producción.
+
+## Solicitudes completadas previamente
+
+Completadas solicitudes de productos en `feat/product-orders`, desde `58a0efd`.
+Selección de un negocio, cantidades, nombre/alias, confirmación con referencia y
+precios históricos, resumen para WhatsApp y enlace privado válido por 30 días.
+Reintentos conservan identidad incluso después de perder la respuesta. Panel del
+titular con filtros, atención, contacto recibido y cancelación auditados; funciona
+para solicitudes existentes aunque venza el plan. No registra venta ni stock.
+
+Validación: **120/120 API/HTTP/PostGIS y 100/100 frontend**, build/lint correctos.
+Integración real y Playwright 1440/390/320 px, pérdida de respuesta tras guardar
+sin duplicados, cambios de estado y privacidad del enlace. Bases temporales
+eliminadas. Migración `20261005111735_AddProductOrders`, Down poblado bloqueado.
+Demo sin migrar ni reiniciar. Commits locales por unidad; sin push/PR/despliegue.
+Reproducir con `node App/tools/verify-catalog.mjs --orders` (`--serve` para navegador).
+Evidencia: `../openspec/changes/archive/2026-10-05-product-orders/verify-report.md`.
+
+Próximo incremento: registrar ventas vinculadas a solicitudes y stock atómico,
+incluyendo concurrencia, idempotencia y correcciones auditadas. Siguen pendientes
+IA opcional, búsqueda/ranking global de productos, publicidad y evaluación humana/
+final. Ranking productivo permanece cerrado.
+
+## Catálogo y planes completados previamente — 05/10/2026
+
+Catálogo por negocio y planes manuales en `feat/business-catalog`, derivada de
+`feat/ranking-preview-ui`. Gestión privada, precios ARS/USD, disponibilidad
+declarada, borrador/publicado/archivado y foto procesada. Perfil público con
+búsqueda local y páginas alfabéticas de 20. Administración en
+`/administracion/planes`, períodos sin superposición y revocación auditada.
+Expirar/revocar oculta catálogo y bloquea escrituras conservando datos privados.
+Asignación inicial del rol documentada en `App/README.md`; registro no lo otorga.
+Migración `20261005025720_AddBusinessCatalog`, solo en bases temporales.
+
+Validación de ese incremento: 110/110 API y 90/90 frontend, build/lint e integración
+real correctos. Unidades `0c5cb25`, `fc0ffee`, `13d1baa`, `e3ba78c` y cierre
+`58a0efd`. Evidencia: `../openspec/changes/archive/2026-10-05-business-catalog/verify-report.md`.
+
+## Registro anterior — 04/10/2026
+
+# Punto de continuidad — 04/10/2026
+
+Completado proxy/UI local de ranking en `feat/ranking-preview-ui`, desde `37cad23`.
+`/revista` permite elegir zona/rubro, recorrer listas por cursor, volver/recargar,
+reintentar sin duplicar y actualizar explícitamente tras vencimiento. Nueva
+respuesta `cursor` habilita GET de primera página. El acceso aparece solo con
+`RANKING_PREVIEW_ENABLED=true` en Next dev y `Ranking__PreviewEnabled=true` en API.
+Producción cerrado aunque se configuren ambos flags; guía pública sin cambio de orden.
+Pruebas: **83/83 frontend, 101/101 API/HTTP/PostGIS**, lint/build y Playwright
+1440/390/320 px correctos. Harness real con 45 negocios: 20/20/5, identidad estable,
+retiro de negocio, 410 y reintento 429 con mismo requestId; sin errores inesperados.
+Medición arreglada tras detectar 503 en navegador: migración
+`20261005020557_AllowRankingActivityVersions` admite hash de política sin perder
+compatibilidad; downgrade bloqueado mientras existan eventos de esa versión.
+Aplicada solo a bases temporales; demo intacta. No hay paquetes humanos modificados.
+Unidades locales: `9289572` contrato/proxy, `1bdf7e1` navegación, `bcf67d0` actividad,
+`63957a2` pantalla y cierre siguiente; consultar git. Sin push/PR.
+Evidencia: `../openspec/changes/archive/2026-10-04-ranking-preview-ui/verify-report.md`.
+Reproducción: `node App/tools/verify-ranking-preview.mjs` (Release/build previos).
+Para revisión visual agregar `--serve`; puerto 3100, base temporal eliminada al cerrar.
+Próximo incremento funcional: catálogo por negocio; ranking productivo permanece
+pendiente de anotaciones/política evaluada, dimensionamiento y claves compartidas.
+
+## Capacidad completada previamente
+
+Completado el incremento de capacidad en `feat/ranking-capacity`, desde `56a238e`.
+Candidatos y saldos históricos acotados: exceso rechaza toda creación con 503 y
+rollback; reintento con mismo requestId seguro. Cupos separados de 4 POST/16 GET
+simultáneos, sin cola, 429 no-store y recuperación tras éxito/error/cancelación.
+Configuración validada al arrancar. Carga local de 1.000 negocios: 17 listas,
+50 páginas completas, sin pérdida ni duplicación de exposición al leer/reintentar.
+**100/100 API/HTTP/PostGIS y 99/99 BLL/evaluación**, sin omitidas ni advertencias.
+Política de previsualización EquityOnly/default/17, sin aprobación experimental.
+Solo Development/Testing con `Ranking:PreviewEnabled=true`; Production cerrado.
+Tres unidades locales: `ddc4c3a` lecturas acotadas, `072164a` concurrencia y cierre
+con carga/documentación; consultar git para el último hash. Sin push/PR.
+Evidencia: `../openspec/changes/archive/2026-10-04-ranking-capacity/verify-report.md`.
+El proxy/UI se completó en el incremento posterior. La activación productiva requiere
+política evaluada/anotaciones y dimensionamiento real; carga HTTP en proceso
+no certifica memoria pico, varias instancias ni agregado SQL a escala de 30 días.
+Paquetes humanos y borrador intactos. Demo sin migrar/reiniciar/habilitar.
+Contrato y configuración en `ranking-public-integration.md` y `../App/README.md`.
+
+Incremento HTTP anterior: cursores protegidos con TTL absoluto, POST/GET locales,
+validación, no-store, reintentos, 400/409/410, cuotas 60/600 por minuto y retirada.
+Evidencia: `../openspec/changes/archive/2026-10-04-ranking-http-preview/verify-report.md`.
+
+## Persistencia interna completada previamente
+
+El usuario ya realizó la Entrega 2 y quiere avanzar para terminar la app.
+Completada la persistencia interna del ranking de revista: creación atómica de
+snapshot/oportunidad/contribuciones/secuencia; reintentos concurrentes deduplicados;
+traza completa reproducible sin datos del visitante; previsualización propia en cero.
+Listas de 30 minutos, historial de 30 días, purga al arranque/cada hora. Paginación
+20/20/5 revalida datos actuales, conserva huecos/posiciones y no suma exposición.
+El adaptador previo conserva historia desconocida como null, con N=0.
+**99/99 BLL/evaluación y 72/72 HTTP/PostGIS**, sin omitidas. Evidencia:
+`../openspec/changes/archive/2026-10-04-ranking-snapshots/verify-report.md`.
+
+Próximo incremento del ranking: endpoints y cursores protegidos, validaciones y
+límites operativos, luego interfaz. Servicios actuales son internos; guía vigente
+sin cambios. La activación sigue requiriendo anotaciones humanas/política evaluada.
+No alterar paquetes ni borrador previo. Para avanzar funcionalidad comercial
+quedan catálogo, capacidades por plan, pedidos, ventas/stock y publicidad.
+Rama `feat/ranking-snapshot-persistence`, derivada de `feat/magazine-ranking-candidates`;
+seis unidades locales con pruebas/documentación, sin push ni PR. Consultar git.
+Nueva migración `20261004100000_AddRankingSnapshots`: tablas SQL internas fuera
+del modelo EF, reversible y probada solo en bases temporales. Aplicar migraciones
+habituales antes de usar backend actualizado. Docker/PostGIS activo; demo no
+migrada ni reiniciada. Contrato actualizado en `ranking-public-integration.md`.
+
+## Registro anterior — 22/09/2026 (histórico)
 
 Sesión continuada: historial de publicación y lector de candidatos completos implementados. El usuario
 prioriza avanzar por incrementos completos sin confirmaciones rutinarias.

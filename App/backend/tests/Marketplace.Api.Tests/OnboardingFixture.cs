@@ -29,7 +29,8 @@ public sealed class OnboardingFixture : IAsyncLifetime
             {
                 ["ConnectionStrings:Marketplace"] = ConnectionString,
                 ["FrontendOrigin"] = "http://localhost:3000",
-                ["Auth:PermitLimit"] = "1000"
+                ["Auth:PermitLimit"] = "1000",
+                ["CatalogAi:Enabled"] = "false"
             })));
         // Transitional red-phase fixture: no initializer exists in the scaffold yet.
         using var scope = Factory.Services.CreateScope();

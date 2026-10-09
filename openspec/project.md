@@ -1,6 +1,65 @@
 # Contexto SDD de la tesis
 
-## Estado vigente — 2026-09-22
+## Estado vigente — 2026-10-05
+
+Catálogo/planes, solicitudes, ventas/inventario, métricas comerciales, búsqueda
+global y campañas manuales implementados. Asistencia opcional preparada y
+desactivada hasta configurar modelo/clave; borrador revisable sin auto publicación.
+**148 API, 99 BLL/evaluación y 123 frontend**, lint/build/integración/navegador
+correctos. Revisión Playwright posterior corrigió paneles obsoletos, selección con
+precio viejo y mensajes de acceso/sesión; API/BLL conservan la validación anterior.
+Evidencia en `../Doc/qa-playwright-2026-10-05.md`.
+Contratos en specs; estado en `../Doc/continuidad.md`. Sigue prueba real
+de IA, evaluación humana/final y ranking experimental de productos. 2286 juicios
+pendientes comprobados; no hay activación experimental productiva.
+
+Demo local actualizada en 3000/API 5080, con respaldo restaurado y doce migraciones
+aplicadas. Seed JSON/consola separado agrega tres negocios, doce productos, stock,
+planes ficticios y cuentas titular/admin, conservando los tres negocios, cuenta
+y fotos anteriores. Repetición y atomicidad verificadas: 3/3 pruebas de seed y
+Playwright. IA/ranking desactivados. Operación: `../Doc/demo-local-2026-10-05.md`.
+
+## Estado anterior — 2026-10-04
+
+Completado `ranking-preview-ui`: `/revista` local con proxy cerrado en producción,
+selección explícita, navegación por cursor actual/siguiente, historial revalidado,
+reintento estable, vencimiento y recuperación. Tarjetas y atribución compartidas
+con guía. Compatibilidad de actividad requiere
+`20261005020557_AllowRankingActivityVersions`, aplicada solo en bases temporales.
+**83/83 frontend y 101/101 API/HTTP/PostGIS**, build/lint y Playwright a 1440/390/320px.
+Harness Next/API/PostGIS: 45 negocios, 20/20/5, replay sin nuevos aportes, medición
+deduplicada y 404 productivo aun con flags activos. Guía y demo conservan su estado.
+Evidencia: `changes/archive/2026-10-04-ranking-preview-ui/verify-report.md`.
+Siguiente incremento funcional: catálogo por negocio. Activación productiva del
+ranking requiere anotaciones/política evaluada, dimensionamiento y claves compartidas.
+
+Capacidad completada previamente:
+
+Capacidad del ranking local: máximos de 1.000 candidatos
+y 10.000 saldos por contexto, exceso 503 con rollback, sin truncar; reintento seguro.
+Cupos independientes de 4 POST/16 GET simultáneos, sin cola, recuperación tras
+éxito/error/cancelación y validación al arrancar. Carga integrada con 1.000 negocios,
+17 listas y 50 páginas; integridad conservada. **100/100 API/HTTP/PostGIS y 99/99
+BLL/evaluación**, cero omitidas. Evidencia: `changes/archive/2026-10-04-ranking-capacity/verify-report.md`.
+Se conservan cursores, TTL, cuotas por minuto y retirada de emergencia del HTTP local.
+Solo Development/Testing con habilitación explícita; producción cerrada.
+Proxy/UI completado posteriormente; activación productiva sujeta a anotaciones, política evaluada y
+dimensionamiento del despliegue real. Demo sin cambios.
+
+Estado previo dentro del mismo día:
+
+Entrega 2 realizada por el usuario. Desarrollo retomado con adaptador interno
+`MagazineRankingCandidates`: tres zonas públicas/rubro/4 km, contexto versionado,
+R=1, sin truncar candidatos e historia desconocida explícita con N=0 en el motor.
+Snapshots/ledger internos completados: transacción, deduplicación concurrente,
+secuencia, traza reproducible, previsualización propia en cero y purga automática.
+Páginas estables revalidan elegibilidad sin rellenar huecos ni sumar exposición.
+Verificación: **99/99 BLL/evaluación y 72/72 HTTP/PostGIS**. Evidencia:
+`changes/archive/2026-10-04-ranking-snapshots/verify-report.md`.
+HTTP local completado en el incremento posterior; siguen controles de carga y UI; ranking público
+deshabilitado hasta evaluación/política. Catálogo/pedidos siguen pendientes.
+
+## Estado anterior — 2026-09-22
 
 Implementados: scaffold, onboarding de responsables y guía pública de negocios,
 búsqueda textual/rubro, descubrimiento por ubicación y rediseño visual Cerca (nombre de trabajo).
@@ -155,3 +214,18 @@ categorías semilla y alta/listado/consulta/edición de negocios propios con
 `geography(Point,4326)`. El frontend incorpora proxy de mismo origen y panel en
 español. Verificación: backend 10/10, frontend 25/25, lint y build aprobados, más
 recorrido integrado sobre base temporal. No hay despliegue público configurado.
+
+## Incremento 05/10/2026 — catálogo, planes y solicitudes
+
+Catálogo por negocio, períodos manuales auditados y solicitudes completados.
+Perfil público, edición versionada, foto procesada y preservación al vencer.
+Solicitudes con precios históricos, reintentos sin duplicados, resumen para
+WhatsApp, acceso privado por 30 días y gestión auditada del titular.
+API/PostGIS 120/120 y frontend 100/100; build/lint e integración real correctos.
+Rama local `feat/product-orders`; demo sin migrar. Ver
+`specs/business-catalog/spec.md`, `specs/product-orders/spec.md` y
+`../Doc/continuidad.md`. Ventas/stock completados en el incremento siguiente:
+ajustes auditados, líneas finales, transacciones sin stock negativo, replay y
+anulación con devolución explícita. API 127/127 y frontend 105/105. Rama
+`feat/sales-inventory`; ver `specs/sales-inventory/spec.md`. Sigue el alcance
+comercial/experimental restante, con ranking productivo cerrado.

@@ -431,10 +431,10 @@ Fuente: elaboración propia.
 | Objetivos asociados | OP-03; OP-01 |
 | Requerimiento principal | RF-13 |
 | Actor principal | Responsable del negocio |
-| Descripción | Registrar una venta vinculada a solicitud o presencial, conservar artículos finales y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo. |
+| Descripción | Registrar una venta vinculada a solicitud o presencial, conservar los artículos finales con el origen de cada línea y descontar stock atómicamente, impidiendo conversiones duplicadas y stock negativo. |
 | Precondiciones | Sesión autorizada; productos propios; solicitud no cancelada ni convertida cuando corresponda. |
 | Disparador | El actor inicia la función desde P13. |
-| Postcondiciones | Venta reportada y saldo consistentes; como máximo una venta por solicitud. |
+| Postcondiciones | Venta reportada y saldo consistentes; como máximo una venta por solicitud, con el origen declarado en cada línea. |
 | Frecuencia esperada | A relevar en piloto; ejecución según demanda del actor. |
 | Importancia | Crítica |
 | Comentarios | Modelo propuesto; datos sensibles sujetos a autorización. Pantalla P13. |
@@ -444,9 +444,9 @@ Fuente: elaboración propia.
 | Paso | Acción |
 | --- | --- |
 | 1 | Abre una solicitud o inicia una venta presencial. |
-| 2 | Confirma productos, cantidades y precios efectivamente acordados. |
+| 2 | Confirma los productos, cantidades y precios efectivamente acordados, quitando, cambiando o agregando líneas respecto de la solicitud. |
 | 3 | El sistema valida idempotencia, propiedad y disponibilidad con control concurrente. |
-| 4 | Guarda venta, líneas, movimientos y saldo dentro de una transacción. |
+| 4 | Guarda venta, líneas con su origen, movimientos y saldo dentro de una transacción. |
 | 5 | Si existe solicitud la marca convertida y conserva la relación de origen. |
 
 **Cursos alternativos**
