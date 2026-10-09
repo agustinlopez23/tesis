@@ -9,6 +9,7 @@
   },
   "packageManager": "npm@11.19.0",
   "scripts": {
+    "audit:ci": "node ../tools/audit-policy.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

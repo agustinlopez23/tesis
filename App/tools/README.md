@@ -66,3 +66,11 @@ Las capturas privadas contienen datos temporales y permanecen fuera de Git.
 No acredita conformidad WCAG completa: faltan lectores de pantalla, interacción
 completa por teclado, dispositivos físicos y revisión del contraste sobre imágenes.
 Referencia: [pruebas de accesibilidad con Playwright](https://playwright.dev/docs/accessibility-testing).
+
+## Excepción temporal de auditoría
+
+`npm --prefix App/frontend run audit:ci` analiza todos los avisos y solo acepta
+GHSA-vfj7-8cjw-p6xm en la cadena de desarrollo y versiones revisadas, hasta el
+15/10/2026 inclusive, hora argentina. CI también exige auditoría de producción
+sin excepciones. Pruebas: `node --test App/tools/audit-policy.test.mjs`.
+[Autorización, límites y retiro](../../Doc/integracion-main-2026-10-08.md).
