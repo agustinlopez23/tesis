@@ -66,7 +66,7 @@ context: |
   falla antes de escribir su implementación, seguida por el mínimo cambio
   para pasar y una refactorización segura.
 
-  Toolchain fijado: .NET SDK 10.0.400, Next.js 16.3.4, Node.js 24.20.0 y
+  Toolchain fijado: .NET SDK 10.0.400, Next.js 16.3.8, Node.js 24.20.0 y
   npm 11.19.0. Revalidar compatibilidad antes de cambiar dependencias.
 
   Runners previstos: backend con xUnit mediante `dotnet test`; frontend con
