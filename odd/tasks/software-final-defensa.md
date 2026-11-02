@@ -30,7 +30,7 @@ La auditoría del 01/11/2026 encontró que la Entrega 4 promete más de lo que h
 - [x] T3 Promociones en el seed y seeder habilitado para la base hosteada con confirmación explícita. Ruta: delegada.
 - [x] T4 Clave del pedido oculta por defecto con opción de mostrar y copiar. Ruta: delegada (se agrupa con T3).
 - [x] T5 Preparación de despliegue: Dockerfile de la API, migraciones al iniciar, claves de Data Protection persistidas, encabezados reenviados, guía de despliegue y variables. Ruta: delegada.
-- [ ] T6 Alinear el texto de la Entrega 4 con el software, recapturar pantallas y regenerar el PDF. Ruta: delegada.
+- [x] T6 Alinear el texto de la Entrega 4 con el software, recapturar pantallas y regenerar el PDF. Ruta: delegada.
 - [x] T7 Pruebas locales completas: suites, scripts de punta a punta y recorrido en navegador de cada historia de usuario contra la demo local. Ruta: delegada (verificación).
 - [x] T9 Cerrar brechas de criterios halladas en T7 (A): HU-01 mensaje de cuenta suspendida, HU-06 saldo disponible y disponibilidad baja, HU-08 tolerancia a errores de tipeo, orden por ranking y ampliar radio. Ruta: delegada.
 - [x] T10 Cerrar brechas de criterios halladas en T7 (B): HU-09 promociones en el perfil y mensaje con contexto, HU-15 capacidades de planes, HU-17 motivo de rechazo visible, HU-20/21 versión visible y registrada, HU-22 actividad del responsable con tope; script `verify-connectivity`, test inestable de despliegue y dos fallas de accesibilidad. Ruta: delegada.
