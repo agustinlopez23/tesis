@@ -4,8 +4,10 @@
 
 Con la base local migrada: `powershell -NoProfile -ExecutionPolicy Bypass -File
 App/tools/seed-demo.ps1` desde la raíz del repositorio. Agrega tres comercios,
-doce productos, stock inicial y planes ficticios. Se puede repetir sin duplicar
-ni restablecer ediciones. [Datos, accesos e instrucciones](seed/README.md).
+doce productos, stock inicial, planes ficticios y dos promociones publicadas. Se
+puede repetir sin duplicar ni restablecer ediciones; renueva la vigencia de las
+promociones. Para la base hosteada de la demo online se requiere
+`--allow-hosted-demo` y `DEMO_SEED_CONFIRM_HOST`. [Datos, accesos e instrucciones](seed/README.md).
 
 ## Pruebas de navegador repetibles
 

@@ -6,8 +6,11 @@ import { money, Order, orderMessage, orderStatus, privateOrderPath } from "./ord
 
 export default function OrderReceipt({ order, accessKey }: { order: Order; accessKey?: string }) {
   const [notice, setNotice] = useState("");
+  const [showLink, setShowLink] = useState(false);
   const message = orderMessage(order);
   const privatePath = accessKey ? privateOrderPath(order.id, accessKey) : null;
+  // The key works like a password: keep it masked on screen unless the customer asks to see it.
+  const visiblePath = privatePath && (showLink ? privatePath : privateOrderPath(order.id, "•".repeat(12)));
   async function copy(value: string) {
     try { await navigator.clipboard.writeText(value); setNotice("Copiado."); }
     catch { setNotice("No pudimos copiar automáticamente. Seleccioná y copiá el texto de abajo."); }
@@ -27,7 +30,11 @@ export default function OrderReceipt({ order, accessKey }: { order: Order; acces
       <div className="order-private-link"><Link className="text-link" href={privatePath!} prefetch={false}>Consultar mi solicitud</Link>
         <button type="button" className="text-link" onClick={() => void copy(window.location.origin + privatePath)}>Copiar enlace privado</button>
         <p className="field-help">Guardá este enlace. Quien lo tenga podrá consultar tu solicitud hasta el {new Date(order.accessExpiresAt).toLocaleDateString("es-AR")}. La referencia sola no permite recuperarla.</p>
-        <input readOnly aria-label="Enlace privado" value={typeof window === "undefined" ? privatePath! : window.location.origin + privatePath} />
+        <p className="field-help">El enlace es privado y funciona como una contraseña: no lo compartas ni lo muestres en pantalla.</p>
+        <div className="order-private-field">
+          <input readOnly aria-label="Enlace privado" value={typeof window === "undefined" ? visiblePath! : window.location.origin + visiblePath} />
+          <button type="button" className="text-link" aria-pressed={showLink} onClick={() => setShowLink(value => !value)}>{showLink ? "Ocultar enlace" : "Mostrar enlace"}</button>
+        </div>
       </div>
     </>}
     {notice && <p role="status">{notice}</p>}

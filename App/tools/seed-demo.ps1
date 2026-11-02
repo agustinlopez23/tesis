@@ -1,4 +1,9 @@
-﻿$ErrorActionPreference = 'Stop'
+﻿# Loads the demo seed into the LOCAL workspace database (App/.env.local, port 55432).
+# Generates distinct owner/admin passwords on first run and keeps them in .tools/seed-demo/credentials.json.
+# Re-running is safe: existing data is preserved and the two demo promotions get a fresh 30-day window.
+# Hosted demo database (e.g. Supabase): this script never targets it. Run Marketplace.Seed directly with
+# --apply --allow-hosted-demo and DEMO_SEED_CONFIRM_HOST=<exact host>; see App/seed/README.md (bash example included).
+$ErrorActionPreference = 'Stop'
 $seedRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
 $seedDirectory = Join-Path $seedRoot '.tools/seed-demo'
 $credentialPath = Join-Path $seedDirectory 'credentials.json'

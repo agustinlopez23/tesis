@@ -36,5 +36,23 @@
         { "id": "de200000-0000-4000-8000-000000000012", "name": "Bufanda tejida", "description": "Bufanda de punto, color natural.", "category": "Accesorios", "price": 12500, "currency": "ARS", "stock": 8, "available": true, "status": "published" }
       ]
     }
+  ],
+  "campaigns": [
+    {
+      "id": "de300000-0000-4000-8000-000000000001", "businessId": "de100000-0000-4000-8000-000000000001",
+      "productId": "de200000-0000-4000-8000-000000000001", "zoneId": "centro",
+      "title": "Semana del mate en el Almacén de la Plaza",
+      "description": "Llevá la yerba mate de 500 g y retirala en el local, a metros de la Plaza San Martín.",
+      "conditions": "Promoción ficticia de demostración. Válida hasta agotar stock; retiro en el local.",
+      "paymentReference": "DEMO-SEED-0001"
+    },
+    {
+      "id": "de300000-0000-4000-8000-000000000002", "businessId": "de100000-0000-4000-8000-000000000002",
+      "productId": "de200000-0000-4000-8000-000000000006", "zoneId": "nueva-cordoba",
+      "title": "Merienda en el Buen Pastor: medialunas por seis",
+      "description": "Media docena de medialunas recién horneadas para compartir en Nueva Córdoba.",
+      "conditions": "Promoción ficticia de demostración. Pedidos de lunes a sábado, de 16 a 19 h.",
+      "paymentReference": "DEMO-SEED-0002"
+    }
   ]
 }

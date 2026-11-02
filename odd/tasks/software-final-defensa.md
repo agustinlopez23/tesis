@@ -27,8 +27,8 @@ La auditoría del 01/11/2026 encontró que la Entrega 4 promete más de lo que h
 ## Tareas
 - [x] T1 Ranking hiperlocal en producción: flag de producción en API y web, `/explorar` con zona y rubro ordenado por el ranking, política versionada. Ruta: delegada (escritor, 2+ archivos no triviales).
 - [x] T2 Moderación del administrador (HU-19): rubros, suspender y reactivar cuentas y negocios, auditoría; bloqueo tras 5 intentos fallidos. Ruta: delegada.
-- [ ] T3 Promociones en el seed y seeder habilitado para la base hosteada con confirmación explícita. Ruta: delegada.
-- [ ] T4 Clave del pedido oculta por defecto con opción de mostrar y copiar. Ruta: delegada (se agrupa con T3).
+- [x] T3 Promociones en el seed y seeder habilitado para la base hosteada con confirmación explícita. Ruta: delegada.
+- [x] T4 Clave del pedido oculta por defecto con opción de mostrar y copiar. Ruta: delegada (se agrupa con T3).
 - [ ] T5 Preparación de despliegue: Dockerfile de la API, migraciones al iniciar, claves de Data Protection persistidas, encabezados reenviados, guía de despliegue y variables. Ruta: delegada.
 - [ ] T6 Alinear el texto de la Entrega 4 con el software, recapturar pantallas y regenerar el PDF. Ruta: delegada.
 - [ ] T7 Publicar online (requiere cuentas del usuario). Ruta: inline con el usuario.
@@ -43,5 +43,8 @@ La auditoría del 01/11/2026 encontró que la Entrega 4 promete más de lo que h
 - T1 revisión: riesgo medio, revisión debida (presupuesto de tramo); consentimiento pendiente del usuario (linaje review-4146b47aa3786af4).
 - T2 (02/11/2026): `/admin/categories`, `/admin/moderation/*`, `/admin/audit`, tabla `admin_actions`, bloqueo 15 min tras 5 fallos (401 genérico), páginas Rubros/Moderación/Auditoría. Migración `20261102021436_AddAdminModeration` aplicada a la base demo. Api.Tests 158/158, BLL 99/99, frontend 144/144, lint y build OK; padre relanzó AdminModeration 5/5.
 
+- T2 revisión: riesgo medio, revisión debida; consentimiento pendiente del usuario (linaje review-a69c0e996281f993).
+- T3/T4 (02/11/2026): dos promociones sembradas con ventana relativa (ahora−1 d a +29 d) renovable de forma idempotente; seed hosteado solo con `--allow-hosted-demo` + `DEMO_SEED_CONFIRM_HOST`; cuentas evaluadoras con `SEED_OWNER_PASSWORD`/`SEED_ADMIN_PASSWORD`. Clave del pedido enmascarada con "Mostrar enlace". Api.Tests 168/168, BLL 99/99, frontend 147/147, lint OK; padre relanzó build (exit 0). Seed local aplicado: 2 promociones visibles.
+
 ## Siguiente paso
-T3 y T4.
+T5.
