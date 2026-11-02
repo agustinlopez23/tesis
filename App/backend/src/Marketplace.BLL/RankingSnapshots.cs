@@ -7,11 +7,13 @@ public sealed record RankingTrace(int Position, RankingCandidate Candidate, Rank
     ExposureBalance Previous, double Expected, double Received);
 
 // Private audit data: never serialize this record into a public response.
+// PolicyLabel names the published policy (for example equity-v1); null for unnamed preview variants.
 public sealed record RankingOpportunity(Guid Id, RankingContext Context, RankingVariant Variant,
-    RankingConfiguration Configuration, string PolicyHash, string Reason, IReadOnlyList<RankingTrace> Candidates);
+    RankingConfiguration Configuration, string PolicyHash, string Reason, IReadOnlyList<RankingTrace> Candidates,
+    string? PolicyLabel = null);
 
 public sealed record RankingSnapshot(Guid Id, string ContextKey, DateTimeOffset CreatedAt,
-    DateTimeOffset ExpiresAt, string PolicyHash, IReadOnlyList<Guid> BusinessIds);
+    DateTimeOffset ExpiresAt, string PolicyHash, IReadOnlyList<Guid> BusinessIds, string? PolicyLabel = null);
 
 public enum SnapshotStatus { Created, Existing, Conflict, Expired }
 public sealed record SnapshotResult(SnapshotStatus Status, RankingSnapshot? Snapshot = null);

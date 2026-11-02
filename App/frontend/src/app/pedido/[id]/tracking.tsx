@@ -36,7 +36,7 @@ export default function OrderTracking({ id }: { id: string }) {
     {state === "loading" && <p role="status">Consultando solicitud…</p>}
     {state === "missing" && <p role="alert">El enlace privado no es válido o venció. Necesitás el enlace completo que recibiste al confirmar; la referencia sola no permite acceder.</p>}
     {state === "error" && <p role="alert">No pudimos consultar la solicitud. Intentá nuevamente.</p>}
-    {state === "ready" && order && <OrderReceipt order={order} accessKey={key} />}
+    {state === "ready" && order && <OrderReceipt order={order} accessKey={key} headingLevel={2} />}
     {state !== "missing" && <button className="button button-outline" disabled={state === "loading"} onClick={() => { setOrder(null); setState("loading"); setAttempt(n => n + 1); }}>Actualizar estado</button>}
   </>;
 }

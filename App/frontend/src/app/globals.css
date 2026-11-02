@@ -120,6 +120,13 @@
   .gallery-thumbnails img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: block; }
   .gallery-thumbnails span { position: absolute; left: 8px; bottom: 6px; color: white; font-size: 10px; background: #273d32c9; border-radius: 3px; padding: 1px 4px; }
   .profile-about { margin: 36px 0; border-top: 1px solid var(--line); padding-top: 28px; }
+  .profile-promotions { margin: 36px 0; border-top: 1px solid var(--line); padding-top: 28px; }
+  .profile-promotions h2 { margin-bottom: 18px; }
+  .ranking-version { margin-left: 10px; font-size: 11px; color: var(--muted); }
+  .campaign-rejection { border-left: 3px solid #b44c2d; padding-left: 10px; }
+  .plan-capabilities { margin: 12px 0 20px; }
+  .plan-capabilities summary { cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 0; }
+  .plan-capabilities td { text-align: center; }
   .profile-about h2 { font-size: 29px; margin: 12px 0 16px; letter-spacing: -.5px; }
   .profile-about > p:last-child { color: var(--muted); white-space: pre-line; overflow-wrap: anywhere; font-size: 15px; }
   .profile-contact { position: sticky; top: 24px; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 28px; }

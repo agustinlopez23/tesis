@@ -88,8 +88,7 @@ public sealed class DeploymentReadinessTests(OnboardingFixture fixture) : IClass
         }
         finally
         {
-            NpgsqlConnection.ClearAllPools();
-            await Execute(admin, $"DROP DATABASE IF EXISTS \"{name}\" WITH (FORCE)");
+            await DropDatabase(admin, name);
         }
     }
 
@@ -175,7 +174,23 @@ public sealed class DeploymentReadinessTests(OnboardingFixture fixture) : IClass
     {
         await using var admin = new NpgsqlConnection(connection);
         await admin.OpenAsync();
-        await using var command = new NpgsqlCommand(sql, admin);
+        // CREATE/DROP DATABASE can wait on checkpoints when the full suite loads the server.
+        await using var command = new NpgsqlCommand(sql, admin) { CommandTimeout = 180 };
         await command.ExecuteNonQueryAsync();
+    }
+
+    // Forced drop after clearing pools; retried because a loaded server can still time out once.
+    private static async Task DropDatabase(string admin, string name)
+    {
+        NpgsqlConnection.ClearAllPools();
+        for (var attempt = 1; ; attempt++)
+        {
+            try { await Execute(admin, $"DROP DATABASE IF EXISTS \"{name}\" WITH (FORCE)"); return; }
+            catch (Exception error) when (attempt < 3 && error is NpgsqlException or TimeoutException)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(2 * attempt));
+                NpgsqlConnection.ClearAllPools();
+            }
+        }
     }
 }

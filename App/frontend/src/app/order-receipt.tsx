@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { money, Order, orderMessage, orderStatus, privateOrderPath } from "./order-api";
 
-export default function OrderReceipt({ order, accessKey }: { order: Order; accessKey?: string }) {
+export default function OrderReceipt({ order, accessKey, headingLevel = 3 }: { order: Order; accessKey?: string; headingLevel?: 2 | 3 }) {
+  const Heading = headingLevel === 2 ? "h2" : "h3";
   const [notice, setNotice] = useState("");
   const [showLink, setShowLink] = useState(false);
   const message = orderMessage(order);
@@ -16,7 +17,7 @@ export default function OrderReceipt({ order, accessKey }: { order: Order; acces
     catch { setNotice("No pudimos copiar automáticamente. Seleccioná y copiá el texto de abajo."); }
   }
   return <section className="order-receipt" aria-label="Resumen de solicitud">
-    <p className="eyebrow">Solicitud guardada</p><h3>{order.reference}</h3>
+    <p className="eyebrow">Solicitud guardada</p><Heading>{order.reference}</Heading>
     <p>{order.businessName} · {order.customerName}</p>
     <p><strong>{orderStatus(order.status)}</strong> · {order.contactReceivedAt ? "Contacto recibido, confirmado por el negocio." : "El negocio aún no confirmó haber recibido el contacto."}</p>
     <ul className="order-lines">{order.lines.map(line => <li key={line.productId}><span>{line.quantity} × {line.name}</span><strong>{money(line.unitPrice * line.quantity, line.currency)}</strong></li>)}</ul>

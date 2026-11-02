@@ -56,7 +56,7 @@ public sealed class OnboardingFixture : IAsyncLifetime
         NpgsqlConnection.ClearAllPools();
         await using var admin = new NpgsqlConnection(adminConnection);
         await admin.OpenAsync();
-        await using var drop = new NpgsqlCommand($"DROP DATABASE IF EXISTS \"{databaseName}\" WITH (FORCE)", admin);
+        await using var drop = new NpgsqlCommand($"DROP DATABASE IF EXISTS \"{databaseName}\" WITH (FORCE)", admin) { CommandTimeout = 180 };
         await drop.ExecuteNonQueryAsync();
     }
 }

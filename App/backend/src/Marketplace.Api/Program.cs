@@ -268,7 +268,7 @@ app.MapPut("/businesses/{id:guid}", async (
         BusinessSaveStatus.NotFound => Results.NotFound(),
         _ => Results.BadRequest(new { message = "Revisá los datos del negocio." })
     };
-});
+}).RecordsOwnerActivity(OwnerActivityKinds.ProfileUpdate);
 
 if (args.Contains("--migrate", StringComparer.Ordinal))
 {

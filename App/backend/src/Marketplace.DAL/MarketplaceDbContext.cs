@@ -14,6 +14,7 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<BusinessProfile> Businesses => Set<BusinessProfile>();
     public DbSet<BusinessPhoto> BusinessPhotos => Set<BusinessPhoto>();
     public DbSet<BusinessActivity> BusinessActivity => Set<BusinessActivity>();
+    public DbSet<OwnerActivity> OwnerActivity => Set<OwnerActivity>();
     public DbSet<BusinessSubscription> BusinessSubscriptions => Set<BusinessSubscription>();
     public DbSet<CatalogProduct> CatalogProducts => Set<CatalogProduct>();
     public DbSet<ProductPhoto> ProductPhotos => Set<ProductPhoto>();
@@ -37,6 +38,18 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
         SalesConfiguration.Configure(modelBuilder);
         CampaignConfiguration.Configure(modelBuilder);
         modelBuilder.ApplyConfiguration(new BusinessActivityConfiguration());
+        modelBuilder.Entity<OwnerActivity>(entity =>
+        {
+            entity.ToTable("owner_activity", table => table.HasCheckConstraint("CK_owner_activity_kind",
+                "kind IN ('profile_update', 'catalog_update', 'promotion_update')"));
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).HasColumnName("id").UseIdentityAlwaysColumn();
+            entity.Property(x => x.BusinessId).HasColumnName("business_id");
+            entity.Property(x => x.Kind).HasColumnName("kind").HasMaxLength(20);
+            entity.Property(x => x.OccurredAt).HasColumnName("occurred_at");
+            entity.HasIndex(x => new { x.BusinessId, x.Kind, x.OccurredAt });
+            entity.HasOne<BusinessProfile>().WithMany().HasForeignKey(x => x.BusinessId).OnDelete(DeleteBehavior.Cascade);
+        });
         modelBuilder.Entity<DataProtectionKeyRecord>(entity =>
         {
             entity.ToTable("data_protection_keys");

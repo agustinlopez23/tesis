@@ -30,7 +30,7 @@ export default function AdminAudit() {
   if (state === "loading") return <p role="status">Cargando auditoría…</p>;
   return <>
     <p>Registro de las acciones sensibles de administración, de la más reciente a la más antigua.</p>
-    {!items.length ? <p>Todavía no hay acciones registradas.</p> : <div className="activity-table"><div><table>
+    {!items.length ? <p>Todavía no hay acciones registradas.</p> : <div className="activity-table"><div role="region" aria-label="Tabla de auditoría" tabIndex={0}><table>
       <thead><tr><th scope="col">Fecha</th><th scope="col">Acción</th><th scope="col">Tipo</th><th scope="col">Destino</th><th scope="col">Administrador</th><th scope="col">Motivo</th></tr></thead>
       <tbody>{items.map((item) => <tr key={item.id}>
         <td>{new Date(item.createdAt).toLocaleString("es-AR")}</td><td>{actions[item.action] ?? item.action}</td><td>{targets[item.targetType] ?? item.targetType}</td>

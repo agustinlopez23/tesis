@@ -7,8 +7,11 @@ namespace Marketplace.BLL;
 public sealed record MagazineRankingInput(RankingContext Context, IReadOnlyList<RankingCandidate> Candidates,
     IReadOnlyDictionary<Guid, Guid> OwnerIds);
 
-public sealed class MagazineRankingCandidates(IRankingCandidateRepository repository, TimeProvider clock)
+public sealed class MagazineRankingCandidates(IRankingCandidateRepository repository, TimeProvider clock,
+    OwnerActivitySettings? activity = null)
 {
+    private readonly OwnerActivitySettings activity = activity ?? OwnerActivitySettings.Default;
+
     public async Task<MagazineRankingInput> PrepareAsync(string zoneId, short categoryId, int seed, long sequence,
         CancellationToken cancellationToken)
     {
@@ -28,7 +31,8 @@ public sealed class MagazineRankingCandidates(IRankingCandidateRepository reposi
                 (row.PublicationHistoryUnknown ? row.FirstPublishedAt is not null : row.FirstPublishedAt is null) ||
                 row.FirstPublishedAt > at)
                 throw new InvalidOperationException("Invalid magazine ranking candidate data.");
-            candidates.Add(new(row.Id, 1, row.DistanceKm, row.FirstPublishedAt));
+            // Bounded owner activity; equity-v1 (EquityOnly) gives it zero weight, so its order is unchanged.
+            candidates.Add(new(row.Id, 1, row.DistanceKm, row.FirstPublishedAt, Activity: activity.Signal(row.RecentOwnerUpdates)));
         }
         return new(new(key, at, area.RadiusKm, seed, sequence), candidates.AsReadOnly(),
             new ReadOnlyDictionary<Guid, Guid>(owners));

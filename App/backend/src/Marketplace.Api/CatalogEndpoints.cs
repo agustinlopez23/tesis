@@ -34,12 +34,12 @@ public static class CatalogEndpoints
         owner.MapGet("/products", async (Guid id, HttpContext http, CatalogService catalog, CancellationToken ct) =>
             Found(await catalog.OwnedAsync(id, User(http).Id, ct)));
         owner.MapPut("/products/{product:guid}", async (Guid id, Guid product, SaveProductRequest body, HttpContext http, CatalogService catalog, CancellationToken ct) =>
-            Result(await catalog.SaveAsync(id, product, User(http).Id, body, ct)));
+            Result(await catalog.SaveAsync(id, product, User(http).Id, body, ct))).RecordsOwnerActivity(OwnerActivityKinds.CatalogUpdate);
         owner.MapGet("/products/{product:guid}/photo", async (Guid id, Guid product, HttpContext http, CatalogService catalog, CancellationToken ct) =>
             Photo(await catalog.ReadPhotoAsync(id, product, User(http).Id, ct), http));
-        owner.MapPut("/products/{product:guid}/photo", Upload);
+        owner.MapPut("/products/{product:guid}/photo", Upload).RecordsOwnerActivity(OwnerActivityKinds.CatalogUpdate);
         owner.MapDelete("/products/{product:guid}/photo", async (Guid id, Guid product, int version, HttpContext http, CatalogService catalog, CancellationToken ct) =>
-            Result(await catalog.PhotoAsync(id, product, User(http).Id, version, null, ct)));
+            Result(await catalog.PhotoAsync(id, product, User(http).Id, version, null, ct))).RecordsOwnerActivity(OwnerActivityKinds.CatalogUpdate);
 
         admin.MapGet("/businesses", async (string? q, int? page, CatalogService catalog, CancellationToken ct) =>
             q?.Length > 150 || page is < 1 or > 10000 ? Results.BadRequest() : Results.Ok(await catalog.AdminBusinessesAsync(q?.Trim() ?? "", page ?? 1, ct)));

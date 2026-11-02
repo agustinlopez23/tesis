@@ -5,7 +5,7 @@ public sealed record SaveCampaignRequest(int Version, Guid? ProductId, int? Phot
 public sealed record CampaignActionRequest(Guid OperationId, int Version, string? Action, string? Reason, string? PaymentReference);
 public sealed record CampaignResponse(Guid Id, Guid BusinessId, string BusinessName, Guid? ProductId, int? PhotoSlot, bool HasImage,
     string Title, string Description, string Conditions, string ZoneId, DateTimeOffset StartsAt, DateTimeOffset EndsAt,
-    string Status, string DeliveryState, int Version, string? PaymentReference);
+    string Status, string DeliveryState, int Version, string? PaymentReference, string? RejectionReason = null);
 public sealed record PublicCampaign(Guid Id, Guid BusinessId, string BusinessName, Guid? ProductId, bool HasImage, string Title,
     string Description, string Conditions, string ZoneId, DateTimeOffset EndsAt, string WhatsApp, string? Token = null);
 public sealed record CampaignEventRequest(string? Token, string? Kind);

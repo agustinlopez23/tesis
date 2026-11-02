@@ -37,6 +37,7 @@ function CampaignList({ business, admin }: { business?: string; admin: boolean }
       <h3>{c.title}</h3><p>{c.businessName} · {campaignState(c.deliveryState)} · {c.zoneId}</p><p>{new Date(c.startsAt).toLocaleString("es-AR")} — {new Date(c.endsAt).toLocaleString("es-AR")}</p>
       {c.hasImage && <Image src={`/api/marketplace/public/campaigns/${c.id}/image`} alt={c.title} width={320} height={200} unoptimized />}
       <p>{c.description}</p><p>Condiciones: {c.conditions}</p>
+      {c.status === "rejected" && c.rejectionReason && <p className="campaign-rejection" role="note">Motivo del rechazo: {c.rejectionReason}</p>}
       {c.deliveryState === "blocked" && <p>La campaña está oculta por el estado del negocio, catálogo o stock. El período no se extiende automáticamente; la administración puede registrar su resolución.</p>}
       {admin ? <button className="text-link" aria-label={`Gestionar ${c.title}`} onClick={() => setSelected(c)}>Gestionar campaña</button> : <div className="catalog-toolbar">
         {(c.status === "draft" || c.status === "rejected") && <button className="text-link" onClick={() => setEditing(c)}>Editar {c.title}</button>}

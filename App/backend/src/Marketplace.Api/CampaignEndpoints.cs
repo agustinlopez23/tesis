@@ -15,7 +15,8 @@ public static class CampaignEndpoints
         admin.MapGet("", async (int? page, HttpContext http, CampaignService campaigns, CancellationToken ct) =>
             page is < 1 or > 10000 ? Results.BadRequest() : Found(await campaigns.List(null, User(http).Id, true, page ?? 1, ct)));
         owner.MapPut("/{id:guid}", async (Guid business, Guid id, HttpContext http, CampaignService campaigns, CancellationToken ct) =>
-            await Write<SaveCampaignRequest>(http, body => campaigns.Save(business, id, User(http).Id, body, ct), ct));
+            await Write<SaveCampaignRequest>(http, body => campaigns.Save(business, id, User(http).Id, body, ct), ct))
+            .RecordsOwnerActivity(OwnerActivityKinds.PromotionUpdate, "business");
         owner.MapPut("/{id:guid}/pause", async (Guid business, Guid id, HttpContext http, CampaignService campaigns, CancellationToken ct) =>
             await Write<CampaignActionRequest>(http, body => campaigns.Act(business, id, User(http).Id, false, body, ct), ct));
         admin.MapPut("/{id:guid}/actions", async (Guid id, HttpContext http, CampaignService campaigns, CancellationToken ct) =>

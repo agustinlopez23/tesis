@@ -968,6 +968,39 @@ namespace Marketplace.DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Marketplace.Models.OwnerActivity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("business_id");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BusinessId", "Kind", "OccurredAt");
+
+                    b.ToTable("owner_activity", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_owner_activity_kind", "kind IN ('profile_update', 'catalog_update', 'promotion_update')");
+                        });
+                });
+
             modelBuilder.Entity("Marketplace.Models.ProductPhoto", b =>
                 {
                     b.Property<Guid>("ProductId")
@@ -1428,6 +1461,15 @@ namespace Marketplace.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Marketplace.Models.OwnerActivity", b =>
+                {
+                    b.HasOne("Marketplace.Models.BusinessProfile", null)
+                        .WithMany()
+                        .HasForeignKey("BusinessId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 

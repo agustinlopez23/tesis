@@ -40,7 +40,7 @@ try {
   const api = start('api', resolve(root, '.tools/dotnet/dotnet.exe'),
     [resolve(root, 'App/backend/src/Marketplace.Api/bin/Release/net10.0/Marketplace.Api.dll')],
     resolve(root, 'App/backend/src/Marketplace.Api'),
-    { ASPNETCORE_URLS: 'http://localhost:5080', DOTNET_ROOT: resolve(root, '.tools/dotnet'), 'Logging__LogLevel__Microsoft.AspNetCore': 'Information' });
+    { ASPNETCORE_URLS: 'http://localhost:5080', ASPNETCORE_ENVIRONMENT: 'Development', DOTNET_ROOT: resolve(root, '.tools/dotnet'), 'Logging__LogLevel__Microsoft.AspNetCore': 'Information' });
   const health = await waitFor('http://localhost:5080/health/live');
   if (await health.text() !== '{"status":"ok"}') throw new Error('Contrato API incorrecto');
   start('next', process.execPath, ['node_modules/next/dist/bin/next', 'start', '-p', '3000'],

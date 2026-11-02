@@ -1,5 +1,5 @@
 export type Campaign = { id: string; businessId: string; businessName: string; productId: string | null; photoSlot: number | null; hasImage: boolean;
-  title: string; description: string; conditions: string; zoneId: string; startsAt: string; endsAt: string; status: string; deliveryState: string; version: number; paymentReference: string | null };
+  title: string; description: string; conditions: string; zoneId: string; startsAt: string; endsAt: string; status: string; deliveryState: string; version: number; paymentReference: string | null; rejectionReason?: string | null };
 export type PublicCampaign = Pick<Campaign, "id" | "businessId" | "businessName" | "productId" | "hasImage" | "title" | "description" | "conditions" | "zoneId" | "endsAt"> & { token: string; whatsApp: string };
 export const campaignState = (value: string) => ({ draft: "Borrador", pending_review: "En revisión", awaiting_payment: "Pendiente de pago", scheduled: "Programada", active: "Activa", blocked: "Oculta por elegibilidad", paused: "Pausada", finished: "Finalizada", rejected: "Rechazada" }[value] ?? value);
 export function rememberCampaign(campaign: PublicCampaign) {

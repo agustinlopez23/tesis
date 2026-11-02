@@ -6,7 +6,7 @@ import type { Business } from "../business-card";
 
 export type RankingSelection = { zoneId: string; categoryId: number };
 export type RankingPage = { items: Business[]; hasMore: boolean; cursor: string; nextCursor: string | null;
-  expiresAt: string; rankingVersion: string; measurement: Record<string, string> };
+  expiresAt: string; rankingVersion: string; measurement: Record<string, string>; policy?: string };
 type Navigation = { selection: RankingSelection; requestId: string; startedAt: number; page: number;
   cursors: string[]; expiresAt?: string; rankingVersion?: string };
 type State = { navigation: Navigation | null; data: RankingPage | null; busy: boolean; error: number | null };

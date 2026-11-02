@@ -5,4 +5,5 @@ public sealed record PublicBusinessProfileResponse(Guid Id, string Name, string 
     string Address, string Category, string WhatsApp, IReadOnlyList<BusinessPhotoResponse> Photos)
 {
     public string? MeasurementToken { get; init; }
+    public IReadOnlyList<PublicCampaign> Promotions { get; init; } = [];
 }

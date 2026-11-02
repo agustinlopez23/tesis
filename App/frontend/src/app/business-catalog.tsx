@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { catalogApi, catalogError, Plan, Product, priceLabel } from "./catalog-api";
 import CatalogAssistance from "./catalog-assistance";
+import PlanCapabilities from "./plan-capabilities";
 import { businessChanged, useBusinessRefresh } from "./business-refresh";
 
 export default function BusinessCatalog({ id }: { id: string }) {
@@ -85,6 +86,7 @@ function CatalogEditor({ id }: { id: string }) {
     {error && <p className="error" role="alert">{error}</p>}
     {success && <p className="success-message" role="status">{success}</p>}
     <div className="catalog-toolbar"><p>{plan ? `Plan ${plan.plan}` : "Consultando plan…"}</p><button type="button" className="text-link" disabled={pending || loading} onClick={refresh}>Actualizar catálogo</button></div>
+    {plan && <PlanCapabilities current={plan.plan} />}
     {loading ? <p role="status">Cargando productos…</p> : <>
       {plan && !plan.catalogEnabled && <p className="catalog-notice">El catálogo requiere un plan Impulso vigente. Tus productos se conservan y podés consultarlos. La administración gestiona la activación.</p>}
       <button type="button" className="button button-primary" disabled={!plan?.catalogEnabled || pending} onClick={() => edit()}>Nuevo producto</button>

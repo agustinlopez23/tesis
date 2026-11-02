@@ -20,7 +20,10 @@ public sealed class CampaignRepository(MarketplaceDbContext db, TimeProvider clo
         return query.Select(c => new CampaignResponse(c.Id, c.BusinessId, db.Businesses.Where(b => b.Id == c.BusinessId).Select(b => b.Name).Single(),
             c.ProductId, c.PhotoSlot, c.Image != null, c.Title, c.Description, c.Conditions, c.ZoneId, c.StartsAt, c.EndsAt, c.Status,
             c.Status == "scheduled" ? (c.EndsAt <= now ? "finished" : c.StartsAt > now ? "scheduled" : Eligible(db, now).Any(x => x.Id == c.Id) ? "active" : "blocked") : c.Status,
-            c.Version, c.PaymentReference));
+            c.Version, c.PaymentReference,
+            // The latest administrative rejection explains why the owner must edit the campaign.
+            c.Status == "rejected" ? db.CampaignChanges.Where(x => x.CampaignId == c.Id && x.Action == "reject")
+                .OrderByDescending(x => x.Version).Select(x => x.Reason).FirstOrDefault() : null));
     }
     public async Task<object?> List(Guid? business, Guid actor, bool admin, int page, CancellationToken ct)
     {
@@ -114,6 +117,9 @@ public sealed class CampaignRepository(MarketplaceDbContext db, TimeProvider clo
         var offset = (int)(clock.GetUtcNow().ToUnixTimeSeconds() / 60 % items.Count);
         return items.Skip(offset).Concat(items.Take(offset)).ToArray();
     }
+    public async Task<IReadOnlyList<PublicCampaign>> ForBusiness(Guid business, CancellationToken ct) =>
+        await PublicQuery(Eligible(db, clock.GetUtcNow()).Where(c => c.BusinessId == business)
+            .OrderBy(c => c.EndsAt).ThenBy(c => c.Id).Take(CampaignService.ProfileLimit)).ToListAsync(ct);
     public Task<PublicCampaign?> Detail(Guid id, CancellationToken ct) => PublicQuery(Eligible(db, clock.GetUtcNow()).Where(c => c.Id == id)).SingleOrDefaultAsync(ct);
     public Task<byte[]?> Image(Guid id, Guid? actor, bool admin, CancellationToken ct) => db.Campaigns.Where(c => c.Id == id &&
         (admin || actor != null && db.Businesses.Any(b => b.Id == c.BusinessId && b.OwnerId == actor) || Eligible(db, clock.GetUtcNow()).Any(x => x.Id == c.Id)))
