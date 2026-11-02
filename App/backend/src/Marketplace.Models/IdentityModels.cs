@@ -7,6 +7,8 @@ public sealed class UserAccount
     public required string DisplayName { get; set; }
     public required string PasswordHash { get; set; }
     public bool IsSuspended { get; set; }
+    public int FailedLoginCount { get; set; }
+    public DateTimeOffset? LockedUntil { get; set; }
     public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
     public ICollection<UserAccountRole> Roles { get; set; } = [];
 }

@@ -6,7 +6,8 @@ import { catalogApi, Product, priceLabel } from "./catalog-api";
 import { useOrderCart } from "./use-order-cart";
 import OrderCheckout from "./order-checkout";
 
-export default function PublicCatalog({ id }: { id: string }) {
+// Without an active plan the API answers 404 for the catalog, so the profile skips the request entirely.
+export default function PublicCatalog({ id, enabled = true }: { id: string; enabled?: boolean }) {
   const cart = useOrderCart(id);
   const reconcile = useEffectEvent((products: Product[]) => cart.reconcile(products));
   const [items, setItems] = useState<Product[]>([]);
@@ -14,9 +15,10 @@ export default function PublicCatalog({ id }: { id: string }) {
   const [more, setMore] = useState(false);
   const [query, setQuery] = useState("");
   const [draft, setDraft] = useState("");
-  const [state, setState] = useState("loading");
+  const [state, setState] = useState(enabled ? "loading" : "hidden");
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
+    if (!enabled) return;
     const controller = new AbortController();
     async function load() {
       try {
@@ -30,7 +32,7 @@ export default function PublicCatalog({ id }: { id: string }) {
     }
     void load();
     return () => controller.abort();
-  }, [id, page, query, attempt]);
+  }, [id, enabled, page, query, attempt]);
   if (state === "hidden") return <OrderCheckout cart={cart} />;
   function reload() { setState("loading"); setItems([]); setAttempt((n) => n + 1); }
   return <section className="public-catalog" aria-labelledby="catalog-title">
@@ -43,7 +45,7 @@ export default function PublicCatalog({ id }: { id: string }) {
       {!items.length && <p>No hay productos publicados para esta búsqueda.</p>}
       <div className="catalog-grid">{items.map((p) => <article className="product-card" key={p.id}>
         {p.hasPhoto && <Image src={`/api/marketplace/public/businesses/${id}/products/${p.id}/photo?v=${p.version}`} alt={p.name} width={400} height={300} unoptimized />}
-        <div className="product-card-copy"><span className="eyebrow">{p.category}</span><h3>{p.name}</h3><p>{p.description}</p><strong>{priceLabel(p)}</strong><span className="product-availability">{p.available ? "Disponible" : "No disponible"}</span></div>
+        <div className="product-card-copy"><span className="eyebrow">{p.category}</span><h3>{p.name}</h3><p>{p.description}</p><strong>{priceLabel(p)}</strong><span className="product-availability">{p.available ? "Disponible" : "No disponible"}</span>{p.available && p.lowStock && <span className="stock-badge">Disponibilidad baja</span>}</div>
         <button type="button" className="button button-outline product-add" aria-label={`Agregar ${p.name}`} disabled={!p.available || cart.pending || cart.restoring || !!cart.intent || !!cart.order} onClick={() => cart.add(p)}>Agregar a la solicitud</button>
       </article>)}</div>
       <nav className="catalog-toolbar" aria-label="Páginas del catálogo"><button className="button button-outline" disabled={page === 1} onClick={() => { setState("loading"); setItems([]); setPage(page - 1); }}>Anterior</button><span>Página {page}</span><button className="button button-outline" disabled={!more} onClick={() => { setState("loading"); setItems([]); setPage(page + 1); }}>Siguiente</button></nav>

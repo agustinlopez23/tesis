@@ -1,5 +1,14 @@
 # Contrato propuesto de integración del ranking · 21/09/2026
 
+**Activación en producción · 01/11/2026:** el ranking queda disponible en cualquier
+entorno con `Ranking:Enabled=true` en la API y `RANKING_ENABLED=true` en la web
+(ambos apagados por defecto). La política es fija y versionada: `equity-v1`
+(EquityOnly, configuración por defecto, semilla 17); la respuesta la informa en
+`policy` y la medición conserva su hash en `rankingVersion` (HU-20/HU-21). En
+`/explorar`, con zona y rubro elegidos, la guía muestra ese orden por cursor; sin
+ambos, o si el ranking falla, conserva el listado habitual. La vista previa local
+(`Ranking:PreviewEnabled`, `RANKING_PREVIEW_ENABLED`) sigue funcionando.
+
 **Persistencia interna implementada al 04/10/2026:** historial, lector, adaptador,
 snapshots/ledger transaccionales, paginación revalidada y purga automática.
 **HTTP local implementado el 04/10/2026:** POST/GET, cursores protegidos, validación,

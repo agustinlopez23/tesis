@@ -47,9 +47,6 @@
 }
 
 @layer components {
-  .preview-access { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 20px; padding: 10px 20px; background: #eaf0e5; color: var(--green); font-size: 12px; }
-  .preview-access > span { color: var(--muted); }
-  .preview-access a { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
   .business-insights { margin: 0 0 32px; border: 1px solid var(--line); border-radius: 14px; background: #fff; overflow: hidden; }
   .insights-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 32px; background: #f0f2ea; }
   .insights-heading h2 { font-size: 27px; letter-spacing: -.6px; margin: 6px 0 8px; }
@@ -123,6 +120,13 @@
   .gallery-thumbnails img { width: 100%; height: 100%; object-fit: cover; border-radius: 4px; display: block; }
   .gallery-thumbnails span { position: absolute; left: 8px; bottom: 6px; color: white; font-size: 10px; background: #273d32c9; border-radius: 3px; padding: 1px 4px; }
   .profile-about { margin: 36px 0; border-top: 1px solid var(--line); padding-top: 28px; }
+  .profile-promotions { margin: 36px 0; border-top: 1px solid var(--line); padding-top: 28px; }
+  .profile-promotions h2 { margin-bottom: 18px; }
+  .ranking-version { margin-left: 10px; font-size: 11px; color: var(--muted); }
+  .campaign-rejection { border-left: 3px solid #b44c2d; padding-left: 10px; }
+  .plan-capabilities { margin: 12px 0 20px; }
+  .plan-capabilities summary { cursor: pointer; font-size: 13px; font-weight: 600; padding: 8px 0; }
+  .plan-capabilities td { text-align: center; }
   .profile-about h2 { font-size: 29px; margin: 12px 0 16px; letter-spacing: -.5px; }
   .profile-about > p:last-child { color: var(--muted); white-space: pre-line; overflow-wrap: anywhere; font-size: 15px; }
   .profile-contact { position: sticky; top: 24px; border: 1px solid var(--line); background: #fff; border-radius: 14px; padding: 28px; }
@@ -588,9 +592,14 @@
 .product-card-copy h3 { margin: .5rem 0; }
 .product-card-copy p { line-height: 1.6; white-space: pre-wrap; }
 .product-availability { display: block; margin-top: .7rem; font-size: .85rem; }
+.stock-badge { display: inline-flex; margin: .5rem .5rem 0 0; padding: 3px 8px; border-radius: 4px; font-size: .8rem; font-weight: 600; background: #f2ebd9; color: #6b5420; }
+.empty-results { margin: 1rem 0; }
+.empty-results .catalog-toolbar { justify-content: flex-start; gap: 1rem; flex-wrap: wrap; }
 .catalog-search { display: flex; gap: 1rem; align-items: end; margin: 1.5rem 0; }
 .catalog-search label { flex: 1; margin: 0; }
 .admin-plans { padding-top: 3rem; padding-bottom: 4rem; max-width: 1000px; }
+.admin-nav { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin: 1rem 0 1.5rem; }
+.admin-nav [aria-current="page"] { font-weight: 700; text-decoration: underline; }
 @media (max-width: 700px) {
   .catalog-fields, .catalog-grid { grid-template-columns: 1fr; }
   .catalog-search, .catalog-owner-list article { align-items: stretch; flex-direction: column; }
@@ -608,6 +617,8 @@
 .order-copy { width: 100%; min-height: 180px; margin-top: 1rem; }
 .order-private-link { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem; }
 .order-private-link input, .order-private-link p { width: 100%; }
+.order-private-field { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; width: 100%; }
+.order-private-field input { flex: 1 1 16rem; width: auto; }
 .order-page { max-width: 850px; padding-top: 3rem; padding-bottom: 4rem; }
 .order-contact-check { display: flex !important; align-items: center; }
 .order-contact-check input { width: auto; }

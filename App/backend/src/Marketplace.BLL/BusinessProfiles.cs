@@ -6,7 +6,7 @@ namespace Marketplace.BLL;
 public sealed record ProcessedPhoto(byte[] Content, int Width, int Height);
 public interface IPhotoProcessor
 {
-    ProcessedPhoto? Process(byte[] input);
+    ProcessedPhoto? Process(byte[] input, int maxSide = 1600);
 }
 public interface IBusinessProfileRepository
 {

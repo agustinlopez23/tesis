@@ -8,6 +8,6 @@ public sealed record BusinessPlanResponse(bool CatalogEnabled, string Plan, IRea
 public sealed record SaveProductRequest(string? Name, string? Description, string? Category,
     decimal Price, string? Currency, bool Available, string? Status, int Version);
 public sealed record ProductResponse(Guid Id, string Name, string Description, string Category,
-    decimal Price, string Currency, bool Available, string Status, int Version, bool HasPhoto);
+    decimal Price, string Currency, bool Available, string Status, int Version, bool HasPhoto, bool LowStock = false);
 public sealed record PublicCatalogResponse(IReadOnlyList<ProductResponse> Items, int Page, bool HasNextPage);
 public sealed record AdminBusinessResponse(Guid Id, string Name, string OwnerEmail);

@@ -151,15 +151,20 @@ public sealed class CatalogTests(OnboardingFixture fixture) : IClassFixture<Onbo
         Assert.Equal(HttpStatusCode.Forbidden, (await owner.PutAsJsonAsync(path, Product())).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await other.GetAsync($"/businesses/{business}/products")).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await other.PutAsJsonAsync(path, Product())).StatusCode);
+        Assert.False(await HasPublicCatalog(owner, business));
         await Activate(admin, business);
+        Assert.True(await HasPublicCatalog(owner, business));
         Assert.Equal(HttpStatusCode.OK, (await owner.PutAsJsonAsync(path, Product())).StatusCode);
         Assert.Single((await Public(business)).GetProperty("items").EnumerateArray());
         await Sql("UPDATE business_subscriptions SET starts_at = now() - interval '2 days', ends_at = now() - interval '1 day' WHERE business_id = $1", business);
         Assert.Equal(HttpStatusCode.NotFound, (await owner.GetAsync($"/public/businesses/{business}/products")).StatusCode);
         Assert.Single((await owner.GetFromJsonAsync<JsonElement>($"/businesses/{business}/products")).EnumerateArray());
         Assert.Equal(HttpStatusCode.Forbidden, (await owner.PutAsJsonAsync(path, Product(1))).StatusCode);
-        Assert.Equal(HttpStatusCode.OK, (await owner.GetAsync($"/public/businesses/{business}")).StatusCode);
+        Assert.False(await HasPublicCatalog(owner, business));
     }
+
+    private static async Task<bool> HasPublicCatalog(HttpClient client, Guid business) =>
+        (await client.GetFromJsonAsync<JsonElement>($"/public/businesses/{business}")).GetProperty("hasPublicCatalog").GetBoolean();
 
     [Fact]
     public async Task Products_validate_prices_preserve_ids_and_detect_stale_edits()

@@ -1,6 +1,6 @@
 export type Product = {
   id: string; name: string; description: string; category: string; price: number;
-  currency: string; available: boolean; status: string; version: number; hasPhoto: boolean;
+  currency: string; available: boolean; status: string; version: number; hasPhoto: boolean; lowStock?: boolean;
 };
 export type Plan = { catalogEnabled: boolean; plan: string; periods: {
   id: string; startsAt: string; endsAt: string; reason: string; revokedAt: string | null; revocationReason: string | null;

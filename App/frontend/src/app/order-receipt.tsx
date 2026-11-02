@@ -4,16 +4,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { money, Order, orderMessage, orderStatus, privateOrderPath } from "./order-api";
 
-export default function OrderReceipt({ order, accessKey }: { order: Order; accessKey?: string }) {
+export default function OrderReceipt({ order, accessKey, headingLevel = 3 }: { order: Order; accessKey?: string; headingLevel?: 2 | 3 }) {
+  const Heading = headingLevel === 2 ? "h2" : "h3";
   const [notice, setNotice] = useState("");
+  const [showLink, setShowLink] = useState(false);
   const message = orderMessage(order);
   const privatePath = accessKey ? privateOrderPath(order.id, accessKey) : null;
+  // The key works like a password: keep it masked on screen unless the customer asks to see it.
+  const visiblePath = privatePath && (showLink ? privatePath : privateOrderPath(order.id, "•".repeat(12)));
   async function copy(value: string) {
     try { await navigator.clipboard.writeText(value); setNotice("Copiado."); }
     catch { setNotice("No pudimos copiar automáticamente. Seleccioná y copiá el texto de abajo."); }
   }
   return <section className="order-receipt" aria-label="Resumen de solicitud">
-    <p className="eyebrow">Solicitud guardada</p><h3>{order.reference}</h3>
+    <p className="eyebrow">Solicitud guardada</p><Heading>{order.reference}</Heading>
     <p>{order.businessName} · {order.customerName}</p>
     <p><strong>{orderStatus(order.status)}</strong> · {order.contactReceivedAt ? "Contacto recibido, confirmado por el negocio." : "El negocio aún no confirmó haber recibido el contacto."}</p>
     <ul className="order-lines">{order.lines.map(line => <li key={line.productId}><span>{line.quantity} × {line.name}</span><strong>{money(line.unitPrice * line.quantity, line.currency)}</strong></li>)}</ul>
@@ -27,7 +31,11 @@ export default function OrderReceipt({ order, accessKey }: { order: Order; acces
       <div className="order-private-link"><Link className="text-link" href={privatePath!} prefetch={false}>Consultar mi solicitud</Link>
         <button type="button" className="text-link" onClick={() => void copy(window.location.origin + privatePath)}>Copiar enlace privado</button>
         <p className="field-help">Guardá este enlace. Quien lo tenga podrá consultar tu solicitud hasta el {new Date(order.accessExpiresAt).toLocaleDateString("es-AR")}. La referencia sola no permite recuperarla.</p>
-        <input readOnly aria-label="Enlace privado" value={typeof window === "undefined" ? privatePath! : window.location.origin + privatePath} />
+        <p className="field-help">El enlace es privado y funciona como una contraseña: no lo compartas ni lo muestres en pantalla.</p>
+        <div className="order-private-field">
+          <input readOnly aria-label="Enlace privado" value={typeof window === "undefined" ? visiblePath! : window.location.origin + visiblePath} />
+          <button type="button" className="text-link" aria-pressed={showLink} onClick={() => setShowLink(value => !value)}>{showLink ? "Ocultar enlace" : "Mostrar enlace"}</button>
+        </div>
       </div>
     </>}
     {notice && <p role="status">{notice}</p>}

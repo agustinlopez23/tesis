@@ -17,6 +17,7 @@ public interface ICampaignRepository
     Task<SalesResult> Save(Guid business, Guid id, Guid owner, SaveCampaignRequest body, string hash, CancellationToken ct);
     Task<SalesResult> Act(Guid? business, Guid id, Guid actor, bool admin, CampaignActionRequest body, string hash, CancellationToken ct);
     Task<IReadOnlyList<PublicCampaign>> Public(string zone, CancellationToken ct);
+    Task<IReadOnlyList<PublicCampaign>> ForBusiness(Guid business, CancellationToken ct);
     Task<PublicCampaign?> Detail(Guid id, CancellationToken ct);
     Task<byte[]?> Image(Guid id, Guid? actor, bool admin, CancellationToken ct);
     Task<bool> Record(CampaignContext context, string kind, Guid? actor, CancellationToken ct);
@@ -48,6 +49,10 @@ public sealed class CampaignService(ICampaignRepository repository, ICampaignTok
     }
     public async Task<IReadOnlyList<PublicCampaign>> Public(string zone, CancellationToken ct) =>
         (await repository.Public(zone, ct)).Select(c => c with { Token = tokens.Issue(new(c.Id, Guid.NewGuid())) }).ToArray();
+    // Active promotions of one business for its public profile, in every zone; each card gets its own measurement token.
+    public const int ProfileLimit = 6;
+    public async Task<IReadOnlyList<PublicCampaign>> ForBusiness(Guid business, CancellationToken ct) =>
+        (await repository.ForBusiness(business, ct)).Select(c => c with { Token = tokens.Issue(new(c.Id, Guid.NewGuid())) }).ToArray();
     public async Task<PublicCampaign?> Detail(Guid id, CancellationToken ct)
     {
         var campaign = await repository.Detail(id, ct);

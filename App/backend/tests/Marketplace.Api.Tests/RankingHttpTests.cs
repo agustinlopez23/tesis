@@ -37,6 +37,7 @@ public sealed partial class RankingHttpTests(OnboardingFixture fixture) : IClass
         Assert.Equal(HttpStatusCode.Created, created.StatusCode);
         AssertNoStore(created);
         var first = await created.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("equity-v1", first.GetProperty("policy").GetString());
         var firstCursor = first.GetProperty("cursor").GetString();
         var reread = await client.GetAsync(Route + "/page?cursor=" + Uri.EscapeDataString(firstCursor!));
         Assert.Equal(Ids(first), Ids(await reread.Content.ReadFromJsonAsync<JsonElement>()));
@@ -104,10 +105,42 @@ public sealed partial class RankingHttpTests(OnboardingFixture fixture) : IClass
         AssertNoStore(response);
     }
 
-    private WebApplicationFactory<Program> Preview(bool enabled = true, string environment = "Testing") =>
+    [Fact]
+    public async Task Production_switch_serves_versioned_policy_snapshots_and_pages()
+    {
+        await using var factory = Preview(false, "Production", productionEnabled: true);
+        using var client = Client(factory);
+        var created = await client.PostAsJsonAsync(Route, Body() with { CategoryId = 3 });
+        Assert.Equal(HttpStatusCode.Created, created.StatusCode);
+        AssertNoStore(created);
+        var first = await created.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("equity-v1", first.GetProperty("policy").GetString());
+        Assert.Matches("^[0-9a-f]{64}$", first.GetProperty("rankingVersion").GetString());
+        var page = await client.GetAsync(Route + "/page?cursor=" + Uri.EscapeDataString(first.GetProperty("cursor").GetString()!));
+        Assert.Equal(HttpStatusCode.OK, page.StatusCode);
+        AssertNoStore(page);
+    }
+
+    [Fact]
+    public async Task Production_without_switch_closes_creation_and_pages()
+    {
+        await using var factory = Preview(true, "Production", productionEnabled: false);
+        using var client = Client(factory);
+        var tokens = factory.Services.GetRequiredService<RankingCursorTokens>();
+        var live = tokens.Issue(new(Guid.NewGuid(), 0, DateTimeOffset.UtcNow.AddMinutes(30)));
+        Assert.Equal(HttpStatusCode.NotFound, (await client.PostAsJsonAsync(Route, Body())).StatusCode);
+        var page = await client.GetAsync(Route + "/page?cursor=" + live);
+        Assert.Equal(HttpStatusCode.NotFound, page.StatusCode);
+        AssertNoStore(page);
+    }
+
+    private WebApplicationFactory<Program> Preview(bool enabled = true, string environment = "Testing", bool productionEnabled = false) =>
         fixture.Factory.WithWebHostBuilder(builder => builder.UseEnvironment(environment)
             .ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?> {
-                ["Ranking:PreviewEnabled"] = enabled.ToString()
+                ["Ranking:PreviewEnabled"] = enabled.ToString(),
+                ["Ranking:Enabled"] = productionEnabled.ToString(),
+                // Production hosts fail fast without the proxy secret (see DeploymentSettings).
+                ["Proxy:SharedSecret"] = "ranking-tests-proxy-secret-0123456789"
             })));
 
     private static HttpClient Client(WebApplicationFactory<Program> factory)

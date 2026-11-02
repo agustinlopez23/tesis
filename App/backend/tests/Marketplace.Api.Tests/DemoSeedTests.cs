@@ -89,4 +89,69 @@ public sealed class DemoSeedTests
         await using var db = Context("Host=localhost;Database=unused;Username=unused");
         await Assert.ThrowsAsync<InvalidOperationException>(() => DemoSeeder.ApplyAsync(db, OwnerPassword, AdminPassword, "Production"));
     }
+
+    [Fact]
+    public async Task Seeds_visible_promotions_and_rerun_refreshes_window_without_duplicates()
+    {
+        var fixture = new OnboardingFixture(); await fixture.InitializeAsync();
+        try
+        {
+            await using var db = Context(fixture.ConnectionString);
+            using var guest = fixture.Client();
+            await DemoSeeder.ApplyAsync(db, OwnerPassword, AdminPassword, "Testing");
+            var centro = await PublicItems(guest, "centro");
+            var nuevaCordoba = await PublicItems(guest, "nueva-cordoba");
+            Assert.Equal(1, centro.GetArrayLength()); Assert.Equal(1, nuevaCordoba.GetArrayLength());
+            Assert.Equal("de200000-0000-4000-8000-000000000001", centro[0].GetProperty("productId").GetString());
+            Assert.Equal(2, await db.Campaigns.CountAsync());
+            Assert.Equal(6, await db.CampaignChanges.CountAsync());
+            Assert.Equal(4, await db.CampaignChanges.CountAsync(c => c.ActorId == DemoSeeder.AdminId));
+
+            // Simulate an aged demo: one window about to expire and one campaign paused by the business.
+            var now = DateTimeOffset.UtcNow;
+            var aging = await db.Campaigns.SingleAsync(c => c.ZoneId == "centro");
+            aging.StartsAt = now.AddDays(-29); aging.EndsAt = now.AddMinutes(5);
+            var paused = await db.Campaigns.SingleAsync(c => c.ZoneId == "nueva-cordoba");
+            paused.Status = "paused"; paused.Version++;
+            await db.SaveChangesAsync();
+            await using (var again = Context(fixture.ConnectionString)) await DemoSeeder.ApplyAsync(again, OwnerPassword, AdminPassword, "Testing");
+            db.ChangeTracker.Clear();
+
+            Assert.Equal(2, await db.Campaigns.CountAsync());
+            var refreshed = await db.Campaigns.SingleAsync(c => c.Id == aging.Id);
+            Assert.Equal("scheduled", refreshed.Status);
+            Assert.True(refreshed.StartsAt <= DateTimeOffset.UtcNow && refreshed.EndsAt > DateTimeOffset.UtcNow.AddDays(28));
+            Assert.True(await db.CampaignChanges.AnyAsync(c => c.CampaignId == aging.Id && c.Version == refreshed.Version));
+            Assert.Equal("paused", (await db.Campaigns.SingleAsync(c => c.Id == paused.Id)).Status);
+            Assert.Equal(1, (await PublicItems(guest, "centro")).GetArrayLength());
+            Assert.Equal(0, (await PublicItems(guest, "nueva-cordoba")).GetArrayLength());
+        }
+        finally { await fixture.DisposeAsync(); }
+    }
+
+    private static async Task<JsonElement> PublicItems(HttpClient guest, string zone) =>
+        (await guest.GetFromJsonAsync<JsonElement>("/public/campaigns?zone=" + zone)).GetProperty("items");
+
+    [Theory]
+    [InlineData("Development", "localhost", null, true)]
+    [InlineData("Testing", "127.0.0.1", null, true)]
+    [InlineData("Production", "localhost", null, false)]
+    [InlineData("Development", "db.demo.supabase.co", null, false)]
+    [InlineData("Development", "db.demo.supabase.co", "", false)]
+    [InlineData("Development", "db.demo.supabase.co", "db.other.supabase.co", false)]
+    [InlineData("Development", "db.demo.supabase.co", "db.demo.supabase.co", true)]
+    [InlineData("Production", "db.demo.supabase.co", "db.demo.supabase.co", false)]
+    public void Hosted_database_requires_explicit_matching_confirmation(string environment, string host, string? confirmedHost, bool allowed)
+    {
+        void Check() => DemoSeeder.EnsureTargetAllowed(environment, host, confirmedHost);
+        if (allowed) Check(); else Assert.Throws<InvalidOperationException>(Check);
+    }
+
+    [Fact]
+    public async Task Hosted_database_without_confirmation_is_rejected_before_connecting()
+    {
+        await using var db = Context("Host=db.demo.supabase.co;Database=unused;Username=unused");
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => DemoSeeder.ApplyAsync(db, OwnerPassword, AdminPassword, "Development"));
+        Assert.Contains("--allow-hosted-demo", error.Message);
+    }
 }

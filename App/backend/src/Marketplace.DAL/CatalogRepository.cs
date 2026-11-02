@@ -6,15 +6,15 @@ using System.Linq.Expressions;
 
 namespace Marketplace.DAL;
 
-public sealed class CatalogRepository(MarketplaceDbContext db, TimeProvider clock) : ICatalogRepository
+public sealed class CatalogRepository(MarketplaceDbContext db, TimeProvider clock, CatalogSettings settings) : ICatalogRepository
 {
     private static readonly Expression<Func<CatalogProduct, ProductResponse>> Projection = p =>
-        new(p.Id, p.Name, p.Description, p.Category, p.Price, p.Currency, p.Available, p.Status, p.Version, p.Photo != null);
+        new(p.Id, p.Name, p.Description, p.Category, p.Price, p.Currency, p.Available, p.Status, p.Version, p.Photo != null, false);
 
     private IQueryable<BusinessSubscription> Active(Guid business, DateTimeOffset now) => db.BusinessSubscriptions
         .Where(s => s.BusinessId == business && s.RevokedAt == null && s.StartsAt <= now && s.EndsAt > now);
     private IQueryable<BusinessProfile> Eligible(Guid business, DateTimeOffset now) => db.Businesses.Where(b =>
-        b.Id == business && b.Status == "published" && db.UserAccounts.Any(u => u.Id == b.OwnerId && !u.IsSuspended) &&
+        b.Id == business && b.Status == "published" && !b.IsSuspended && db.UserAccounts.Any(u => u.Id == b.OwnerId && !u.IsSuspended) &&
         Active(business, now).Any());
 
     // All plan and catalog writes lock the business first, including concurrent grants.
@@ -84,12 +84,13 @@ public sealed class CatalogRepository(MarketplaceDbContext db, TimeProvider cloc
     {
         var now = clock.GetUtcNow();
         if (!await Eligible(businessId, now).AnyAsync(ct)) return null;
-        var items = await db.CatalogProducts.AsNoTracking().Where(p => p.BusinessId == businessId && p.Status == "published" &&
+        var items = await db.CatalogProducts.AsNoTracking().Where(p => p.BusinessId == businessId && p.Status == "published" && !p.IsSuspended &&
             Eligible(businessId, now).Any() && (p.Name.ToLower().Contains(query.ToLower()) ||
             p.Description.ToLower().Contains(query.ToLower()) || p.Category.ToLower().Contains(query.ToLower())))
             .OrderBy(p => p.Name).ThenBy(p => p.Id).Skip((page - 1) * 20).Take(21)
             .Select(p => new ProductResponse(p.Id, p.Name, p.Description, p.Category, p.Price, p.Currency,
-                p.Available && !db.InventoryBalances.Any(b => b.ProductId == p.Id && b.Quantity == 0), p.Status, p.Version, p.Photo != null)).ToListAsync(ct);
+                p.Available && !db.InventoryBalances.Any(b => b.ProductId == p.Id && b.Quantity == 0), p.Status, p.Version, p.Photo != null,
+                db.InventoryBalances.Any(b => b.ProductId == p.Id && b.Quantity > 0 && b.Quantity < settings.LowStockThreshold))).ToListAsync(ct);
         return new(items.Take(20).ToArray(), page, items.Count > 20);
     }
 
@@ -149,6 +150,6 @@ public sealed class CatalogRepository(MarketplaceDbContext db, TimeProvider cloc
         var now = clock.GetUtcNow();
         return db.CatalogProducts.AsNoTracking().Where(p => p.Id == productId && p.BusinessId == businessId && p.Photo != null &&
             (ownerId != null ? db.Businesses.Any(b => b.Id == businessId && b.OwnerId == ownerId) :
-                p.Status == "published" && Eligible(businessId, now).Any())).Select(p => p.Photo!.Content).SingleOrDefaultAsync(ct);
+                p.Status == "published" && !p.IsSuspended && Eligible(businessId, now).Any())).Select(p => p.Photo!.Content).SingleOrDefaultAsync(ct);
     }
 }

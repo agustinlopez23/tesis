@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vitest";
-import Explore from "../src/app/explorar/page";
+import Explore from "../src/app/explorar/explore";
 
 const business = { id: "geo", name: "Negocio cercano", description: "Productos locales",
   address: "Córdoba", category: "Almacenes", whatsApp: "+5493515551234", distanceKm: 0.75 };

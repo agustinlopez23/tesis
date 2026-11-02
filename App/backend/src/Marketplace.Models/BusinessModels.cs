@@ -14,6 +14,7 @@ public sealed class BusinessCategory
     public short Id { get; set; }
     public required string Name { get; set; }
     public required string Slug { get; set; }
+    public bool IsActive { get; set; } = true;
 }
 
 public sealed class BusinessProfile
@@ -27,6 +28,7 @@ public sealed class BusinessProfile
     public required string WhatsApp { get; set; }
     public required GeoLocation Location { get; set; }
     public required string Status { get; set; }
+    public bool IsSuspended { get; set; }
     // Database-maintained history: null/false = never published, null/true = unknown.
     public DateTimeOffset? FirstPublishedAt { get; private set; }
     public bool PublicationHistoryUnknown { get; private set; }

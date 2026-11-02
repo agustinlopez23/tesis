@@ -47,6 +47,19 @@ public sealed class IdentityRepository(MarketplaceDbContext database) : IIdentit
         session.RevokedAt = now;
         await database.SaveChangesAsync(cancellationToken);
     }
+
+    // Single-statement increment keeps concurrent failures from losing counts.
+    public Task RecordFailedLoginAsync(Guid accountId, int maxAttempts, DateTimeOffset lockedUntil, CancellationToken cancellationToken) =>
+        database.Database.ExecuteSqlInterpolatedAsync($"""
+            UPDATE user_accounts SET
+                locked_until = CASE WHEN failed_login_count + 1 >= {maxAttempts} THEN {lockedUntil} ELSE locked_until END,
+                failed_login_count = CASE WHEN failed_login_count + 1 >= {maxAttempts} THEN 0 ELSE failed_login_count + 1 END
+            WHERE id = {accountId}
+            """, cancellationToken);
+
+    public Task ResetFailedLoginsAsync(Guid accountId, CancellationToken cancellationToken) =>
+        database.Database.ExecuteSqlInterpolatedAsync(
+            $"UPDATE user_accounts SET failed_login_count = 0, locked_until = NULL WHERE id = {accountId}", cancellationToken);
 }
 
 public sealed class DatabaseInitializer(MarketplaceDbContext database) : IDatabaseInitializer

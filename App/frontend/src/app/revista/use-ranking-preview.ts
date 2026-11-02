@@ -6,7 +6,7 @@ import type { Business } from "../business-card";
 
 export type RankingSelection = { zoneId: string; categoryId: number };
 export type RankingPage = { items: Business[]; hasMore: boolean; cursor: string; nextCursor: string | null;
-  expiresAt: string; rankingVersion: string; measurement: Record<string, string> };
+  expiresAt: string; rankingVersion: string; measurement: Record<string, string>; policy?: string };
 type Navigation = { selection: RankingSelection; requestId: string; startedAt: number; page: number;
   cursors: string[]; expiresAt?: string; rankingVersion?: string };
 type State = { navigation: Navigation | null; data: RankingPage | null; busy: boolean; error: number | null };
@@ -116,9 +116,10 @@ export function useRankingPreview() {
     return () => clearTimeout(timeout);
   }, [state.navigation, state.error]);
 
-  return { ...state, reset,
-    start: (selection: RankingSelection) => load({ selection, requestId: crypto.randomUUID(),
-      startedAt: Date.now(), page: 1, cursors: [] }, true),
+  const start = useCallback((selection: RankingSelection, push = true) => load({ selection,
+    requestId: crypto.randomUUID(), startedAt: Date.now(), page: 1, cursors: [] }, push), [load]);
+
+  return { ...state, reset, start,
     retry: async () => { if (state.navigation) await load(state.navigation); },
     go: async (page: number) => {
       if (state.navigation?.cursors[page - 1] && !state.busy) await load({ ...state.navigation, page }, true);

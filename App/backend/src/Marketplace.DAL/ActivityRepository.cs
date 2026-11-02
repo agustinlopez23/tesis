@@ -14,7 +14,7 @@ public sealed class ActivityRepository(MarketplaceDbContext database) : IActivit
             SELECT {entry.VisitId}, b.id, {entry.Kind}, {entry.Surface}, {entry.Source},
                 {entry.Position}, {entry.RankingVersion}, {entry.OccurredAt}
             FROM businesses b JOIN user_accounts u ON u.id = b.owner_id
-            WHERE b.id = {entry.BusinessId} AND b.status = 'published' AND NOT u.is_suspended
+            WHERE b.id = {entry.BusinessId} AND b.status = 'published' AND NOT u.is_suspended AND NOT b.is_suspended
                 AND b.owner_id IS DISTINCT FROM {actorId}
             ON CONFLICT (visit_id, business_id, kind, surface) DO NOTHING
             """, ct);

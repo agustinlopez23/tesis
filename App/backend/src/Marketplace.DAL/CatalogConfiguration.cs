@@ -47,6 +47,7 @@ internal static class CatalogConfiguration
             e.Property(x => x.Currency).HasColumnName("currency").HasMaxLength(3);
             e.Property(x => x.Available).HasColumnName("available");
             e.Property(x => x.Status).HasColumnName("status").HasMaxLength(20);
+            e.Property(x => x.IsSuspended).HasColumnName("is_suspended");
             e.Property(x => x.Version).HasColumnName("version");
             e.Property(x => x.CreatedAt).HasColumnName("created_at");
             e.Property(x => x.UpdatedAt).HasColumnName("updated_at");

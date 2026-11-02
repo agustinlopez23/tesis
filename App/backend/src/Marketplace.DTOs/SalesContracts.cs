@@ -5,7 +5,7 @@ public sealed record SaleLineRequest(Guid ProductId, int Quantity, decimal UnitP
 public sealed record CreateSaleRequest(Guid? OrderId, int? OrderVersion, SaleLineRequest[]? Lines);
 public sealed record ReturnLineRequest(Guid ProductId, int Quantity);
 public sealed record VoidSaleRequest(Guid OperationId, string? Reason, ReturnLineRequest[]? Returns);
-public sealed record InventoryItem(Guid ProductId, string Name, int? Quantity, int Version);
+public sealed record InventoryItem(Guid ProductId, string Name, int? Quantity, int Version, bool LowStock);
 public sealed record MovementResponse(Guid OperationId, Guid ProductId, string ProductName, int Delta, int Balance,
     string Kind, string Reason, Guid ActorId, Guid? SaleId, DateTimeOffset CreatedAt);
 public sealed record SaleLineResponse(Guid ProductId, string Name, int Quantity, decimal UnitPrice, string Currency, string Origin, int ReturnedQuantity);

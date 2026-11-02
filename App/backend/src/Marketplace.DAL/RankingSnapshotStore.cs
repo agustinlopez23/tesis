@@ -41,15 +41,15 @@ public sealed class RankingSnapshotStore(MarketplaceDbContext database, TimeProv
             throw new ArgumentException("Opportunity does not match its transaction.");
         var snapshot = new RankingSnapshot(opportunity.Id, contextKey, opportunity.Context.At,
             opportunity.Context.At.AddMinutes(30), opportunity.PolicyHash,
-            Array.AsReadOnly(opportunity.Candidates.Select(x => x.Candidate.Id).ToArray()));
+            Array.AsReadOnly(opportunity.Candidates.Select(x => x.Candidate.Id).ToArray()), opportunity.PolicyLabel);
         var snapshotJson = JsonSerializer.Serialize(snapshot);
         var opportunityJson = JsonSerializer.Serialize(opportunity);
         var traceJson = JsonSerializer.Serialize(opportunity.Candidates);
         await database.Database.ExecuteSqlInterpolatedAsync($"""
-            INSERT INTO ranking_snapshots (id, request_id, context_key, expires_at, payload)
-            VALUES ({snapshot.Id}, {requestId}, {contextKey}, {snapshot.ExpiresAt}, CAST({snapshotJson} AS jsonb));
-            INSERT INTO ranking_opportunities (id, context_key, sequence, occurred_at, payload)
-            VALUES ({opportunity.Id}, {contextKey}, {sequence}, {opportunity.Context.At}, CAST({opportunityJson} AS jsonb));
+            INSERT INTO ranking_snapshots (id, request_id, context_key, expires_at, payload, policy_label)
+            VALUES ({snapshot.Id}, {requestId}, {contextKey}, {snapshot.ExpiresAt}, CAST({snapshotJson} AS jsonb), {opportunity.PolicyLabel});
+            INSERT INTO ranking_opportunities (id, context_key, sequence, occurred_at, payload, policy_label)
+            VALUES ({opportunity.Id}, {contextKey}, {sequence}, {opportunity.Context.At}, CAST({opportunityJson} AS jsonb), {opportunity.PolicyLabel});
             INSERT INTO ranking_contributions (opportunity_id, business_id, expected, received)
             SELECT {opportunity.Id}, (item->'Candidate'->>'Id')::uuid,
                 (item->>'Expected')::double precision, (item->>'Received')::double precision

@@ -5,7 +5,7 @@ import { catalogApi, catalogError } from "./catalog-api";
 import { useSaleOperation } from "./use-sale-operation";
 import { businessChanged, useBusinessRefresh } from "./business-refresh";
 
-type Item = { productId: string; name: string; quantity: number | null; version: number };
+type Item = { productId: string; name: string; quantity: number | null; version: number; lowStock?: boolean };
 type Movement = { operationId: string; productId: string; productName: string; delta: number; balance: number; reason: string; createdAt: string };
 export default function BusinessInventory({ business }: { business: string }) {
   const [open, setOpen] = useState(false);
@@ -34,7 +34,7 @@ function Inventory({ business }: { business: string }) {
     <p>Cargá el saldo inicial real. Luego sumá ingresos o restá bajas indicando el motivo. Una solicitud no reserva unidades.</p>
     {error && <p role="alert">{error}</p>}{operation.error && <p role="alert">{operation.error}</p>}{success && <p role="status">{success}</p>}
     <button className="text-link" disabled={loading || operation.pending} onClick={refresh}>Actualizar inventario</button>
-    {loading ? <p role="status">Cargando inventario…</p> : !error && <ul className="inventory-list">{items.map(item => <li key={item.productId}><span><strong>{item.name}</strong> · {item.quantity === null ? <span>Sin cargar</span> : `${item.quantity} unidades`}</span>
+    {loading ? <p role="status">Cargando inventario…</p> : !error && <ul className="inventory-list">{items.map(item => <li key={item.productId}><span><strong>{item.name}</strong> · {item.quantity === null ? <span>Sin cargar</span> : `${item.quantity} unidades`}{item.lowStock && <span className="stock-badge">Disponibilidad baja</span>}</span>
       <button className="text-link" disabled={operation.locked} onClick={() => { setSelected(item); setDelta(""); setReason(""); setSuccess(""); }}>Ajustar {item.name}</button></li>)}</ul>}
     {(selected || operation.intent) && <form className="catalog-form" onSubmit={e => { e.preventDefault(); void operation.submit(() => ({ path: `/businesses/${business}/inventory/adjustments/${crypto.randomUUID()}`, body: { productId: selected!.productId, delta: Number(delta), version: selected!.version, reason: reason.trim() } })); }}>
       <fieldset disabled={operation.locked}><legend>{selected?.name ?? "Ajuste pendiente"}</legend><label>Unidades a sumar o restar<input required type="number" min={-1000000} max={1000000} value={delta} onChange={e => setDelta(e.target.value)} /></label>

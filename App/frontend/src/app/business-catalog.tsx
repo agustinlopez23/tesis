@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import Image from "next/image";
 import { catalogApi, catalogError, Plan, Product, priceLabel } from "./catalog-api";
 import CatalogAssistance from "./catalog-assistance";
+import PlanCapabilities from "./plan-capabilities";
 import { businessChanged, useBusinessRefresh } from "./business-refresh";
 
 export default function BusinessCatalog({ id }: { id: string }) {
@@ -43,7 +44,10 @@ function CatalogEditor({ id }: { id: string }) {
   }, [id, attempt]);
   function refresh() { setError(""); setLoading(true); setAttempt((n) => n + 1); }
   useBusinessRefresh(id, refresh);
+  // Photo the owner attached to the AI draft, kept client side until they choose to upload it.
+  const [assistPhoto, setAssistPhoto] = useState<File | null>(null);
   function edit(product?: Product) {
+    setAssistPhoto(null);
     setEditing(product ?? { id: crypto.randomUUID(), name: "", description: "", category: "", price: 0, currency: "ARS", available: true, status: "draft", version: 0, hasPhoto: false });
     setPrice(product ? String(product.price) : ""); setError(""); setSuccess("");
   }
@@ -77,6 +81,7 @@ function CatalogEditor({ id }: { id: string }) {
       const form = new FormData();
       if (file) { form.append("file", file); form.append("version", String(editing.version)); }
       await handleResponse(await catalogApi(`/businesses/${id}/products/${editing.id}/photo${file ? "" : "?version=" + editing.version}`, file ? "PUT" : "DELETE", file ? form : undefined));
+      if (file === assistPhoto) setAssistPhoto(null);
       setSuccess(file ? "Foto guardada." : "Foto retirada.");
     } catch (error) { setError(error instanceof Error ? error.message : "No pudimos guardar la foto."); }
     finally { setPending(false); }
@@ -85,6 +90,7 @@ function CatalogEditor({ id }: { id: string }) {
     {error && <p className="error" role="alert">{error}</p>}
     {success && <p className="success-message" role="status">{success}</p>}
     <div className="catalog-toolbar"><p>{plan ? `Plan ${plan.plan}` : "Consultando plan…"}</p><button type="button" className="text-link" disabled={pending || loading} onClick={refresh}>Actualizar catálogo</button></div>
+    {plan && <PlanCapabilities current={plan.plan} />}
     {loading ? <p role="status">Cargando productos…</p> : <>
       {plan && !plan.catalogEnabled && <p className="catalog-notice">El catálogo requiere un plan Impulso vigente. Tus productos se conservan y podés consultarlos. La administración gestiona la activación.</p>}
       <button type="button" className="button button-primary" disabled={!plan?.catalogEnabled || pending} onClick={() => edit()}>Nuevo producto</button>
@@ -97,7 +103,8 @@ function CatalogEditor({ id }: { id: string }) {
     {editing && <form className="catalog-form" onSubmit={save}>
       <h3>{editing.version ? "Editar producto" : "Nuevo producto"}</h3>
       <fieldset disabled={pending || !plan?.catalogEnabled || loading}>
-        <CatalogAssistance key={editing.id} business={id} onApply={draft => setEditing({ ...editing, ...draft })} />
+        <CatalogAssistance key={editing.id} business={id} onApply={(draft, file) => { setEditing({ ...editing, ...draft }); setAssistPhoto(file); }} />
+        {assistPhoto && editing.version === 0 && <p className="field-help">Guardá el producto para usar la foto del borrador.</p>}
         <label>Nombre del producto<input required maxLength={160} value={editing.name} onChange={(e) => setEditing({ ...editing, name: e.target.value })} /></label>
         <label>Descripción del producto<textarea maxLength={2000} value={editing.description} onChange={(e) => setEditing({ ...editing, description: e.target.value })} /></label>
         <label>Categoría del producto<input required maxLength={80} value={editing.category} onChange={(e) => setEditing({ ...editing, category: e.target.value })} /></label>
@@ -113,6 +120,7 @@ function CatalogEditor({ id }: { id: string }) {
         <label>Foto del producto<input key={editing.id + ":" + editing.version} type="file" accept="image/jpeg,image/png,image/webp" disabled={pending || !plan?.catalogEnabled || dirty || loading} onChange={(e) => { const file = e.target.files?.[0]; if (file) void photo(file); }} /></label>
         {dirty && <p className="field-help">Guardá los cambios del producto antes de modificar su foto.</p>}
         <p className="field-help">JPEG, PNG o WebP de hasta 5 MB.</p>
+        {assistPhoto && <button type="button" className="button button-outline" disabled={pending || !plan?.catalogEnabled || dirty || loading} onClick={() => void photo(assistPhoto)}>Usar la foto del borrador</button>}
         {editing.hasPhoto && <button type="button" className="text-link" disabled={pending || !plan?.catalogEnabled || dirty || loading} onClick={() => void photo(null)}>Quitar foto</button>}
       </div>}
     </form>}

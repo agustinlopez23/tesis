@@ -13,7 +13,7 @@ public sealed class BusinessRepository(MarketplaceDbContext database) : IBusines
                from business in database.Businesses.AsNoTracking()
                join owner in database.UserAccounts on business.OwnerId equals owner.Id
                join category in database.BusinessCategories on business.CategoryId equals category.Id
-               where business.Status == "published" && !owner.IsSuspended
+               where business.Status == "published" && !business.IsSuspended && !owner.IsSuspended
                select new PublicBusinessRow { Id = business.Id, Name = business.Name, Description = business.Description,
                    Address = business.Address, Category = category.Name, WhatsApp = business.WhatsApp, DistanceKm = null };
         if (!string.IsNullOrWhiteSpace(categoryFilter))
@@ -46,7 +46,7 @@ public sealed class BusinessRepository(MarketplaceDbContext database) : IBusines
         FROM businesses b
         JOIN user_accounts u ON u.id = b.owner_id
         JOIN business_categories c ON c.id = b.category_id
-        WHERE b.status = 'published' AND NOT u.is_suspended
+        WHERE b.status = 'published' AND NOT u.is_suspended AND NOT b.is_suspended
           AND ST_DWithin(b.location, ST_SetSRID(ST_MakePoint({area.Longitude}, {area.Latitude}), 4326)::geography, {area.RadiusKm * 1000})
         """);
 
@@ -64,8 +64,8 @@ public sealed class BusinessRepository(MarketplaceDbContext database) : IBusines
     public async Task<IReadOnlyList<BusinessCategory>> GetCategoriesAsync(CancellationToken cancellationToken) =>
         await database.BusinessCategories.AsNoTracking().OrderBy(x => x.Name).ToListAsync(cancellationToken);
 
-    public Task<bool> CategoryExistsAsync(short categoryId, CancellationToken cancellationToken) =>
-        database.BusinessCategories.AnyAsync(x => x.Id == categoryId, cancellationToken);
+    public Task<BusinessCategory?> FindCategoryAsync(short categoryId, CancellationToken cancellationToken) =>
+        database.BusinessCategories.AsNoTracking().SingleOrDefaultAsync(x => x.Id == categoryId, cancellationToken);
 
     public async Task<IReadOnlyList<BusinessProfile>> GetOwnedAsync(Guid ownerId, CancellationToken cancellationToken) =>
         await database.Businesses.AsNoTracking().Where(x => x.OwnerId == ownerId)

@@ -24,6 +24,14 @@ public static class MarketplaceServices
         services.AddSingleton(provider => new RankingReadLimits(
             provider.GetRequiredService<IConfiguration>().GetValue("Ranking:MaxCandidates", 1000),
             provider.GetRequiredService<IConfiguration>().GetValue("Ranking:MaxBalanceRows", 10000)));
+        services.AddSingleton(provider => new CatalogSettings(
+            Math.Max(1, provider.GetRequiredService<IConfiguration>().GetValue("Catalog:LowStockThreshold", 3))));
+        services.AddSingleton(provider => new OwnerActivitySettings(
+            TimeSpan.FromMinutes(Math.Max(1, provider.GetRequiredService<IConfiguration>().GetValue("OwnerActivity:DedupMinutes", 60))),
+            Math.Max(1, provider.GetRequiredService<IConfiguration>().GetValue("OwnerActivity:RankingCap", 10))));
+        services.AddScoped<IOwnerActivityRepository, OwnerActivityRepository>();
+        services.AddScoped<OwnerActivityService>();
+        services.AddScoped<ProductSearchRanking>();
         services.AddScoped<IRankingCandidateRepository, RankingCandidateRepository>();
         services.AddScoped<MagazineRankingCandidates>();
         services.AddScoped<IRankingSnapshotStore, RankingSnapshotStore>();
@@ -56,6 +64,8 @@ public static class MarketplaceServices
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<ActivityService>();
         services.AddScoped<IPasswordService, AspNetPasswordService>();
+        services.AddScoped<IAdminRepository, AdminRepository>();
+        services.AddScoped<AdminService>();
         return services;
     }
 }

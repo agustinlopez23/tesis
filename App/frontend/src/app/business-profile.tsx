@@ -6,10 +6,13 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { categoryStyle, Icon, SiteFooter, SiteHeader } from "./ui";
 import { profileMeasurementToken, trackActivity, useProfileVisit } from "./activity";
+import { SponsoredCard } from "./sponsored-campaigns";
+import type { PublicCampaign } from "./campaign-api";
+import { whatsAppLink } from "./whatsapp";
 
 export type Photo = { slot: number; caption: string; width: number; height: number };
 type Profile = { id: string; name: string; description: string; address: string;
-  category: string; whatsApp: string; photos: Photo[]; measurementToken?: string };
+  category: string; whatsApp: string; photos: Photo[]; measurementToken?: string; promotions?: PublicCampaign[]; hasPublicCatalog?: boolean };
 
 export default function BusinessProfile({ id }: { id: string }) {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -44,11 +47,15 @@ export default function BusinessProfile({ id }: { id: string }) {
             <section className="profile-about"><p className="eyebrow">Detrás del negocio</p><h2>Conocé su propuesta.</h2><p>{profile.description || "Para conocer su propuesta, contactá directamente al negocio."}</p></section>
           </div>
           <aside className="profile-contact"><span className="mini-icon"><Icon name="message" /></span><h2>Una buena conexión <br/>empieza con un hola.</h2><p>Consultá disponibilidad, precios o lo que quieras saber directamente con el negocio.</p>
-            <a className="button button-dark full-width" onClick={() => void trackActivity(id, profileMeasurementToken(id, profile.measurementToken), "contact", "profile")} href={"https://wa.me/" + profile.whatsApp.replace(/^\+/, "")} target="_blank" rel="noopener noreferrer">Contactar por WhatsApp<Icon name="arrow" /></a>
+            <a className="button button-dark full-width" onClick={() => void trackActivity(id, profileMeasurementToken(id, profile.measurementToken), "contact", "profile")} href={whatsAppLink(profile.whatsApp, profile.name)} target="_blank" rel="noopener noreferrer">Contactar por WhatsApp<Icon name="arrow" /></a>
             <div className="profile-address"><Icon name="pin" /><div><strong>Dónde encontrarlo</strong><p>{profile.address || "Consultá la dirección por WhatsApp."}</p>{profile.address && <a className="text-link" href={"https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(profile.address + ", Córdoba, Argentina")} target="_blank" rel="noopener noreferrer">Buscar dirección en Maps <Icon name="arrow" /></a>}</div></div>
           </aside>
         </div>
-        <PublicCatalog key={profile.id} id={profile.id} />
+        {!!profile.promotions?.length && <section className="profile-promotions" aria-labelledby="profile-promotions-title">
+          <p className="eyebrow">Para aprovechar</p><h2 id="profile-promotions-title">Promociones vigentes</h2>
+          <div className="catalog-grid">{profile.promotions.filter((item) => typeof item.token === "string").map((item) => <SponsoredCard key={item.id} campaign={item} />)}</div>
+        </section>}
+        <PublicCatalog key={profile.id} id={profile.id} enabled={profile.hasPublicCatalog !== false} />
       </>}
   </main><SiteFooter /></>;
 }

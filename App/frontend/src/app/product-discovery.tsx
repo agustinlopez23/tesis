@@ -5,15 +5,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { catalogApi } from "./catalog-api";
 import { money } from "./order-api";
-import { areaParams, DiscoveryLocation, distanceLabel, readArea } from "./explorar/discovery-location";
+import { areaParams, DiscoveryLocation, distanceLabel, radii, readArea } from "./explorar/discovery-location";
 import { LocationFilter } from "./explorar/location-filter";
 import SponsoredCampaigns from "./sponsored-campaigns";
 import { SiteFooter, SiteHeader } from "./ui";
 
 type Product = { id: string; businessId: string; businessName: string; businessCategory: string; name: string; description: string; category: string;
-  price: number; currency: string; version: number; hasPhoto: boolean; distanceKm: number | null };
+  price: number; currency: string; version: number; hasPhoto: boolean; distanceKm: number | null; lowStock?: boolean };
 type Filters = { page: number; query: string; category: string; area: DiscoveryLocation | null };
-type Results = { items: Product[]; page: number; hasNextPage: boolean; order: string };
+type Results = { items: Product[]; page: number; hasNextPage: boolean; order: string; policy?: string | null };
+const radiusLabel = (radius: number) => radius < 1 ? radius * 1000 + " m" : radius + " km";
 export default function ProductDiscovery() {
   const [filters, setFilters] = useState<Filters>({ page: 1, query: "", category: "", area: null });
   const [draft, setDraft] = useState(""), [ready, setReady] = useState(false), [attempt, setAttempt] = useState(0);
@@ -38,6 +39,7 @@ export default function ProductDiscovery() {
     const controller = new AbortController();
     const query = new URLSearchParams({ page: String(filters.page), q: filters.query, category: filters.category });
     areaParams(query, filters.area);
+    if (filters.area?.kind === "zone" && filters.area.zone) query.set("zone", filters.area.zone);
     void catalogApi(`/public/products?${query}`, "GET", undefined, controller.signal).then(async response => {
       if (!response.ok) throw new Error();
       const result = await response.json(); if (!controller.signal.aborted) setData(result);
@@ -64,15 +66,22 @@ export default function ProductDiscovery() {
     <LocationFilter area={filters.area} onChange={area => navigate({ ...filters, area, page: 1 })} />
     <SponsoredCampaigns zone={filters.area?.kind === "zone" ? filters.area.zone ?? null : null} />
     {notice && <p role="status">Volvé a elegir tu ubicación para buscar cerca de vos; las coordenadas no se comparten en el enlace.</p>}
-    <div className="catalog-toolbar"><p>{filters.area ? "Ordenados por distancia en línea recta." : "Ordenados alfabéticamente."} Precios informados por cada negocio.</p><button className="text-link" onClick={() => navigate(filters)}>Actualizar productos</button></div>
+    <div className="catalog-toolbar"><p>{data?.order === "ranking" ? `Ordenado por ranking hiperlocal con equidad (${data.policy}).` : filters.area ? "Ordenados por distancia en línea recta." : "Ordenados alfabéticamente."} Precios informados por cada negocio.</p><button className="text-link" onClick={() => navigate(filters)}>Actualizar productos</button></div>
     {error ? <p role="alert">No pudimos consultar los productos. Actualizá para reintentar.</p> : !data ? <p role="status">Buscando productos…</p> : <>
-      {!data.items.length && <p>No encontramos productos disponibles con esos filtros.</p>}
+      {!data.items.length && (filters.area ? <WiderSearch area={filters.area} onChange={area => navigate({ ...filters, area, page: 1 })} /> : <p>No encontramos productos disponibles con esos filtros.</p>)}
       <div className="catalog-grid">{data.items.map(product => <article className="product-card" key={product.id}>
         {product.hasPhoto && <Image src={`/api/marketplace/public/businesses/${product.businessId}/products/${product.id}/photo?v=${product.version}`} alt={product.name} width={400} height={300} unoptimized />}
-        <div className="product-card-copy"><span className="eyebrow">{product.category}</span><h2>{product.name}</h2><p>{product.description}</p><strong>{money(product.price, product.currency)}</strong><p>{product.businessName} · {product.businessCategory}</p>{product.distanceKm !== null && <p>{distanceLabel(product.distanceKm)}</p>}
+        <div className="product-card-copy"><span className="eyebrow">{product.category}</span><h2>{product.name}</h2><p>{product.description}</p><strong>{money(product.price, product.currency)}</strong>{product.lowStock && <span className="stock-badge">Disponibilidad baja</span>}<p>{product.businessName} · {product.businessCategory}</p>{product.distanceKm !== null && <p>{distanceLabel(product.distanceKm)}</p>}
           <Link className="text-link" href={`/negocios/${product.businessId}#catalog-title`} aria-label={`Ver catálogo de ${product.businessName}`}>Ver catálogo y solicitar</Link></div>
       </article>)}</div>
       <nav className="catalog-toolbar" aria-label="Páginas de productos"><button className="button button-outline" disabled={filters.page === 1} onClick={() => navigate({ ...filters, page: filters.page - 1 })}>Anterior</button><span>Página {data.page}</span><button className="button button-outline" disabled={!data.hasNextPage} onClick={() => navigate({ ...filters, page: filters.page + 1 })}>Siguiente</button></nav>
     </>}
   </main><SiteFooter /></>;
+}
+
+function WiderSearch({ area, onChange }: { area: DiscoveryLocation; onChange: (area: DiscoveryLocation | null) => void }) {
+  const wider = radii.find(radius => radius > area.radiusKm);
+  return <div className="empty-results" role="status"><p>No encontramos productos disponibles en esta zona dentro de {radiusLabel(area.radiusKm)}.</p>
+    <div className="catalog-toolbar">{wider !== undefined && <button className="button button-outline" onClick={() => onChange({ ...area, radiusKm: wider })}>Ampliar radio a {radiusLabel(wider)}</button>}
+      <button className="text-link" onClick={() => onChange(null)}>Buscar en toda la ciudad</button></div></div>;
 }

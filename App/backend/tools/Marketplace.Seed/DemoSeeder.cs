@@ -13,11 +13,27 @@ public static class DemoSeeder
 {
     public static readonly Guid OwnerId = Guid.Parse("de000000-0000-4000-8000-000000000001");
     public static readonly Guid AdminId = Guid.Parse("de000000-0000-4000-8000-000000000002");
-    public static async Task ApplyAsync(MarketplaceDbContext db, string ownerPassword, string adminPassword, string environment)
+    public const string HostedOptIn = "--allow-hosted-demo";
+    public const string HostedConfirmationVariable = "DEMO_SEED_CONFIRM_HOST";
+
+    /// <summary>
+    /// Guards the seed target. A local database is always allowed in Development/Testing; a hosted database
+    /// additionally requires the explicit opt-in and a confirmation that names exactly the target host.
+    /// </summary>
+    public static void EnsureTargetAllowed(string environment, string? host, string? confirmedHostedHost)
     {
         if (environment is not ("Development" or "Testing")) throw new InvalidOperationException("Seed permitido solo en Development/Testing.");
+        if (host is "localhost" or "127.0.0.1" or "::1") return;
+        if (string.IsNullOrWhiteSpace(host) || string.IsNullOrWhiteSpace(confirmedHostedHost))
+            throw new InvalidOperationException($"El seed requiere una base local. Para una base de demostración hosteada usá {HostedOptIn} y {HostedConfirmationVariable}=<host de la base>.");
+        if (!string.Equals(host, confirmedHostedHost.Trim(), StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException($"{HostedConfirmationVariable} no coincide con el host de la conexión; no se modificó la base.");
+    }
+
+    public static async Task ApplyAsync(MarketplaceDbContext db, string ownerPassword, string adminPassword, string environment, string? confirmedHostedHost = null)
+    {
         var connection = new NpgsqlConnectionStringBuilder(db.Database.GetConnectionString());
-        if (connection.Host is not ("localhost" or "127.0.0.1" or "::1")) throw new InvalidOperationException("El seed requiere una base local.");
+        EnsureTargetAllowed(environment, connection.Host, confirmedHostedHost);
         if (ownerPassword.Length is < 12 or > 128 || adminPassword.Length is < 12 or > 128 || ownerPassword == adminPassword)
             throw new InvalidOperationException("Se requieren dos contraseñas distintas de 12 a 128 caracteres.");
         var data = JsonSerializer.Deserialize<SeedData>(await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "demo-seed.json")), new JsonSerializerOptions(JsonSerializerDefaults.Web))
@@ -61,7 +77,47 @@ public static class DemoSeeder
             }
             await db.SaveChangesAsync();
         }
+        foreach (var item in data.Campaigns ?? []) await Campaign(item);
         await transaction.CommitAsync();
+
+        // Promotions are seeded as already approved and paid, mirroring the audit trail of the real flow.
+        // Re-running renews the window of scheduled promotions; paused or rejected ones are left untouched.
+        async Task Campaign(SeedCampaign item)
+        {
+            var business = data.Businesses.SingleOrDefault(b => b.Id == item.BusinessId);
+            if (item.Id == Guid.Empty || ids.Contains(item.Id) || business is null || !business.Products.Any(p => p.Id == item.ProductId) || !Marketplace.BLL.CampaignService.Zone(item.ZoneId))
+                throw new InvalidOperationException("Promoción de seed inválida.");
+            var startsAt = now.AddDays(-1); var endsAt = now.AddDays(29);
+            var existing = await db.Campaigns.FindAsync(item.Id);
+            if (existing is not null && (existing.BusinessId != item.BusinessId || existing.ProductId != item.ProductId))
+                throw new InvalidOperationException("ID de promoción ocupado por otra campaña.");
+            if (existing is not null && (existing.Status != "scheduled" || existing.ApprovedAt is null || existing.PaidAt is null)) return;
+            // Same zone lock and capacity rule as confirm_payment/resume in CampaignRepository.
+            await db.Database.ExecuteSqlInterpolatedAsync($"SELECT pg_advisory_xact_lock(hashtext({item.ZoneId}))");
+            if (await db.Campaigns.CountAsync(c => c.Id != item.Id && c.ZoneId == item.ZoneId && (c.Status == "scheduled" || c.Status == "paused") &&
+                c.StartsAt < endsAt && c.EndsAt > startsAt) >= 3) throw new InvalidOperationException($"La zona {item.ZoneId} no tiene cupo para la promoción demo.");
+            if (existing is null)
+            {
+                existing = new Campaign { Id=item.Id, BusinessId=item.BusinessId, ProductId=item.ProductId, Title=item.Title, Description=item.Description,
+                    Conditions=item.Conditions, ZoneId=item.ZoneId, StartsAt=startsAt, EndsAt=endsAt, CreatedAt=now, Status="scheduled", Version=3,
+                    SaveHash=Hash($"demo-v1:campaign:{item.Id}"), ApprovedAt=now, PaidAt=now, PaymentReference=item.PaymentReference,
+                    Image=await db.ProductPhotos.Where(p => p.ProductId == item.ProductId).Select(p => p.Content).SingleOrDefaultAsync() };
+                db.Campaigns.Add(existing);
+                Change(existing, 1, OwnerId, "submit", "Contenido preparado por el negocio (seed demo)");
+                Change(existing, 2, AdminId, "approve", "Aprobada para la demostración");
+                Change(existing, 3, AdminId, "confirm_payment", "Pago ficticio del seed de demostración. Sin cobro.");
+            }
+            else
+            {
+                existing.StartsAt = startsAt; existing.EndsAt = endsAt; existing.Version++;
+                Change(existing, existing.Version, AdminId, "resolve", "Ventana de demostración renovada por el seed");
+            }
+            await db.SaveChangesAsync();
+        }
+
+        void Change(Campaign campaign, int version, Guid actor, string action, string reason) => db.CampaignChanges.Add(new CampaignChange {
+            OperationId=Guid.NewGuid(), CampaignId=campaign.Id, ActorId=actor, Version=version, Action=action, Reason=reason,
+            RequestHash=Hash($"demo-v1:campaign:{campaign.Id}:{version}:{action}"), CreatedAt=now });
 
         async Task Account(Guid id, string email, string name, string password, bool admin)
         {
@@ -84,7 +140,9 @@ public static class DemoSeeder
         }
     }
 
-    private sealed record SeedData(SeedBusiness[] Businesses);
+    private static string Hash(string value) => Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+    private sealed record SeedData(SeedBusiness[] Businesses, SeedCampaign[]? Campaigns);
+    private sealed record SeedCampaign(Guid Id, Guid BusinessId, Guid ProductId, string ZoneId, string Title, string Description, string Conditions, string PaymentReference);
     private sealed record SeedBusiness(Guid Id, string Name, short CategoryId, string Description, string Address, double Latitude, double Longitude, SeedProduct[] Products);
     private sealed record SeedProduct(Guid Id, string Name, string Description, string Category, decimal Price, string Currency, int Stock, bool Available, string Status);
 }

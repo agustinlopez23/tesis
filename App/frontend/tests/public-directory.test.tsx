@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, expect, it, vi } from "vitest";
-import Explore from "../src/app/explorar/page";
+import Explore from "../src/app/explorar/explore";
 
 const business = { id: "1", name: "Almacén Córdoba", description: "Productos locales",
   address: "Colón 123", category: "Almacenes", whatsApp: "+5493515551234" };

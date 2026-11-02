@@ -7,11 +7,13 @@ public static class BusinessProfileEndpoints
 {
     public static void MapBusinessProfiles(this WebApplication app)
     {
-        app.MapGet("/public/businesses/{id:guid}", async (Guid id, HttpResponse response, BusinessProfileService profiles, ActivityTokens tokens, CancellationToken ct) =>
+        app.MapGet("/public/businesses/{id:guid}", async (Guid id, HttpResponse response, BusinessProfileService profiles, CampaignService campaigns, ActivityTokens tokens, CancellationToken ct) =>
         {
             response.Headers.CacheControl = "no-store";
             var profile = await profiles.GetPublicAsync(id, ct);
-            return profile is null ? Results.NotFound() : Results.Ok(profile with { MeasurementToken = tokens.Issue(new(id, "unknown", null, null)) });
+            return profile is null ? Results.NotFound() : Results.Ok(profile with {
+                MeasurementToken = tokens.Issue(new(id, "unknown", null, null)),
+                Promotions = await campaigns.ForBusiness(id, ct) });
         });
         app.MapGet("/public/businesses/{id:guid}/photos/{slot:int}", async (
             Guid id, int slot, HttpResponse response, BusinessProfileService profiles, CancellationToken ct) =>
@@ -69,7 +71,7 @@ public static class BusinessProfileEndpoints
             }
             catch (InvalidDataException) { return InvalidPhoto(); }
             catch (BadHttpRequestException error) { return Results.StatusCode(error.StatusCode); }
-        });
+        }).RecordsOwnerActivity(OwnerActivityKinds.ProfileUpdate);
         app.MapDelete("/businesses/{id:guid}/photos/{slot:int}", async (
             Guid id, int slot, HttpRequest request, HttpResponse response, IConfiguration config,
             AuthenticationService auth, BusinessProfileService profiles, CancellationToken ct) =>
@@ -80,7 +82,7 @@ public static class BusinessProfileEndpoints
             if (owner is null) return Results.Unauthorized();
             if (!await profiles.IsOwnedAsync(id, owner.Id, ct)) return Results.NotFound();
             return await profiles.DeletePhotoAsync(id, slot, ct) ? Results.NoContent() : Results.NotFound();
-        });
+        }).RecordsOwnerActivity(OwnerActivityKinds.ProfileUpdate);
     }
     private static bool Trusted(HttpRequest request, IConfiguration config) =>
         request.Headers.Origin == config["FrontendOrigin"] && request.Headers["X-Requested-With"] == "marketplace";

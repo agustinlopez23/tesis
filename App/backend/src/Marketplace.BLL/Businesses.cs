@@ -11,7 +11,7 @@ public interface IBusinessRepository
 {
     Task<IReadOnlyList<PublicBusinessResponse>> GetPublishedAsync(int skip, int take, string? query, string? category, DiscoveryArea? area, CancellationToken cancellationToken);
     Task<IReadOnlyList<BusinessCategory>> GetCategoriesAsync(CancellationToken cancellationToken);
-    Task<bool> CategoryExistsAsync(short categoryId, CancellationToken cancellationToken);
+    Task<BusinessCategory?> FindCategoryAsync(short categoryId, CancellationToken cancellationToken);
     Task<IReadOnlyList<BusinessProfile>> GetOwnedAsync(Guid ownerId, CancellationToken cancellationToken);
     Task<BusinessProfile?> GetOwnedAsync(Guid ownerId, Guid id, CancellationToken cancellationToken);
     Task AddAsync(BusinessProfile business, CancellationToken cancellationToken);
@@ -28,7 +28,7 @@ public sealed partial class BusinessService(IBusinessRepository repository)
 
     public async Task<IReadOnlyList<BusinessCategoryResponse>> GetCategoriesAsync(CancellationToken cancellationToken) =>
         (await repository.GetCategoriesAsync(cancellationToken))
-            .Select(x => new BusinessCategoryResponse(x.Id, x.Name, x.Slug)).ToArray();
+            .Select(x => new BusinessCategoryResponse(x.Id, x.Name, x.Slug, x.IsActive)).ToArray();
 
     public async Task<IReadOnlyList<BusinessResponse>> GetOwnedAsync(Guid ownerId, CancellationToken cancellationToken) =>
         (await repository.GetOwnedAsync(ownerId, cancellationToken)).Select(ToResponse).ToArray();
@@ -45,7 +45,7 @@ public sealed partial class BusinessService(IBusinessRepository repository)
         CancellationToken cancellationToken)
     {
         var business = Build(ownerId, request);
-        if (business is null || !await repository.CategoryExistsAsync(request.CategoryId, cancellationToken))
+        if (business is null || (await repository.FindCategoryAsync(request.CategoryId, cancellationToken))?.IsActive != true)
             return new(BusinessSaveStatus.Invalid);
         await repository.AddAsync(business, cancellationToken);
         return new(BusinessSaveStatus.Saved, ToResponse(business));
@@ -58,12 +58,14 @@ public sealed partial class BusinessService(IBusinessRepository repository)
         CancellationToken cancellationToken)
     {
         var values = Build(ownerId, request);
-        if (values is null || !await repository.CategoryExistsAsync(request.CategoryId, cancellationToken))
-            return new(BusinessSaveStatus.Invalid);
+        var category = values is null ? null : await repository.FindCategoryAsync(request.CategoryId, cancellationToken);
+        if (category is null) return new(BusinessSaveStatus.Invalid);
         var business = await repository.GetOwnedAsync(ownerId, id, cancellationToken);
         if (business is null) return new(BusinessSaveStatus.NotFound);
+        // A disabled category stays valid only for businesses that already use it.
+        if (!category.IsActive && business.CategoryId != category.Id) return new(BusinessSaveStatus.Invalid);
 
-        business.Name = values.Name;
+        business.Name = values!.Name;
         business.Description = values.Description;
         business.Address = values.Address;
         business.CategoryId = values.CategoryId;
