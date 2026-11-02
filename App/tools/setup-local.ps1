@@ -1,4 +1,4 @@
-$ErrorActionPreference = 'Stop'
+﻿$ErrorActionPreference = 'Stop'
 $appRoot = Split-Path $PSScriptRoot -Parent
 $localFile = Join-Path $appRoot '.env.local'
 if (-not (Test-Path -LiteralPath $localFile)) {

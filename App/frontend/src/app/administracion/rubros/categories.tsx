@@ -12,6 +12,7 @@ export default function AdminCategories() {
   const [attempt, setAttempt] = useState(0);
   const [name, setName] = useState("");
   const [editing, setEditing] = useState<{ id: number; name: string } | null>(null);
+  const [deleting, setDeleting] = useState<number | null>(null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -63,7 +64,12 @@ export default function AdminCategories() {
         <button className="text-link" disabled={pending} aria-label={`${category.isActive ? "Deshabilitar" : "Habilitar"} ${category.name}`}
           onClick={() => void save(`/admin/categories/${category.id}`, "PUT", { name: category.name, isActive: !category.isActive }, category.isActive ? "Rubro deshabilitado." : "Rubro habilitado.")}>
           {category.isActive ? "Deshabilitar" : "Habilitar"}</button>
+        <button className="text-link" disabled={pending} aria-label={`Eliminar ${category.name}`} onClick={() => setDeleting(category.id)}>Eliminar</button>
       </div>
+      {deleting === category.id && <div className="photo-confirm"><p>¿Eliminar el rubro {category.name}? Si algún negocio lo usa, no se podrá eliminar; en ese caso deshabilitalo.</p>
+        <button className="button button-outline" disabled={pending} aria-label={`Confirmar eliminación de ${category.name}`}
+          onClick={() => { setDeleting(null); void save(`/admin/categories/${category.id}`, "DELETE", undefined, "Rubro eliminado."); }}>Confirmar eliminación</button>
+        <button className="text-link" disabled={pending} onClick={() => setDeleting(null)}>Cancelar</button></div>}
     </article>)}</div>
   </>;
 }

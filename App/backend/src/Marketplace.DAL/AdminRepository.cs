@@ -51,6 +51,27 @@ public sealed class AdminRepository(MarketplaceDbContext db, TimeProvider clock)
         return new(AdminStatus.Saved, new(category.Id, category.Name, category.Slug, category.IsActive, count));
     }
 
+    // Businesses are the only rows referencing a category; the row lock blocks concurrent edits while counting,
+    // and the foreign key still rejects a business assigned between the count and the delete.
+    public async Task<AdminCategoryDeletion> DeleteCategoryAsync(Guid actor, short id, CancellationToken ct)
+    {
+        await using var tx = await db.Database.BeginTransactionAsync(ct);
+        var category = await db.BusinessCategories.FromSqlInterpolated($"SELECT * FROM business_categories WHERE id = {id} FOR UPDATE").SingleOrDefaultAsync(ct);
+        if (category is null) return new(AdminStatus.NotFound);
+        var usage = await db.Businesses.CountAsync(b => b.CategoryId == id, ct);
+        if (usage > 0) return new(AdminStatus.Conflict, usage);
+        db.BusinessCategories.Remove(category);
+        Audit(actor, "category", id.ToString(), category.Name, "delete", null);
+        try { await db.SaveChangesAsync(ct); }
+        catch (DbUpdateException error) when (error.InnerException is Npgsql.PostgresException { SqlState: "23503" })
+        {
+            await tx.RollbackAsync(ct);
+            return new(AdminStatus.Conflict, Math.Max(1, await db.Businesses.CountAsync(b => b.CategoryId == id, ct)));
+        }
+        await tx.CommitAsync(ct);
+        return new(AdminStatus.Saved);
+    }
+
     public async Task<IReadOnlyList<ModeratedAccountResponse>> AccountsAsync(string query, int page, CancellationToken ct)
     {
         var term = query.ToLower();

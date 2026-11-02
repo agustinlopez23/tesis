@@ -23,12 +23,14 @@ public sealed class AdminModerationTests(OnboardingFixture fixture) : IClassFixt
         }
         Assert.Equal(HttpStatusCode.Forbidden, (await ownerClient.PostAsJsonAsync("/admin/categories", new { name = "Ferretería" })).StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden, (await ownerClient.PostAsJsonAsync($"/admin/moderation/accounts/{Guid.NewGuid()}/suspend", new { reason = "Prueba" })).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, (await ownerClient.DeleteAsync("/admin/categories/1")).StatusCode);
 
         var (admin, _) = await Account(true);
         using var adminClient = admin;
         using var untrusted = fixture.Client(false);
         foreach (var header in adminClient.DefaultRequestHeaders.GetValues("Cookie")) untrusted.DefaultRequestHeaders.Add("Cookie", header);
         Assert.Equal(HttpStatusCode.Forbidden, (await untrusted.PostAsJsonAsync("/admin/categories", new { name = "Ferretería" })).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, (await untrusted.DeleteAsync("/admin/categories/1")).StatusCode);
     }
 
     [Fact]
@@ -156,6 +158,43 @@ public sealed class AdminModerationTests(OnboardingFixture fixture) : IClassFixt
             .Where(x => x.GetProperty("targetType").GetString() == "category" && x.GetProperty("targetId").GetString() == id.ToString())
             .Select(x => x.GetProperty("action").GetString()!).ToArray();
         Assert.Equal(["update", "update", "create"], audit);
+    }
+
+    [Fact]
+    public async Task Admin_deletes_unused_categories_and_is_blocked_with_a_usage_count_when_in_use()
+    {
+        var (owner, _) = await Account();
+        using var ownerClient = owner;
+        var (admin, _) = await Account(true);
+        using var adminClient = admin;
+
+        var unused = await Category(adminClient, "Librería " + Guid.NewGuid().ToString("N")[..6]);
+        Assert.Equal(HttpStatusCode.NoContent, (await adminClient.DeleteAsync($"/admin/categories/{unused}")).StatusCode);
+        Assert.Equal(0, await Scalar<long>("SELECT count(*) FROM business_categories WHERE id = $1", unused));
+        Assert.Equal(1, await Scalar<long>("SELECT count(*) FROM admin_actions WHERE target_type = 'category' AND target_id = $1 AND action = 'delete'", unused.ToString()));
+        Assert.Equal(HttpStatusCode.NotFound, (await adminClient.DeleteAsync($"/admin/categories/{unused}")).StatusCode);
+
+        var used = await Category(adminClient, "Vivero " + Guid.NewGuid().ToString("N")[..6]);
+        await Business(ownerClient, "Uso " + Guid.NewGuid().ToString("N")[..8], used);
+        var single = await adminClient.DeleteAsync($"/admin/categories/{used}");
+        Assert.Equal(HttpStatusCode.Conflict, single.StatusCode);
+        var body = await single.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("category_in_use", body.GetProperty("code").GetString());
+        Assert.Equal(1, body.GetProperty("usageCount").GetInt32());
+        Assert.Equal("No se puede eliminar el rubro: lo usa 1 negocio.", body.GetProperty("message").GetString());
+
+        await Business(ownerClient, "Uso " + Guid.NewGuid().ToString("N")[..8], used);
+        var plural = await (await adminClient.DeleteAsync($"/admin/categories/{used}")).Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal(2, plural.GetProperty("usageCount").GetInt32());
+        Assert.Equal("No se puede eliminar el rubro: lo usan 2 negocios.", plural.GetProperty("message").GetString());
+        Assert.Equal(1, await Scalar<long>("SELECT count(*) FROM business_categories WHERE id = $1", used));
+    }
+
+    private static async Task<short> Category(HttpClient admin, string name)
+    {
+        var response = await admin.PostAsJsonAsync("/admin/categories", new { name });
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        return (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetInt16();
     }
 
     [Fact]

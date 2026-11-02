@@ -263,8 +263,9 @@ promociones tienen página propia en `/promociones/{id}`.
 
 ### Moderación y auditoría
 
-`/administracion/rubros` crea, renombra y deshabilita rubros (un rubro deshabilitado no
-se elige para negocios nuevos; los existentes siguen visibles).
+`/administracion/rubros` crea, renombra, deshabilita y elimina rubros. Un rubro
+deshabilitado no se elige para negocios nuevos; los existentes siguen visibles. Un rubro
+en uso no se puede eliminar: la API responde 409 e indica cuántos negocios lo usan.
 `/administracion/moderacion` suspende y reactiva cuentas de comercio, negocios y
 productos con motivo. `/administracion/auditoria` lista `admin_actions`, registradas en
 la misma transacción que el cambio. Tras 5 ingresos fallidos la cuenta queda bloqueada

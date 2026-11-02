@@ -5,7 +5,7 @@ import AdminModeration from "../src/app/administracion/moderacion/moderation";
 import AdminAudit from "../src/app/administracion/auditoria/audit";
 import AdminNav from "../src/app/administracion/admin-nav";
 import OwnerOnboarding from "../src/app/owner-onboarding";
-import { GET, POST, PUT } from "../src/app/api/marketplace/[...path]/route";
+import { DELETE, GET, POST, PUT } from "../src/app/api/marketplace/[...path]/route";
 
 Element.prototype.scrollIntoView = vi.fn();
 const id = "d71cd8d6-7245-492f-92de-4caa0cf11e50";
@@ -37,6 +37,29 @@ it("el administrador crea un rubro y deshabilita otro", async () => {
   expect(calls(fetcher)).toEqual(expect.arrayContaining([
     ["/api/marketplace/admin/categories", "POST", JSON.stringify({ name: "Ferretería" })],
     ["/api/marketplace/admin/categories/1", "PUT", JSON.stringify({ name: "Almacenes", isActive: false })],
+  ]));
+});
+
+it("el administrador elimina un rubro sin uso y ve cuántos negocios bloquean otro", async () => {
+  const list = [{ id: 1, name: "Almacenes", slug: "almacenes", isActive: true, businessCount: 2 }, { id: 4, name: "Ferretería", slug: "ferreteria", isActive: true, businessCount: 0 }];
+  const fetcher = vi.spyOn(globalThis, "fetch")
+    .mockResolvedValueOnce(Response.json(list))
+    .mockResolvedValueOnce(new Response(null, { status: 204 }))
+    .mockResolvedValueOnce(Response.json([list[0]]))
+    .mockResolvedValueOnce(Response.json({ code: "category_in_use", usageCount: 2, message: "No se puede eliminar el rubro: lo usan 2 negocios." }, { status: 409 }));
+  render(<AdminCategories />);
+  fireEvent.click(await screen.findByRole("button", { name: "Eliminar Ferretería" }));
+  expect(fetcher).toHaveBeenCalledTimes(1);
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar eliminación de Ferretería" }));
+  expect(await screen.findByRole("status")).toHaveTextContent("Rubro eliminado.");
+  await waitFor(() => expect(screen.queryByText("Ferretería")).not.toBeInTheDocument());
+  fireEvent.click(screen.getByRole("button", { name: "Eliminar Almacenes" }));
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar eliminación de Almacenes" }));
+  expect(await screen.findByRole("alert")).toHaveTextContent("No se puede eliminar el rubro: lo usan 2 negocios.");
+  expect(screen.getByText("Almacenes")).toBeInTheDocument();
+  expect(calls(fetcher)).toEqual(expect.arrayContaining([
+    ["/api/marketplace/admin/categories/4", "DELETE", undefined],
+    ["/api/marketplace/admin/categories/1", "DELETE", undefined],
   ]));
 });
 
@@ -121,6 +144,7 @@ it("el proxy permite las rutas de administración y sus filtros", async () => {
   expect((await GET(new Request("http://localhost:3000/api/marketplace/admin/categories"), context(["admin", "categories"]))).status).toBe(200);
   expect((await POST(new Request("http://localhost:3000/api/marketplace/admin/categories", { method: "POST", headers, body: "{}" }), context(["admin", "categories"]))).status).toBe(200);
   expect((await PUT(new Request("http://localhost:3000/api/marketplace/admin/categories/4", { method: "PUT", headers, body: "{}" }), context(["admin", "categories", "4"]))).status).toBe(200);
+  expect((await DELETE(new Request("http://localhost:3000/api/marketplace/admin/categories/4", { method: "DELETE", headers }), context(["admin", "categories", "4"]))).status).toBe(200);
   expect((await POST(new Request(`http://localhost:3000/api/marketplace/admin/moderation/accounts/${id}/suspend`, { method: "POST", headers, body: "{}" }), context(["admin", "moderation", "accounts", id, "suspend"]))).status).toBe(200);
   expect((await POST(new Request(`http://localhost:3000/api/marketplace/admin/moderation/widgets/${id}/suspend`, { method: "POST", headers, body: "{}" }), context(["admin", "moderation", "widgets", id, "suspend"]))).status).toBe(404);
 });

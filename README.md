@@ -41,7 +41,7 @@ Rutas relativas a `http://localhost:3000`. «Mi negocio» es el panel `/mi-negoc
 | HU-16 | Gestión de campañas publicitarias | Mi negocio → Ver campañas | Implementada |
 | HU-17 | Revisión y activación de la publicidad | `/administracion/campanas`: aprobación, pago y rechazo con motivo visible para el responsable | Implementada |
 | HU-18 | Métricas del negocio | Mi negocio → Ver actividad; Resultados comerciales | Implementada |
-| HU-19 | Administración de cuentas, contenido y categorías | `/administracion/rubros` y `/administracion/moderacion` | Implementada (ver limitaciones) |
+| HU-19 | Administración de cuentas, contenido y categorías | `/administracion/rubros` (crear, renombrar, deshabilitar y eliminar rubros sin uso) y `/administracion/moderacion` | Implementada (ver limitaciones) |
 | HU-20 | Configuración y evaluación del prototipo | Política versionada `equity-v1` (`Ranking__Enabled`/`RANKING_ENABLED`); evaluación reproducible con `App/backend/tools/Marketplace.Evaluation` | Implementada |
 | HU-21 | Registro de la exposición orgánica y patrocinada | `/explorar` con zona y rubro: se registran candidatos, posición y versión; «Patrocinado» separado del orden orgánico | Implementada |
 | HU-22 | Registro de la actividad del negocio | Registro interno al actualizar perfil, catálogo o promociones, con deduplicación y tope para el ranking | Implementada |
@@ -49,7 +49,7 @@ Rutas relativas a `http://localhost:3000`. «Mi negocio» es el panel `/mi-negoc
 
 **Limitaciones documentadas**
 
-- Los rubros se deshabilitan en lugar de borrarse, para conservar los negocios que los usan.
+- Un rubro solo se puede eliminar si ningún negocio lo usa; si está en uso, el sistema lo impide e indica cuántos negocios lo utilizan, y la alternativa es deshabilitarlo para conservar esos negocios.
 - El orden por ranking de la búsqueda de productos no persiste registros de exposición
   propios: usa el historial de exposición del ranking de negocios.
 
@@ -122,7 +122,7 @@ Decisiones: [ADR-001](Doc/architecture/ADR-001-layered-architecture.md). Ranking
 Desde la raíz:
 
 ```powershell
-dotnet test App/backend/Marketplace.sln --configuration Release   # requiere TEST_DATABASE_CONNECTION
+dotnet test App/backend/Marketplace.sln --configuration Release -m:1   # requiere TEST_DATABASE_CONNECTION
 npm --prefix App/frontend test; npm --prefix App/frontend run lint; npm --prefix App/frontend run build
 ```
 

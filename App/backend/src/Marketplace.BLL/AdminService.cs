@@ -7,12 +7,15 @@ namespace Marketplace.BLL;
 public enum AdminStatus { Saved, Invalid, NotFound, Conflict }
 public enum ModerationTarget { Account, Business, Product }
 public sealed record AdminCategoryResult(AdminStatus Status, AdminCategoryResponse? Category = null);
+// UsageCount is the number of businesses still referencing the category when deletion is refused.
+public sealed record AdminCategoryDeletion(AdminStatus Status, int UsageCount = 0);
 
 public interface IAdminRepository
 {
     Task<IReadOnlyList<AdminCategoryResponse>> CategoriesAsync(CancellationToken ct);
     Task<AdminCategoryResult> CreateCategoryAsync(Guid actor, string name, string slug, CancellationToken ct);
     Task<AdminCategoryResult> UpdateCategoryAsync(Guid actor, short id, string name, bool isActive, CancellationToken ct);
+    Task<AdminCategoryDeletion> DeleteCategoryAsync(Guid actor, short id, CancellationToken ct);
     Task<IReadOnlyList<ModeratedAccountResponse>> AccountsAsync(string query, int page, CancellationToken ct);
     Task<IReadOnlyList<ModeratedBusinessResponse>> BusinessesAsync(string query, int page, CancellationToken ct);
     Task<IReadOnlyList<ModeratedProductResponse>> ProductsAsync(string query, int page, CancellationToken ct);
@@ -40,6 +43,11 @@ public sealed class AdminService(IAdminRepository repository)
             ? Task.FromResult(new AdminCategoryResult(AdminStatus.Invalid))
             : repository.UpdateCategoryAsync(actor, id, name, request.IsActive.Value, ct);
     }
+
+    public Task<AdminCategoryDeletion> DeleteCategoryAsync(Guid actor, short id, CancellationToken ct) => repository.DeleteCategoryAsync(actor, id, ct);
+
+    public static string CategoryInUseMessage(int count) =>
+        count == 1 ? "No se puede eliminar el rubro: lo usa 1 negocio." : $"No se puede eliminar el rubro: lo usan {count} negocios.";
 
     public Task<IReadOnlyList<ModeratedAccountResponse>> AccountsAsync(string query, int page, CancellationToken ct) => repository.AccountsAsync(query, page, ct);
     public Task<IReadOnlyList<ModeratedBusinessResponse>> BusinessesAsync(string query, int page, CancellationToken ct) => repository.BusinessesAsync(query, page, ct);

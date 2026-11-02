@@ -13,6 +13,17 @@ public static class AdminEndpoints
             Category(await service.CreateCategoryAsync(User(http).Id, body, ct), StatusCodes.Status201Created));
         admin.MapPut("/categories/{id:int}", async (int id, SaveCategoryRequest body, HttpContext http, AdminService service, CancellationToken ct) =>
             id is < 1 or > short.MaxValue ? Results.NotFound() : Category(await service.UpdateCategoryAsync(User(http).Id, (short)id, body, ct), StatusCodes.Status200OK));
+        admin.MapDelete("/categories/{id:int}", async (int id, HttpContext http, AdminService service, CancellationToken ct) =>
+        {
+            if (id is < 1 or > short.MaxValue) return Results.NotFound(new { message = "No encontramos el rubro." });
+            var result = await service.DeleteCategoryAsync(User(http).Id, (short)id, ct);
+            return result.Status switch
+            {
+                AdminStatus.Saved => Results.NoContent(),
+                AdminStatus.NotFound => Results.NotFound(new { message = "No encontramos el rubro." }),
+                _ => Results.Conflict(new { code = "category_in_use", usageCount = result.UsageCount, message = AdminService.CategoryInUseMessage(result.UsageCount) })
+            };
+        });
         admin.MapGet("/moderation/{target}", async (string target, string? q, int? page, AdminService service, CancellationToken ct) =>
         {
             if (q?.Length > 150 || page is < 1 or > 10000) return Results.BadRequest();

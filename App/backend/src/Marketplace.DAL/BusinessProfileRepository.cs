@@ -5,17 +5,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marketplace.DAL;
 
-public sealed class BusinessProfileRepository(MarketplaceDbContext database) : IBusinessProfileRepository
+public sealed class BusinessProfileRepository(MarketplaceDbContext database, TimeProvider clock) : IBusinessProfileRepository
 {
     public async Task<PublicBusinessProfileResponse?> GetPublicAsync(Guid id, CancellationToken ct)
     {
+        var now = clock.GetUtcNow();
         var business = await (from b in database.Businesses.AsNoTracking()
             join u in database.UserAccounts on b.OwnerId equals u.Id
             join c in database.BusinessCategories on b.CategoryId equals c.Id
             where b.Id == id && b.Status == "published" && !b.IsSuspended && !u.IsSuspended
-            select new { b.Id, b.Name, b.Description, b.Address, Category = c.Name, b.WhatsApp }).SingleOrDefaultAsync(ct);
+            select new { b.Id, b.Name, b.Description, b.Address, Category = c.Name, b.WhatsApp,
+                HasPublicCatalog = database.BusinessSubscriptions.Any(s => s.BusinessId == b.Id && s.RevokedAt == null && s.StartsAt <= now && s.EndsAt > now) })
+            .SingleOrDefaultAsync(ct);
         return business is null ? null : new(business.Id, business.Name, business.Description, business.Address,
-            business.Category, business.WhatsApp, await GetPhotosAsync(id, ct));
+            business.Category, business.WhatsApp, await GetPhotosAsync(id, ct)) { HasPublicCatalog = business.HasPublicCatalog };
     }
     public Task<bool> IsOwnedAsync(Guid id, Guid ownerId, CancellationToken ct) =>
         database.Businesses.AnyAsync(x => x.Id == id && x.OwnerId == ownerId, ct);

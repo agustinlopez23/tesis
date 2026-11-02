@@ -5,5 +5,7 @@ public sealed record PublicBusinessProfileResponse(Guid Id, string Name, string 
     string Address, string Category, string WhatsApp, IReadOnlyList<BusinessPhotoResponse> Photos)
 {
     public string? MeasurementToken { get; init; }
+    // True while an active Impulso plan exposes the public catalog; lets clients skip a request that would 404.
+    public bool HasPublicCatalog { get; init; }
     public IReadOnlyList<PublicCampaign> Promotions { get; init; } = [];
 }

@@ -32,3 +32,10 @@ it("presenta un negocio sin fotos sin inventar imágenes", async () => {
   expect(await screen.findByText("Este negocio todavía no compartió fotos.")).toBeInTheDocument();
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
 });
+it("no pide el catálogo de un negocio sin plan Impulso", async () => {
+  const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ ...profile, hasPublicCatalog: false }));
+  render(<BusinessProfile id="1" />);
+  expect(await screen.findByRole("heading", { name: profile.name })).toBeInTheDocument();
+  expect(screen.queryByRole("heading", { name: "Productos del negocio" })).not.toBeInTheDocument();
+  expect(fetcher.mock.calls.some(([url]) => String(url).includes("/products"))).toBe(false);
+});

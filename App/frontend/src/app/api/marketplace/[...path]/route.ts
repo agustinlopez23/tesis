@@ -35,6 +35,7 @@ allowedRoutes.PUT.push(/^businesses\/[0-9a-f-]{36}\/campaigns\/[0-9a-f-]{36}(\/p
 allowedRoutes.GET.push(/^admin\/(categories|audit|moderation\/(accounts|businesses|products))$/);
 allowedRoutes.POST.push(/^admin\/categories$/, /^admin\/moderation\/(accounts|businesses|products)\/[0-9a-f-]{36}\/(suspend|reinstate)$/i);
 allowedRoutes.PUT.push(/^admin\/categories\/[0-9]{1,5}$/);
+allowedRoutes.DELETE.push(/^admin\/categories\/[0-9]{1,5}$/);
 
 async function forward(request: Request, context: RouteParameters): Promise<Response> {
   const response = await forwardRequest(request, context);

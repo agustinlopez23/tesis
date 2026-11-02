@@ -12,7 +12,7 @@ import { whatsAppLink } from "./whatsapp";
 
 export type Photo = { slot: number; caption: string; width: number; height: number };
 type Profile = { id: string; name: string; description: string; address: string;
-  category: string; whatsApp: string; photos: Photo[]; measurementToken?: string; promotions?: PublicCampaign[] };
+  category: string; whatsApp: string; photos: Photo[]; measurementToken?: string; promotions?: PublicCampaign[]; hasPublicCatalog?: boolean };
 
 export default function BusinessProfile({ id }: { id: string }) {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -55,7 +55,7 @@ export default function BusinessProfile({ id }: { id: string }) {
           <p className="eyebrow">Para aprovechar</p><h2 id="profile-promotions-title">Promociones vigentes</h2>
           <div className="catalog-grid">{profile.promotions.filter((item) => typeof item.token === "string").map((item) => <SponsoredCard key={item.id} campaign={item} />)}</div>
         </section>}
-        <PublicCatalog key={profile.id} id={profile.id} />
+        <PublicCatalog key={profile.id} id={profile.id} enabled={profile.hasPublicCatalog !== false} />
       </>}
   </main><SiteFooter /></>;
 }
