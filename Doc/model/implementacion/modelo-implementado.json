@@ -1,0 +1,2775 @@
+{
+  "source": {
+    "database": "marketplace (PostgreSQL/PostGIS, contenedor app-database-1)",
+    "excluded": {
+      "__EFMigrationsHistory": "historial de migraciones de Entity Framework",
+      "spatial_ref_sys": "catálogo de sistemas de referencia de PostGIS",
+      "data_protection_keys": "claves de ASP.NET Core Data Protection (infraestructura)"
+    }
+  },
+  "groups": [
+    {
+      "section": "01-negocios",
+      "title": "Negocios, identidad y planes",
+      "entities": [
+        [
+          "user_accounts",
+          "Cuenta de usuario con credenciales y estado de acceso",
+          "uuid id PK;varchar(254) email UK;varchar(120) display_name;text password_hash;boolean is_suspended;timestamptz created_at;integer failed_login_count;timestamptz locked_until"
+        ],
+        [
+          "roles",
+          "Rol de la plataforma",
+          "smallint id PK;varchar(50) name UK"
+        ],
+        [
+          "user_account_roles",
+          "Asignación de roles a cuentas",
+          "uuid user_id PK,FK;smallint role_id PK,FK"
+        ],
+        [
+          "user_sessions",
+          "Sesión autenticada y revocable",
+          "uuid id PK;uuid user_id FK;varchar(64) token_hash UK;timestamptz expires_at;timestamptz revoked_at;timestamptz created_at"
+        ],
+        [
+          "businesses",
+          "Negocio con su única ubicación",
+          "uuid id PK;uuid owner_id FK;smallint category_id FK;varchar(160) name;varchar(2000) description;varchar(250) address;varchar(16) whatsapp;geography(Point,4326) location;varchar(20) status;timestamptz created_at;timestamptz updated_at;timestamptz first_published_at;boolean publication_history_unknown;boolean is_suspended"
+        ],
+        [
+          "business_categories",
+          "Rubro de negocio administrado por la plataforma",
+          "smallint id PK;varchar(80) name UK;varchar(80) slug UK;boolean is_active"
+        ],
+        [
+          "business_photos",
+          "Fotografía del perfil del negocio",
+          "uuid business_id PK,FK;integer slot PK;varchar(160) caption;integer width;integer height;bytea content"
+        ],
+        [
+          "business_subscriptions",
+          "Período del plan Impulso otorgado a un negocio",
+          "uuid id PK;uuid business_id FK;timestamptz starts_at;timestamptz ends_at;uuid granted_by FK;timestamptz granted_at;varchar(500) reason;timestamptz revoked_at;uuid revoked_by FK;varchar(500) revocation_reason"
+        ],
+        [
+          "admin_actions",
+          "Auditoría de acciones del administrador",
+          "bigint id PK;uuid actor_id FK;varchar(20) target_type;varchar(64) target_id;varchar(254) target_label;varchar(20) action;varchar(500) reason;timestamptz created_at"
+        ]
+      ]
+    },
+    {
+      "section": "02-comercio",
+      "title": "Catálogo, solicitudes, ventas e inventario",
+      "entities": [
+        [
+          "catalog_products",
+          "Producto del catálogo de un negocio",
+          "uuid id PK;uuid business_id FK;varchar(160) name;varchar(2000) description;varchar(80) category;numeric(12,2) price;varchar(3) currency;boolean available;varchar(20) status;integer version;timestamptz created_at;timestamptz updated_at;boolean is_suspended"
+        ],
+        [
+          "product_photos",
+          "Fotografía de un producto",
+          "uuid product_id PK,FK;bytea content"
+        ],
+        [
+          "inventory_balances",
+          "Saldo de stock de un producto",
+          "uuid product_id PK,FK;integer quantity;integer version"
+        ],
+        [
+          "inventory_movements",
+          "Movimiento de stock con su saldo resultante",
+          "uuid operation_id PK;uuid product_id PK,FK;uuid business_id FK;uuid actor_id FK;uuid sale_id FK;integer delta;integer balance;varchar(20) kind;varchar(300) reason;varchar(64) request_hash;timestamptz created_at"
+        ],
+        [
+          "customer_orders",
+          "Solicitud de compra de un consumidor",
+          "uuid id PK;uuid business_id FK;varchar(15) reference UK;varchar(80) customer_name;varchar(160) business_name;varchar(16) whatsapp;varchar(64) access_key_hash;varchar(64) request_hash;timestamptz access_expires_at;timestamptz created_at;timestamptz updated_at;timestamptz contact_received_at;varchar(20) status;varchar(20) source;integer version;uuid campaign_id FK"
+        ],
+        [
+          "order_lines",
+          "Producto incluido en una solicitud",
+          "uuid order_id PK,FK;uuid product_id PK,FK;varchar(160) name;numeric(12,2) unit_price;varchar(3) currency;integer quantity;integer product_version"
+        ],
+        [
+          "order_changes",
+          "Historial de estados de una solicitud",
+          "uuid order_id PK,FK;integer version PK;uuid actor_id FK;timestamptz occurred_at;varchar(20) from_status;varchar(20) to_status;boolean contact_received"
+        ],
+        [
+          "sales",
+          "Venta reportada por el negocio",
+          "uuid id PK;uuid business_id FK;uuid order_id FK,UK;uuid actor_id FK;varchar(64) request_hash;timestamptz created_at;uuid void_operation_id;varchar(64) void_hash;varchar(300) void_reason;uuid voided_by FK;timestamptz voided_at"
+        ],
+        [
+          "sale_lines",
+          "Producto vendido en una venta",
+          "uuid sale_id PK,FK;uuid product_id PK,FK;varchar(160) name;integer quantity;numeric(12,2) unit_price;varchar(3) currency;varchar(20) origin;integer returned_quantity"
+        ]
+      ]
+    },
+    {
+      "section": "03-ranking",
+      "title": "Ranking, campañas y medición",
+      "layout": {
+        "apilar": [
+          [
+            "campaign_events",
+            "business_activity"
+          ],
+          [
+            "ranking_contributions",
+            "owner_activity"
+          ]
+        ]
+      },
+      "entities": [
+        [
+          "ranking_contexts",
+          "Contexto de ranking (zona y rubro) con su secuencia",
+          "varchar(200) context_key PK;bigint sequence"
+        ],
+        [
+          "ranking_snapshots",
+          "Orden publicado del ranking para una solicitud",
+          "uuid id PK;uuid request_id UK;varchar(200) context_key FK;timestamptz expires_at;jsonb payload;varchar(40) policy_label"
+        ],
+        [
+          "ranking_opportunities",
+          "Oportunidad de exposición auditada",
+          "uuid id PK;varchar(200) context_key FK,UK;bigint sequence UK;timestamptz occurred_at;jsonb payload;varchar(40) policy_label"
+        ],
+        [
+          "ranking_contributions",
+          "Exposición esperada y recibida por negocio",
+          "uuid opportunity_id PK,FK;uuid business_id PK;float8 expected;float8 received"
+        ],
+        [
+          "campaigns",
+          "Campaña publicitaria pagada",
+          "uuid id PK;uuid business_id FK;uuid product_id FK;integer photo_slot;bytea image;varchar(160) title;varchar(1000) description;varchar(1000) conditions;varchar(32) zone_id;timestamptz starts_at;timestamptz ends_at;timestamptz created_at;varchar(24) status;integer version;varchar(64) save_hash;timestamptz approved_at;timestamptz paid_at;varchar(120) payment_reference"
+        ],
+        [
+          "campaign_changes",
+          "Historial de acciones sobre una campaña",
+          "uuid operation_id PK;uuid campaign_id FK,UK;uuid actor_id FK;integer version UK;varchar(24) action;varchar(300) reason;varchar(64) request_hash;timestamptz created_at"
+        ],
+        [
+          "campaign_events",
+          "Impresión o clic de una campaña",
+          "uuid campaign_id PK,FK;uuid context_id PK;varchar(16) kind PK;timestamptz created_at"
+        ],
+        [
+          "business_activity",
+          "Exposición e interacción observada de un negocio",
+          "uuid visit_id PK;uuid business_id PK,FK;varchar(20) kind PK;varchar(20) surface PK;varchar(20) source;integer position;varchar(64) ranking_version;timestamptz occurred_at"
+        ],
+        [
+          "owner_activity",
+          "Actualización sustantiva del responsable",
+          "bigint id PK;uuid business_id FK;varchar(20) kind;timestamptz occurred_at"
+        ]
+      ]
+    }
+  ],
+  "rels": [
+    [
+      "roles",
+      "user_account_roles",
+      "1",
+      "0..*",
+      "se asigna"
+    ],
+    [
+      "user_accounts",
+      "user_account_roles",
+      "1",
+      "0..*",
+      "posee"
+    ],
+    [
+      "user_accounts",
+      "user_sessions",
+      "1",
+      "0..*",
+      "inicia"
+    ],
+    [
+      "business_categories",
+      "businesses",
+      "1",
+      "0..*",
+      "clasifica"
+    ],
+    [
+      "user_accounts",
+      "businesses",
+      "1",
+      "0..*",
+      "administra"
+    ],
+    [
+      "businesses",
+      "business_photos",
+      "1",
+      "0..*",
+      "muestra"
+    ],
+    [
+      "businesses",
+      "business_subscriptions",
+      "1",
+      "0..*",
+      "recibe"
+    ],
+    [
+      "user_accounts",
+      "business_subscriptions",
+      "1",
+      "0..*",
+      "otorga"
+    ],
+    [
+      "user_accounts",
+      "business_subscriptions",
+      "0..1",
+      "0..*",
+      "revoca"
+    ],
+    [
+      "user_accounts",
+      "admin_actions",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "businesses",
+      "catalog_products",
+      "1",
+      "0..*",
+      "ofrece"
+    ],
+    [
+      "catalog_products",
+      "product_photos",
+      "1",
+      "0..1",
+      "tiene"
+    ],
+    [
+      "catalog_products",
+      "inventory_balances",
+      "1",
+      "0..1",
+      "tiene saldo"
+    ],
+    [
+      "businesses",
+      "inventory_movements",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "catalog_products",
+      "inventory_movements",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "sales",
+      "inventory_movements",
+      "0..1",
+      "0..*",
+      "genera"
+    ],
+    [
+      "user_accounts",
+      "inventory_movements",
+      "1",
+      "0..*",
+      "realiza"
+    ],
+    [
+      "businesses",
+      "customer_orders",
+      "1",
+      "0..*",
+      "recibe"
+    ],
+    [
+      "campaigns",
+      "customer_orders",
+      "0..1",
+      "0..*",
+      "origina"
+    ],
+    [
+      "catalog_products",
+      "order_lines",
+      "1",
+      "0..*",
+      "se solicita"
+    ],
+    [
+      "customer_orders",
+      "order_lines",
+      "1",
+      "0..*",
+      "contiene"
+    ],
+    [
+      "customer_orders",
+      "order_changes",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "user_accounts",
+      "order_changes",
+      "1",
+      "0..*",
+      "realiza"
+    ],
+    [
+      "businesses",
+      "sales",
+      "1",
+      "0..*",
+      "reporta"
+    ],
+    [
+      "customer_orders",
+      "sales",
+      "0..1",
+      "0..1",
+      "se convierte"
+    ],
+    [
+      "user_accounts",
+      "sales",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "user_accounts",
+      "sales",
+      "0..1",
+      "0..*",
+      "anula"
+    ],
+    [
+      "catalog_products",
+      "sale_lines",
+      "1",
+      "0..*",
+      "se vende"
+    ],
+    [
+      "sales",
+      "sale_lines",
+      "1",
+      "0..*",
+      "contiene"
+    ],
+    [
+      "ranking_contexts",
+      "ranking_snapshots",
+      "1",
+      "0..*",
+      "publica"
+    ],
+    [
+      "ranking_contexts",
+      "ranking_opportunities",
+      "1",
+      "0..*",
+      "secuencia"
+    ],
+    [
+      "ranking_opportunities",
+      "ranking_contributions",
+      "1",
+      "0..*",
+      "mide"
+    ],
+    [
+      "businesses",
+      "campaigns",
+      "1",
+      "0..*",
+      "contrata"
+    ],
+    [
+      "catalog_products",
+      "campaigns",
+      "0..1",
+      "0..*",
+      "promociona"
+    ],
+    [
+      "campaigns",
+      "campaign_changes",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "user_accounts",
+      "campaign_changes",
+      "1",
+      "0..*",
+      "realiza"
+    ],
+    [
+      "campaigns",
+      "campaign_events",
+      "1",
+      "0..*",
+      "mide"
+    ],
+    [
+      "businesses",
+      "business_activity",
+      "1",
+      "0..*",
+      "registra"
+    ],
+    [
+      "businesses",
+      "owner_activity",
+      "1",
+      "0..*",
+      "registra"
+    ]
+  ],
+  "operations": {},
+  "classes": {
+    "groups": [
+      {
+        "section": "01-negocios",
+        "title": "Negocios, identidad y planes",
+        "entities": [
+          [
+            "UserAccount",
+            "Cuenta de usuario",
+            "string Email;string DisplayName;string PasswordHash;bool IsSuspended;int FailedLoginCount;DateTimeOffset? LockedUntil;DateTimeOffset CreatedAt"
+          ],
+          [
+            "Role",
+            "Rol de la plataforma",
+            "string Name"
+          ],
+          [
+            "UserAccountRole",
+            "Rol asignado a una cuenta",
+            ""
+          ],
+          [
+            "UserSession",
+            "Sesión autenticada",
+            "string TokenHash;DateTimeOffset ExpiresAt;DateTimeOffset? RevokedAt;DateTimeOffset CreatedAt"
+          ],
+          [
+            "BusinessProfile",
+            "Negocio y su ubicación",
+            "string Name;string Description;string Address;string WhatsApp;GeoLocation Location;string Status;bool IsSuspended;DateTimeOffset? FirstPublishedAt;bool PublicationHistoryUnknown;DateTimeOffset CreatedAt;DateTimeOffset UpdatedAt"
+          ],
+          [
+            "BusinessCategory",
+            "Rubro de negocio",
+            "string Name;string Slug;bool IsActive"
+          ],
+          [
+            "BusinessPhoto",
+            "Fotografía del negocio",
+            "int Slot;string Caption;int Width;int Height;byte[] Content"
+          ],
+          [
+            "BusinessSubscription",
+            "Período del plan Impulso",
+            "DateTimeOffset StartsAt;DateTimeOffset EndsAt;DateTimeOffset GrantedAt;string Reason;DateTimeOffset? RevokedAt;string? RevocationReason"
+          ],
+          [
+            "AdminAction",
+            "Acción auditada del administrador",
+            "string TargetType;string TargetLabel;string Action;string? Reason;DateTimeOffset CreatedAt"
+          ]
+        ]
+      },
+      {
+        "section": "02-comercio",
+        "title": "Catálogo, solicitudes, ventas e inventario",
+        "entities": [
+          [
+            "CatalogProduct",
+            "Producto del catálogo",
+            "string Name;string Description;string Category;decimal Price;string Currency;bool Available;string Status;bool IsSuspended;int Version;DateTimeOffset CreatedAt;DateTimeOffset UpdatedAt"
+          ],
+          [
+            "ProductPhoto",
+            "Fotografía del producto",
+            "byte[] Content"
+          ],
+          [
+            "InventoryBalance",
+            "Saldo de stock",
+            "int Quantity;int Version"
+          ],
+          [
+            "InventoryMovement",
+            "Movimiento de stock",
+            "int Delta;int Balance;string Kind;string Reason;string RequestHash;DateTimeOffset CreatedAt"
+          ],
+          [
+            "CustomerOrder",
+            "Solicitud de compra",
+            "string Reference;string CustomerName;string BusinessName;string WhatsApp;string AccessKeyHash;string RequestHash;DateTimeOffset AccessExpiresAt;DateTimeOffset CreatedAt;DateTimeOffset UpdatedAt;DateTimeOffset? ContactReceivedAt;string Status;string Source;int Version"
+          ],
+          [
+            "OrderLine",
+            "Línea de la solicitud",
+            "string Name;decimal UnitPrice;string Currency;int Quantity;int ProductVersion"
+          ],
+          [
+            "OrderChange",
+            "Cambio de estado de la solicitud",
+            "int Version;DateTimeOffset OccurredAt;string FromStatus;string ToStatus;bool ContactReceived"
+          ],
+          [
+            "Sale",
+            "Venta reportada",
+            "string RequestHash;DateTimeOffset CreatedAt;string? VoidHash;string? VoidReason;DateTimeOffset? VoidedAt"
+          ],
+          [
+            "SaleLine",
+            "Línea de la venta",
+            "string Name;int Quantity;decimal UnitPrice;string Currency;string Origin;int ReturnedQuantity"
+          ]
+        ]
+      },
+      {
+        "section": "03-ranking",
+        "title": "Ranking, campañas y medición",
+        "layout": {
+          "apilar": [
+            [
+              "CampaignEvent",
+              "BusinessActivity"
+            ],
+            [
+              "ExposureBalance",
+              "OwnerActivity"
+            ]
+          ]
+        },
+        "entities": [
+          [
+            "RankingContext",
+            "Contexto de ranking",
+            "DateTimeOffset At;double? RadiusKm;int Seed;long Sequence"
+          ],
+          [
+            "RankingSnapshot",
+            "Orden publicado",
+            "DateTimeOffset CreatedAt;DateTimeOffset ExpiresAt;string PolicyHash;Guid[] BusinessIds;string? PolicyLabel"
+          ],
+          [
+            "RankingOpportunity",
+            "Oportunidad de exposición",
+            "RankingVariant Variant;RankingConfiguration Configuration;string PolicyHash;string Reason;RankingTrace[] Candidates;string? PolicyLabel"
+          ],
+          [
+            "ExposureBalance",
+            "Exposición esperada y recibida",
+            "double Expected;double Received"
+          ],
+          [
+            "Campaign",
+            "Campaña publicitaria",
+            "int? PhotoSlot;byte[]? Image;string Title;string Description;string Conditions;DateTimeOffset StartsAt;DateTimeOffset EndsAt;DateTimeOffset CreatedAt;string Status;int Version;string SaveHash;DateTimeOffset? ApprovedAt;DateTimeOffset? PaidAt;string? PaymentReference"
+          ],
+          [
+            "CampaignChange",
+            "Acción sobre una campaña",
+            "int Version;string Action;string Reason;string RequestHash;DateTimeOffset CreatedAt"
+          ],
+          [
+            "CampaignEvent",
+            "Impresión o clic",
+            "string Kind;DateTimeOffset CreatedAt"
+          ],
+          [
+            "BusinessActivity",
+            "Actividad observada del negocio",
+            "string Kind;string Surface;string Source;int? Position;string? RankingVersion;DateTimeOffset OccurredAt"
+          ],
+          [
+            "OwnerActivity",
+            "Actualización del responsable",
+            "string Kind;DateTimeOffset OccurredAt"
+          ]
+        ]
+      }
+    ],
+    "rels": [
+      [
+        "Role",
+        "UserAccountRole",
+        "1",
+        "0..*",
+        "se asigna"
+      ],
+      [
+        "UserAccount",
+        "UserAccountRole",
+        "1",
+        "0..*",
+        "posee"
+      ],
+      [
+        "UserAccount",
+        "UserSession",
+        "1",
+        "0..*",
+        "inicia"
+      ],
+      [
+        "BusinessCategory",
+        "BusinessProfile",
+        "1",
+        "0..*",
+        "clasifica"
+      ],
+      [
+        "UserAccount",
+        "BusinessProfile",
+        "1",
+        "0..*",
+        "administra"
+      ],
+      [
+        "BusinessProfile",
+        "BusinessPhoto",
+        "1",
+        "0..*",
+        "muestra"
+      ],
+      [
+        "BusinessProfile",
+        "BusinessSubscription",
+        "1",
+        "0..*",
+        "recibe"
+      ],
+      [
+        "UserAccount",
+        "BusinessSubscription",
+        "1",
+        "0..*",
+        "otorga"
+      ],
+      [
+        "UserAccount",
+        "BusinessSubscription",
+        "0..1",
+        "0..*",
+        "revoca"
+      ],
+      [
+        "UserAccount",
+        "AdminAction",
+        "1",
+        "0..*",
+        "registra"
+      ],
+      [
+        "BusinessProfile",
+        "CatalogProduct",
+        "1",
+        "0..*",
+        "ofrece"
+      ],
+      [
+        "CatalogProduct",
+        "ProductPhoto",
+        "1",
+        "0..1",
+        "tiene"
+      ],
+      [
+        "CatalogProduct",
+        "InventoryBalance",
+        "1",
+        "0..1",
+        "tiene saldo"
+      ],
+      [
+        "BusinessProfile",
+        "InventoryMovement",
+        "1",
+        "0..*",
+        "registra"
+      ],
+      [
+        "CatalogProduct",
+        "InventoryMovement",
+        "1",
+        "0..*",
+        "registra"
+      ],
+      [
+        "Sale",
+        "InventoryMovement",
+        "0..1",
+        "0..*",
+        "genera"
+      ],
+      [
+        "UserAccount",
+        "InventoryMovement",
+        "1",
+        "0..*",
+        "realiza"
+      ],
+      [
+        "BusinessProfile",
+        "CustomerOrder",
+        "1",
+        "0..*",
+        "recibe"
+      ],
+      [
+        "Campaign",
+        "CustomerOrder",
+        "0..1",
+        "0..*",
+        "origina"
+      ],
+      [
+        "CatalogProduct",
+        "OrderLine",
+        "1",
+        "0..*",
+        "se solicita"
+      ],
+      [
+        "CustomerOrder",
+        "OrderLine",
+        "1",
+        "0..*",
+        "contiene"
+      ],
+      [
+        "CustomerOrder",
+        "OrderChange",
+        "1",
+        "0..*",
+        "registra"
+      ],
+      [
+        "UserAccount",
+        "OrderChange",
+        "1",
+        "0..*",
+        "realiza"
+      ],
+      [
+        "BusinessProfile",
+        "Sale",
+        "1",
+        "0..*",
+        "reporta"
+      ],
+      [
+        "CustomerOrder",
+        "Sale",
+        "0..1",
+        "0..1",
+        "se convierte"
+      ],
+      [
+        "UserAccount",
+        "Sale",
+        "1",
+        "0..*",
+        "registra"
+      ],
+      [
+        "UserAccount",
+        "Sale",
+        "0..1",
+        "0..*",
+        "anula"
+      ],
+      [
+        "CatalogProduct",
+        "SaleLine",
+        "1",
+        "0..*",
+        "se vende"
+      ],
+      [
+        "Sale",
+        "SaleLine",
+        "1",
+        "0..*",
+        "contiene"
+      ],
+      [
+        "RankingContext",
+        "RankingSnapshot",
+        "1",
+        "0..*",
+        "publica"
+      ],
+      [
+        "RankingContext",
+        "RankingOpportunity",
+        "1",
+        "0..*",
+        "secuencia"
+      ],
+      [
+        "RankingOpportunity",
+        "ExposureBalance",
+        "1",
+        "0..*",
+        "mide"
+      ],
+      [
+        "BusinessProfile",
+        "Campaign",
+        "1",
+        "0..*",
+        "contrata"
+      ],
+      [
+        "CatalogProduct",
+        "Campaign",
+        "0..1",
+        "0..*",
+        "promociona"
+      ],
+      [
+        "Campaign",
+        "CampaignChange",
+        "1",
+        "0..*",
+        "registra"
+      ],
+      [
+        "UserAccount",
+        "CampaignChange",
+        "1",
+        "0..*",
+        "realiza"
+      ],
+      [
+        "Campaign",
+        "CampaignEvent",
+        "1",
+        "0..*",
+        "mide"
+      ],
+      [
+        "BusinessProfile",
+        "BusinessActivity",
+        "1",
+        "0..*",
+        "registra"
+      ],
+      [
+        "BusinessProfile",
+        "OwnerActivity",
+        "1",
+        "0..*",
+        "registra"
+      ]
+    ],
+    "operations": {
+      "UserAccount": [
+        "RegisterAsync(): RegistrationResult",
+        "LoginAsync(): LoginResult",
+        "ModerateAsync(): AdminStatus"
+      ],
+      "UserSession": [
+        "GetSessionAsync(): OwnerIdentityResponse",
+        "LogoutAsync(): void"
+      ],
+      "BusinessProfile": [
+        "CreateAsync(): BusinessSaveResult",
+        "UpdateAsync(): BusinessSaveResult",
+        "GetPublishedAsync(): PublicBusinessPage"
+      ],
+      "BusinessCategory": [
+        "CreateCategoryAsync(): AdminCategoryResult",
+        "UpdateCategoryAsync(): AdminCategoryResult",
+        "DeleteCategoryAsync(): AdminCategoryDeletion"
+      ],
+      "BusinessPhoto": [
+        "SavePhotoAsync(): PhotoSaveResult",
+        "DeletePhotoAsync(): bool"
+      ],
+      "BusinessSubscription": [
+        "PlanAsync(): BusinessPlanResponse",
+        "GrantAsync(): CatalogStatus",
+        "RevokeAsync(): CatalogStatus"
+      ],
+      "AdminAction": [
+        "AuditAsync(): AdminAuditPage"
+      ],
+      "CatalogProduct": [
+        "SaveAsync(): CatalogResult",
+        "PublicAsync(): PublicCatalogResponse",
+        "Generate(): CatalogDraftResult",
+        "Read(): ProductDiscoveryResponse"
+      ],
+      "ProductPhoto": [
+        "PhotoAsync(): CatalogResult",
+        "ReadPhotoAsync(): byte[]"
+      ],
+      "InventoryBalance": [
+        "Inventory(): object",
+        "Adjust(): SalesResult"
+      ],
+      "InventoryMovement": [
+        "Movements(): object"
+      ],
+      "CustomerOrder": [
+        "CreateAsync(): OrderResult",
+        "GuestAsync(): OrderResponse",
+        "ListAsync(): OrderPageResponse",
+        "UpdateAsync(): OrderResult"
+      ],
+      "Sale": [
+        "Create(): SalesResult",
+        "List(): object",
+        "Void(): SalesResult"
+      ],
+      "RankingContext": [
+        "PrepareAsync(): MagazineRankingInput"
+      ],
+      "RankingSnapshot": [
+        "CreateAsync(): SnapshotResult",
+        "ReadAsync(): RankingSnapshotPage"
+      ],
+      "RankingOpportunity": [
+        "Build(): RankingOpportunity"
+      ],
+      "ExposureBalance": [
+        "Targets(): Dictionary<Guid, double>",
+        "Observe(): void"
+      ],
+      "Campaign": [
+        "Save(): SalesResult",
+        "Act(): SalesResult",
+        "Public(): PublicCampaign[]",
+        "Metrics(): CampaignMetrics"
+      ],
+      "CampaignEvent": [
+        "Record(): bool",
+        "Purge(): int"
+      ],
+      "BusinessActivity": [
+        "RecordAsync(): void",
+        "ReadAsync(): ActivityResponse",
+        "PurgeAsync(): int"
+      ],
+      "OwnerActivity": [
+        "RecordAsync(): bool",
+        "Signal(): double"
+      ]
+    }
+  },
+  "dictionary": [
+    {
+      "table": "user_accounts",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno de la cuenta."
+    },
+    {
+      "table": "user_accounts",
+      "name": "email",
+      "type": "character varying(254)",
+      "length": "254 caracteres",
+      "nullable": false,
+      "key": "UK",
+      "description": "Correo electrónico de acceso, único en la plataforma."
+    },
+    {
+      "table": "user_accounts",
+      "name": "display_name",
+      "type": "character varying(120)",
+      "length": "120 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Nombre visible del usuario."
+    },
+    {
+      "table": "user_accounts",
+      "name": "password_hash",
+      "type": "text",
+      "length": "Variable",
+      "nullable": false,
+      "key": "—",
+      "description": "Hash de la contraseña generado por el componente de identidad del framework; no es la contraseña."
+    },
+    {
+      "table": "user_accounts",
+      "name": "is_suspended",
+      "type": "boolean",
+      "length": "1 byte",
+      "nullable": false,
+      "key": "—",
+      "description": "Indica si el administrador suspendió la cuenta."
+    },
+    {
+      "table": "user_accounts",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de alta en UTC."
+    },
+    {
+      "table": "user_accounts",
+      "name": "failed_login_count",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Intentos fallidos consecutivos de inicio de sesión."
+    },
+    {
+      "table": "user_accounts",
+      "name": "locked_until",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Fin del bloqueo temporal tras cinco intentos fallidos; nulo si no hay bloqueo."
+    },
+    {
+      "table": "roles",
+      "name": "id",
+      "type": "smallint",
+      "length": "2 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador del rol."
+    },
+    {
+      "table": "roles",
+      "name": "name",
+      "type": "character varying(50)",
+      "length": "50 caracteres",
+      "nullable": false,
+      "key": "UK",
+      "description": "Nombre único del rol (Owner o Admin)."
+    },
+    {
+      "table": "user_account_roles",
+      "name": "user_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Cuenta a la que se asigna el rol."
+    },
+    {
+      "table": "user_account_roles",
+      "name": "role_id",
+      "type": "smallint",
+      "length": "2 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Rol asignado."
+    },
+    {
+      "table": "user_sessions",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno de la sesión."
+    },
+    {
+      "table": "user_sessions",
+      "name": "user_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Cuenta autenticada."
+    },
+    {
+      "table": "user_sessions",
+      "name": "token_hash",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": false,
+      "key": "UK",
+      "description": "Hash SHA-256 del token de sesión enviado en la cookie."
+    },
+    {
+      "table": "user_sessions",
+      "name": "expires_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Vencimiento de la sesión."
+    },
+    {
+      "table": "user_sessions",
+      "name": "revoked_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Momento del cierre de sesión; nulo mientras está activa."
+    },
+    {
+      "table": "user_sessions",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de inicio de la sesión."
+    },
+    {
+      "table": "businesses",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno del negocio."
+    },
+    {
+      "table": "businesses",
+      "name": "owner_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Cuenta responsable del negocio."
+    },
+    {
+      "table": "businesses",
+      "name": "category_id",
+      "type": "smallint",
+      "length": "2 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Rubro al que pertenece el negocio."
+    },
+    {
+      "table": "businesses",
+      "name": "name",
+      "type": "character varying(160)",
+      "length": "160 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Nombre visible del comercio."
+    },
+    {
+      "table": "businesses",
+      "name": "description",
+      "type": "character varying(2000)",
+      "length": "2000 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Descripción de la oferta del negocio."
+    },
+    {
+      "table": "businesses",
+      "name": "address",
+      "type": "character varying(250)",
+      "length": "250 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Dirección textual del local."
+    },
+    {
+      "table": "businesses",
+      "name": "whatsapp",
+      "type": "character varying(16)",
+      "length": "16 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Número de WhatsApp validado del negocio."
+    },
+    {
+      "table": "businesses",
+      "name": "location",
+      "type": "geography(Point,4326)",
+      "length": "1 punto, 2 coordenadas",
+      "nullable": false,
+      "key": "—",
+      "description": "Ubicación geográfica del local (latitud y longitud, SRID 4326)."
+    },
+    {
+      "table": "businesses",
+      "name": "status",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Estado del perfil: borrador o publicado."
+    },
+    {
+      "table": "businesses",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de creación en UTC."
+    },
+    {
+      "table": "businesses",
+      "name": "updated_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de la última modificación."
+    },
+    {
+      "table": "businesses",
+      "name": "first_published_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Primera publicación del perfil, mantenida por la base de datos."
+    },
+    {
+      "table": "businesses",
+      "name": "publication_history_unknown",
+      "type": "boolean",
+      "length": "1 byte",
+      "nullable": false,
+      "key": "—",
+      "description": "Indica que la fecha de primera publicación es desconocida."
+    },
+    {
+      "table": "businesses",
+      "name": "is_suspended",
+      "type": "boolean",
+      "length": "1 byte",
+      "nullable": false,
+      "key": "—",
+      "description": "Indica si el administrador suspendió el negocio."
+    },
+    {
+      "table": "business_categories",
+      "name": "id",
+      "type": "smallint",
+      "length": "2 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador del rubro."
+    },
+    {
+      "table": "business_categories",
+      "name": "name",
+      "type": "character varying(80)",
+      "length": "80 caracteres",
+      "nullable": false,
+      "key": "UK",
+      "description": "Nombre único del rubro."
+    },
+    {
+      "table": "business_categories",
+      "name": "slug",
+      "type": "character varying(80)",
+      "length": "80 caracteres",
+      "nullable": false,
+      "key": "UK",
+      "description": "Identificador textual único del rubro para direcciones web."
+    },
+    {
+      "table": "business_categories",
+      "name": "is_active",
+      "type": "boolean",
+      "length": "1 byte",
+      "nullable": false,
+      "key": "—",
+      "description": "Indica si el rubro admite nuevos negocios."
+    },
+    {
+      "table": "business_photos",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Negocio al que pertenece la fotografía."
+    },
+    {
+      "table": "business_photos",
+      "name": "slot",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Posición de la fotografía, de 1 a 5."
+    },
+    {
+      "table": "business_photos",
+      "name": "caption",
+      "type": "character varying(160)",
+      "length": "160 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Texto descriptivo de la fotografía."
+    },
+    {
+      "table": "business_photos",
+      "name": "width",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Ancho en píxeles tras el procesamiento."
+    },
+    {
+      "table": "business_photos",
+      "name": "height",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Alto en píxeles tras el procesamiento."
+    },
+    {
+      "table": "business_photos",
+      "name": "content",
+      "type": "bytea",
+      "length": "hasta 1 MB",
+      "nullable": false,
+      "key": "—",
+      "description": "Imagen vuelta a codificar y sin metadatos."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno del período."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Negocio que recibe el plan Impulso."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "starts_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Inicio del período habilitado."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "ends_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fin del período; posterior al inicio."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "granted_by",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Administrador que otorgó el período."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "granted_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Momento del otorgamiento."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "reason",
+      "type": "character varying(500)",
+      "length": "500 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Motivo del otorgamiento."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "revoked_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Momento de la revocación; nulo si sigue vigente."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "revoked_by",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": true,
+      "key": "FK",
+      "description": "Administrador que revocó el período."
+    },
+    {
+      "table": "business_subscriptions",
+      "name": "revocation_reason",
+      "type": "character varying(500)",
+      "length": "500 caracteres",
+      "nullable": true,
+      "key": "—",
+      "description": "Motivo de la revocación."
+    },
+    {
+      "table": "admin_actions",
+      "name": "id",
+      "type": "bigint",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Número secuencial de la acción."
+    },
+    {
+      "table": "admin_actions",
+      "name": "actor_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Administrador que realizó la acción."
+    },
+    {
+      "table": "admin_actions",
+      "name": "target_type",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Tipo de objeto afectado: cuenta, negocio, producto o rubro."
+    },
+    {
+      "table": "admin_actions",
+      "name": "target_id",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Identificador del objeto afectado."
+    },
+    {
+      "table": "admin_actions",
+      "name": "target_label",
+      "type": "character varying(254)",
+      "length": "254 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Nombre del objeto al momento de la acción."
+    },
+    {
+      "table": "admin_actions",
+      "name": "action",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Acción realizada, por ejemplo suspender o reactivar."
+    },
+    {
+      "table": "admin_actions",
+      "name": "reason",
+      "type": "character varying(500)",
+      "length": "500 caracteres",
+      "nullable": true,
+      "key": "—",
+      "description": "Motivo informado por el administrador."
+    },
+    {
+      "table": "admin_actions",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de la acción."
+    },
+    {
+      "table": "catalog_products",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno del producto."
+    },
+    {
+      "table": "catalog_products",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Negocio propietario del producto."
+    },
+    {
+      "table": "catalog_products",
+      "name": "name",
+      "type": "character varying(160)",
+      "length": "160 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Nombre visible del producto."
+    },
+    {
+      "table": "catalog_products",
+      "name": "description",
+      "type": "character varying(2000)",
+      "length": "2000 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Descripción del producto."
+    },
+    {
+      "table": "catalog_products",
+      "name": "category",
+      "type": "character varying(80)",
+      "length": "80 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Categoría textual del producto."
+    },
+    {
+      "table": "catalog_products",
+      "name": "price",
+      "type": "numeric(12,2)",
+      "length": "12 dígitos, 2 decimales",
+      "nullable": false,
+      "key": "—",
+      "description": "Precio unitario, mayor o igual que cero."
+    },
+    {
+      "table": "catalog_products",
+      "name": "currency",
+      "type": "character varying(3)",
+      "length": "3 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Moneda del precio: ARS o USD."
+    },
+    {
+      "table": "catalog_products",
+      "name": "available",
+      "type": "boolean",
+      "length": "1 byte",
+      "nullable": false,
+      "key": "—",
+      "description": "Indica si el negocio lo ofrece en este momento."
+    },
+    {
+      "table": "catalog_products",
+      "name": "status",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Estado: borrador, publicado o archivado."
+    },
+    {
+      "table": "catalog_products",
+      "name": "version",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Versión para el control de concurrencia optimista."
+    },
+    {
+      "table": "catalog_products",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de creación."
+    },
+    {
+      "table": "catalog_products",
+      "name": "updated_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de la última modificación."
+    },
+    {
+      "table": "catalog_products",
+      "name": "is_suspended",
+      "type": "boolean",
+      "length": "1 byte",
+      "nullable": false,
+      "key": "—",
+      "description": "Indica si el administrador suspendió el producto."
+    },
+    {
+      "table": "product_photos",
+      "name": "product_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Producto al que corresponde la fotografía."
+    },
+    {
+      "table": "product_photos",
+      "name": "content",
+      "type": "bytea",
+      "length": "hasta 1 MB",
+      "nullable": false,
+      "key": "—",
+      "description": "Imagen vuelta a codificar y sin metadatos."
+    },
+    {
+      "table": "inventory_balances",
+      "name": "product_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Producto cuyo saldo se registra."
+    },
+    {
+      "table": "inventory_balances",
+      "name": "quantity",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Unidades disponibles, entre 0 y 1.000.000."
+    },
+    {
+      "table": "inventory_balances",
+      "name": "version",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Versión para el control de concurrencia optimista."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "operation_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador de la operación, que evita registrarla dos veces."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "product_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Producto afectado."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Negocio propietario del producto."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "actor_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Cuenta que registró el movimiento."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "sale_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": true,
+      "key": "FK",
+      "description": "Venta que originó el movimiento, si corresponde."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "delta",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Variación de unidades, positiva o negativa."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "balance",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Saldo resultante después del movimiento."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "kind",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Tipo: ajuste, venta o devolución."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "reason",
+      "type": "character varying(300)",
+      "length": "300 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Motivo del movimiento."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "request_hash",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Hash de la solicitud, que detecta reintentos con datos distintos."
+    },
+    {
+      "table": "inventory_movements",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora del movimiento."
+    },
+    {
+      "table": "customer_orders",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno de la solicitud."
+    },
+    {
+      "table": "customer_orders",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Negocio que recibe la solicitud."
+    },
+    {
+      "table": "customer_orders",
+      "name": "reference",
+      "type": "character varying(15)",
+      "length": "15 caracteres",
+      "nullable": false,
+      "key": "UK",
+      "description": "Referencia corta y única que se comparte por WhatsApp."
+    },
+    {
+      "table": "customer_orders",
+      "name": "customer_name",
+      "type": "character varying(80)",
+      "length": "80 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Nombre informado por el consumidor."
+    },
+    {
+      "table": "customer_orders",
+      "name": "business_name",
+      "type": "character varying(160)",
+      "length": "160 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Nombre del negocio al momento de la solicitud."
+    },
+    {
+      "table": "customer_orders",
+      "name": "whatsapp",
+      "type": "character varying(16)",
+      "length": "16 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Número de WhatsApp del negocio al momento de la solicitud."
+    },
+    {
+      "table": "customer_orders",
+      "name": "access_key_hash",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Hash de la clave privada con la que el consumidor consulta su solicitud."
+    },
+    {
+      "table": "customer_orders",
+      "name": "request_hash",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Hash de la solicitud, que detecta reintentos con datos distintos."
+    },
+    {
+      "table": "customer_orders",
+      "name": "access_expires_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Vencimiento del acceso del consumidor a la solicitud."
+    },
+    {
+      "table": "customer_orders",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de creación."
+    },
+    {
+      "table": "customer_orders",
+      "name": "updated_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de la última modificación."
+    },
+    {
+      "table": "customer_orders",
+      "name": "contact_received_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Momento en que el negocio confirmó el contacto por WhatsApp."
+    },
+    {
+      "table": "customer_orders",
+      "name": "status",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Estado: pendiente, en atención, cancelada o convertida en venta."
+    },
+    {
+      "table": "customer_orders",
+      "name": "source",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Origen: catálogo o campaña."
+    },
+    {
+      "table": "customer_orders",
+      "name": "version",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Versión para el control de concurrencia optimista."
+    },
+    {
+      "table": "customer_orders",
+      "name": "campaign_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": true,
+      "key": "FK",
+      "description": "Campaña que originó la solicitud; obligatoria solo si el origen es campaña."
+    },
+    {
+      "table": "order_lines",
+      "name": "order_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Solicitud a la que pertenece la línea."
+    },
+    {
+      "table": "order_lines",
+      "name": "product_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Producto solicitado."
+    },
+    {
+      "table": "order_lines",
+      "name": "name",
+      "type": "character varying(160)",
+      "length": "160 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Nombre del producto al momento de la solicitud."
+    },
+    {
+      "table": "order_lines",
+      "name": "unit_price",
+      "type": "numeric(12,2)",
+      "length": "12 dígitos, 2 decimales",
+      "nullable": false,
+      "key": "—",
+      "description": "Precio unitario al momento de la solicitud."
+    },
+    {
+      "table": "order_lines",
+      "name": "currency",
+      "type": "character varying(3)",
+      "length": "3 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Moneda del precio: ARS o USD."
+    },
+    {
+      "table": "order_lines",
+      "name": "quantity",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Unidades solicitadas, entre 1 y 99."
+    },
+    {
+      "table": "order_lines",
+      "name": "product_version",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Versión del producto que vio el consumidor."
+    },
+    {
+      "table": "order_changes",
+      "name": "order_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Solicitud modificada."
+    },
+    {
+      "table": "order_changes",
+      "name": "version",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Versión de la solicitud que produjo el cambio."
+    },
+    {
+      "table": "order_changes",
+      "name": "actor_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Cuenta que realizó el cambio."
+    },
+    {
+      "table": "order_changes",
+      "name": "occurred_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora del cambio."
+    },
+    {
+      "table": "order_changes",
+      "name": "from_status",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Estado anterior."
+    },
+    {
+      "table": "order_changes",
+      "name": "to_status",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Estado nuevo."
+    },
+    {
+      "table": "order_changes",
+      "name": "contact_received",
+      "type": "boolean",
+      "length": "1 byte",
+      "nullable": false,
+      "key": "—",
+      "description": "Indica si el cambio confirmó el contacto."
+    },
+    {
+      "table": "sales",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno de la venta."
+    },
+    {
+      "table": "sales",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Negocio que reporta la venta."
+    },
+    {
+      "table": "sales",
+      "name": "order_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": true,
+      "key": "FK, UK",
+      "description": "Solicitud convertida en venta; nulo en una venta directa."
+    },
+    {
+      "table": "sales",
+      "name": "actor_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Cuenta que registró la venta."
+    },
+    {
+      "table": "sales",
+      "name": "request_hash",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Hash de la solicitud, que detecta reintentos con datos distintos."
+    },
+    {
+      "table": "sales",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora del registro."
+    },
+    {
+      "table": "sales",
+      "name": "void_operation_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Identificador de la operación de anulación."
+    },
+    {
+      "table": "sales",
+      "name": "void_hash",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": true,
+      "key": "—",
+      "description": "Hash de la solicitud de anulación."
+    },
+    {
+      "table": "sales",
+      "name": "void_reason",
+      "type": "character varying(300)",
+      "length": "300 caracteres",
+      "nullable": true,
+      "key": "—",
+      "description": "Motivo de la anulación."
+    },
+    {
+      "table": "sales",
+      "name": "voided_by",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": true,
+      "key": "FK",
+      "description": "Cuenta que anuló la venta."
+    },
+    {
+      "table": "sales",
+      "name": "voided_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Fecha y hora de la anulación; nulo si la venta está vigente."
+    },
+    {
+      "table": "sale_lines",
+      "name": "sale_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Venta a la que pertenece la línea."
+    },
+    {
+      "table": "sale_lines",
+      "name": "product_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Producto vendido."
+    },
+    {
+      "table": "sale_lines",
+      "name": "name",
+      "type": "character varying(160)",
+      "length": "160 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Nombre del producto al momento de la venta."
+    },
+    {
+      "table": "sale_lines",
+      "name": "quantity",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Unidades vendidas, entre 1 y 99."
+    },
+    {
+      "table": "sale_lines",
+      "name": "unit_price",
+      "type": "numeric(12,2)",
+      "length": "12 dígitos, 2 decimales",
+      "nullable": false,
+      "key": "—",
+      "description": "Precio unitario acordado."
+    },
+    {
+      "table": "sale_lines",
+      "name": "currency",
+      "type": "character varying(3)",
+      "length": "3 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Moneda del precio: ARS o USD."
+    },
+    {
+      "table": "sale_lines",
+      "name": "origin",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Origen: solicitado, acordado en la conversación o venta directa."
+    },
+    {
+      "table": "sale_lines",
+      "name": "returned_quantity",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Unidades devueltas, sin superar las vendidas."
+    },
+    {
+      "table": "ranking_contexts",
+      "name": "context_key",
+      "type": "character varying(200)",
+      "length": "200 caracteres",
+      "nullable": false,
+      "key": "PK",
+      "description": "Clave del contexto, formada por zona y rubro."
+    },
+    {
+      "table": "ranking_contexts",
+      "name": "sequence",
+      "type": "bigint",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Número de la última oportunidad registrada en el contexto."
+    },
+    {
+      "table": "ranking_snapshots",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno del orden publicado."
+    },
+    {
+      "table": "ranking_snapshots",
+      "name": "request_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "UK",
+      "description": "Identificador único de la solicitud que pidió el orden."
+    },
+    {
+      "table": "ranking_snapshots",
+      "name": "context_key",
+      "type": "character varying(200)",
+      "length": "200 caracteres",
+      "nullable": false,
+      "key": "FK",
+      "description": "Contexto de ranking al que pertenece."
+    },
+    {
+      "table": "ranking_snapshots",
+      "name": "expires_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Vencimiento del orden para la paginación."
+    },
+    {
+      "table": "ranking_snapshots",
+      "name": "payload",
+      "type": "jsonb",
+      "length": "Variable",
+      "nullable": false,
+      "key": "—",
+      "description": "Lista ordenada de negocios y huella de la política aplicada."
+    },
+    {
+      "table": "ranking_snapshots",
+      "name": "policy_label",
+      "type": "character varying(40)",
+      "length": "40 caracteres",
+      "nullable": true,
+      "key": "—",
+      "description": "Política publicada que produjo el orden, por ejemplo equity-v1."
+    },
+    {
+      "table": "ranking_opportunities",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno de la oportunidad."
+    },
+    {
+      "table": "ranking_opportunities",
+      "name": "context_key",
+      "type": "character varying(200)",
+      "length": "200 caracteres",
+      "nullable": false,
+      "key": "FK, UK",
+      "description": "Contexto de ranking al que pertenece."
+    },
+    {
+      "table": "ranking_opportunities",
+      "name": "sequence",
+      "type": "bigint",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "UK",
+      "description": "Posición de la oportunidad en la secuencia del contexto."
+    },
+    {
+      "table": "ranking_opportunities",
+      "name": "occurred_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de la oportunidad."
+    },
+    {
+      "table": "ranking_opportunities",
+      "name": "payload",
+      "type": "jsonb",
+      "length": "Variable",
+      "nullable": false,
+      "key": "—",
+      "description": "Traza privada de candidatos, componentes del puntaje y configuración."
+    },
+    {
+      "table": "ranking_opportunities",
+      "name": "policy_label",
+      "type": "character varying(40)",
+      "length": "40 caracteres",
+      "nullable": true,
+      "key": "—",
+      "description": "Política publicada aplicada, por ejemplo equity-v1."
+    },
+    {
+      "table": "ranking_contributions",
+      "name": "opportunity_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Oportunidad en la que se midió la exposición."
+    },
+    {
+      "table": "ranking_contributions",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Negocio candidato; referencia lógica sin clave foránea declarada."
+    },
+    {
+      "table": "ranking_contributions",
+      "name": "expected",
+      "type": "double precision",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Exposición esperada según el mérito, entre 0 y 1."
+    },
+    {
+      "table": "ranking_contributions",
+      "name": "received",
+      "type": "double precision",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Exposición recibida según la posición, entre 0 y 1."
+    },
+    {
+      "table": "campaigns",
+      "name": "id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador interno de la campaña."
+    },
+    {
+      "table": "campaigns",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Negocio anunciante."
+    },
+    {
+      "table": "campaigns",
+      "name": "product_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": true,
+      "key": "FK",
+      "description": "Producto promocionado; nulo si se promociona una fotografía del negocio."
+    },
+    {
+      "table": "campaigns",
+      "name": "photo_slot",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Fotografía del negocio promocionada, de 1 a 5, cuando no hay producto."
+    },
+    {
+      "table": "campaigns",
+      "name": "image",
+      "type": "bytea",
+      "length": "hasta 1 MB",
+      "nullable": true,
+      "key": "—",
+      "description": "Imagen propia de la campaña, hasta 1 MB."
+    },
+    {
+      "table": "campaigns",
+      "name": "title",
+      "type": "character varying(160)",
+      "length": "160 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Título del anuncio."
+    },
+    {
+      "table": "campaigns",
+      "name": "description",
+      "type": "character varying(1000)",
+      "length": "1000 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Texto del anuncio."
+    },
+    {
+      "table": "campaigns",
+      "name": "conditions",
+      "type": "character varying(1000)",
+      "length": "1000 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Condiciones de la promoción."
+    },
+    {
+      "table": "campaigns",
+      "name": "zone_id",
+      "type": "character varying(32)",
+      "length": "32 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Zona de publicación: centro, nueva-cordoba o alberdi."
+    },
+    {
+      "table": "campaigns",
+      "name": "starts_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Inicio de la vigencia."
+    },
+    {
+      "table": "campaigns",
+      "name": "ends_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fin de la vigencia, hasta 30 días después del inicio."
+    },
+    {
+      "table": "campaigns",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de creación."
+    },
+    {
+      "table": "campaigns",
+      "name": "status",
+      "type": "character varying(24)",
+      "length": "24 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Estado: borrador, en revisión, pendiente de pago, programada, pausada o rechazada."
+    },
+    {
+      "table": "campaigns",
+      "name": "version",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Versión para el control de concurrencia optimista."
+    },
+    {
+      "table": "campaigns",
+      "name": "save_hash",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Hash del último guardado, que detecta reintentos con datos distintos."
+    },
+    {
+      "table": "campaigns",
+      "name": "approved_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Momento de la aprobación del administrador."
+    },
+    {
+      "table": "campaigns",
+      "name": "paid_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Momento en que se registró el pago."
+    },
+    {
+      "table": "campaigns",
+      "name": "payment_reference",
+      "type": "character varying(120)",
+      "length": "120 caracteres",
+      "nullable": true,
+      "key": "—",
+      "description": "Referencia del pago informado."
+    },
+    {
+      "table": "campaign_changes",
+      "name": "operation_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador de la operación, que evita registrarla dos veces."
+    },
+    {
+      "table": "campaign_changes",
+      "name": "campaign_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK, UK",
+      "description": "Campaña afectada."
+    },
+    {
+      "table": "campaign_changes",
+      "name": "actor_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Cuenta que realizó la acción."
+    },
+    {
+      "table": "campaign_changes",
+      "name": "version",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": false,
+      "key": "UK",
+      "description": "Versión de la campaña que produjo el cambio."
+    },
+    {
+      "table": "campaign_changes",
+      "name": "action",
+      "type": "character varying(24)",
+      "length": "24 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Acción realizada, por ejemplo enviar, aprobar o rechazar."
+    },
+    {
+      "table": "campaign_changes",
+      "name": "reason",
+      "type": "character varying(300)",
+      "length": "300 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Motivo informado, visible para el negocio en un rechazo."
+    },
+    {
+      "table": "campaign_changes",
+      "name": "request_hash",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Hash de la solicitud, que detecta reintentos con datos distintos."
+    },
+    {
+      "table": "campaign_changes",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de la acción."
+    },
+    {
+      "table": "campaign_events",
+      "name": "campaign_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Campaña medida."
+    },
+    {
+      "table": "campaign_events",
+      "name": "context_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador del contexto de visualización; evita contar dos veces el mismo evento."
+    },
+    {
+      "table": "campaign_events",
+      "name": "kind",
+      "type": "character varying(16)",
+      "length": "16 caracteres",
+      "nullable": false,
+      "key": "PK",
+      "description": "Tipo de evento: impresión o clic."
+    },
+    {
+      "table": "campaign_events",
+      "name": "created_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora del evento."
+    },
+    {
+      "table": "business_activity",
+      "name": "visit_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Identificador anónimo de la visita."
+    },
+    {
+      "table": "business_activity",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "PK, FK",
+      "description": "Negocio observado."
+    },
+    {
+      "table": "business_activity",
+      "name": "kind",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "PK",
+      "description": "Tipo: impresión, vista del perfil o contacto."
+    },
+    {
+      "table": "business_activity",
+      "name": "surface",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "PK",
+      "description": "Superficie: guía de comercios o perfil."
+    },
+    {
+      "table": "business_activity",
+      "name": "source",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Origen: guía, búsqueda o desconocido."
+    },
+    {
+      "table": "business_activity",
+      "name": "position",
+      "type": "integer",
+      "length": "4 bytes",
+      "nullable": true,
+      "key": "—",
+      "description": "Posición en la que se mostró el negocio, si se conoce."
+    },
+    {
+      "table": "business_activity",
+      "name": "ranking_version",
+      "type": "character varying(64)",
+      "length": "64 caracteres",
+      "nullable": true,
+      "key": "—",
+      "description": "Versión del orden con el que se mostró el negocio."
+    },
+    {
+      "table": "business_activity",
+      "name": "occurred_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora del evento."
+    },
+    {
+      "table": "owner_activity",
+      "name": "id",
+      "type": "bigint",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "PK",
+      "description": "Número secuencial del registro."
+    },
+    {
+      "table": "owner_activity",
+      "name": "business_id",
+      "type": "uuid",
+      "length": "16 bytes",
+      "nullable": false,
+      "key": "FK",
+      "description": "Negocio actualizado."
+    },
+    {
+      "table": "owner_activity",
+      "name": "kind",
+      "type": "character varying(20)",
+      "length": "20 caracteres",
+      "nullable": false,
+      "key": "—",
+      "description": "Tipo: perfil, catálogo o promoción."
+    },
+    {
+      "table": "owner_activity",
+      "name": "occurred_at",
+      "type": "timestamp with time zone",
+      "length": "8 bytes",
+      "nullable": false,
+      "key": "—",
+      "description": "Fecha y hora de la actualización."
+    }
+  ]
+}

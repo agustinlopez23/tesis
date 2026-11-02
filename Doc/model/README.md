@@ -2,6 +2,8 @@
 
 Versión 1.0 · 2026-09-07 · Propuesta de diseño para documentar y revisar antes de implementar.
 
+Esta carpeta contiene el modelo de diseño de la Entrega 2. El modelo tal como quedó implementado, extraído del esquema real de la base de datos, está en [`implementacion/`](implementacion/README.md).
+
 El modelo deriva del [PRD](../PRD.md) y de la primera entrega del seminario. La entrada del consumidor muestra **negocios ordenados por el algoritmo**, incluso sin búsqueda textual. El catálogo y los pedidos complementan ese recorrido. La adaptación de la fórmula de productos a negocios sigue pendiente de calibración.
 
 ## Archivos

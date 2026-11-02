@@ -3,12 +3,23 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../..');
-const dir = path.join(root, 'Doc/model');
+// Optional arguments: --model <json> --out <dir>. With --model only the DOT/SVG/PNG figures
+// are rendered; without arguments the Entrega 2 design model is regenerated unchanged.
+const argv = process.argv.slice(2);
+const arg = (name) => { const i = argv.indexOf(name); return i >= 0 ? argv[i + 1] : undefined; };
+const modelArg = arg('--model');
+const figuresOnly = Boolean(modelArg);
+// Compact layout for the implemented model: tighter cells and spacing so the figures stay
+// legible at page width; the notation samples move to their own row of the legend band.
+const COMPACTO = figuresOnly;
+const CELDA = COMPACTO ? 3 : 6;
+const dir = path.resolve(root, arg('--out') || 'Doc/model');
+const modelPath = modelArg ? path.resolve(root, modelArg) : path.join(dir, 'model.json');
 const require = createRequire(path.join(root, '.tools/documentation/package.json'));
 const { instance } = require('@viz-js/viz');
 const { Resvg } = require('@resvg/resvg-js');
 const viz = await instance();
-const m = JSON.parse(fs.readFileSync(path.join(dir, 'model.json'), 'utf8'));
+const m = JSON.parse(fs.readFileSync(modelPath, 'utf8'));
 const all = m.groups.flatMap(g => g.entities);
 const write = (name, value) => fs.writeFileSync(path.join(dir, name), value, 'utf8');
 const esc = s => String(s).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;');
@@ -46,16 +57,22 @@ function filaUml(campo) {
   return `<TR><TD ALIGN="LEFT">${esc('− ' + nombre)}<FONT COLOR="#5d7268">${esc(' : ' + tipo)}</FONT></TD></TR>`;
 }
 
-function nodo([nombre, descripcion, campos], isUml) {
-  const filas = campos.split(';').map(c => (isUml ? filaUml(c) : filaEr(c)));
-  if (isUml && m.operations[nombre]) {
-    filas.push('<HR/>', ...m.operations[nombre].map(op =>
+// A stub stands for a class of another package: name only, dashed border.
+function nodoExterno([id, nombre]) {
+  return `${id} [label=<<TABLE BORDER="1" STYLE="dashed" CELLBORDER="0" CELLSPACING="0" CELLPADDING="${CELDA}" COLOR="#3f5d4e">`
+    + `<TR><TD BGCOLOR="#f1f5f2"><I>${esc(nombre)}</I></TD></TR></TABLE>>];`;
+}
+
+function nodo([nombre, descripcion, campos], isUml, operaciones = m.operations) {
+  const filas = campos ? campos.split(';').map(c => (isUml ? filaUml(c) : filaEr(c))) : [];
+  if (isUml && operaciones[nombre]) {
+    filas.push(...(filas.length ? ['<HR/>'] : []), ...operaciones[nombre].map(op =>
       `<TR><TD ALIGN="LEFT">${esc('+ ' + op)}</TD></TR>`));
   }
-  return `${nombre} [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6" COLOR="#3f5d4e">`
+  return `${nombre} [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="${CELDA}" COLOR="#3f5d4e">`
     + `<TR><TD BGCOLOR="#cfe0d6"><B>${esc(nombre)}</B></TD></TR>`
     + `<TR><TD BGCOLOR="#e8f0ea"><FONT POINT-SIZE="10" COLOR="#40564a">${esc(descripcion)}</FONT></TD></TR>`
-    + `<HR/>${filas.join('')}</TABLE>>];`;
+    + `${filas.length ? '<HR/>' : ''}${filas.join('')}</TABLE>>];`;
 }
 
 // La leyenda se compone como banda al pie en lugar de participar del trazado: asi no
@@ -85,18 +102,20 @@ function muestra(clase, x, y, u) {
 }
 
 const ALTO_BANDA = 108;
-function conBanda(svg, isUml) {
+function conBanda(svg, isUml, notaUml) {
   const cabecera = svg.match(/<svg[^>]*>/)[0];
   const ancho = Number(cabecera.match(/width="(\d+)pt"/)[1]);
   const alto = Number(cabecera.match(/height="(\d+)pt"/)[1]);
   const [vx, vy, vw, vh] = cabecera.match(/viewBox="([^"]+)"/)[1].split(' ').map(Number);
   const escala = vh / alto;              // unidades de viewBox por punto
+  const altoBanda = COMPACTO && !isUml ? ALTO_BANDA + 44 : ALTO_BANDA;
   const banda = ALTO_BANDA * escala;     // alto de la banda en unidades del viewBox
+  const bandaTotal = altoBanda * escala;
   const y = vy + vh;
 
   const lineas = isUml
     ? ['Visibilidad: <tspan font-weight="bold">−</tspan> atributo privado, <tspan font-weight="bold">+</tspan> operación pública. Los paquetes agrupan las clases por módulo del dominio.',
-       'La multiplicidad se lee en el extremo de cada asociación, junto a la clase con la que se corresponde.']
+       notaUml || 'La multiplicidad se lee en el extremo de cada asociación, junto a la clase con la que se corresponde.']
     : ['Clave primaria: <tspan font-weight="bold" text-decoration="underline">negrita subrayada</tspan>.  Clave foránea: <tspan font-style="italic">cursiva</tspan>.  UK: clave única.',
        'Cardinalidad en notación pie de cuervo, leída desde cada entidad hacia la relación:'];
 
@@ -106,43 +125,83 @@ function conBanda(svg, isUml) {
   const u = banda * 0.26;
   const anchoMuestra = u * 7.2;
   const muestrasEmbebidas = isUml ? '' : Object.keys(patas).map((clase, i) =>
-    muestra(clase, vx + vw - banda * 0.3 - anchoMuestra * (4 - i), y + banda * 0.58, u)).join('');
+    COMPACTO
+      ? muestra(clase, vx + banda * 0.3 + anchoMuestra * i, y + banda * 1.02, u)
+      : muestra(clase, vx + vw - banda * 0.3 - anchoMuestra * (4 - i), y + banda * 0.58, u)).join('');
 
   const rotulo = `<text x="${vx + banda * 0.22}" y="${y + banda * 0.18}" font-family="Arial" font-size="${banda * 0.2}" fill="#4a6055">Notación</text>`;
-  const fondo = `<rect x="${vx}" y="${y}" width="${vw}" height="${banda}" fill="white"/>`;
-  const marco = `<rect x="${vx + banda * 0.08}" y="${y + banda * 0.06}" width="${vw - banda * 0.16}" height="${banda * 0.86}" `
+  const fondo = `<rect x="${vx}" y="${y}" width="${vw}" height="${bandaTotal}" fill="white"/>`;
+  const marco = `<rect x="${vx + banda * 0.08}" y="${y + banda * 0.06}" width="${vw - banda * 0.16}" height="${bandaTotal - banda * 0.14}" `
     + `fill="none" stroke="#8fa79a" stroke-dasharray="7 5" rx="${banda * 0.08}"/>`;
 
   return svg
-    .replace(/height="\d+pt"/, `height="${alto + ALTO_BANDA}pt"`)
-    .replace(/viewBox="[^"]+"/, `viewBox="${vx} ${vy} ${vw} ${vh + banda}"`)
+    .replace(/height="\d+pt"/, `height="${alto + altoBanda}pt"`)
+    .replace(/viewBox="[^"]+"/, `viewBox="${vx} ${vy} ${vw} ${vh + bandaTotal}"`)
     .replace('</svg>', `${fondo}${marco}${rotulo}${texto}${muestrasEmbebidas}</svg>`);
 }
 
-async function graph(name, entities, relations, isUml, grupos = null) {
-  const cuerpo = grupos
+async function graph(name, entities, relations, isUml, grupos = null, opciones = {}) {
+  // apilar: pairs [upper, lower] joined by invisible edges to stack nodes without relations.
+  const { operaciones = m.operations, externos = [], notaUml, rankdir = 'TB', apilar = [] } = opciones;
+  const cuerpo = (grupos
     ? grupos.map((g, i) => `subgraph cluster_g${i} { label="${esc(g.title)}"; labeljust="l"; fontname="Arial"; `
         + `fontsize=17; fontcolor="#1d4030"; style="rounded"; color="#8fa79a"; penwidth=1.6; margin=18; `
-        + g.entities.map(e => nodo(e, isUml)).join(' ') + ' }').join('\n')
-    : entities.map(e => nodo(e, isUml)).join('\n');
+        + g.entities.map(e => nodo(e, isUml, operaciones)).join(' ') + ' }').join('\n')
+    : entities.map(e => nodo(e, isUml, operaciones)).join('\n'))
+    + externos.map(n => '\n' + nodoExterno(n)).join('');
 
   const aristas = relations.map(([a, b, x, y, l]) => isUml
     ? `${a} -> ${b} [dir=none,taillabel="${x}",headlabel="${y}",label="${esc(l)}",`
       + 'labeldistance=1.9,labelangle=22,labelfontsize=11,labelfontcolor="#3c5a4b"];'
     : `${a} -> ${b} [dir=both,arrowtail=${patas[x]},arrowhead=${patas[y]},label="${esc(l)}",`
-      + 'fontsize=11,fontcolor="#3c5a4b"];');
+      + 'fontsize=11,fontcolor="#3c5a4b"];')
+    .concat(apilar.map(([a, b]) => `${a} -> ${b} [style=invis];`));
 
-  const dot = `digraph G { graph [rankdir=TB,bgcolor="white",pad=0.5,nodesep=${grupos ? 0.7 : 0.55},`
-    + `ranksep=${grupos ? 1.4 : 1.1},splines=polyline,concentrate=false,fontname="Arial"]; `
+  const dot = `digraph G { graph [rankdir=${rankdir},bgcolor="white",pad=0.5,nodesep=${grupos ? 0.7 : COMPACTO ? 0.35 : 0.55},`
+    + `ranksep=${grupos ? 1.4 : COMPACTO ? 0.75 : 1.1},splines=polyline,concentrate=false,fontname="Arial"]; `
     + 'node [shape=plain,fontname="Arial",fontsize=13]; '
     + 'edge [fontname="Arial",fontsize=11,color="#60756c",penwidth=1.2,arrowsize=1.1]; '
     + `${cuerpo} ${aristas.join('\n')} }`;
 
   write(`figures/${name}.dot`, dot);
-  const svg = conBanda(viz.renderString(dot, { format: 'svg', engine: 'dot' }), isUml);
+  const svg = conBanda(viz.renderString(dot, { format: 'svg', engine: 'dot' }), isUml, notaUml);
   write(`figures/${name}.svg`, svg);
   const png = new Resvg(svg, { fitTo: { mode: 'width', value: 2600 } }).render().asPng();
   fs.writeFileSync(path.join(dir, `figures/${name}.png`), png);
+}
+if (figuresOnly) {
+  // Implemented model: ER figures come from tables, class figures from m.classes. Edges to
+  // another module are not drawn in the ER (the FK stays in the row); class figures show the
+  // foreign class as a dashed stub so the association keeps its multiplicities.
+  const cls = m.classes || m;
+  const nota = 'La multiplicidad se lee en el extremo de cada asociación. Borde discontinuo: clase de otro paquete.';
+  const figuras = [];
+  for (const g of m.groups) {
+    const names = new Set(g.entities.map(e => e[0]));
+    await graph(`ER-${g.section}`, g.entities, m.rels.filter(r => names.has(r[0]) && names.has(r[1])), false, null, g.layout || {});
+    figuras.push(`ER-${g.section}`);
+  }
+  for (const g of cls.groups) {
+    const names = new Set(g.entities.map(e => e[0]));
+    // Only the referencing class shows a foreign class (as the ER row shows its FK). One stub
+    // per pair of classes keeps the edges short instead of converging on a single node.
+    const rels = cls.rels.filter(r => names.has(r[1]));
+    const externos = [];
+    const aristas = rels.map(([a, b, ...resto]) => {
+      if (names.has(a)) return [a, b, ...resto];
+      const id = `ext_${a}_${b}`;
+      if (!externos.some(e => e[0] === id)) externos.push([id, a]);
+      return [id, b, ...resto];
+    });
+    await graph(`UML-${g.section}`, g.entities, aristas, true, null,
+      { operaciones: cls.operations, externos, notaUml: nota, ...(g.layout || {}) });
+    figuras.push(`UML-${g.section}`);
+  }
+  await graph('ER-completo', null, m.rels, false, m.groups);
+  await graph('UML-completo', null, cls.rels, true, cls.groups, { operaciones: cls.operations });
+  figuras.push('ER-completo', 'UML-completo');
+  console.log(`Figuras generadas en ${path.relative(root, dir)}: ${figuras.join(', ')}.`);
+  process.exit(0);
 }
 write('entities.puml', uml(m.groups, m.rels));
 write('database.mmd', er(all, m.rels));
