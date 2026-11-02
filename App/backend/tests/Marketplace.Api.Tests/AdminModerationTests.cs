@@ -46,7 +46,7 @@ public sealed class AdminModerationTests(OnboardingFixture fixture) : IClassFixt
         Assert.Equal(HttpStatusCode.OK, (await adminClient.PostAsJsonAsync($"/admin/moderation/accounts/{ownerId}/suspend", new { reason = "Reclamos reiterados" })).StatusCode);
 
         Assert.Equal(HttpStatusCode.Unauthorized, (await ownerClient.GetAsync("/auth/session")).StatusCode);
-        Assert.Equal(HttpStatusCode.Unauthorized, (await Login(email, Password)).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, (await Login(email, Password)).StatusCode);
         Assert.False(await Listed(name));
         Assert.Equal(HttpStatusCode.NotFound, (await fixture.Client().GetAsync($"/public/businesses/{business}")).StatusCode);
         var accounts = await adminClient.GetFromJsonAsync<JsonElement>($"/admin/moderation/accounts?q={Uri.EscapeDataString(email)}");

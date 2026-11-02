@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Marketplace.DAL;
 
-public sealed class SalesRepository(MarketplaceDbContext db, TimeProvider clock) : ISalesRepository
+public sealed class SalesRepository(MarketplaceDbContext db, TimeProvider clock, CatalogSettings settings) : ISalesRepository
 {
     private Task<bool> Owns(Guid business, Guid owner, CancellationToken ct) => db.Businesses.AnyAsync(b => b.Id == business && b.OwnerId == owner, ct);
     private async Task<bool> Lock(Guid business, Guid owner, CancellationToken ct) =>
@@ -13,9 +13,10 @@ public sealed class SalesRepository(MarketplaceDbContext db, TimeProvider clock)
     public async Task<object?> Inventory(Guid business, Guid owner, CancellationToken ct)
     {
         if (!await Owns(business, owner, ct)) return null;
-        return await (from p in db.CatalogProducts.AsNoTracking() where p.BusinessId == business
+        var rows = await (from p in db.CatalogProducts.AsNoTracking() where p.BusinessId == business
             join b in db.InventoryBalances on p.Id equals b.ProductId into balances from b in balances.DefaultIfEmpty()
-            orderby p.Name, p.Id select new InventoryItem(p.Id, p.Name, b == null ? null : b.Quantity, b == null ? 0 : b.Version)).ToListAsync(ct);
+            orderby p.Name, p.Id select new { p.Id, p.Name, Quantity = b == null ? (int?)null : b.Quantity, Version = b == null ? 0 : b.Version }).ToListAsync(ct);
+        return rows.Select(x => new InventoryItem(x.Id, x.Name, x.Quantity, x.Version, settings.IsLow(x.Quantity))).ToList();
     }
     public async Task<object?> Movements(Guid business, Guid owner, Guid? product, int page, CancellationToken ct)
     {
@@ -51,7 +52,10 @@ public sealed class SalesRepository(MarketplaceDbContext db, TimeProvider clock)
             ? new(200, new { quantity = previous.Balance }) : new(409);
         if (!await db.CatalogProducts.AnyAsync(p => p.Id == body.ProductId && p.BusinessId == business, ct)) return new(404);
         var balance = await db.InventoryBalances.SingleOrDefaultAsync(b => b.ProductId == body.ProductId, ct);
-        if ((balance?.Version ?? 0) != body.Version || (balance?.Quantity ?? 0) + (long)body.Delta is < 0 or > 1000000) return new(409);
+        if ((balance?.Version ?? 0) != body.Version || (balance?.Quantity ?? 0) + (long)body.Delta > 1000000) return new(409);
+        var available = balance?.Quantity ?? 0;
+        if (available + (long)body.Delta < 0) return new(409, new { code = "insufficient_stock", availableQuantity = available,
+            message = $"El ajuste dejaría el saldo por debajo de cero. Saldo disponible: {available} unidades." });
         if (balance == null) { balance = new() { ProductId = body.ProductId }; db.InventoryBalances.Add(balance); }
         Change(balance, body.Delta, business, owner, id, null, "adjustment", body.Reason!, hash);
         if (!await Save(ct)) return new(409);

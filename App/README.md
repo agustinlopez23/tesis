@@ -447,7 +447,19 @@ variable de servidor, sin `NEXT_PUBLIC`) activan el ranking con la política
 versionada `equity-v1` en cualquier entorno; ambas están apagadas por defecto.
 En `/explorar`, al elegir zona y rubro, los comercios se ordenan con el ranking
 hiperlocal con equidad; sin ellos, o ante un fallo, se mantiene la guía habitual.
-La respuesta incluye `policy: "equity-v1"`. Lo que sigue describe la vista previa local.
+La respuesta incluye `policy: "equity-v1"`.
+
+En `/productos`, `GET /public/products?zone=<centro|nueva-cordoba|alberdi>&radiusKm=<r>`
+centra la búsqueda en el punto de referencia de la zona. Con `Ranking__Enabled=true`
+los productos se ordenan por la posición de su negocio bajo `equity-v1` (empates por
+coincidencia y nombre) y la respuesta trae `order: "ranking"` y `policy: "equity-v1"`.
+Este orden no registra exposición: lee el saldo de exposición que cada negocio acumula
+en la revista de su zona y rubro. Sin zona se mantiene el orden por distancia o nombre.
+La búsqueda tolera errores de tipeo con `pg_trgm` y `fuzzystrmatch` (migración
+`20261102034202_AddProductFuzzySearch`). `Catalog__LowStockThreshold` (por defecto 3)
+marca "Disponibilidad baja" cuando el saldo cargado es mayor que cero y menor al umbral.
+
+Lo que sigue describe la vista previa local.
 
 La creación experimental se habilita solo en `Development` o `Testing` mediante
 `Ranking__PreviewEnabled=true`. Por defecto está cerrada y en Production esa

@@ -167,8 +167,11 @@ app.MapPost("/auth/login", async (
 {
     if (!IsTrustedMutation(httpRequest, configuration)) return Results.StatusCode(StatusCodes.Status403Forbidden);
     var result = await authentication.LoginAsync(request, cancellationToken);
-    if (result is null) return Results.Unauthorized();
-    httpResponse.Cookies.Append(SessionCookie, result.Token, new CookieOptions
+    if (result.Status == LoginStatus.Suspended)
+        return Results.Json(new { code = "account_suspended", message = "Tu cuenta no está habilitada. Contactá a la administración." },
+            statusCode: StatusCodes.Status403Forbidden);
+    if (result.Status != LoginStatus.Authenticated) return Results.Unauthorized();
+    httpResponse.Cookies.Append(SessionCookie, result.Token!, new CookieOptions
     {
         HttpOnly = true,
         SameSite = SameSiteMode.Lax,

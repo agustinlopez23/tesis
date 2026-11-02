@@ -24,6 +24,9 @@ public static class MarketplaceServices
         services.AddSingleton(provider => new RankingReadLimits(
             provider.GetRequiredService<IConfiguration>().GetValue("Ranking:MaxCandidates", 1000),
             provider.GetRequiredService<IConfiguration>().GetValue("Ranking:MaxBalanceRows", 10000)));
+        services.AddSingleton(provider => new CatalogSettings(
+            Math.Max(1, provider.GetRequiredService<IConfiguration>().GetValue("Catalog:LowStockThreshold", 3))));
+        services.AddScoped<ProductSearchRanking>();
         services.AddScoped<IRankingCandidateRepository, RankingCandidateRepository>();
         services.AddScoped<MagazineRankingCandidates>();
         services.AddScoped<IRankingSnapshotStore, RankingSnapshotStore>();

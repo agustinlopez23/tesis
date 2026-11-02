@@ -6,10 +6,10 @@ using System.Linq.Expressions;
 
 namespace Marketplace.DAL;
 
-public sealed class CatalogRepository(MarketplaceDbContext db, TimeProvider clock) : ICatalogRepository
+public sealed class CatalogRepository(MarketplaceDbContext db, TimeProvider clock, CatalogSettings settings) : ICatalogRepository
 {
     private static readonly Expression<Func<CatalogProduct, ProductResponse>> Projection = p =>
-        new(p.Id, p.Name, p.Description, p.Category, p.Price, p.Currency, p.Available, p.Status, p.Version, p.Photo != null);
+        new(p.Id, p.Name, p.Description, p.Category, p.Price, p.Currency, p.Available, p.Status, p.Version, p.Photo != null, false);
 
     private IQueryable<BusinessSubscription> Active(Guid business, DateTimeOffset now) => db.BusinessSubscriptions
         .Where(s => s.BusinessId == business && s.RevokedAt == null && s.StartsAt <= now && s.EndsAt > now);
@@ -89,7 +89,8 @@ public sealed class CatalogRepository(MarketplaceDbContext db, TimeProvider cloc
             p.Description.ToLower().Contains(query.ToLower()) || p.Category.ToLower().Contains(query.ToLower())))
             .OrderBy(p => p.Name).ThenBy(p => p.Id).Skip((page - 1) * 20).Take(21)
             .Select(p => new ProductResponse(p.Id, p.Name, p.Description, p.Category, p.Price, p.Currency,
-                p.Available && !db.InventoryBalances.Any(b => b.ProductId == p.Id && b.Quantity == 0), p.Status, p.Version, p.Photo != null)).ToListAsync(ct);
+                p.Available && !db.InventoryBalances.Any(b => b.ProductId == p.Id && b.Quantity == 0), p.Status, p.Version, p.Photo != null,
+                db.InventoryBalances.Any(b => b.ProductId == p.Id && b.Quantity > 0 && b.Quantity < settings.LowStockThreshold))).ToListAsync(ct);
         return new(items.Take(20).ToArray(), page, items.Count > 20);
     }
 

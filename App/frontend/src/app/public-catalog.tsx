@@ -43,7 +43,7 @@ export default function PublicCatalog({ id }: { id: string }) {
       {!items.length && <p>No hay productos publicados para esta búsqueda.</p>}
       <div className="catalog-grid">{items.map((p) => <article className="product-card" key={p.id}>
         {p.hasPhoto && <Image src={`/api/marketplace/public/businesses/${id}/products/${p.id}/photo?v=${p.version}`} alt={p.name} width={400} height={300} unoptimized />}
-        <div className="product-card-copy"><span className="eyebrow">{p.category}</span><h3>{p.name}</h3><p>{p.description}</p><strong>{priceLabel(p)}</strong><span className="product-availability">{p.available ? "Disponible" : "No disponible"}</span></div>
+        <div className="product-card-copy"><span className="eyebrow">{p.category}</span><h3>{p.name}</h3><p>{p.description}</p><strong>{priceLabel(p)}</strong><span className="product-availability">{p.available ? "Disponible" : "No disponible"}</span>{p.available && p.lowStock && <span className="stock-badge">Disponibilidad baja</span>}</div>
         <button type="button" className="button button-outline product-add" aria-label={`Agregar ${p.name}`} disabled={!p.available || cart.pending || cart.restoring || !!cart.intent || !!cart.order} onClick={() => cart.add(p)}>Agregar a la solicitud</button>
       </article>)}</div>
       <nav className="catalog-toolbar" aria-label="Páginas del catálogo"><button className="button button-outline" disabled={page === 1} onClick={() => { setState("loading"); setItems([]); setPage(page - 1); }}>Anterior</button><span>Página {page}</span><button className="button button-outline" disabled={!more} onClick={() => { setState("loading"); setItems([]); setPage(page + 1); }}>Siguiente</button></nav>
