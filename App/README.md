@@ -375,6 +375,21 @@ guarda como hash; cerrar sesión lo revoca en el servidor.
 Las pruebas crean una base temporal y la eliminan al terminar. Para ejecutarlas,
 establecer `TEST_DATABASE_CONNECTION` con la misma conexión pero base `postgres`.
 
+## Despliegue (Vercel + Railway + Supabase)
+
+Guía paso a paso: [`Doc/despliegue.md`](../Doc/despliegue.md). Resumen técnico:
+
+- `backend/Dockerfile` (SDK 10.0.400 → runtime aspnet 10, usuario no root) y
+  `backend/railway.json` (healthcheck `/health/live`). La API escucha en `PORT` si existe.
+- `Database:MigrateOnStartup=true` aplica migraciones antes de aceptar tráfico; `--migrate` sigue disponible.
+- En `Production` la API no arranca sin `ConnectionStrings:Marketplace`, `FrontendOrigin`
+  (solo origen) y `Proxy:SharedSecret` (≥ 32 caracteres). `FrontendOrigin` ya no tiene valor por
+  defecto fuera de `Development`.
+- Fuera de `Development` las claves de Data Protection se guardan en la tabla `data_protection_keys`
+  (nombre de aplicación fijo `marketplace-api`): los tokens sobreviven reinicios y redeploys.
+- El proxy web envía `X-Marketplace-Client-IP` junto con `X-Marketplace-Proxy-Secret`
+  (`API_PROXY_SECRET`); la API usa esa IP para el límite de login solo si el secreto coincide.
+
 ## Frontend
 
 En otra terminal, desde la raíz:

@@ -61,7 +61,10 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
 
   const baseUrl = parseApiBase(process.env.API_BASE_URL);
   if (!baseUrl) return Response.json({ message: "API no configurada." }, { status: 503 });
-  const headers = new Headers({ Origin: appOrigin, "X-Requested-With": "marketplace" });
+  const headers = new Headers({
+    Origin: appOrigin, "X-Requested-With": "marketplace",
+    ...clientAddressHeaders(request.headers, process.env.API_PROXY_SECRET),
+  });
   const contentType = request.headers.get("content-type");
   const cookie = request.headers.get("cookie");
   if (contentType) headers.set("Content-Type", contentType);
@@ -148,4 +151,5 @@ export const GET = forward;
 export const POST = forward;
 export const PUT = forward;
 export const DELETE = forward;
+import { clientAddressHeaders } from "@/lib/client-address";
 import { isRankingPreviewEnvironment, rankingEnabled } from "@/lib/ranking-preview";

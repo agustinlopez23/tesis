@@ -3,16 +3,33 @@ using Marketplace.Api;
 using Marketplace.DTOs;
 using Marketplace.IoC;
 using Marketplace.Models;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.Extensions.Options;
 using System.Data.Common;
 using System.Threading.RateLimiting;
 
 const string SessionCookie = "marketplace_session";
 
 var builder = WebApplication.CreateBuilder(args);
+// Hosting platforms such as Railway assign the listening port through PORT.
+if (int.TryParse(Environment.GetEnvironmentVariable("PORT"), out var hostingPort) &&
+    string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ASPNETCORE_URLS")))
+    builder.WebHost.UseUrls($"http://0.0.0.0:{hostingPort}");
 builder.Services.AddMarketplace(builder.Configuration);
+// Registered first: validates Production settings and applies opt-in migrations before other hosted services.
+builder.Services.AddHostedService<DeploymentStartup>();
 builder.Services.AddProblemDetails();
-builder.Services.AddDataProtection();
+// Fixed application name keeps protected tokens valid across deploys; keys live in the database
+// outside Development (local development keeps the default per-user key ring).
+builder.Services.AddDataProtection().SetApplicationName("marketplace-api");
+builder.Services.AddSingleton<IConfigureOptions<KeyManagementOptions>>(provider =>
+    new ConfigureOptions<KeyManagementOptions>(options =>
+    {
+        if (!provider.GetRequiredService<IHostEnvironment>().IsDevelopment())
+            options.XmlRepository = new DatabaseXmlRepository(provider.GetRequiredService<IServiceScopeFactory>());
+    }));
 builder.Services.AddSingleton<ActivityTokens>();
 builder.Services.AddSingleton<ICampaignTokens, CampaignTokens>();
 builder.Services.AddHostedService<CampaignRetentionWorker>();
@@ -44,7 +61,7 @@ builder.Services.AddRateLimiter(options =>
         PermitLimit = 1200, Window = TimeSpan.FromMinutes(1), QueueLimit = 0, AutoReplenishment = true
     }));
     options.AddPolicy("auth", context => RateLimitPartition.GetFixedWindowLimiter(
-        context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+        ClientAddress.Resolve(context, context.RequestServices.GetRequiredService<IConfiguration>()["Proxy:SharedSecret"]),
         _ => new FixedWindowRateLimiterOptions
         {
             PermitLimit = builder.Configuration.GetValue("Auth:PermitLimit", 5),

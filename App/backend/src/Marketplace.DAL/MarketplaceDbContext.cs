@@ -28,6 +28,7 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<CampaignChange> CampaignChanges => Set<CampaignChange>();
     public DbSet<CampaignEvent> CampaignEvents => Set<CampaignEvent>();
     public DbSet<AdminAction> AdminActions => Set<AdminAction>();
+    public DbSet<DataProtectionKeyRecord> DataProtectionKeys => Set<DataProtectionKeyRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +37,14 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
         SalesConfiguration.Configure(modelBuilder);
         CampaignConfiguration.Configure(modelBuilder);
         modelBuilder.ApplyConfiguration(new BusinessActivityConfiguration());
+        modelBuilder.Entity<DataProtectionKeyRecord>(entity =>
+        {
+            entity.ToTable("data_protection_keys");
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).HasColumnName("id");
+            entity.Property(x => x.FriendlyName).HasColumnName("friendly_name").HasMaxLength(256);
+            entity.Property(x => x.Xml).HasColumnName("xml").IsRequired();
+        });
         modelBuilder.Entity<BusinessPhoto>(entity =>
         {
             entity.ToTable("business_photos", table =>

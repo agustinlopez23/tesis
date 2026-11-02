@@ -760,6 +760,30 @@ namespace Marketplace.DAL.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Marketplace.Models.DataProtectionKeyRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FriendlyName")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)")
+                        .HasColumnName("friendly_name");
+
+                    b.Property<string>("Xml")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("xml");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("data_protection_keys", (string)null);
+                });
+
             modelBuilder.Entity("Marketplace.Models.InventoryBalance", b =>
                 {
                     b.Property<Guid>("ProductId")

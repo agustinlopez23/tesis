@@ -138,7 +138,9 @@ public sealed partial class RankingHttpTests(OnboardingFixture fixture) : IClass
         fixture.Factory.WithWebHostBuilder(builder => builder.UseEnvironment(environment)
             .ConfigureAppConfiguration((_, config) => config.AddInMemoryCollection(new Dictionary<string, string?> {
                 ["Ranking:PreviewEnabled"] = enabled.ToString(),
-                ["Ranking:Enabled"] = productionEnabled.ToString()
+                ["Ranking:Enabled"] = productionEnabled.ToString(),
+                // Production hosts fail fast without the proxy secret (see DeploymentSettings).
+                ["Proxy:SharedSecret"] = "ranking-tests-proxy-secret-0123456789"
             })));
 
     private static HttpClient Client(WebApplicationFactory<Program> factory)
