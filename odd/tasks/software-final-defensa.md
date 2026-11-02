@@ -67,5 +67,9 @@ La auditoría del 01/11/2026 encontró que la Entrega 4 promete más de lo que h
 - T10 revisión: tramo T9–T10 `under_budget` según la evaluación (4363 líneas; resultado registrado tal como lo devuelve la herramienta).
 - T11 (02/11/2026): README raíz 32→151 líneas (qué es, roles, tabla HU-01..23 con rutas, arranque local, cuentas, arquitectura, pruebas, despliegue); `App/README.md` 610→328 como guía técnica; historial movido a `Doc/bitacora-desarrollo.md`. 59 enlaces verificados, 34 variables verificadas, sin voseo ni secretos. Hallazgo: HU-05 usa texto, no fotografía → T12. Las contraseñas del seed las genera `seed-demo.ps1` y las guarda en `.tools/seed-demo/credentials.json`.
 
+- Cierre (02/11/2026): CI del PR #30 en verde (Secrets, Backend, Frontend) sobre 51c04d1; squash-merge a main como 5a90366; main idéntica a la rama. Ramas remotas integradas borradas (feat/software-final-defensa, docs/entrega2-scrum, fix/accessibility-commerce, feature/ranking-evaluation-publication). PR de Dependabot obsoletos cerrados (#26–#29); quedan 14 abiertos con actualizaciones mayores y parches del backend. Revisiones RDD de los tramos T1, T2 y T3–T5: consentimiento nunca respondido, no se ejecutaron.
+
+- T15 (02/11/2026, decisión del usuario: regenerar): modelo implementado extraído de la base migrada y de las clases C# en `Doc/model/implementacion/` (27 tablas, 198 columnas, 39 FK, 27 clases, 50 operaciones existentes en BLL); figuras ER y de clases con la notación de la Entrega 2 (salidas de la Entrega 2 sin cambios); diccionario en español. Entrega 4 regenerada: 91 páginas, 154/154 entradas de índice, 42 figuras, 52 tablas. FK no declaradas en la base: `ranking_contributions.business_id`, `campaign_events.context_id`, `campaigns.photo_slot`.
+
 ## Siguiente paso
-T12, luego repetir pruebas locales completas y T6.
+Pendientes del usuario: enlace de Drive de la demo, clave de OpenAI para probar HU-05 en vivo, publicación online con la guía. 14 PR de Dependabot con versiones mayores, para después de la defensa.
