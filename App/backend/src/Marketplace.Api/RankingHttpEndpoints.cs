@@ -24,9 +24,7 @@ public static class RankingHttpEndpoints
         RankingCursorTokens cursors, ActivityTokens measurement, CancellationToken ct)
     {
         response.Headers.CacheControl = "no-store";
-        // Temporary local preview only. A production policy requires separate evaluated evidence.
-        if (!IsPreviewEnvironment(environment) || !config.GetValue<bool>("Ranking:PreviewEnabled"))
-            return Results.NotFound();
+        if (!CreationEnabled(config, environment)) return Results.NotFound();
         if (config.GetValue<bool>("Ranking:WithdrawPages")) return Gone();
         if (string.IsNullOrWhiteSpace(config["FrontendOrigin"]) || request.Headers.Origin != config["FrontendOrigin"] ||
             request.Headers["X-Requested-With"] != "marketplace") return Results.StatusCode(403);
@@ -45,7 +43,7 @@ public static class RankingHttpEndpoints
         try
         {
             result = await service.CreateAsync(body.RequestId, body.ZoneId, body.CategoryId,
-                RankingVariant.EquityOnly, new(), 17, actor?.Id, ct);
+                RankingPolicies.EquityV1, actor?.Id, ct);
         }
         catch (RankingCapacityException)
         {
@@ -63,7 +61,7 @@ public static class RankingHttpEndpoints
         RankingCursorTokens cursors, ActivityTokens measurement, CancellationToken ct)
     {
         response.Headers.CacheControl = "no-store";
-        if (!IsPreviewEnvironment(environment)) return Results.NotFound();
+        if (!ProductionEnabled(config) && !IsPreviewEnvironment(environment)) return Results.NotFound();
         if (request.Query.Count != 1 || !request.Query.TryGetValue("cursor", out var values) || values.Count != 1)
             return Results.BadRequest();
         var result = cursors.Read(values[0]);
@@ -83,7 +81,13 @@ public static class RankingHttpEndpoints
             page.NextOffset is { } offset ? cursors.Issue(new(page.SnapshotId, offset, page.ExpiresAt)) : null,
             page.Items.ToDictionary(x => x.Business.Id,
                 x => measurement.Issue(new(x.Business.Id, "directory", x.Position, page.PolicyHash))),
-            cursors.Issue(new(page.SnapshotId, currentOffset, page.ExpiresAt)));
+            cursors.Issue(new(page.SnapshotId, currentOffset, page.ExpiresAt)), RankingPolicies.EquityV1.Label);
+
+    // Production switch for the evaluated equity-v1 policy; the local preview keeps its own switch.
+    private static bool ProductionEnabled(IConfiguration config) => config.GetValue<bool>("Ranking:Enabled");
+
+    private static bool CreationEnabled(IConfiguration config, IWebHostEnvironment environment) =>
+        ProductionEnabled(config) || (IsPreviewEnvironment(environment) && config.GetValue<bool>("Ranking:PreviewEnabled"));
 
     private static bool IsPreviewEnvironment(IWebHostEnvironment environment) =>
         environment.IsDevelopment() || environment.IsEnvironment("Testing");

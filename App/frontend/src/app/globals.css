@@ -47,9 +47,6 @@
 }
 
 @layer components {
-  .preview-access { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 8px 20px; padding: 10px 20px; background: #eaf0e5; color: var(--green); font-size: 12px; }
-  .preview-access > span { color: var(--muted); }
-  .preview-access a { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
   .business-insights { margin: 0 0 32px; border: 1px solid var(--line); border-radius: 14px; background: #fff; overflow: hidden; }
   .insights-heading { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 32px; background: #f0f2ea; }
   .insights-heading h2 { font-size: 27px; letter-spacing: -.6px; margin: 6px 0 8px; }

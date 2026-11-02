@@ -398,6 +398,13 @@ paginación y recuperación ante fallos; el script integrado comprueba HTTP.
 
 ## Previsualización HTTP del ranking
 
+**Producción:** `Ranking__Enabled=true` (API) y `RANKING_ENABLED=true` (web,
+variable de servidor, sin `NEXT_PUBLIC`) activan el ranking con la política
+versionada `equity-v1` en cualquier entorno; ambas están apagadas por defecto.
+En `/explorar`, al elegir zona y rubro, los comercios se ordenan con el ranking
+hiperlocal con equidad; sin ellos, o ante un fallo, se mantiene la guía habitual.
+La respuesta incluye `policy: "equity-v1"`. Lo que sigue describe la vista previa local.
+
 La creación experimental se habilita solo en `Development` o `Testing` mediante
 `Ranking__PreviewEnabled=true`. Por defecto está cerrada y en Production esa
 variable no habilita nada. No se activó en la demo. Requiere las migraciones del

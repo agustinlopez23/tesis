@@ -68,3 +68,13 @@ it("propaga cancelación del visitante y falla sin cachear ni revelar errores in
   controller.abort();
   expect(fetcher.mock.calls[0][1]?.signal?.aborted).toBe(true);
 });
+
+it("abre creación y páginas en producción con RANKING_ENABLED", async () => {
+  vi.stubEnv("NODE_ENV", "production");
+  vi.stubEnv("RANKING_PREVIEW_ENABLED", "false");
+  vi.stubEnv("RANKING_ENABLED", "true");
+  const fetcher = vi.spyOn(globalThis, "fetch").mockImplementation(async () => Response.json({ cursor: "current" }, { status: 201 }));
+  expect((await POST(post(), context())).status).toBe(201);
+  expect((await GET(new Request(url + "/page?cursor=token"), context(true))).status).toBe(201);
+  expect(fetcher).toHaveBeenCalledTimes(2);
+});

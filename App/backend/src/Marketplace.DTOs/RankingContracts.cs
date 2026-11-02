@@ -7,4 +7,4 @@ public sealed record CreateRankingSnapshotRequest(Guid RequestId, string? ZoneId
 
 public sealed record PublicRankingPage(IReadOnlyList<PublicBusinessResponse> Items, DateTimeOffset ExpiresAt,
     string RankingVersion, bool HasMore, string? NextCursor, IReadOnlyDictionary<Guid, string> Measurement,
-    string Cursor);
+    string Cursor, string Policy);

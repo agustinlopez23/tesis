@@ -3,6 +3,10 @@ namespace Marketplace.BLL;
 public sealed class RankingSnapshotService(MagazineRankingCandidates candidates, IRankingSnapshotStore store)
 {
     public Task<SnapshotResult> CreateAsync(Guid requestId, string zoneId, short categoryId,
+        RankingPolicy policy, Guid? actorId, CancellationToken ct) =>
+        CreateAsync(requestId, zoneId, categoryId, policy.Variant, policy.Configuration, policy.Seed, actorId, ct);
+
+    public Task<SnapshotResult> CreateAsync(Guid requestId, string zoneId, short categoryId,
         RankingVariant variant, RankingConfiguration configuration, int seed, Guid? actorId, CancellationToken ct)
     {
         var (key, _) = MagazineRankingCandidates.ResolveScope(zoneId, categoryId);

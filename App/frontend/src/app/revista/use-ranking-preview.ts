@@ -116,9 +116,10 @@ export function useRankingPreview() {
     return () => clearTimeout(timeout);
   }, [state.navigation, state.error]);
 
-  return { ...state, reset,
-    start: (selection: RankingSelection) => load({ selection, requestId: crypto.randomUUID(),
-      startedAt: Date.now(), page: 1, cursors: [] }, true),
+  const start = useCallback((selection: RankingSelection, push = true) => load({ selection,
+    requestId: crypto.randomUUID(), startedAt: Date.now(), page: 1, cursors: [] }, push), [load]);
+
+  return { ...state, reset, start,
     retry: async () => { if (state.navigation) await load(state.navigation); },
     go: async (page: number) => {
       if (state.navigation?.cursors[page - 1] && !state.busy) await load({ ...state.navigation, page }, true);

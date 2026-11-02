@@ -46,7 +46,7 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
     return new Response(null, { status: 404 });
   }
   const ranking = path === "public/ranking-snapshots" || path === "public/ranking-snapshots/page";
-  if (ranking && (!isRankingPreviewEnvironment() || (request.method === "POST" && !rankingPreviewEnabled())))
+  if (ranking && !rankingEnabled() && (!isRankingPreviewEnvironment() || request.method === "POST"))
     return new Response(null, { status: 404 });
 
   const appOrigin = process.env.APP_ORIGIN;
@@ -145,4 +145,4 @@ export const GET = forward;
 export const POST = forward;
 export const PUT = forward;
 export const DELETE = forward;
-import { isRankingPreviewEnvironment, rankingPreviewEnabled } from "@/lib/ranking-preview";
+import { isRankingPreviewEnvironment, rankingEnabled } from "@/lib/ranking-preview";
