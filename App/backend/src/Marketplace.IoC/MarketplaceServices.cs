@@ -56,6 +56,8 @@ public static class MarketplaceServices
         services.AddScoped<IActivityRepository, ActivityRepository>();
         services.AddScoped<ActivityService>();
         services.AddScoped<IPasswordService, AspNetPasswordService>();
+        services.AddScoped<IAdminRepository, AdminRepository>();
+        services.AddScoped<AdminService>();
         return services;
     }
 }

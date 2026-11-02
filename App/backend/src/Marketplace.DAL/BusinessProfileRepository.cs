@@ -12,7 +12,7 @@ public sealed class BusinessProfileRepository(MarketplaceDbContext database) : I
         var business = await (from b in database.Businesses.AsNoTracking()
             join u in database.UserAccounts on b.OwnerId equals u.Id
             join c in database.BusinessCategories on b.CategoryId equals c.Id
-            where b.Id == id && b.Status == "published" && !u.IsSuspended
+            where b.Id == id && b.Status == "published" && !b.IsSuspended && !u.IsSuspended
             select new { b.Id, b.Name, b.Description, b.Address, Category = c.Name, b.WhatsApp }).SingleOrDefaultAsync(ct);
         return business is null ? null : new(business.Id, business.Name, business.Description, business.Address,
             business.Category, business.WhatsApp, await GetPhotosAsync(id, ct));
@@ -29,7 +29,7 @@ public sealed class BusinessProfileRepository(MarketplaceDbContext database) : I
          join b in database.Businesses on p.BusinessId equals b.Id
          join u in database.UserAccounts on b.OwnerId equals u.Id
          where b.Id == id && p.Slot == slot && !u.IsSuspended &&
-             (ownerId != null ? b.OwnerId == ownerId : b.Status == "published")
+             (ownerId != null ? b.OwnerId == ownerId : b.Status == "published" && !b.IsSuspended)
          select p.Content).SingleOrDefaultAsync(ct);
 
     public async Task SavePhotoAsync(BusinessPhoto photo, CancellationToken ct) =>

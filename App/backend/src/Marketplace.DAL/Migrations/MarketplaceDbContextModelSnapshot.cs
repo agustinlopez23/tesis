@@ -24,6 +24,66 @@ namespace Marketplace.DAL.Migrations
             NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "postgis");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Marketplace.Models.AdminAction", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("action");
+
+                    b.Property<Guid>("ActorId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("actor_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("reason");
+
+                    b.Property<string>("TargetId")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("target_id");
+
+                    b.Property<string>("TargetLabel")
+                        .IsRequired()
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)")
+                        .HasColumnName("target_label");
+
+                    b.Property<string>("TargetType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("target_type");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActorId");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("TargetType", "TargetId");
+
+                    b.ToTable("admin_actions", null, t =>
+                        {
+                            t.HasCheckConstraint("CK_admin_actions_target", "target_type IN ('account', 'business', 'product', 'category')");
+                        });
+                });
+
             modelBuilder.Entity("Marketplace.Models.BusinessActivity", b =>
                 {
                     b.Property<Guid>("VisitId")
@@ -85,6 +145,10 @@ namespace Marketplace.DAL.Migrations
                         .HasColumnType("smallint")
                         .HasColumnName("id");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(80)
@@ -99,6 +163,9 @@ namespace Marketplace.DAL.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.HasIndex("Slug")
                         .IsUnique();
 
@@ -108,18 +175,21 @@ namespace Marketplace.DAL.Migrations
                         new
                         {
                             Id = (short)1,
+                            IsActive = true,
                             Name = "Almacenes",
                             Slug = "almacenes"
                         },
                         new
                         {
                             Id = (short)2,
+                            IsActive = true,
                             Name = "Gastronomía",
                             Slug = "gastronomia"
                         },
                         new
                         {
                             Id = (short)3,
+                            IsActive = true,
                             Name = "Indumentaria",
                             Slug = "indumentaria"
                         });
@@ -195,6 +265,10 @@ namespace Marketplace.DAL.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("first_published_at");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_suspended");
 
                     b.Property<Point>("Location")
                         .IsRequired()
@@ -536,6 +610,10 @@ namespace Marketplace.DAL.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("description");
+
+                    b.Property<bool>("IsSuspended")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_suspended");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1060,9 +1138,17 @@ namespace Marketplace.DAL.Migrations
                         .HasColumnType("character varying(254)")
                         .HasColumnName("email");
 
+                    b.Property<int>("FailedLoginCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("failed_login_count");
+
                     b.Property<bool>("IsSuspended")
                         .HasColumnType("boolean")
                         .HasColumnName("is_suspended");
+
+                    b.Property<DateTimeOffset?>("LockedUntil")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("locked_until");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -1131,6 +1217,15 @@ namespace Marketplace.DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("user_sessions", (string)null);
+                });
+
+            modelBuilder.Entity("Marketplace.Models.AdminAction", b =>
+                {
+                    b.HasOne("Marketplace.Models.UserAccount", null)
+                        .WithMany()
+                        .HasForeignKey("ActorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Marketplace.Models.BusinessActivity", b =>

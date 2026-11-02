@@ -92,6 +92,7 @@ app.MapProductDiscovery();
 app.MapCampaigns();
 app.MapBusinessActivity();
 app.MapRankingSnapshots();
+app.MapAdministration();
 
 app.MapGet("/health/live", () => Results.Json(new { status = "ok" }));
 

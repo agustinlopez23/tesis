@@ -9,8 +9,8 @@ public sealed class CampaignRepository(MarketplaceDbContext db, TimeProvider clo
 {
     internal static IQueryable<Campaign> Eligible(MarketplaceDbContext db, DateTimeOffset now) => db.Campaigns.Where(c =>
         c.Status == "scheduled" && c.ApprovedAt != null && c.PaidAt != null && c.StartsAt <= now && c.EndsAt > now &&
-        db.Businesses.Any(b => b.Id == c.BusinessId && b.Status == "published" && db.UserAccounts.Any(u => u.Id == b.OwnerId && !u.IsSuspended)) &&
-        (c.ProductId == null || db.CatalogProducts.Any(p => p.Id == c.ProductId && p.BusinessId == c.BusinessId && p.Status == "published" && p.Available &&
+        db.Businesses.Any(b => b.Id == c.BusinessId && b.Status == "published" && !b.IsSuspended && db.UserAccounts.Any(u => u.Id == b.OwnerId && !u.IsSuspended)) &&
+        (c.ProductId == null || db.CatalogProducts.Any(p => p.Id == c.ProductId && p.BusinessId == c.BusinessId && p.Status == "published" && !p.IsSuspended && p.Available &&
             !db.InventoryBalances.Any(i => i.ProductId == p.Id && i.Quantity == 0) &&
             db.BusinessSubscriptions.Any(s => s.BusinessId == c.BusinessId && s.RevokedAt == null && s.StartsAt <= now && s.EndsAt > now))));
     private Task<BusinessProfile?> Lock(Guid business, CancellationToken ct) => db.Businesses.FromSqlInterpolated($"SELECT * FROM businesses WHERE id={business} FOR UPDATE").SingleOrDefaultAsync(ct);

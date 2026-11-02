@@ -89,6 +89,33 @@ Down bloquea datos/atribuciones existentes. Prueba aislada tras build:
 `node App/tools/verify-catalog.mjs --campaigns` (opcional `--serve`, artefactos en
 `.tools/campaigns`). Incluye verificaciones previas de catálogo, pedidos y ventas.
 
+## Moderación y rubros (administración)
+
+Con una cuenta administradora, `/administracion/rubros`, `/administracion/moderacion`
+y `/administracion/auditoria` completan la HU-19:
+
+- Rubros: alta, cambio de nombre y habilitación. Un rubro deshabilitado no se puede
+  elegir para negocios nuevos ni al cambiar de rubro; los negocios que ya lo usan
+  siguen visibles y editables.
+- Moderación: suspender y reactivar cuentas de comercio, negocios y productos
+  (ocultar), siempre con motivo. Una cuenta suspendida no puede ingresar y sus
+  sesiones dejan de valer en la siguiente solicitud; un negocio suspendido sale del
+  directorio, la búsqueda, el ranking, el perfil público, el catálogo y no recibe
+  pedidos; un producto oculto sale del catálogo público, la búsqueda y los pedidos.
+  Las cuentas administradoras no se moderan desde esta pantalla.
+- Auditoría: cada acción de rubros y moderación queda en `admin_actions` (actor,
+  tipo y destino, acción, motivo y fecha) en la misma transacción que el cambio.
+
+API: `GET/POST /admin/categories`, `PUT /admin/categories/{id}`,
+`GET /admin/moderation/{accounts|businesses|products}?q=&page=`,
+`POST /admin/moderation/{accounts|businesses|products}/{id}/{suspend|reinstate}`
+y `GET /admin/audit?page=`. Todas exigen sesión con rol administrador vigente.
+
+Inicio de sesión: tras 5 intentos fallidos consecutivos la cuenta queda bloqueada
+15 minutos (`failed_login_count`, `locked_until`). Durante el bloqueo la API responde
+el mismo 401 genérico que ante una contraseña incorrecta, para no revelar qué correos
+existen; un ingreso correcto reinicia el contador.
+
 ## Ayuda opcional para redactar productos
 
 Dentro del editor de producto, **Ayuda para redactar** permite ingresar hechos,

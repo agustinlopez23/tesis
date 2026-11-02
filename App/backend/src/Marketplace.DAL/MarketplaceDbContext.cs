@@ -27,6 +27,7 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
     public DbSet<Campaign> Campaigns => Set<Campaign>();
     public DbSet<CampaignChange> CampaignChanges => Set<CampaignChange>();
     public DbSet<CampaignEvent> CampaignEvents => Set<CampaignEvent>();
+    public DbSet<AdminAction> AdminActions => Set<AdminAction>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -61,7 +62,26 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
             entity.Property(x => x.DisplayName).HasColumnName("display_name").HasMaxLength(120).IsRequired();
             entity.Property(x => x.PasswordHash).HasColumnName("password_hash").IsRequired();
             entity.Property(x => x.IsSuspended).HasColumnName("is_suspended");
+            entity.Property(x => x.FailedLoginCount).HasColumnName("failed_login_count");
+            entity.Property(x => x.LockedUntil).HasColumnName("locked_until");
             entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+        });
+        modelBuilder.Entity<AdminAction>(entity =>
+        {
+            entity.ToTable("admin_actions", table => table.HasCheckConstraint("CK_admin_actions_target",
+                "target_type IN ('account', 'business', 'product', 'category')"));
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).HasColumnName("id").UseIdentityAlwaysColumn();
+            entity.Property(x => x.ActorId).HasColumnName("actor_id");
+            entity.Property(x => x.TargetType).HasColumnName("target_type").HasMaxLength(20).IsRequired();
+            entity.Property(x => x.TargetId).HasColumnName("target_id").HasMaxLength(64).IsRequired();
+            entity.Property(x => x.TargetLabel).HasColumnName("target_label").HasMaxLength(254).IsRequired();
+            entity.Property(x => x.Action).HasColumnName("action").HasMaxLength(20).IsRequired();
+            entity.Property(x => x.Reason).HasColumnName("reason").HasMaxLength(500);
+            entity.Property(x => x.CreatedAt).HasColumnName("created_at");
+            entity.HasIndex(x => x.CreatedAt);
+            entity.HasIndex(x => new { x.TargetType, x.TargetId });
+            entity.HasOne<UserAccount>().WithMany().HasForeignKey(x => x.ActorId).OnDelete(DeleteBehavior.Restrict);
         });
         modelBuilder.Entity<Role>(entity =>
         {
@@ -101,7 +121,9 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
             entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedNever();
             entity.Property(x => x.Name).HasColumnName("name").HasMaxLength(80).IsRequired();
             entity.Property(x => x.Slug).HasColumnName("slug").HasMaxLength(80).IsRequired();
+            entity.Property(x => x.IsActive).HasColumnName("is_active");
             entity.HasIndex(x => x.Slug).IsUnique();
+            entity.HasIndex(x => x.Name).IsUnique();
             entity.HasData(
                 new BusinessCategory { Id = 1, Name = "Almacenes", Slug = "almacenes" },
                 new BusinessCategory { Id = 2, Name = "Gastronomía", Slug = "gastronomia" },
@@ -120,6 +142,7 @@ public sealed class MarketplaceDbContext(DbContextOptions<MarketplaceDbContext> 
             entity.Property(x => x.Address).HasColumnName("address").HasMaxLength(250).IsRequired();
             entity.Property(x => x.WhatsApp).HasColumnName("whatsapp").HasMaxLength(16).IsRequired();
             entity.Property(x => x.Status).HasColumnName("status").HasMaxLength(20).IsRequired();
+            entity.Property(x => x.IsSuspended).HasColumnName("is_suspended");
             entity.Property(x => x.FirstPublishedAt).HasColumnName("first_published_at").ValueGeneratedOnAddOrUpdate();
             entity.Property(x => x.PublicationHistoryUnknown).HasColumnName("publication_history_unknown").ValueGeneratedOnAddOrUpdate();
             entity.Property(x => x.CreatedAt).HasColumnName("created_at");

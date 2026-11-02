@@ -27,10 +27,15 @@ public interface IIdentityRepository
     Task AddSessionAsync(UserSession session, CancellationToken cancellationToken);
     Task<UserSession?> FindActiveSessionAsync(string tokenHash, DateTimeOffset now, CancellationToken cancellationToken);
     Task RevokeSessionAsync(UserSession session, DateTimeOffset now, CancellationToken cancellationToken);
+    Task RecordFailedLoginAsync(Guid accountId, int maxAttempts, DateTimeOffset lockedUntil, CancellationToken cancellationToken);
+    Task ResetFailedLoginsAsync(Guid accountId, CancellationToken cancellationToken);
 }
 
 public sealed class AuthenticationService(IIdentityRepository repository, IPasswordService passwords)
 {
+    public const int MaxFailedLogins = 5;
+    public static readonly TimeSpan LockoutDuration = TimeSpan.FromMinutes(15);
+
     public async Task<RegistrationResult> RegisterAsync(
         RegisterOwnerRequest request,
         CancellationToken cancellationToken = default)
@@ -79,10 +84,18 @@ public sealed class AuthenticationService(IIdentityRepository repository, IPassw
         var email = request.Email?.Trim().ToLowerInvariant() ?? "";
         var password = request.Password ?? "";
         var account = await repository.FindAccountAsync(email, cancellationToken);
-        if (account is null || account.IsSuspended) return null;
+        var now = DateTimeOffset.UtcNow;
+        // Locked accounts get the same generic rejection so lockout does not reveal valid emails.
+        if (account is null || account.IsSuspended || account.LockedUntil > now) return null;
 
         var verification = passwords.Verify(account, password);
-        if (verification == PasswordStatus.Invalid) return null;
+        if (verification == PasswordStatus.Invalid)
+        {
+            await repository.RecordFailedLoginAsync(account.Id, MaxFailedLogins, now.Add(LockoutDuration), cancellationToken);
+            return null;
+        }
+        if (account.FailedLoginCount > 0 || account.LockedUntil is not null)
+            await repository.ResetFailedLoginsAsync(account.Id, cancellationToken);
         if (verification == PasswordStatus.NeedsRehash)
         {
             account.PasswordHash = passwords.Hash(account, password);
@@ -91,7 +104,7 @@ public sealed class AuthenticationService(IIdentityRepository repository, IPassw
 
         var tokenBytes = RandomNumberGenerator.GetBytes(32);
         var token = Convert.ToBase64String(tokenBytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
-        var expiresAt = DateTimeOffset.UtcNow.AddHours(8);
+        var expiresAt = now.AddHours(8);
         await repository.AddSessionAsync(new UserSession
         {
             UserId = account.Id,

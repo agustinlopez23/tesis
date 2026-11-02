@@ -22,7 +22,7 @@ public sealed class RankingCandidateRepository(MarketplaceDbContext database, Ra
                 b.publication_history_unknown AS "PublicationHistoryUnknown"
             FROM businesses b
             JOIN user_accounts u ON u.id = b.owner_id
-            WHERE b.status = 'published' AND NOT u.is_suspended
+            WHERE b.status = 'published' AND NOT u.is_suspended AND NOT b.is_suspended
               AND b.category_id = {categoryId}
               AND ST_DWithin(b.location, ST_SetSRID(ST_MakePoint({area.Longitude}, {area.Latitude}), 4326)::geography, {area.RadiusKm * 1000})
             """).OrderBy(x => x.Id).Take(limits.MaxCandidates + 1).ToListAsync(cancellationToken);

@@ -13,11 +13,14 @@ import CampaignPanel from "./campaign-panel";
 import { BusinessInsights } from "./business-insights";
 
 type Owner = { id: string; email: string; displayName: string; roles?: string[] };
-type Category = { id: number; name: string; slug: string };
+type Category = { id: number; name: string; slug: string; isActive?: boolean };
 type Business = {
   id: string; name: string; description: string; address: string; categoryId: number;
   whatsApp: string; latitude: number; longitude: number; status: string;
 };
+
+// Disabled categories stay selectable only for businesses that already use them.
+const firstActive = (items: Category[]) => String(items.find((item) => item.isActive !== false)?.id ?? "");
 
 const emptyBusiness = {
   id: "", name: "", description: "", address: "", categoryId: "",
@@ -62,7 +65,7 @@ export default function OwnerOnboarding() {
     setBusinesses(await businessResponse.json());
     const loadedCategories: Category[] = await categoryResponse.json();
     setCategories(loadedCategories);
-    setBusiness((current) => ({ ...current, categoryId: current.categoryId || String(loadedCategories[0]?.id ?? "") }));
+    setBusiness((current) => ({ ...current, categoryId: current.categoryId || firstActive(loadedCategories) }));
   }
 
   async function submitIdentity(event: FormEvent<HTMLFormElement>) {
@@ -186,7 +189,7 @@ export default function OwnerOnboarding() {
         <button className="button button-outline" type="button" disabled={pending} onClick={logout}><Icon name="logout" />Cerrar sesión</button></header>
       <div className="dashboard-summary"><div><Icon name="store" /><strong>{businesses.length}</strong><span>{businesses.length === 1 ? "negocio" : "negocios"}</span></div><div><span className="status-dot"/><strong>{published}</strong><span>publicados</span></div><div><span className="status-dot draft"/><strong>{businesses.length - published}</strong><span>en borrador</span></div><Link className="text-link" href="/explorar">Ver guía pública <Icon name="arrow" /></Link></div>
       <BusinessInsights businesses={businesses} />
-      {owner.roles?.includes("administrator") && <Link className="text-link" href="/administracion/planes">Administrar planes</Link>}
+      {owner.roles?.includes("administrator") && <nav className="admin-nav" aria-label="Accesos de administración"><Link className="text-link" href="/administracion/planes">Administrar planes</Link><Link className="text-link" href="/administracion/moderacion">Moderar contenido</Link><Link className="text-link" href="/administracion/rubros">Gestionar rubros</Link><Link className="text-link" href="/administracion/auditoria">Ver auditoría</Link></nav>}
       {error && <p role="alert" className="error">{error}</p>}
       {success && <div role="status" className="success-message"><Icon name="check" />{success}<button type="button" className="icon-button" aria-label="Cerrar confirmación" onClick={() => setSuccess("")}><Icon name="close" /></button></div>}
       <div className="panel-grid">
@@ -199,14 +202,14 @@ export default function OwnerOnboarding() {
                 document.getElementById("business-form")?.scrollIntoView({ block: "start" });
               }}>Editar <Icon name="arrow" /></button></article>
           ))}
-          {business.id && <button className="button button-outline full-width" disabled={pending} type="button" onClick={() => { setBusiness({ ...emptyBusiness, categoryId: String(categories[0]?.id ?? "") }); setError(""); setLocationMessage(""); }}><Icon name="plus" />Nuevo negocio</button>}
+          {business.id && <button className="button button-outline full-width" disabled={pending} type="button" onClick={() => { setBusiness({ ...emptyBusiness, categoryId: firstActive(categories) }); setError(""); setLocationMessage(""); }}><Icon name="plus" />Nuevo negocio</button>}
           <div className="sidebar-tip"><Icon name="eye" /><strong>Vos elegís cuándo aparecer.</strong><p>Un borrador es privado. Cuando lo publiques, cualquier persona podrá encontrarlo en la guía.</p></div>
         </aside>
         <div className="business-editor"><form id="business-form" className="business-form" onSubmit={saveBusiness}>
           <div className="form-heading"><div><p className="eyebrow">Perfil del comercio</p><h2>{business.id ? "Editar negocio" : "Nuevo negocio"}</h2></div><span className="form-note">* Datos obligatorios</span></div>
           <fieldset disabled={pending}><legend><span>01</span> Contanos sobre tu negocio</legend>
             <label htmlFor="business-name">Nombre del negocio</label><input id="business-name" required aria-required="true" placeholder="El nombre que conoce tu barrio" maxLength={160} value={business.name} onChange={(e) => setBusiness({ ...business, name: e.target.value })} />
-            <label htmlFor="business-category">Rubro</label><select id="business-category" required value={business.categoryId} onChange={(e) => setBusiness({ ...business, categoryId: e.target.value })}>{categories.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select>
+            <label htmlFor="business-category">Rubro</label><select id="business-category" required value={business.categoryId} onChange={(e) => setBusiness({ ...business, categoryId: e.target.value })}>{categories.filter((item) => item.isActive !== false || String(item.id) === business.categoryId).map((item) => <option key={item.id} value={item.id}>{item.isActive === false ? `${item.name} (deshabilitado)` : item.name}</option>)}</select>
             <label htmlFor="business-description">Descripción <span className="optional">Opcional</span></label><textarea id="business-description" maxLength={2000} placeholder="¿Qué ofrecés? ¿Qué hace especial a tu negocio?" value={business.description} onChange={(e) => setBusiness({ ...business, description: e.target.value })} /><p className="field-help">Una descripción clara ayuda a que te elijan.</p>
           </fieldset>
           <fieldset disabled={pending}><legend><span>02</span> Dónde encontrarte</legend>
@@ -220,7 +223,7 @@ export default function OwnerOnboarding() {
             </details>
           </fieldset>
           <fieldset disabled={pending} className="publication-section"><legend><span>03</span> Elegí quién puede verlo</legend><label htmlFor="business-status">Estado</label><select id="business-status" value={business.status} onChange={(e) => setBusiness({ ...business, status: e.target.value })}><option value="draft">Borrador</option><option value="published">Publicado</option></select><p className="field-help">{business.status === "published" ? "Al guardar, tu negocio aparecerá en la guía pública con su WhatsApp." : "Solo vos vas a poder verlo. Podés publicarlo cuando esté listo."}</p></fieldset>
-          <div className="form-actions">{business.id && <button className="button button-outline" disabled={pending} type="button" onClick={() => { setBusiness({ ...emptyBusiness, categoryId: String(categories[0]?.id ?? "") }); setError(""); setLocationMessage(""); }}>Cancelar edición</button>}<button className="button button-primary" disabled={pending || locating} type="submit">{pending ? "Guardando…" : "Guardar negocio"}<Icon name="check" /></button></div>
+          <div className="form-actions">{business.id && <button className="button button-outline" disabled={pending} type="button" onClick={() => { setBusiness({ ...emptyBusiness, categoryId: firstActive(categories) }); setError(""); setLocationMessage(""); }}>Cancelar edición</button>}<button className="button button-primary" disabled={pending || locating} type="submit">{pending ? "Guardando…" : "Guardar negocio"}<Icon name="check" /></button></div>
         </form>
         {business.id ? <><BusinessOrders key={"orders-" + business.id} id={business.id} /><BusinessInventory key={"inventory-" + business.id} business={business.id} /><BusinessSales key={"sales-" + business.id} business={business.id} /><CommerceMetrics key={"commerce-" + business.id} business={business.id} /><CampaignPanel key={"campaigns-" + business.id} business={business.id} /><BusinessCatalog key={"catalog-" + business.id} id={business.id} /><BusinessPhotos key={business.id} id={business.id} />
           {businesses.find((item) => item.id === business.id)?.status === "published" && <Link className="text-link" href={"/negocios/" + business.id}>Ver perfil público <Icon name="arrow" /></Link>}</> :

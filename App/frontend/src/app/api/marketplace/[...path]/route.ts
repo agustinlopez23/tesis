@@ -32,6 +32,9 @@ const allowedRoutes: Record<string, RegExp[]> = {
 allowedRoutes.POST.push(/^public\/campaign-events$/);
 allowedRoutes.POST.push(/^businesses\/[0-9a-f-]{36}\/catalog-assistance$/i);
 allowedRoutes.PUT.push(/^businesses\/[0-9a-f-]{36}\/campaigns\/[0-9a-f-]{36}(\/pause)?$/i, /^admin\/campaigns\/[0-9a-f-]{36}\/actions$/i);
+allowedRoutes.GET.push(/^admin\/(categories|audit|moderation\/(accounts|businesses|products))$/);
+allowedRoutes.POST.push(/^admin\/categories$/, /^admin\/moderation\/(accounts|businesses|products)\/[0-9a-f-]{36}\/(suspend|reinstate)$/i);
+allowedRoutes.PUT.push(/^admin\/categories\/[0-9]{1,5}$/);
 
 async function forward(request: Request, context: RouteParameters): Promise<Response> {
   const response = await forwardRequest(request, context);
@@ -69,7 +72,7 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
   }
 
   try {
-    const maxBody = path.endsWith("/catalog-assistance") ? 8192 : /\/(orders|sales|inventory|campaigns|campaign-events)(\/|$)/.test(path) ? 16384 : path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
+    const maxBody = path.endsWith("/catalog-assistance") || path.startsWith("admin/categories") || path.startsWith("admin/moderation/") ? 8192 : /\/(orders|sales|inventory|campaigns|campaign-events)(\/|$)/.test(path) ? 16384 : path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
     if (Number(request.headers.get("content-length")) > maxBody) return new Response(null, { status: 413 });
     // Bound streamed/chunked uploads too, before buffering them for the API.
     const chunks: Uint8Array[] = [];
@@ -105,7 +108,7 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
       const query = new URL(request.url).searchParams;
       for (const key of ["page", path.endsWith("/sales") ? "orderId" : "productId"]) if (query.has(key)) upstreamUrl.searchParams.set(key, query.get(key)!);
     }
-    if (ranking || path === "public/businesses" || path.endsWith("/activity") || path.includes("/products") || path === "admin/businesses") upstreamUrl.search = new URL(request.url).search;
+    if (ranking || path === "public/businesses" || path.endsWith("/activity") || path.includes("/products") || path === "admin/businesses" || path === "admin/audit" || path.startsWith("admin/moderation/")) upstreamUrl.search = new URL(request.url).search;
     if (path.startsWith("businesses/") && path.endsWith("/orders")) {
       const query = new URL(request.url).searchParams;
       for (const key of ["page", "reference", "status"]) if (query.has(key)) upstreamUrl.searchParams.set(key, query.get(key)!);

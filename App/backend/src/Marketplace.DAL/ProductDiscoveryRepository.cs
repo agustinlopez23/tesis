@@ -20,7 +20,7 @@ public sealed class ProductDiscoveryRepository(MarketplaceDbContext db, TimeProv
                 CASE WHEN {located} THEN ST_Distance(b.location,ST_SetSRID(ST_MakePoint({lon},{lat}),4326)::geography)/1000 ELSE NULL END AS "DistanceKm"
             FROM catalog_products p JOIN businesses b ON b.id=p.business_id
             JOIN user_accounts u ON u.id=b.owner_id JOIN business_categories c ON c.id=b.category_id
-            WHERE p.status='published' AND p.available AND b.status='published' AND NOT u.is_suspended
+            WHERE p.status='published' AND NOT p.is_suspended AND p.available AND b.status='published' AND NOT u.is_suspended AND NOT b.is_suspended
                 AND EXISTS (SELECT 1 FROM business_subscriptions s WHERE s.business_id=b.id AND s.revoked_at IS NULL AND s.starts_at <= {now} AND s.ends_at > {now})
                 AND NOT EXISTS (SELECT 1 FROM inventory_balances i WHERE i.product_id=p.id AND i.quantity=0)
                 AND ({category}='' OR c.name={category})

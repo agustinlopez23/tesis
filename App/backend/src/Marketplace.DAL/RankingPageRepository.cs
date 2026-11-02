@@ -22,7 +22,7 @@ public sealed class RankingPageRepository(MarketplaceDbContext database) : IRank
             FROM businesses b
             JOIN user_accounts u ON u.id = b.owner_id
             JOIN business_categories c ON c.id = b.category_id
-            WHERE b.id = ANY({ids}) AND b.status = 'published' AND NOT u.is_suspended
+            WHERE b.id = ANY({ids}) AND b.status = 'published' AND NOT u.is_suspended AND NOT b.is_suspended
                 AND b.category_id = {categoryId}
                 AND ST_DWithin(b.location, ST_SetSRID(ST_MakePoint({area.Longitude}, {area.Latitude}), 4326)::geography, {area.RadiusKm * 1000})
             """).ToListAsync(ct);

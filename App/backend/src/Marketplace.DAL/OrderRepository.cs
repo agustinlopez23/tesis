@@ -22,7 +22,7 @@ public sealed class OrderRepository(MarketplaceDbContext db, TimeProvider clock)
             if (existing.BusinessId != business || existing.AccessKeyHash != keyHash || existing.AccessExpiresAt <= now) return new(OrderResultStatus.NotFound);
             return existing.RequestHash == requestHash ? new(OrderResultStatus.Saved, await Response(existing, ct)) : new(OrderResultStatus.Conflict);
         }
-        if (profile.Status != "published" || !await db.UserAccounts.AnyAsync(u => u.Id == profile.OwnerId && !u.IsSuspended, ct) ||
+        if (profile.Status != "published" || profile.IsSuspended || !await db.UserAccounts.AnyAsync(u => u.Id == profile.OwnerId && !u.IsSuspended, ct) ||
             !await db.BusinessSubscriptions.AnyAsync(s => s.BusinessId == business && s.RevokedAt == null && s.StartsAt <= now && s.EndsAt > now, ct))
             return new(OrderResultStatus.Unavailable);
         var requestedLines = request.Lines!;
@@ -33,7 +33,7 @@ public sealed class OrderRepository(MarketplaceDbContext db, TimeProvider clock)
         var products = await db.CatalogProducts.Where(p => p.BusinessId == business && ids.Contains(p.Id)).ToDictionaryAsync(p => p.Id, ct);
         var balances = await db.InventoryBalances.Where(b => ids.Contains(b.ProductId)).ToDictionaryAsync(b => b.ProductId, ct);
         if (requestedLines.Any(line => balances.TryGetValue(line.ProductId, out var balance) && balance.Quantity < line.Quantity)) return new(OrderResultStatus.Conflict);
-        if (requestedLines.Any(line => !products.TryGetValue(line.ProductId, out var product) || product.Status != "published" ||
+        if (requestedLines.Any(line => !products.TryGetValue(line.ProductId, out var product) || product.Status != "published" || product.IsSuspended ||
             !product.Available || product.Version != line.ExpectedVersion)) return new(OrderResultStatus.Conflict);
         var order = new CustomerOrder {
             Id = request.RequestId, BusinessId = business, CampaignId = campaign, Source = campaign == null ? "catalog" : "campaign", Reference = "CE-" + request.RequestId.ToString("N")[..12].ToUpperInvariant(),
@@ -101,7 +101,7 @@ public sealed class OrderRepository(MarketplaceDbContext db, TimeProvider clock)
 
     private async Task<OrderResponse> Response(CustomerOrder order, CancellationToken ct)
     {
-        var canContact = order.Status != "cancelled" && await db.Businesses.AnyAsync(b => b.Id == order.BusinessId && b.Status == "published" &&
+        var canContact = order.Status != "cancelled" && await db.Businesses.AnyAsync(b => b.Id == order.BusinessId && b.Status == "published" && !b.IsSuspended &&
             db.UserAccounts.Any(u => u.Id == b.OwnerId && !u.IsSuspended), ct);
         return new(order.Id, order.BusinessId, order.Reference, order.CustomerName, order.BusinessName, order.WhatsApp,
             order.CreatedAt, order.AccessExpiresAt, order.Status, order.Version, order.ContactReceivedAt, canContact,

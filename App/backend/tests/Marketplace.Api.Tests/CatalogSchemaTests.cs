@@ -26,7 +26,8 @@ public sealed class CatalogSchemaTests(OnboardingFixture fixture) : IClassFixtur
         var migrator = db.GetService<IMigrator>();
         var blocked = await Assert.ThrowsAsync<PostgresException>(() => migrator.MigrateAsync("20261005020557_AllowRankingActivityVersions"));
         Assert.Equal(PostgresErrorCodes.CheckViolation, blocked.SqlState);
-        Assert.Equal(15.25m, (await db.CatalogProducts.SingleAsync()).Price);
+        // Later migrations may already be reverted, so read only columns that predate them.
+        Assert.Equal(15.25m, await db.CatalogProducts.Select(p => p.Price).SingleAsync());
         // Remove only this generated fixture product to exercise an empty downgrade.
         await db.CatalogProducts.Where(p => p.Id == product.Id).ExecuteDeleteAsync();
         await migrator.MigrateAsync("20261005020557_AllowRankingActivityVersions");
