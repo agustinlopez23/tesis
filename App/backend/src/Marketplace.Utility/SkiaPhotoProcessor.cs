@@ -6,9 +6,9 @@ public sealed record NormalizedPhoto(byte[] Content, int Width, int Height);
 
 public sealed class SkiaPhotoProcessor
 {
-    public NormalizedPhoto? Process(byte[] input)
+    public NormalizedPhoto? Process(byte[] input, int maxSide = 1600)
     {
-        if (input.Length is 0 or > 5 * 1024 * 1024) return null;
+        if (input.Length is 0 or > 5 * 1024 * 1024 || maxSide < 1) return null;
         using var data = SKData.CreateCopy(input);
         using var codec = SKCodec.Create(data);
         if (codec is null || codec.EncodedFormat is not (SKEncodedImageFormat.Jpeg or SKEncodedImageFormat.Png or SKEncodedImageFormat.Webp) ||
@@ -20,7 +20,7 @@ public sealed class SkiaPhotoProcessor
         var swapped = (int)codec.EncodedOrigin >= 5;
         var width = swapped ? info.Height : info.Width;
         var height = swapped ? info.Width : info.Height;
-        var scale = Math.Min(1f, 1600f / Math.Max(width, height));
+        var scale = Math.Min(1f, (float)maxSide / Math.Max(width, height));
         var outputInfo = new SKImageInfo(Math.Max(1, (int)(width * scale)), Math.Max(1, (int)(height * scale)));
         using var surface = SKSurface.Create(outputInfo);
         surface.Canvas.Clear(SKColors.White);

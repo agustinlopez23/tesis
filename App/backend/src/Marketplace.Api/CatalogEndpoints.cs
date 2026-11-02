@@ -14,21 +14,7 @@ public static class CatalogEndpoints
         var admin = app.MapGroup("/admin").AddEndpointFilter(Authorize(true));
         owner.MapGet("/catalog-assistance", async (Guid id, HttpContext http, CatalogDraftService drafts, CancellationToken ct) =>
             Found(await drafts.Availability(id, User(http).Id, ct)));
-        owner.MapPost("/catalog-assistance", async (Guid id, HttpContext http, CatalogDraftService drafts, CancellationToken ct) => {
-            if (!http.Request.HasJsonContentType()) return Results.BadRequest();
-            var bytes = new byte[8193]; var size = await http.Request.Body.ReadAtLeastAsync(bytes, bytes.Length, false, ct);
-            if (size > 8192) return Results.StatusCode(413);
-            CatalogDraftRequest? body;
-            try { body = JsonSerializer.Deserialize<CatalogDraftRequest>(bytes.AsSpan(0, size), JsonSerializerOptions.Web); }
-            catch (JsonException) { return Results.BadRequest(); }
-            if (body == null) return Results.BadRequest();
-            var result = await drafts.Generate(id, User(http).Id, body, ct);
-            return Results.Json((object?)result.Draft ?? new { message = result.Status switch {
-                400 => "Escribí entre 3 y 1500 caracteres y confirmá el envío al proveedor.",
-                403 => "Necesitás un plan vigente para preparar productos.",
-                404 => "No encontramos el negocio.",
-                _ => "La asistencia no está disponible. Podés continuar con la carga manual." } }, statusCode: result.Status);
-        }).RequireRateLimiting("catalog-assistance");
+        owner.MapPost("/catalog-assistance", DraftAssistance).RequireRateLimiting("catalog-assistance");
         owner.MapGet("/plan", async (Guid id, HttpContext http, CatalogService catalog, CancellationToken ct) =>
             Found(await catalog.PlanAsync(id, User(http).Id, ct)));
         owner.MapGet("/products", async (Guid id, HttpContext http, CatalogService catalog, CancellationToken ct) =>
@@ -91,6 +77,48 @@ public static class CatalogEndpoints
         CatalogStatus.LimitReached => Results.Conflict(new { message = "Este prototipo admite hasta 200 productos por negocio, incluidos los archivados." }),
         _ => Results.BadRequest(new { message = "Revisá los datos: nombre, categoría, precio con hasta dos decimales, moneda y estado válidos." })
     };
+    // Accepts JSON (text only) or multipart with an optional photo; the photo is only forwarded, never stored.
+    private static async Task<IResult> DraftAssistance(Guid id, HttpContext http, CatalogDraftService drafts, CancellationToken ct)
+    {
+        var request = http.Request;
+        CatalogDraftRequest? body; byte[]? photo = null;
+        if (request.HasFormContentType)
+        {
+            if (request.ContentLength > BusinessProfileService.MaxBytes + 65536) return Results.StatusCode(413);
+            try
+            {
+                var form = await request.ReadFormAsync(new FormOptions { MultipartBodyLengthLimit = BusinessProfileService.MaxBytes + 1, ValueLengthLimit = 8192, ValueCountLimit = 3 }, ct);
+                if (form.Files.Count > 1) return Results.BadRequest();
+                var file = form.Files.GetFile("file");
+                if (file != null)
+                {
+                    if (file.Length > BusinessProfileService.MaxBytes) return Results.StatusCode(413);
+                    await using var buffer = new MemoryStream();
+                    await file.CopyToAsync(buffer, ct); photo = buffer.ToArray();
+                }
+                body = new(form["facts"].ToString(), form["consent"] == "true");
+            }
+            catch (InvalidDataException) { return Results.StatusCode(413); }
+            catch (BadHttpRequestException error) { return Results.StatusCode(error.StatusCode); }
+        }
+        else
+        {
+            if (!request.HasJsonContentType()) return Results.BadRequest();
+            var bytes = new byte[8193]; var size = await request.Body.ReadAtLeastAsync(bytes, bytes.Length, false, ct);
+            if (size > 8192) return Results.StatusCode(413);
+            try { body = JsonSerializer.Deserialize<CatalogDraftRequest>(bytes.AsSpan(0, size), JsonSerializerOptions.Web); }
+            catch (JsonException) { return Results.BadRequest(); }
+            if (body == null) return Results.BadRequest();
+        }
+        var result = await drafts.Generate(id, User(http).Id, body, photo, ct);
+        return Results.Json((object?)result.Draft ?? new { message = result.Status switch {
+            400 when result.InvalidPhoto => "Elegí una foto JPEG, PNG o WebP válida, de hasta 5 MB y 20 megapíxeles.",
+            400 => "Escribí entre 3 y 1500 caracteres y confirmá el envío al proveedor.",
+            403 => "Necesitás un plan vigente para preparar productos.",
+            404 => "No encontramos el negocio.",
+            413 => "La foto supera el límite de 5 MB.",
+            _ => "La asistencia no está disponible. Podés continuar con la carga manual." } }, statusCode: result.Status);
+    }
     private static async Task<IResult> Upload(Guid id, Guid product, HttpContext http, CatalogService catalog, CancellationToken ct)
     {
         var request = http.Request;

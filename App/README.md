@@ -64,7 +64,7 @@ cambiarlas, hay que reconstruir y reiniciar (o reiniciar `npm run dev`).
 | `OwnerActivity__DedupMinutes` | `60` | Ventana en la que una actualización del responsable cuenta una sola vez por tipo. |
 | `OwnerActivity__RankingCap` | `10` | Actualizaciones en 30 días que saturan la señal de actividad del ranking. |
 | `CatalogAi__Enabled` | `false` | Habilita la asistencia de redacción. |
-| `CatalogAi__Model` | vacío | Modelo de OpenAI compatible con Responses/Structured Outputs. |
+| `CatalogAi__Model` | vacío | Modelo de OpenAI con visión y Structured Outputs en Responses (por ejemplo, `gpt-4o-mini`); recibe la foto del producto. |
 | `CatalogAi__ApiKey` | sin valor | Clave de OpenAI, solo mediante el gestor de secretos del entorno. |
 
 La configuración de ranking inválida impide el arranque. En `Production` la API no
@@ -311,9 +311,13 @@ una vez por ventana `OwnerActivity__DedupMinutes` y alimenta el ranking con tope
 
 ### Asistencia IA
 
-En el editor de producto, **Ayuda para redactar** envía a OpenAI solo los datos que el
-responsable escribe y consiente, y devuelve nombre, descripción y categoría editables;
-no guarda ni publica. Está implementada y desactivada por defecto: requiere
+En el editor de producto, **Ayuda para redactar** envía a OpenAI, con consentimiento, una
+foto opcional del producto y los datos mínimos que el responsable escribe, y devuelve
+nombre, descripción y categoría editables; no guarda ni publica. La API valida la foto
+(JPEG, PNG o WebP, hasta 5 MB y 20 megapíxeles), la reencoda como JPEG de 1024 px como
+máximo sin metadatos y la envía como `input_image` con `detail: "low"`; no la almacena.
+Tras guardar el producto, el editor ofrece **Usar la foto del borrador**, que la sube
+por el flujo normal de fotos. Está implementada y desactivada por defecto: requiere
 `CatalogAi__Enabled=true`, `CatalogAi__Model` y `CatalogAi__ApiKey`; sin ellos informa
 que la carga es manual. Endpoint fijo `https://api.openai.com/v1/responses` con
 `store:false`; límites por instancia: seis POST por minuto, dos generaciones simultáneas,

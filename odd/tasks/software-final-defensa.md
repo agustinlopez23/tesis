@@ -35,7 +35,7 @@ La auditoría del 01/11/2026 encontró que la Entrega 4 promete más de lo que h
 - [x] T9 Cerrar brechas de criterios halladas en T7 (A): HU-01 mensaje de cuenta suspendida, HU-06 saldo disponible y disponibilidad baja, HU-08 tolerancia a errores de tipeo, orden por ranking y ampliar radio. Ruta: delegada.
 - [x] T10 Cerrar brechas de criterios halladas en T7 (B): HU-09 promociones en el perfil y mensaje con contexto, HU-15 capacidades de planes, HU-17 motivo de rechazo visible, HU-20/21 versión visible y registrada, HU-22 actividad del responsable con tope; script `verify-connectivity`, test inestable de despliegue y dos fallas de accesibilidad. Ruta: delegada.
 - [x] T11 Reescribir README de la raíz como entrada para evaluadores (qué es, HU vs software, arranque local, cuentas, arquitectura, pruebas, despliegue) y reordenar `App/README.md` como guía técnica; mover la bitácora a `Doc/bitacora-desarrollo.md`; corregir enlaces rotos. Español neutro. Pedido del usuario 02/11/2026. Ruta: delegada, después de T10.
-- [ ] T12 HU-05 desde fotografía: el asistente de IA debe recibir la foto del producto (además de los datos mínimos) y proponer nombre, descripción y categoría; hoy solo envía texto. El resumen y el cuerpo de la Entrega 4 lo presentan como propuesta central. Ruta: delegada.
+- [x] T12 HU-05 desde fotografía: el asistente de IA debe recibir la foto del producto (además de los datos mínimos) y proponer nombre, descripción y categoría; hoy solo envía texto. El resumen y el cuerpo de la Entrega 4 lo presentan como propuesta central. Ruta: delegada.
 - [ ] T8 (diferida por decisión del usuario, 02/11/2026) Publicar online; por ahora solo queda la guía `Doc/despliegue.md`.
 
 ## Verificación

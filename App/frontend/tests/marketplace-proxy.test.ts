@@ -102,4 +102,16 @@ describe("proxy del marketplace", () => {
     expect(blocked.status).toBe(404);
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
+  it("admite la foto del asistente de catálogo hasta el límite de fotos", async () => {
+    vi.stubEnv("APP_ORIGIN", "http://localhost:3000");
+    vi.stubEnv("API_BASE_URL", "http://localhost:5080");
+    const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({}));
+    const id = "d71cd8d6-7245-492f-92de-4caa0cf11e50";
+    const path = ["businesses", id, "catalog-assistance"];
+    const request = (size: number) => new Request("http://localhost:3000/api/marketplace/" + path.join("/"), {
+      method: "POST", headers: { Origin: "http://localhost:3000", "X-Requested-With": "marketplace", "Content-Type": "multipart/form-data; boundary=x" }, body: new Uint8Array(size) });
+    expect((await POST(request(200 * 1024), context(path))).status).toBe(200);
+    expect((await POST(request(5 * 1024 * 1024 + 65537), context(path))).status).toBe(413);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
 });

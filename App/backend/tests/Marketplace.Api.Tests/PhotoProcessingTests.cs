@@ -22,6 +22,8 @@ public sealed class PhotoProcessingTests
         using var decoded = SKBitmap.Decode(result.Content);
         Assert.Equal(1600, decoded.Width);
         Assert.Null(new SkiaPhotoProcessor().Process(encoded.ToArray().Take(25).ToArray()));
+        var small = Assert.IsType<NormalizedPhoto>(new SkiaPhotoProcessor().Process(encoded.ToArray(), 1024));
+        Assert.Equal((1024, 512), (small.Width, small.Height));
     }
 
     [Theory]

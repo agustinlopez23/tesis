@@ -27,7 +27,7 @@ Rutas relativas a `http://localhost:3000`. «Mi negocio» es el panel `/mi-negoc
 | HU-02 | Perfil y ubicación del negocio | Mi negocio → crear/editar negocio; perfil público en `/negocios/{id}` | Implementada |
 | HU-03 | Novedades y promociones del negocio | Mi negocio → Ver campañas (promoción); `/promociones/{id}`. Se publican como campañas aprobadas y pagadas | Implementada |
 | HU-04 | Catálogo y precios del negocio | Mi negocio → Administrar catálogo | Implementada |
-| HU-05 | Borrador de producto asistido por IA | Editor de producto → «Ayuda para redactar», con consentimiento y a partir de datos escritos. Requiere clave y modelo de OpenAI; sin ellos informa que la carga es manual | Implementada |
+| HU-05 | Borrador de producto asistido por IA | Editor de producto → «Ayuda para redactar»: con consentimiento, propone nombre, descripción y categoría a partir de la foto del producto y sus datos mínimos; el borrador es editable y no se publica solo. Requiere clave de OpenAI y un modelo con visión; sin ellos, o ante una falla o demora, informa que la carga es manual | Implementada |
 | HU-06 | Movimientos de inventario | Mi negocio → Inventario. Saldo disponible al rechazar y «Disponibilidad baja» según umbral | Implementada |
 | HU-07 | Descubrimiento de negocios de la zona | `/explorar`: al elegir zona y rubro, orden por ranking hiperlocal `equity-v1` | Implementada |
 | HU-08 | Búsqueda de productos cercanos | `/productos`: tolerancia a errores de tipeo, orden por el ranking del negocio en la zona y opción de ampliar el radio | Implementada (ver limitaciones) |

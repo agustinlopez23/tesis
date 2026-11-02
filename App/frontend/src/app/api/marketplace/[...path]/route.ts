@@ -75,7 +75,7 @@ async function forwardRequest(request: Request, context: RouteParameters): Promi
   }
 
   try {
-    const maxBody = path.endsWith("/catalog-assistance") || path.startsWith("admin/categories") || path.startsWith("admin/moderation/") ? 8192 : /\/(orders|sales|inventory|campaigns|campaign-events)(\/|$)/.test(path) ? 16384 : path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
+    const maxBody = path.startsWith("admin/categories") || path.startsWith("admin/moderation/") ? 8192 : /\/(orders|sales|inventory|campaigns|campaign-events)(\/|$)/.test(path) ? 16384 : path === "public/events" || ranking ? 4096 : 5 * 1024 * 1024 + 65536;
     if (Number(request.headers.get("content-length")) > maxBody) return new Response(null, { status: 413 });
     // Bound streamed/chunked uploads too, before buffering them for the API.
     const chunks: Uint8Array[] = [];
