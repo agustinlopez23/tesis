@@ -34,7 +34,8 @@ La auditoría del 01/11/2026 encontró que la Entrega 4 promete más de lo que h
 - [x] T7 Pruebas locales completas: suites, scripts de punta a punta y recorrido en navegador de cada historia de usuario contra la demo local. Ruta: delegada (verificación).
 - [x] T9 Cerrar brechas de criterios halladas en T7 (A): HU-01 mensaje de cuenta suspendida, HU-06 saldo disponible y disponibilidad baja, HU-08 tolerancia a errores de tipeo, orden por ranking y ampliar radio. Ruta: delegada.
 - [x] T10 Cerrar brechas de criterios halladas en T7 (B): HU-09 promociones en el perfil y mensaje con contexto, HU-15 capacidades de planes, HU-17 motivo de rechazo visible, HU-20/21 versión visible y registrada, HU-22 actividad del responsable con tope; script `verify-connectivity`, test inestable de despliegue y dos fallas de accesibilidad. Ruta: delegada.
-- [ ] T11 Reescribir README de la raíz como entrada para evaluadores (qué es, HU vs software, arranque local, cuentas, arquitectura, pruebas, despliegue) y reordenar `App/README.md` como guía técnica; mover la bitácora a `Doc/bitacora-desarrollo.md`; corregir enlaces rotos. Español neutro. Pedido del usuario 02/11/2026. Ruta: delegada, después de T10.
+- [x] T11 Reescribir README de la raíz como entrada para evaluadores (qué es, HU vs software, arranque local, cuentas, arquitectura, pruebas, despliegue) y reordenar `App/README.md` como guía técnica; mover la bitácora a `Doc/bitacora-desarrollo.md`; corregir enlaces rotos. Español neutro. Pedido del usuario 02/11/2026. Ruta: delegada, después de T10.
+- [ ] T12 HU-05 desde fotografía: el asistente de IA debe recibir la foto del producto (además de los datos mínimos) y proponer nombre, descripción y categoría; hoy solo envía texto. El resumen y el cuerpo de la Entrega 4 lo presentan como propuesta central. Ruta: delegada.
 - [ ] T8 (diferida por decisión del usuario, 02/11/2026) Publicar online; por ahora solo queda la guía `Doc/despliegue.md`.
 
 ## Verificación
@@ -61,5 +62,8 @@ La auditoría del 01/11/2026 encontró que la Entrega 4 promete más de lo que h
 - T9 revisión: riesgo medio, `under_budget`, pendiente en el tramo.
 - T10 (02/11/2026): promociones vigentes en el perfil, WhatsApp con texto de contexto, comparación Presencia/Impulso sin precios, motivo de rechazo visible, "Versión del ranking: equity-v1" y columna `policy_label` en `ranking_snapshots`/`ranking_opportunities`, tabla `owner_activity` con deduplicación (60 min) y tope (10) que no altera `equity-v1` (peso de actividad 0); limpieza robusta de bases de prueba; accesibilidad de `/pedido` y tablas. Migración `20261102035544_AddOwnerActivityAndRankingPolicyLabel` aplicada a la demo. Api 185/185, BLL 106/106, frontend 163/163, lint/build OK, axe 0. El padre detuvo la demo de T7, recompiló con `NEXT_PUBLIC_API_URL=http://localhost:5080` (precondición documentada) y `verify-connectivity.mjs` dio exit 0.
 
+- T10 revisión: tramo T9–T10 `under_budget` según la evaluación (4363 líneas; resultado registrado tal como lo devuelve la herramienta).
+- T11 (02/11/2026): README raíz 32→151 líneas (qué es, roles, tabla HU-01..23 con rutas, arranque local, cuentas, arquitectura, pruebas, despliegue); `App/README.md` 610→328 como guía técnica; historial movido a `Doc/bitacora-desarrollo.md`. 59 enlaces verificados, 34 variables verificadas, sin voseo ni secretos. Hallazgo: HU-05 usa texto, no fotografía → T12. Las contraseñas del seed las genera `seed-demo.ps1` y las guarda en `.tools/seed-demo/credentials.json`.
+
 ## Siguiente paso
-T11 (README), luego repetir pruebas locales completas y T6.
+T12, luego repetir pruebas locales completas y T6.
