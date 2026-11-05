@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
 import { EmptyState, Icon } from "./ui";
+import PhotoPicker from "./photo-picker";
 import type { Photo } from "./business-profile";
 
 type PhotosProps = { id: string; defaultOpen?: boolean; onCountChange?: (count: number) => void };
@@ -109,9 +110,9 @@ export default function BusinessPhotos({ id, defaultOpen = false, onCountChange 
         </article>)}</div>}
         <p className="field-help">La primera foto disponible es la portada. Las fotos siguen el estado de publicación de tu negocio.</p>
         {slot ? <form className="photo-upload" onSubmit={save}><fieldset disabled={pending}><legend>{editing ? "Reemplazar foto " + editing : "Agregar una foto"}</legend>
-          <label htmlFor={"photo-file-" + id}>Archivo de foto</label><input key={revision} id={"photo-file-" + id} type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => selectFile(event.target.files?.[0])} aria-describedby={"photo-help-" + id} />
+          <PhotoPicker key={revision} label="Archivo de foto" fileName={file?.name} describedBy={"photo-help-" + id} onSelect={(selected) => selectFile(selected ?? undefined)} />
           <p id={"photo-help-" + id} className="field-help">JPEG, PNG o WebP · Hasta 5 MB y 20 megapíxeles. Usá fotos propias o que tengas permiso de publicar.</p>
-          {file && <div className="upload-preview">{preview && <Image src={preview} alt="Vista previa de la foto elegida" width={140} height={100} unoptimized />}<span>{file.name}</span></div>}
+          {file && preview && <div className="upload-preview"><Image src={preview} alt="Vista previa de la foto elegida" width={140} height={100} unoptimized /></div>}
           <label htmlFor={"photo-caption-" + id}>Descripción de la foto</label><input id={"photo-caption-" + id} maxLength={160} placeholder="Por ejemplo: el patio de nuestro café" value={caption} onChange={(event) => setCaption(event.target.value)} />
           <p className="field-help">Una descripción breve ayuda a entender la imagen.</p>
           <div className="photo-upload-actions"><button className="button button-primary" type="submit" disabled={pending || !file}>{pending ? "Guardando…" : "Guardar foto"}<Icon name="check" /></button>

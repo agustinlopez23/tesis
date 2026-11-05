@@ -1,12 +1,13 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { catalogApi, catalogError, Plan, Product, priceLabel } from "./catalog-api";
 import CatalogAssistance from "./catalog-assistance";
 import PlanCapabilities from "./plan-capabilities";
 import { businessChanged, useBusinessRefresh } from "./business-refresh";
 import { EmptyState } from "./ui";
+import PhotoPicker from "./photo-picker";
 
 type CatalogProps = { id: string; defaultOpen?: boolean; onCountChange?: (count: number) => void };
 // `defaultOpen` opens the editor when the dashboard reaches the Catálogo section; `onCountChange` reports the product count to the setup guide.
@@ -23,6 +24,14 @@ function CatalogEditor({ id, onCountChange }: { id: string; onCountChange?: (cou
   const [plan, setPlan] = useState<Plan | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [editing, setEditing] = useState<Product | null>(null);
+  // On phones the form renders below the product list; bring it into view when a product opens.
+  const editor = useRef<HTMLFormElement>(null);
+  const editingId = editing?.id;
+  useEffect(() => {
+    if (!editingId) return;
+    const reduced = typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    editor.current?.scrollIntoView?.({ block: "start", behavior: reduced ? "auto" : "smooth" });
+  }, [editingId]);
   const [price, setPrice] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -104,7 +113,7 @@ function CatalogEditor({ id, onCountChange }: { id: string; onCountChange?: (cou
         <button type="button" className="text-link" disabled={!plan?.catalogEnabled || pending} aria-label={`Editar ${p.name}`} onClick={() => edit(p)}>Editar</button>
       </article>)}</div>
     </>}
-    {editing && <form className="catalog-form" onSubmit={save}>
+    {editing && <form ref={editor} className="catalog-form catalog-editor" onSubmit={save}>
       <h3>{editing.version ? "Editar producto" : "Nuevo producto"}</h3>
       <fieldset disabled={pending || !plan?.catalogEnabled || loading}>
         <CatalogAssistance key={editing.id} business={id} onApply={(draft, file) => { setEditing({ ...editing, ...draft }); setAssistPhoto(file); }} />
@@ -121,7 +130,7 @@ function CatalogEditor({ id, onCountChange }: { id: string; onCountChange?: (cou
       </fieldset>
       {editing.version > 0 && <div className="catalog-photo-editor">
         {editing.hasPhoto && <Image alt={editing.name} src={`/api/marketplace/businesses/${id}/products/${editing.id}/photo?v=${editing.version}`} width={240} height={180} unoptimized />}
-        <label>Foto del producto<input key={editing.id + ":" + editing.version} type="file" accept="image/jpeg,image/png,image/webp" disabled={pending || !plan?.catalogEnabled || dirty || loading} onChange={(e) => { const file = e.target.files?.[0]; if (file) void photo(file); }} /></label>
+        <PhotoPicker label="Foto del producto" disabled={pending || !plan?.catalogEnabled || dirty || loading} fileName={editing.hasPhoto ? "Ya tiene foto. Elegí otra para reemplazarla." : undefined} onSelect={(file) => { if (file) void photo(file); }} />
         {dirty && <p className="field-help">Guardá los cambios del producto antes de modificar su foto.</p>}
         <p className="field-help">JPEG, PNG o WebP de hasta 5 MB.</p>
         {assistPhoto && <button type="button" className="button button-outline" disabled={pending || !plan?.catalogEnabled || dirty || loading} onClick={() => void photo(assistPhoto)}>Usar la foto del borrador</button>}

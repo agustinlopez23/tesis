@@ -79,3 +79,17 @@ it("guarda los valores confirmados del borrador y ofrece usar la misma foto", as
   expect(await screen.findByText("Foto guardada.")).toBeInTheDocument();
   expect(screen.queryByRole("button", { name: "Usar la foto del borrador" })).not.toBeInTheDocument();
 });
+it("al abrir el formulario de un producto lo lleva a la vista, sin moverse al aplicar cambios", async () => {
+  vi.spyOn(globalThis, "fetch").mockImplementation(async (url) => String(url).endsWith("/plan")
+    ? Response.json({ catalogEnabled: true, plan: "Impulso", periods: [] }) : Response.json([product]));
+  const scroll = vi.fn(); Element.prototype.scrollIntoView = scroll;
+  render(<BusinessCatalog id="b1" />);
+  fireEvent.click(screen.getByRole("button", { name: "Administrar catálogo" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Nuevo producto" }));
+  await waitFor(() => expect(scroll).toHaveBeenCalledTimes(1));
+  expect(scroll.mock.contexts[0]).toBe(screen.getByRole("heading", { name: "Nuevo producto" }).closest("form"));
+  fireEvent.change(screen.getByLabelText("Nombre del producto"), { target: { value: "Taza" } });
+  fireEvent.click(screen.getByRole("button", { name: "Editar Café molido" }));
+  await waitFor(() => expect(scroll).toHaveBeenCalledTimes(2));
+  expect(screen.getByLabelText("Foto del producto con la cámara")).toHaveAttribute("capture", "environment");
+});

@@ -65,4 +65,17 @@
     .callout .button { width: 100%; justify-content: center; }
     .business-form input, .business-form textarea, .business-form select { font-size: 16px; }
   }
+
+  /* Photo picker: camera and gallery buttons replace the unstyled native file control. */
+  .photo-picker { display: grid; gap: var(--space-2); }
+  .photo-picker-label { font-size: var(--text-s); font-weight: 600; }
+  .photo-picker-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .photo-picker-actions .button { flex: 1 1 160px; }
+  .photo-picker-file { font-size: var(--text-xs); color: var(--muted); overflow-wrap: anywhere; }
+  /* Desktop browsers ignore capture and would open a file dialog, so the camera button is touch only. */
+  @media (pointer: fine) { .photo-picker-camera { display: none; } }
+  /* Keep the opened product form clear of the sticky header after scrolling to it. */
+  .catalog-editor { scroll-margin-top: 80px; }
+  /* Text buttons are standalone controls: give them a 44px touch target on touch screens. */
+  @media (pointer: coarse) { button.text-link { min-height: 44px; } }
 }

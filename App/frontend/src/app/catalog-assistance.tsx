@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { catalogApi, catalogError } from "./catalog-api";
+import PhotoPicker, { photoTypes } from "./photo-picker";
 
 type Draft = { name: string; description: string; category: string };
 type ApplyDraft = (draft: Draft, photo: File | null) => void;
-const photoTypes = ["image/jpeg", "image/png", "image/webp"];
 export default function CatalogAssistance({ business, onApply }: { business: string; onApply: ApplyDraft }) {
   const [open, setOpen] = useState(false);
   return <section className="catalog-assistance"><button type="button" className="text-link" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar ayuda de redacción" : "Ayuda para redactar"}</button>
@@ -18,10 +18,9 @@ function DraftAssistant({ business, onApply }: { business: string; onApply: Appl
   const [facts, setFacts] = useState(""), [consent, setConsent] = useState(false), [pending, setPending] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null), [photo, setPhoto] = useState<File | null>(null);
   // The photo stays in the browser; the API only forwards it to the provider and never stores it.
-  function selectPhoto(input: HTMLInputElement) {
-    const file = input.files?.[0] ?? null;
+  function selectPhoto(file: File | null) {
     if (file && (!photoTypes.includes(file.type) || file.size > 5 * 1024 * 1024)) {
-      input.value = ""; setPhoto(null); setError("Elegí una foto JPEG, PNG o WebP de hasta 5 MB."); return;
+      setPhoto(null); setError("Elegí una foto JPEG, PNG o WebP de hasta 5 MB."); return;
     }
     setPhoto(file); setError("");
   }
@@ -55,7 +54,7 @@ function DraftAssistant({ business, onApply }: { business: string; onApply: Appl
   return <div className="catalog-form"><h3>Borrador con asistencia de IA</h3>
     {enabled === null ? <p role="status">Consultando disponibilidad…</p> : !enabled ? <p>La asistencia no está configurada o no está habilitada para este negocio. Podés continuar con la carga manual.</p> : <>
       <p>Subí una foto del producto y escribí sus datos mínimos comprobados. Se enviarán la foto y el texto a {provider} para sugerir nombre, descripción y categoría. No incluyas datos personales ni información de clientes. La foto no se guarda, salvo que después decidas usarla en el producto.</p>
-      <label>Foto para el borrador (opcional)<input type="file" accept={photoTypes.join(",")} disabled={pending} onChange={e => selectPhoto(e.target)} /></label>
+      <PhotoPicker label="Foto para el borrador (opcional)" disabled={pending} fileName={photo?.name} onSelect={selectPhoto} />
       <label>Datos mínimos del producto<textarea maxLength={1500} disabled={pending} value={facts} onChange={e => setFacts(e.target.value)} placeholder="Por ejemplo: café en granos, paquete de 250 g, tueste medio." /></label>
       <label className="order-contact-check"><input type="checkbox" checked={consent} disabled={pending} onChange={e => setConsent(e.target.checked)} />Acepto enviar la foto y los datos a {provider} para preparar un borrador</label>
       <button type="button" className="button button-outline" disabled={!consent || pending || facts.trim().length < 3} onClick={() => void generate()}>{pending ? "Preparando borrador…" : "Generar borrador"}</button>
