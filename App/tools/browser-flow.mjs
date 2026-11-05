@@ -80,11 +80,13 @@ async function exercise(browser, s, artifacts, result) {
 
     await login(s.owner);
     await page.getByRole("button", { name: "Editar", exact: true }).click();
-    await page.getByRole("button", { name: "Ver inventario", exact: true }).click();
+    // The dashboard shows one section at a time; each section opens its panel and reloads its data.
+    const sections = page.getByRole("navigation", { name: "Secciones de tu negocio" });
+    const section = name => sections.getByRole("button", { name, exact: true }).click();
     const inventory = page.locator(".inventory-list").first();
+    await section("Inventario");
     await inventory.getByText("4 unidades", { exact: false }).waitFor();
-    await page.getByRole("button", { name: "Ver resultados comerciales" }).click();
-    await page.getByRole("button", { name: "Ver solicitudes", exact: true }).click();
+    await section("Solicitudes");
     await page.getByRole("button", { name: `Abrir ${saved.reference}`, exact: true }).click();
     await page.getByLabel("Estado de la solicitud").selectOption("in_attention");
     await page.getByRole("checkbox", { name: "Confirmo que recibí el contacto del cliente" }).check();
@@ -96,18 +98,22 @@ async function exercise(browser, s, artifacts, result) {
     await page.getByRole("button", { name: "Registrar venta", exact: true }).click();
     const receipt = page.getByRole("region", { name: "Resumen de solicitud" });
     await receipt.getByText("Convertida en venta", { exact: true }).waitFor();
+    await section("Inventario");
     await inventory.getByText("2 unidades", { exact: false }).waitFor();
+    await section("Ventas");
     await page.getByText(/^1 vigentes · \d+ anuladas$/).waitFor();
     result.checks.push("owner-attention-contact", "sale-stock-metrics-refresh");
 
-    await page.getByRole("button", { name: "Ver ventas", exact: true }).click();
     await page.getByRole("button", { name: `Anular venta ${saved.reference}`, exact: true }).click();
     await page.getByLabel("Motivo de anulación").fill("Anulación de prueba con devolución completa");
     await page.getByLabel("Unidades devueltas de Café de especialidad").fill("2");
     await page.getByRole("button", { name: "Confirmar anulación", exact: true }).click();
-    await receipt.getByText("Cancelada", { exact: true }).waitFor();
-    await inventory.getByText("4 unidades", { exact: false }).waitFor();
     await page.getByText(/^0 vigentes · \d+ anuladas$/).waitFor();
+    await section("Inventario");
+    await inventory.getByText("4 unidades", { exact: false }).waitFor();
+    await section("Solicitudes");
+    await page.getByRole("button", { name: `Abrir ${saved.reference}`, exact: true }).click();
+    await receipt.getByText("Cancelada", { exact: true }).waitFor();
     result.checks.push("void-stock-order-metrics-refresh");
     for (const width of [390, 320]) {
       await page.setViewportSize({ width, height: 844 });

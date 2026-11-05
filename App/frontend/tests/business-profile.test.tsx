@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { expect, it, vi } from "vitest";
 import BusinessProfile from "../src/app/business-profile";
 
@@ -31,6 +31,17 @@ it("presenta un negocio sin fotos sin inventar imágenes", async () => {
   render(<BusinessProfile id="1" />);
   expect(await screen.findByText("Este negocio todavía no compartió fotos.")).toBeInTheDocument();
   expect(screen.queryByRole("img")).not.toBeInTheDocument();
+});
+it("ofrece cómo llegar y copia el enlace del perfil al compartir", async () => {
+  vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json(profile));
+  const writeText = vi.fn().mockResolvedValue(undefined);
+  Object.defineProperty(navigator, "clipboard", { value: { writeText }, configurable: true });
+  render(<BusinessProfile id="1" />);
+  expect(await screen.findByRole("heading", { name: profile.name })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Cómo llegar" }).getAttribute("href")).toContain("google.com/maps");
+  fireEvent.click(screen.getByRole("button", { name: "Compartir" }));
+  await waitFor(() => expect(writeText).toHaveBeenCalledWith(window.location.href));
+  expect(await screen.findByText("Enlace copiado")).toBeInTheDocument();
 });
 it("no pide el catálogo de un negocio sin plan Impulso", async () => {
   const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ ...profile, hasPublicCatalog: false }));

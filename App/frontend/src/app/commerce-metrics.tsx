@@ -7,9 +7,9 @@ import { useBusinessRefresh } from "./business-refresh";
 
 type Metrics = { days: number; from: string; asOf: string; orders: number; contactsReceived: number; converted: number;
   conversionRate: number | null; activeSales: number; voidedSales: number; amounts: Record<string, Record<string, number>> };
-export default function CommerceMetrics({ business }: { business: string }) {
-  const [open, setOpen] = useState(false);
-  return <section className="catalog-panel"><div className="catalog-heading"><h2>Resultados comerciales</h2><button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar resultados comerciales" : "Ver resultados comerciales"}</button></div>{open && <Results key={business} business={business} />}</section>;
+export default function CommerceMetrics({ business, defaultOpen = false }: { business: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return <section className="panel"><div className="panel-heading"><div><p className="eyebrow">De la solicitud a la venta</p><h2>Resultados comerciales</h2></div><div className="panel-actions"><button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar resultados comerciales" : "Ver resultados comerciales"}</button></div></div>{open && <Results key={business} business={business} />}</section>;
 }
 function Results({ business }: { business: string }) {
   const [days, setDays] = useState(7), [attempt, setAttempt] = useState(0), [loading, setLoading] = useState(true);

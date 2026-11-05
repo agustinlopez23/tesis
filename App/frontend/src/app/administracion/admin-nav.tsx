@@ -1,18 +1,17 @@
-import Link from "next/link";
+import { SectionNav, type SectionItem } from "../ui";
 
 const sections = [
-  { key: "planes", href: "/administracion/planes", label: "Planes" },
-  { key: "campanas", href: "/administracion/campanas", label: "Campañas" },
-  { key: "rubros", href: "/administracion/rubros", label: "Rubros" },
-  { key: "moderacion", href: "/administracion/moderacion", label: "Moderación" },
-  { key: "auditoria", href: "/administracion/auditoria", label: "Auditoría" },
+  { key: "planes", href: "/administracion/planes", label: "Planes", icon: "shield" },
+  { key: "campanas", href: "/administracion/campanas", label: "Campañas", icon: "megaphone" },
+  { key: "rubros", href: "/administracion/rubros", label: "Rubros", icon: "tag" },
+  { key: "moderacion", href: "/administracion/moderacion", label: "Moderación", icon: "users" },
+  { key: "auditoria", href: "/administracion/auditoria", label: "Auditoría", icon: "list" },
 ] as const;
 
 export type AdminSection = (typeof sections)[number]["key"];
+const items: SectionItem[] = sections.map((section) => ({ id: section.key, label: section.label, href: section.href, icon: section.icon }));
 
+// Vertical on desktop, horizontal scroll row on narrow screens (see admin.css).
 export default function AdminNav({ current }: { current: AdminSection }) {
-  return <nav className="admin-nav" aria-label="Administración">
-    {sections.map((section) => <Link key={section.key} className="text-link" href={section.href}
-      aria-current={section.key === current ? "page" : undefined}>{section.label}</Link>)}
-  </nav>;
+  return <div className="admin-sidebar"><SectionNav items={items} current={current} label="Administración" /></div>;
 }

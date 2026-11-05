@@ -6,17 +6,20 @@ import { catalogApi, catalogError, Plan, Product, priceLabel } from "./catalog-a
 import CatalogAssistance from "./catalog-assistance";
 import PlanCapabilities from "./plan-capabilities";
 import { businessChanged, useBusinessRefresh } from "./business-refresh";
+import { EmptyState } from "./ui";
 
-export default function BusinessCatalog({ id }: { id: string }) {
-  const [open, setOpen] = useState(false);
-  return <section className="catalog-panel" aria-label="Catálogo del negocio">
-    <div className="catalog-heading"><div><p className="eyebrow">Tu oferta</p><h2>Catálogo de productos</h2></div>
-      <button type="button" className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar catálogo" : "Administrar catálogo"}</button></div>
-    {open && <CatalogEditor key={id} id={id} />}
+type CatalogProps = { id: string; defaultOpen?: boolean; onCountChange?: (count: number) => void };
+// `defaultOpen` opens the editor when the dashboard reaches the Catálogo section; `onCountChange` reports the product count to the setup guide.
+export default function BusinessCatalog({ id, defaultOpen = false, onCountChange }: CatalogProps) {
+  const [open, setOpen] = useState(defaultOpen);
+  return <section className="panel" aria-label="Catálogo del negocio">
+    <div className="panel-heading"><div><p className="eyebrow">Tu oferta</p><h2>Catálogo de productos</h2></div>
+      <div className="panel-actions"><button type="button" className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar catálogo" : "Administrar catálogo"}</button></div></div>
+    {open && <CatalogEditor key={id} id={id} onCountChange={onCountChange} />}
   </section>;
 }
 
-function CatalogEditor({ id }: { id: string }) {
+function CatalogEditor({ id, onCountChange }: { id: string; onCountChange?: (count: number) => void }) {
   const [plan, setPlan] = useState<Plan | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [editing, setEditing] = useState<Product | null>(null);
@@ -42,6 +45,7 @@ function CatalogEditor({ id }: { id: string }) {
     void load();
     return () => controller.abort();
   }, [id, attempt]);
+  useEffect(() => { if (!loading) onCountChange?.(products.length); }, [loading, products.length, onCountChange]);
   function refresh() { setError(""); setLoading(true); setAttempt((n) => n + 1); }
   useBusinessRefresh(id, refresh);
   // Photo the owner attached to the AI draft, kept client side until they choose to upload it.
@@ -94,7 +98,7 @@ function CatalogEditor({ id }: { id: string }) {
     {loading ? <p role="status">Cargando productos…</p> : <>
       {plan && !plan.catalogEnabled && <p className="catalog-notice">El catálogo requiere un plan Impulso vigente. Tus productos se conservan y podés consultarlos. La administración gestiona la activación.</p>}
       <button type="button" className="button button-primary" disabled={!plan?.catalogEnabled || pending} onClick={() => edit()}>Nuevo producto</button>
-      {products.length === 0 && <p className="muted">Todavía no cargaste productos.</p>}
+      {products.length === 0 && <EmptyState compact icon="tag" title="Todavía no cargaste productos.">Los productos publicados aparecen en tu perfil y en la búsqueda de productos.</EmptyState>}
       <div className="catalog-owner-list">{products.map((p) => <article key={p.id}>
         <div><strong>{p.name}</strong><p>{priceLabel(p)} · {p.status === "published" ? "Publicado" : p.status === "archived" ? "Archivado" : "Borrador"} · {p.available ? "Disponible" : "No disponible"}</p></div>
         <button type="button" className="text-link" disabled={!plan?.catalogEnabled || pending} aria-label={`Editar ${p.name}`} onClick={() => edit(p)}>Editar</button>

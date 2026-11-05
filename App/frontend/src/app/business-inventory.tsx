@@ -7,9 +7,9 @@ import { businessChanged, useBusinessRefresh } from "./business-refresh";
 
 type Item = { productId: string; name: string; quantity: number | null; version: number; lowStock?: boolean };
 type Movement = { operationId: string; productId: string; productName: string; delta: number; balance: number; reason: string; createdAt: string };
-export default function BusinessInventory({ business }: { business: string }) {
-  const [open, setOpen] = useState(false);
-  return <section className="catalog-panel"><div className="catalog-heading"><h2>Inventario</h2><button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar inventario" : "Ver inventario"}</button></div>{open && <Inventory key={business} business={business} />}</section>;
+export default function BusinessInventory({ business, defaultOpen = false }: { business: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return <section className="panel"><div className="panel-heading"><div><p className="eyebrow">Stock real</p><h2>Inventario</h2></div><div className="panel-actions"><button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar inventario" : "Ver inventario"}</button></div></div>{open && <Inventory key={business} business={business} />}</section>;
 }
 function Inventory({ business }: { business: string }) {
   const [items, setItems] = useState<Item[]>([]), [selected, setSelected] = useState<Item | null>(null);

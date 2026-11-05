@@ -16,6 +16,17 @@ it("busca entre negocios, conserva filtros al paginar y enlaza el catálogo", as
   expect(window.location.search).not.toContain("page=2");
   window.history.replaceState({}, "", "/");
 });
+it("muestra un esqueleto mientras busca y permite quitar la búsqueda aplicada", async () => {
+  window.history.replaceState({}, "", "/productos?q=cafe");
+  vi.spyOn(globalThis, "fetch").mockImplementation(async url => Response.json(String(url).includes("business-categories") ? [] : { items: [product], page: 1, hasNextPage: false, order: "name" }));
+  render(<ProductDiscovery />);
+  expect(screen.getByRole("status", { name: "Buscando productos…" })).toBeInTheDocument();
+  await screen.findByRole("link", { name: "Ver catálogo de Local" });
+  fireEvent.click(screen.getByRole("button", { name: "Quitar búsqueda cafe" }));
+  await waitFor(() => expect(window.location.search).toBe(""));
+  expect(screen.getByRole("searchbox")).toHaveValue("");
+  window.history.replaceState({}, "", "/");
+});
 it("retira resultados anteriores ante error y permite reintentar", async () => {
   window.history.replaceState({}, "", "/productos"); let count = 0;
   vi.spyOn(globalThis, "fetch").mockImplementation(async url => {

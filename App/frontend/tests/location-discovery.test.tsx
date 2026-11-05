@@ -97,6 +97,17 @@ it("explica un enlace sin coordenadas y descarta zona, radio e historial inváli
   expect(screen.queryByText(/Este enlace no incluye la ubicación/)).not.toBeInTheDocument();
 });
 
+it("muestra el radio sólo cuando hay un área elegida y lo aplica desde el chip de zona", async () => {
+  const fetcher = mockDirectory();
+  render(<Explore />);
+  await screen.findByRole("heading", { name: business.name });
+  expect(screen.queryByLabelText("Radio de búsqueda")).not.toBeInTheDocument();
+  fireEvent.change(screen.getByLabelText("Zona de referencia"), { target: { value: "alberdi" } });
+  await waitFor(() => expect(lastQuery(fetcher).get("lat")).toBe("-31.4093"));
+  expect(screen.getByLabelText("Radio de búsqueda")).toHaveValue("2");
+  expect(screen.getByRole("button", { name: "Quitar ubicación" })).toBeInTheDocument();
+});
+
 it("reinicia la página al cambiar el radio y permite recuperar una zona sin resultados", async () => {
   window.history.replaceState(null, "", "/explorar?zone=centro&radiusKm=2&page=2");
   const fetcher = vi.spyOn(globalThis, "fetch").mockImplementation(async (url) =>

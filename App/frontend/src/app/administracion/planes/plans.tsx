@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { catalogApi, catalogError, Plan } from "../../catalog-api";
+import { Alert, Badge, EmptyState, Icon, Panel, Skeleton, type Tone } from "../../ui";
 
 type Business = { id: string; name: string; ownerEmail: string };
 export default function AdminPlans() {
@@ -28,20 +29,34 @@ export default function AdminPlans() {
     void load();
     return () => controller.abort();
   }, [query, page, attempt]);
-  if (state === "denied") return <p role="alert">Necesitás ingresar con una cuenta administradora. <Link href="/mi-negocio">Ir a Mi negocio</Link></p>;
+  if (state === "denied") return <Alert tone="danger" role="alert">Necesitás ingresar con una cuenta administradora. <Link href="/mi-negocio">Ir a Mi negocio</Link></Alert>;
   return <>
-    <p>Activá el catálogo con una vigencia definida. Cada activación y revocación conserva su motivo.</p>
-    <form className="catalog-search" onSubmit={(e) => { e.preventDefault(); setState("loading"); setQuery(draft.trim()); setPage(1); setAttempt((n) => n + 1); }}>
-      <label>Buscar negocio o correo<input maxLength={150} value={draft} onChange={(e) => setDraft(e.target.value)} /></label><button className="button button-outline">Buscar negocios</button>
+    <p className="admin-intro">Activá el catálogo con una vigencia definida. Cada activación y revocación conserva su motivo.</p>
+    <form role="search" className="search-form admin-search" onSubmit={(e) => { e.preventDefault(); setState("loading"); setQuery(draft.trim()); setPage(1); setAttempt((n) => n + 1); }}>
+      <Icon name="search" />
+      <label htmlFor="plans-search" className="sr-only">Buscar negocio o correo</label>
+      <input id="plans-search" maxLength={150} placeholder="Buscar negocio o correo" value={draft} onChange={(e) => setDraft(e.target.value)} />
+      <button className="button button-outline">Buscar negocios</button>
     </form>
-    {state === "error" && <><p role="alert">{error}</p><button className="button button-outline" onClick={() => { setState("loading"); setAttempt((n) => n + 1); }}>Reintentar carga</button></>}
-    {state === "loading" ? <p role="status">Cargando negocios…</p> : state === "ready" && <>
-      <div className="catalog-owner-list">{businesses.map((b) => <article key={b.id}><div><strong>{b.name}</strong><p>{b.ownerEmail}</p></div><button className="text-link" onClick={() => setSelected(b)}>Gestionar plan de {b.name}</button></article>)}</div>
-      {!businesses.length && <p>No se encontraron negocios.</p>}
-      <nav className="catalog-toolbar" aria-label="Páginas de negocios"><button className="button button-outline" disabled={page === 1} onClick={() => { setState("loading"); setPage(page - 1); }}>Anterior</button><span>Página {page}</span><button className="button button-outline" disabled={businesses.length < 20} onClick={() => { setState("loading"); setPage(page + 1); }}>Siguiente</button></nav>
+    {state === "error" && <><Alert tone="danger" role="alert">{error}</Alert><div className="action-row"><button className="button button-outline" onClick={() => { setState("loading"); setAttempt((n) => n + 1); }}>Reintentar carga</button></div></>}
+    {state === "loading" ? <Skeleton variant="rows" count={4} label="Cargando negocios…" /> : state === "ready" && <>
+      {businesses.length > 0 && <div className="resource-list">{businesses.map((b) => <article key={b.id} className="resource-row">
+        <div className="resource-main"><strong>{b.name}</strong><p>{b.ownerEmail}</p></div>
+        <div className="resource-actions"><button className="button button-outline button-small" aria-current={selected?.id === b.id ? "true" : undefined} onClick={() => setSelected(b)}>Gestionar plan de {b.name}</button></div>
+      </article>)}</div>}
+      {!businesses.length && <EmptyState compact icon="search" title="No se encontraron negocios." />}
+      <nav className="admin-pager" aria-label="Páginas de negocios"><button className="button button-outline button-small" disabled={page === 1} onClick={() => { setState("loading"); setPage(page - 1); }}>Anterior</button><span>Página {page}</span><button className="button button-outline button-small" disabled={businesses.length < 20} onClick={() => { setState("loading"); setPage(page + 1); }}>Siguiente</button></nav>
     </>}
     {selected && <PlanEditor key={selected.id} business={selected} />}
   </>;
+}
+
+function periodStatus(period: Plan["periods"][number]): { tone: Tone; label: string } {
+  if (period.revokedAt) return { tone: "neutral", label: "Revocada" };
+  const now = Date.now();
+  if (new Date(period.endsAt).getTime() < now) return { tone: "neutral", label: "Finalizada" };
+  if (new Date(period.startsAt).getTime() > now) return { tone: "info", label: "Programada" };
+  return { tone: "success", label: "Vigente" };
 }
 
 function PlanEditor({ business }: { business: Business }) {
@@ -85,21 +100,32 @@ function PlanEditor({ business }: { business: Business }) {
     finally { setPending(false); }
   }
   const date = (value: string) => new Date(value).toLocaleString("es-AR");
-  return <section className="catalog-panel">
-    <div className="catalog-heading"><h2>{business.name}</h2><button className="text-link" disabled={pending} onClick={() => { setError(""); setAttempt((n) => n + 1); }}>Actualizar plan</button></div>
-    {error && <p role="alert" className="error">{error}</p>}{success && <p role="status" className="success-message">{success}</p>}
-    <p>{plan ? `Plan actual: ${plan.plan}` : "Consultando vigencias…"}</p>
+  return <Panel className="admin-form admin-plan-editor" eyebrow="Plan del negocio" title={business.name} description={business.ownerEmail}
+    actions={<button className="button button-outline button-small" disabled={pending} onClick={() => { setError(""); setAttempt((n) => n + 1); }}>Actualizar plan</button>}>
+    {error && <Alert tone="danger" role="alert">{error}</Alert>}{success && <Alert tone="success" role="status">{success}</Alert>}
+    <p className="admin-plan-current">{plan ? `Plan actual: ${plan.plan}` : "Consultando vigencias…"}</p>
     <form className="catalog-form" onSubmit={grant}><h3>Habilitar Impulso</h3><fieldset disabled={pending || !plan}>
       <p className="field-help">Las fechas usan la hora local de tu dispositivo. El acceso termina exactamente en la fecha y hora de fin.</p>
       <div className="catalog-fields"><label>Inicio de vigencia<input type="datetime-local" required value={period.startsAt} onChange={(e) => { setRequestId(null); setPeriod({ ...period, startsAt: e.target.value }); }} /></label><label>Fin de vigencia<input type="datetime-local" required value={period.endsAt} onChange={(e) => { setRequestId(null); setPeriod({ ...period, endsAt: e.target.value }); }} /></label></div>
       <label>Motivo de activación<textarea required minLength={3} maxLength={500} value={period.reason} onChange={(e) => { setRequestId(null); setPeriod({ ...period, reason: e.target.value }); }} /></label>
-      <button className="button button-primary" type="submit">Registrar vigencia</button>
+      <div className="action-row"><button className="button button-primary" type="submit">Registrar vigencia</button></div>
     </fieldset></form>
-    <h3>Historial de vigencias</h3>
-    {plan?.periods.length === 0 && <p>Sin activaciones registradas.</p>}
-    <div className="catalog-owner-list">{plan?.periods.map((p) => <article key={p.id}><div><strong>{date(p.startsAt)} — {date(p.endsAt)}</strong><p>{p.reason}</p>{p.revokedAt && <p>Revocada el {date(p.revokedAt)}: {p.revocationReason}</p>}</div>
-      {!p.revokedAt && <button className="text-link" disabled={pending} onClick={() => { setRevoking(p.id); setReason(""); }}>Revocar vigencia</button>}
-    </article>)}</div>
-    {revoking && <form className="catalog-form" onSubmit={revoke}><fieldset disabled={pending}><p>Revocar retira el catálogo público si esta vigencia está activa. Los productos permanecen guardados.</p><label>Motivo de revocación<textarea required minLength={3} maxLength={500} value={reason} onChange={(e) => setReason(e.target.value)} /></label><div className="catalog-toolbar"><button className="button button-outline" type="submit">Confirmar revocación</button><button className="text-link" type="button" onClick={() => setRevoking("")}>Cancelar</button></div></fieldset></form>}
-  </section>;
+    <h3 className="admin-section-title">Historial de vigencias</h3>
+    {plan?.periods.length === 0 && <EmptyState compact icon="clock" title="Sin activaciones registradas." />}
+    {plan && plan.periods.length > 0 && <div className="resource-list">{plan.periods.map((p) => {
+      const status = periodStatus(p);
+      return <article key={p.id} className="resource-row">
+        <div className="resource-main"><strong>{date(p.startsAt)} — {date(p.endsAt)}</strong><p>{p.reason}</p>{p.revokedAt && <p>Revocada el {date(p.revokedAt)}: {p.revocationReason}</p>}</div>
+        <Badge tone={status.tone}>{status.label}</Badge>
+        <div className="resource-actions">{!p.revokedAt && <button className="text-link danger" disabled={pending} onClick={() => { setRevoking(p.id); setReason(""); }}>Revocar vigencia</button>}</div>
+        {revoking === p.id && <div className="resource-wide"><Alert tone="warning" title="Revocar esta vigencia">
+          <p>Revocar retira el catálogo público si esta vigencia está activa. Los productos permanecen guardados.</p>
+          <form className="catalog-form" onSubmit={revoke}><fieldset disabled={pending}>
+            <label>Motivo de revocación<textarea required minLength={3} maxLength={500} value={reason} onChange={(e) => setReason(e.target.value)} /></label>
+            <div className="action-row"><button className="text-link" type="button" onClick={() => setRevoking("")}>Cancelar</button><button className="button button-outline" type="submit">Confirmar revocación</button></div>
+          </fieldset></form>
+        </Alert></div>}
+      </article>;
+    })}</div>}
+  </Panel>;
 }

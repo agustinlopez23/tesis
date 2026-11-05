@@ -70,10 +70,11 @@ export async function verifyAccessibility(s, artifacts) {
     await authenticate(s.owner);
     await page.goto(s.webOrigin + "/mi-negocio");
     await page.getByRole("button", { name: "Editar", exact: true }).click();
-    await page.getByRole("button", { name: "Administrar catálogo" }).click();
+    const sections = page.getByRole("navigation", { name: "Secciones de tu negocio" });
+    await sections.getByRole("button", { name: "Catálogo", exact: true }).click();
     await page.getByRole("button", { name: "Editar Café de especialidad", exact: true }).click();
     await scan("product-editor");
-    await page.getByRole("button", { name: "Ver resultados comerciales" }).click();
+    await sections.getByRole("button", { name: "Ventas", exact: true }).click();
     await page.getByRole("heading", { name: "Ventas registradas en el período" }).waitFor();
     await scan("metrics");
     await authenticate(s.admin);

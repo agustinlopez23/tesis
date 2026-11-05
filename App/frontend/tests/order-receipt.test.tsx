@@ -32,6 +32,13 @@ it("copia el enlace real aunque esté oculto", async () => {
   expect(await screen.findByRole("status")).toHaveTextContent("Copiado.");
 });
 
+it("presenta la solicitud guardada como panel de éxito con WhatsApp como acción principal", () => {
+  render(<OrderReceipt order={order} accessKey={key} />);
+  expect(screen.getByRole("region", { name: "Resumen de solicitud" })).toHaveClass("order-receipt");
+  expect(screen.getByText("Solicitud guardada")).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "Abrir WhatsApp" })).toHaveClass("button-whatsapp");
+  expect(screen.getByText("Pendiente")).toBeInTheDocument();
+});
 it("el enlace de consulta conserva la clave real", () => {
   render(<OrderReceipt order={order} accessKey={key} />);
   expect(screen.getByRole("link", { name: "Consultar mi solicitud" }).getAttribute("href")).toBe(`/pedido/order1#clave=${key}`);

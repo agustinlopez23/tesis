@@ -1,0 +1,68 @@
+/* owner area styles. Loaded globally from layout.tsx; use the tokens defined in globals.css. */
+@layer components {
+  /* Layout: compact business switcher + section navigation + one section at a time (Shopify App Home / Square). */
+  .owner-layout { display: grid; grid-template-columns: 270px minmax(0, 1fr); gap: var(--space-6); align-items: start; }
+  /* Explicit minmax(0, 1fr) columns: Firefox sizes an implicit auto column to the width of the scrolling section row. */
+  .owner-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); min-width: 0; }
+  .owner-main > .panel { margin-top: 0; }
+  .owner-section { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-5); min-width: 0; }
+
+  .business-switcher { display: grid; gap: var(--space-3); min-width: 0; }
+  .business-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .business-list .business-item { margin-bottom: 0; }
+  .business-select { display: block; width: 100%; min-height: 44px; padding: 6px 0; border: 0; background: none; text-align: left; font-size: var(--text-m); font-weight: 600; color: var(--ink); cursor: pointer; overflow-wrap: anywhere; }
+  .business-select:hover, .business-select[aria-pressed="true"] { color: var(--accent); }
+
+  /* Setup guide: "X de Y pasos completados" with one verb-first action per pending step. */
+  .setup-bar { height: 6px; background: var(--surface-2); border-radius: var(--radius-pill); overflow: hidden; margin-bottom: var(--space-4); }
+  .setup-bar > span { display: block; height: 100%; background: var(--accent); border-radius: var(--radius-pill); transition: width .25s; }
+  .setup-steps { list-style: none; margin: 0; padding: 0; display: grid; }
+  .setup-steps li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; padding: 14px 0; border-top: 1px solid var(--line); min-height: 44px; }
+  .setup-steps li:first-child { border-top: 0; }
+  .setup-steps strong { display: block; font-size: var(--text-m); font-weight: 600; }
+  .setup-steps p { font-size: var(--text-s); color: var(--muted); margin-top: 2px; }
+  .setup-steps .done strong { color: var(--muted); text-decoration: line-through; }
+  .step-check { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--line-strong); color: var(--success-ink); }
+  .done .step-check { background: var(--success-bg); border-color: transparent; }
+  .step-check .icon { width: 16px; height: 16px; }
+
+  .callout { display: flex; align-items: center; gap: var(--space-4); padding: 16px 20px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius-m); }
+  .callout > .icon { flex-shrink: 0; color: var(--accent); }
+  .callout > div { flex: 1; min-width: 0; }
+  .callout strong { display: block; font-size: var(--text-m); font-weight: 600; }
+  .callout p { font-size: var(--text-s); color: var(--muted); margin-top: 2px; }
+  .callout .button, .callout .text-link { flex-shrink: 0; }
+
+  .admin-shortcuts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 18px; margin: 0 0 var(--space-5); padding: 10px 16px; border: 1px solid var(--line); border-radius: var(--radius-m); background: var(--surface-2); }
+  .admin-shortcuts .eyebrow { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); margin-right: 6px; }
+  .admin-shortcuts .eyebrow .icon { width: 15px; height: 15px; }
+  .admin-shortcuts .text-link { font-size: var(--text-s); min-height: 40px; }
+
+  /* Business form: publish state next to the heading and the public-profile link as a footnote. */
+  .form-title { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+  .form-footnote { margin-top: var(--space-4); }
+  .welcome-intro { display: flex; gap: var(--space-4); align-items: flex-start; padding: 20px 24px; margin-bottom: var(--space-5); background: var(--surface-2); border: 1px dashed var(--line-strong); border-radius: var(--radius-l); }
+  .welcome-intro .empty-icon { display: inline-flex; padding: 12px; border-radius: 50%; background: var(--surface); color: var(--accent); flex-shrink: 0; }
+  .welcome-intro h2 { font-size: var(--text-l); font-weight: 600; }
+  .welcome-intro p { font-size: var(--text-s); color: var(--muted); margin-top: 6px; }
+  .owner-section > .business-form { margin: 0; }
+
+  @media (max-width: 960px) {
+    .owner-layout { grid-template-columns: 230px minmax(0, 1fr); gap: var(--space-5); }
+  }
+  @media (max-width: 760px) {
+    /* minmax(0, 1fr): a plain 1fr track grows to the width of the scrolling rows inside it. */
+    .owner-layout { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+    .business-switcher { gap: var(--space-2); }
+    .business-switcher .sidebar-heading { padding-bottom: 8px; }
+    /* Chip row: the businesses scroll sideways and the section nav keeps its own horizontal scroll. */
+    .business-list { display: flex; gap: var(--space-2); overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+    .business-list .business-item { min-width: 220px; padding: 14px 16px; gap: 4px; }
+    .owner-main > .section-nav { max-width: 100%; }
+    .setup-steps li { grid-template-columns: 28px minmax(0, 1fr); }
+    .setup-steps li > .button { grid-column: 2; justify-self: start; }
+    .callout { flex-wrap: wrap; }
+    .callout .button { width: 100%; justify-content: center; }
+    .business-form input, .business-form textarea, .business-form select { font-size: 16px; }
+  }
+}
