@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 export type IconName = "pin" | "arrow" | "search" | "store" | "coffee" | "bag" | "shirt" | "grid" | "check" | "close" | "message" | "chevron" | "logout" | "plus" | "eye"
-  | "home" | "tag" | "cart" | "share" | "map" | "box" | "chart" | "megaphone" | "image" | "users" | "shield" | "list" | "alert" | "info" | "clock" | "user";
+  | "home" | "tag" | "cart" | "share" | "map" | "box" | "chart" | "megaphone" | "image" | "users" | "shield" | "list" | "alert" | "info" | "clock" | "user" | "camera";
 const paths: Record<IconName, ReactNode> = {
   pin: <><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></>,
   arrow: <path d="M4 12h16M14 6l6 6-6 6"/>,
@@ -35,6 +35,7 @@ const paths: Record<IconName, ReactNode> = {
   info: <><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.5"/></>,
   clock: <><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></>,
   user: <><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></>,
+  camera: <><path d="M3 8h4l2-3h6l2 3h4v12H3Z"/><circle cx="12" cy="13" r="3.5"/></>,
 };
 
 export function Icon({ name, className = "" }: { name: IconName; className?: string }) {
