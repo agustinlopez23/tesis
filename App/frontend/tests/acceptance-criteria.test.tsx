@@ -62,8 +62,8 @@ it("HU-06 el inventario marca saldo bajo e informa el saldo disponible al rechaz
   render(<BusinessInventory business="b1" />);
   fireEvent.click(screen.getByRole("button", { name: "Ver inventario" }));
   expect(await screen.findByText("Disponibilidad baja")).toBeInTheDocument();
-  fireEvent.click(screen.getByRole("button", { name: "Ajustar Yerba" }));
-  fireEvent.change(screen.getByLabelText("Unidades a sumar o restar"), { target: { value: "-5" } });
+  fireEvent.click(await screen.findByRole("button", { name: "Ajustar Yerba" }));
+  fireEvent.change(await screen.findByLabelText("Unidades a sumar o restar"), { target: { value: "-5" } });
   fireEvent.change(screen.getByLabelText("Motivo del ajuste"), { target: { value: "Rotura" } });
   fireEvent.click(screen.getByRole("button", { name: "Guardar ajuste" }));
   expect(await screen.findByRole("alert")).toHaveTextContent("Saldo disponible: 2 unidades");
