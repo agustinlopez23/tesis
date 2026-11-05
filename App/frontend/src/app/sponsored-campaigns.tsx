@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { catalogApi } from "./catalog-api";
 import { campaignEvent, PublicCampaign, rememberCampaign } from "./campaign-api";
+import { Icon } from "./ui";
 
 export default function SponsoredCampaigns({ zone }: { zone: string | null }) {
   if (!zone) return null;
@@ -20,7 +21,7 @@ function SponsoredList({ zone }: { zone: string }) {
     return () => controller.abort();
   }, [zone]);
   if (!items.length) return null;
-  return <aside className="sponsored-section" aria-label="Anuncios patrocinados"><p>Publicidad de negocios en la zona elegida</p><div className="catalog-grid">{items.map(item => <SponsoredCard key={item.id} campaign={item} />)}</div></aside>;
+  return <aside className="sponsored-section" aria-label="Anuncios patrocinados"><p className="eyebrow"><Icon name="megaphone" />Publicidad de negocios en la zona elegida</p><div className="catalog-grid">{items.map(item => <SponsoredCard key={item.id} campaign={item} />)}</div></aside>;
 }
 export function SponsoredCard({ campaign }: { campaign: PublicCampaign }) {
   const element = useRef<HTMLElement>(null);
@@ -37,9 +38,12 @@ export function SponsoredCard({ campaign }: { campaign: PublicCampaign }) {
     return () => { observer.disconnect(); clearTimeout(timer); document.removeEventListener("visibilitychange", update); };
   }, [campaign.token]);
   const href = campaign.productId ? `/negocios/${campaign.businessId}?campaign=${campaign.id}#catalog-title` : `/promociones/${campaign.id}`;
-  return <article ref={element} className="product-card sponsored-card"><div className="sponsored-label">Patrocinado</div>
-    {campaign.hasImage && <Image src={`/api/marketplace/public/campaigns/${campaign.id}/image`} alt={campaign.title} width={400} height={300} unoptimized />}
-    <div className="product-card-copy"><h3>{campaign.title}</h3><p>{campaign.description}</p><p>{campaign.businessName}</p><p className="field-help">{campaign.conditions}</p>
-      <Link className="text-link" href={href} aria-label={`Ver ${campaign.title}`} onClick={() => { rememberCampaign(campaign); void campaignEvent(campaign.token, "click"); }}>Ver propuesta</Link></div>
+  // The sponsored label sits top-left on every sponsored card so it is recognised at a glance.
+  return <article ref={element} className="product-card sponsored-card"><span className="sponsored-label badge badge-warning">Patrocinado</span>
+    {campaign.hasImage ? <Image src={`/api/marketplace/public/campaigns/${campaign.id}/image`} alt={campaign.title} width={400} height={300} unoptimized />
+      : <div className="product-placeholder sand" aria-hidden="true"><Icon name="megaphone" /></div>}
+    <div className="product-card-copy"><h3>{campaign.title}</h3><p className="product-description">{campaign.description}</p>
+      <p className="product-business"><Icon name="store" />{campaign.businessName}</p><p className="field-help">{campaign.conditions}</p>
+      <Link className="button button-outline button-small" href={href} aria-label={`Ver ${campaign.title}`} onClick={() => { rememberCampaign(campaign); void campaignEvent(campaign.token, "click"); }}>Ver propuesta <Icon name="arrow" /></Link></div>
   </article>;
 }

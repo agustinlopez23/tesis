@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
-import { categoryStyle, Icon, SiteFooter, SiteHeader } from "../ui";
+import { Alert, categoryStyle, EmptyState, Icon, SiteFooter, SiteHeader, Skeleton } from "../ui";
 import { areaParams, DiscoveryLocation, readArea, zones } from "./discovery-location";
 import { LocationFilter } from "./location-filter";
 import SponsoredCampaigns from "../sponsored-campaigns";
@@ -110,13 +110,18 @@ export default function Explore({ rankingEnabled = false }: { rankingEnabled?: b
   }
   const filtered = Boolean(filters.query || filters.category || filters.area);
 
+  const orderLabel = filters.area ? "Más cercanos" : "Nombre, A–Z";
+  const retry = <button className="button button-dark" onClick={() => navigate(filters)}>Reintentar</button>;
+
   return <><SiteHeader /><main id="contenido" tabIndex={-1} className="container explore-main">
     <section className="discovery-hero" aria-labelledby="discovery-title">
       <div className="hero-copy"><p className="eyebrow"><span className="tiny-spark">✳</span> Tu ciudad, a la vuelta</p>
         <h1 id="discovery-title">Hay mucho por <br/>descubrir. <br/><em>Y está cerca.</em></h1>
-        <Link className="text-link" href="/productos">Buscar productos entre negocios <Icon name="arrow" /></Link>
         <p className="hero-description">Ese café que todavía no conocés. El almacén de siempre.<br className="desktop-break"/> Encontrá tu próximo favorito en Córdoba.</p>
-        <a className="text-link" href="#negocios">Conocé los negocios <Icon name="arrow" /></a>
+        <div className="hero-actions">
+          <a className="button button-primary" href="#negocios">Conocé los negocios <Icon name="arrow" /></a>
+          <Link className="text-link" href="/productos">Buscar productos entre negocios <Icon name="arrow" /></Link>
+        </div>
         <div className="hero-footnote"><span className="mini-icon"><Icon name="store" /></span><span>Comercios locales.<br/><strong>Conexiones de verdad.</strong></span></div>
       </div>
       <div className="hero-picture"><Image src="/images/neighborhood-editorial.webp" alt="Escena ilustrativa de un café y un almacén de barrio" fill sizes="(max-width: 700px) 100vw, 50vw" preload />
@@ -128,29 +133,31 @@ export default function Explore({ rankingEnabled = false }: { rankingEnabled?: b
 
     <section className="directory-section" id="negocios" aria-labelledby="directory-title">
       <div className="section-heading"><div><p className="eyebrow">La guía local</p><h2 id="directory-title">Descubrí comercios de tu ciudad.</h2></div><span className="city-caption"><Icon name="pin" /> Córdoba capital</span></div>
-      <form className="search-form" role="search" onSubmit={search}>
-        <Icon name="search" /><label className="sr-only" htmlFor="business-search">Buscar negocios</label>
-        <input key={filters.query} id="business-search" name="q" type="search" defaultValue={filters.query} maxLength={150} placeholder="Un negocio, algo que te gusta o una dirección…" />
-        <button className="button button-primary" type="submit">Buscar <Icon name="arrow" /></button>
-      </form>
-      <LocationFilter key={JSON.stringify(filters.area)} area={filters.area} onChange={(area) => navigate({ ...filters, page: 1, area })} />
-      <SponsoredCampaigns zone={filters.area?.kind === "zone" ? filters.area.zone ?? null : null} />
-      {locationNotice && <p className="location-note" role="status">Este enlace no incluye la ubicación del dispositivo. Elegí una zona o usá tu ubicación para ver distancias.</p>}
-      <div className="category-filters" role="group" aria-label="Filtrar por rubro">
-        <button className={"category-chip " + (!filters.category ? "selected" : "")} aria-pressed={!filters.category} onClick={() => navigate({ ...filters, page: 1, category: "" })}><Icon name="grid" />Todos los rubros</button>
-        {categories.map((category) => <button key={category} className={"category-chip " + (filters.category === category ? "selected" : "")} aria-pressed={filters.category === category} onClick={() => navigate({ ...filters, page: 1, category })}><Icon name={categoryStyle(category).icon} />{category}</button>)}
+      <div className="discovery-filters">
+        <form className="search-form" role="search" onSubmit={search}>
+          <Icon name="search" /><label className="sr-only" htmlFor="business-search">Buscar negocios</label>
+          <input key={filters.query} id="business-search" name="q" type="search" defaultValue={filters.query} maxLength={150} placeholder="Un negocio, algo que te gusta o una dirección…" />
+          <button className="button button-primary" type="submit">Buscar <Icon name="arrow" /></button>
+        </form>
+        <div className="category-filters chip-row" role="group" aria-label="Filtrar por rubro">
+          <button className={"category-chip " + (!filters.category ? "selected" : "")} aria-pressed={!filters.category} onClick={() => navigate({ ...filters, page: 1, category: "" })}><Icon name="grid" />Todos los rubros</button>
+          {categories.map((category) => <button key={category} className={"category-chip " + (filters.category === category ? "selected" : "")} aria-pressed={filters.category === category} onClick={() => navigate({ ...filters, page: 1, category })}><Icon name={categoryStyle(category).icon} />{category}</button>)}
+        </div>
+        <LocationFilter key={JSON.stringify(filters.area)} area={filters.area} onChange={(area) => navigate({ ...filters, page: 1, area })} />
       </div>
+      <SponsoredCampaigns zone={filters.area?.kind === "zone" ? filters.area.zone ?? null : null} />
+      {locationNotice && <Alert tone="info" role="status">Este enlace no incluye la ubicación del dispositivo. Elegí una zona o usá tu ubicación para ver distancias.</Alert>}
       {(filters.query || filters.category) && <div className="applied-filters"><span>Tu búsqueda:</span>
         {filters.query && <button onClick={() => navigate({ ...filters, page: 1, query: "" })} aria-label={"Quitar búsqueda " + filters.query}>“{filters.query}” <Icon name="close" /></button>}
         {filters.category && <button onClick={() => navigate({ ...filters, page: 1, category: "" })} aria-label={"Quitar filtro " + filters.category}>{filters.category} <Icon name="close" /></button>}
         <button className="clear-filters" onClick={() => navigate(initialFilters)}>Limpiar filtros</button></div>}
-      {rankingEnabled && !rankedMode && <p className="location-note">Elegí una zona y un rubro para ver los comercios ordenados por el ranking hiperlocal con equidad.</p>}
-      {rankedMode && ranking.error !== null && <p className="location-note" role="status">No pudimos preparar el orden del ranking. Te mostramos la guía habitual. <button className="text-link" onClick={() => void startRanking({ zoneId: rankedZone!, categoryId: rankedCategory! }, false)}>Reintentar</button></p>}
+      {rankingEnabled && !rankedMode && <p className="results-note"><Icon name="info" />Elegí una zona y un rubro para ver los comercios ordenados por el ranking hiperlocal con equidad.</p>}
+      {rankedMode && ranking.error !== null && <p className="results-note" role="status"><Icon name="alert" />No pudimos preparar el orden del ranking. Te mostramos la guía habitual. <button className="text-link" onClick={() => void startRanking({ zoneId: rankedZone!, categoryId: rankedCategory! }, false)}>Reintentar</button></p>}
       {ranked ? <>
-        <p className="location-note">Orden según el ranking hiperlocal con equidad: combina relevancia y cercanía (hasta 4 km) y reparte la visibilidad entre los comercios de la zona.</p>
-        <div className="results-toolbar"><span aria-live="polite">{ranking.data ? ranking.data.items.length + (ranking.data.items.length === 1 ? " comercio" : " comercios") + " en esta página" : "Buscando comercios locales"}</span><span>Orden: <strong>Ranking hiperlocal con equidad</strong>{ranking.data?.policy && <small className="ranking-version">Versión del ranking: {ranking.data.policy}</small>}</span></div>
-        {!ranking.data ? <div role="status" aria-label="Cargando negocios"><span className="sr-only">Cargando negocios…</span><div className="directory-grid skeleton-grid" aria-hidden="true">{[1, 2, 3].map((item) => <div className="skeleton-card" key={item}><div/><span/><span/><span/></div>)}</div></div>
-          : <section aria-label="Negocios publicados">{ranking.data.items.length === 0 ? <div className="empty-state"><span className="empty-icon"><Icon name="search" /></span><h3>No encontramos negocios disponibles en esta página.</h3><p>Probá con otro rubro o elegí una zona diferente.</p></div>
+        <div className="results-toolbar"><span aria-live="polite">{ranking.data ? ranking.data.items.length + (ranking.data.items.length === 1 ? " comercio" : " comercios") + " en esta página" : "Buscando comercios locales"}</span>
+          <p className="results-order">Orden según el ranking hiperlocal con equidad: relevancia y cercanía (hasta 4 km), con la visibilidad repartida entre los comercios de la zona.{ranking.data?.policy && <small className="ranking-version">Versión del ranking: {ranking.data.policy}</small>}</p></div>
+        {!ranking.data ? <Skeleton variant="cards" label="Cargando negocios" />
+          : <section aria-label="Negocios publicados">{ranking.data.items.length === 0 ? <EmptyState icon="search" title="No encontramos negocios disponibles en esta página.">Probá con otro rubro o elegí una zona diferente.</EmptyState>
             : <div className="directory-grid">{ranking.data.items.map((business) => <BusinessCard key={business.id} business={business} token={ranking.data?.measurement[business.id]}/>)}</div>}</section>}
         <nav className="directory-pagination" aria-label="Páginas de negocios">
           <button className="button button-outline" disabled={!ranking.data || (rankingNavigation?.page ?? 1) === 1} onClick={() => void ranking.go(rankingNavigation!.page - 1)}><Icon name="chevron" className="rotate" />Anterior</button>
@@ -158,11 +165,13 @@ export default function Explore({ rankingEnabled = false }: { rankingEnabled?: b
           <button className="button button-outline" disabled={!ranking.data?.hasMore} onClick={() => void ranking.go(rankingNavigation!.page + 1)}>Siguiente<Icon name="chevron" /></button>
         </nav>
       </> : <>
-      <div className="results-toolbar"><span aria-live="polite">{directory ? directory.items.length + (directory.hasMore ? "+" : "") + (directory.items.length === 1 ? " comercio" : " comercios") + " en esta página" : "Buscando comercios locales"}</span><span>Orden: <strong>{filters.area ? "Más cercanos" : "Nombre, A–Z"}</strong></span></div>
-      {error ? <div className="empty-state"><span className="empty-icon"><Icon name="store" /></span><h3>La guía no está disponible por un momento.</h3><p role="alert">No pudimos cargar los negocios. Revisá tu conexión y volvé a intentarlo.</p><button className="button button-dark" onClick={() => navigate(filters)}>Reintentar</button></div>
-        : !directory ? <div role="status" aria-label="Cargando negocios"><span className="sr-only">Cargando negocios…</span><div className="directory-grid skeleton-grid" aria-hidden="true">{[1, 2, 3].map((item) => <div className="skeleton-card" key={item}><div/><span/><span/><span/></div>)}</div></div>
+      <div className="results-toolbar"><span aria-live="polite">{directory ? directory.items.length + (directory.hasMore ? "+" : "") + (directory.items.length === 1 ? " comercio" : " comercios") + " en esta página" : "Buscando comercios locales"}</span><p className="results-order">Orden: <strong>{orderLabel}</strong></p></div>
+      {error ? <EmptyState icon="store" role="alert" title="La guía no está disponible por un momento." actions={retry}>No pudimos cargar los negocios. Revisá tu conexión y volvé a intentarlo.</EmptyState>
+        : !directory ? <Skeleton variant="cards" label="Cargando negocios" />
         : <section aria-label="Negocios publicados">
-          {directory.items.length === 0 ? <div className="empty-state"><span className="empty-icon"><Icon name="search" /></span><h3>{filtered ? "No encontramos negocios con esa búsqueda." : filters.page === 1 ? "Todavía no hay negocios publicados." : "No hay más negocios en esta página."}</h3><p>{filters.area ? "Ampliá el radio, elegí otra zona o quitá la ubicación para ver más negocios." : filtered ? "Probá con otro nombre, una dirección o un rubro diferente." : "Cada comercio tiene una historia. La tuya puede ser la próxima."}</p>{filtered ? <button className="button button-dark" onClick={() => navigate(initialFilters)}>Ver todos los negocios</button> : <Link className="button button-dark" href="/mi-negocio">Sumar mi negocio <Icon name="arrow" /></Link>}</div>
+          {directory.items.length === 0 ? <EmptyState icon="search" title={filtered ? "No encontramos negocios con esa búsqueda." : filters.page === 1 ? "Todavía no hay negocios publicados." : "No hay más negocios en esta página."}
+            actions={filtered ? <button className="button button-dark" onClick={() => navigate(initialFilters)}>Ver todos los negocios</button> : <Link className="button button-dark" href="/mi-negocio">Sumar mi negocio <Icon name="arrow" /></Link>}>
+            {filters.area ? "Ampliá el radio, elegí otra zona o quitá la ubicación para ver más negocios." : filtered ? "Probá con otro nombre, una dirección o un rubro diferente." : "Cada comercio tiene una historia. La tuya puede ser la próxima."}</EmptyState>
           : <div className="directory-grid">{directory.items.map((business) => <BusinessCard key={business.id} business={business} token={directory.measurement?.[business.id]}/>)}</div>}
         </section>}
       <nav className="directory-pagination" aria-label="Páginas de negocios">

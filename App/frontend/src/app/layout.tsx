@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
+import "./styles/discovery.css";
+import "./styles/profile.css";
+import "./styles/owner.css";
+import "./styles/admin.css";
 
 export const metadata: Metadata = {
   title: "Cerca · Comercios de Córdoba",
