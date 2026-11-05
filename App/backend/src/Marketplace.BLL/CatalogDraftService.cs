@@ -2,8 +2,11 @@ using Marketplace.DTOs;
 
 namespace Marketplace.BLL;
 
+/// <summary>Strategy port for catalog AI providers; adapters live in Marketplace.Integrations.</summary>
 public interface ICatalogDraftProvider
 {
+    /// <summary>Provider name shown to the owner before consenting.</summary>
+    string Name { get; }
     bool Enabled { get; }
     /// <param name="jpegPhoto">Optional re-encoded JPEG of the product; never the raw upload.</param>
     Task<CatalogDraft?> Generate(string facts, byte[]? jpegPhoto, CancellationToken ct);
@@ -16,7 +19,7 @@ public sealed class CatalogDraftService(ICatalogRepository catalog, ICatalogDraf
     public async Task<CatalogDraftAvailability?> Availability(Guid business, Guid owner, CancellationToken ct)
     {
         var plan = await catalog.PlanAsync(business, owner, ct);
-        return plan == null ? null : new(provider.Enabled && plan.CatalogEnabled, provider.Enabled ? "OpenAI" : null);
+        return plan == null ? null : new(provider.Enabled && plan.CatalogEnabled, provider.Enabled ? provider.Name : null);
     }
     public async Task<CatalogDraftResult> Generate(Guid business, Guid owner, CatalogDraftRequest request, byte[]? photo, CancellationToken ct)
     {

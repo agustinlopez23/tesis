@@ -78,6 +78,7 @@ public sealed class CatalogAssistanceTests(OnboardingFixture fixture) : IClassFi
     }
     private sealed class StubProvider(string outcome) : ICatalogDraftProvider
     {
+        public string Name => "OpenAI";
         public bool Enabled => true;
         public int Calls;
         public string? Facts; public byte[]? Photo;

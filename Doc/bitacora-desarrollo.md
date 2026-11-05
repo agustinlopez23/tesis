@@ -654,3 +654,22 @@ Guía paso a paso: [`Doc/despliegue.md`](despliegue.md). Resumen técnico:
   (nombre de aplicación fijo `marketplace-api`): los tokens sobreviven reinicios y redeploys.
 - El proxy web envía `X-Marketplace-Client-IP` junto con `X-Marketplace-Proxy-Secret`
   (`API_PROXY_SECRET`); la API usa esa IP para el límite de login solo si el secreto coincide.
+
+## 04/11/2026 — Proveedor de IA intercambiable
+
+### Asistencia de catálogo con OpenAI o Gemini
+
+La asistencia de catálogo estaba atada a OpenAI en la configuración y en el texto de
+consentimiento. Ahora `CatalogAi__Provider` elige entre `OpenAI` y `Gemini` sin cambiar
+la capa de negocio. Se aplicaron tres patrones de diseño:
+
+- **Strategy**: `ICatalogDraftProvider` es el puerto en BLL y cada proveedor es una
+  estrategia en Integrations.
+- **Template Method**: `CatalogDraftProviderBase` concentra el flujo común (cupo, tiempo
+  máximo, tope de respuesta y validación) y cada estrategia define la solicitud y la lectura.
+- **Factory**: `CatalogDraftProviderFactory` crea la estrategia según la configuración y
+  falla al arrancar ante un proveedor desconocido.
+
+Motivo: las suscripciones de consumo (ChatGPT, Gemini, Claude) no incluyen acceso a la
+API. La API de Gemini tiene una capa gratuita sin tarjeta, apta para la demostración con
+datos ficticios. El consentimiento nombra al proveedor que informa la API.

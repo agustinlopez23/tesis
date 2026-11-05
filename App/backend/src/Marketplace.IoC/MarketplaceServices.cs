@@ -44,9 +44,11 @@ public static class MarketplaceServices
         services.AddScoped<ICatalogRepository, CatalogRepository>();
         services.AddScoped<CatalogService>();
         services.AddScoped<CatalogDraftService>();
-        services.AddSingleton<ICatalogDraftProvider>(_ => new OpenAiCatalogDraftProvider(
-            new HttpClient(new SocketsHttpHandler { AllowAutoRedirect = false, PooledConnectionLifetime = TimeSpan.FromMinutes(5) }),
-            new CatalogAiOptions(configuration.GetValue("CatalogAi:Enabled", false), configuration["CatalogAi:ApiKey"], configuration["CatalogAi:Model"])));
+        var catalogAi = new CatalogAiOptions(configuration.GetValue("CatalogAi:Enabled", false), configuration["CatalogAi:ApiKey"],
+            configuration["CatalogAi:Model"], configuration["CatalogAi:Provider"]);
+        CatalogDraftProviderFactory.Validate(catalogAi);
+        services.AddSingleton<ICatalogDraftProvider>(_ => CatalogDraftProviderFactory.Create(catalogAi,
+            new HttpClient(new SocketsHttpHandler { AllowAutoRedirect = false, PooledConnectionLifetime = TimeSpan.FromMinutes(5) })));
         services.AddScoped<IOrderRepository, OrderRepository>();
         services.AddScoped<OrderService>();
         services.AddScoped<ISalesRepository, SalesRepository>();

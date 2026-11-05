@@ -49,7 +49,7 @@ Usar el mismo valor en Railway (`Proxy__SharedSecret`) y en Vercel (`API_PROXY_S
    | `FrontendOrigin` | `https://<app>.vercel.app` (sin barra final; completar en el paso 5) |
    | `Proxy__SharedSecret` | secreto del paso 2 (mínimo 32 caracteres) |
    | `Ranking__Enabled` | `true` |
-   | `CatalogAi__Enabled` / `CatalogAi__ApiKey` / `CatalogAi__Model` | opcional: `true`, clave de OpenAI y modelo. Sin clave, dejar `false` |
+   | `CatalogAi__Enabled` / `CatalogAi__Provider` / `CatalogAi__ApiKey` / `CatalogAi__Model` | opcional: `true`, `OpenAI` o `Gemini`, clave de ese proveedor y modelo. Sin clave, dejar `false` |
 
    `PORT` lo define Railway; la API escucha en ese puerto.
 4. *Settings → Networking → Generate Domain*. Anotar la URL (`https://<api>.up.railway.app`).

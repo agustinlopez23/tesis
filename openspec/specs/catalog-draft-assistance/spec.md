@@ -18,14 +18,16 @@ continuar manualmente sin sustituir contenido.
 
 El adaptador MUST permanecer desactivado por defecto y requerir habilitación,
 modelo y clave de servidor. La interfaz de proveedor reside en BLL y su adaptador
-en Integrations, registrado por IoC. Endpoint OpenAI HTTPS fijo, sin redirecciones,
-sin herramientas ni contexto extraído de cuenta/pedidos, `store:false`, esquema
-estricto. No se registran hechos/respuestas en logs propios. Esto no declara
+en Integrations, registrado por IoC. `CatalogAi:Provider` elige el adaptador
+(`OpenAI` por defecto, o `Gemini`); un valor desconocido MUST impedir el arranque.
+Cada adaptador usa un endpoint HTTPS fijo, sin redirecciones, sin herramientas ni
+contexto extraído de cuenta/pedidos, con salida JSON por esquema; OpenAI con
+`store:false` y esquema estricto, Gemini con la clave solo en encabezado. No se registran hechos/respuestas en logs propios. Esto no declara
 retención cero del proveedor; su configuración y condiciones son externas.
 
 Límites del prototipo por instancia: seis POST/minuto, dos generaciones simultáneas
-sin cola, 12 segundos y 128 KiB de respuesta, 1000 tokens de salida solicitados.
-No hay reintentos automáticos. La interfaz informa envío a OpenAI y permite escribir
+sin cola, 12 segundos y 128 KiB de respuesta, con tope de tokens de salida.
+No hay reintentos automáticos. La interfaz informa el proveedor configurado y permite escribir
 a mano cuando el adaptador está desconfigurado o falla.
 
 Escenario: proveedor deshabilitado no realiza solicitudes externas. Respuesta

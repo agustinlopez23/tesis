@@ -64,8 +64,9 @@ cambiarlas, hay que reconstruir y reiniciar (o reiniciar `npm run dev`).
 | `OwnerActivity__DedupMinutes` | `60` | Ventana en la que una actualización del responsable cuenta una sola vez por tipo. |
 | `OwnerActivity__RankingCap` | `10` | Actualizaciones en 30 días que saturan la señal de actividad del ranking. |
 | `CatalogAi__Enabled` | `false` | Habilita la asistencia de redacción. |
-| `CatalogAi__Model` | vacío | Modelo de OpenAI con visión y Structured Outputs en Responses (por ejemplo, `gpt-4o-mini`); recibe la foto del producto. |
-| `CatalogAi__ApiKey` | sin valor | Clave de OpenAI, solo mediante el gestor de secretos del entorno. |
+| `CatalogAi__Provider` | `OpenAI` | Proveedor de IA: `OpenAI` o `Gemini`. Un valor desconocido impide el arranque. |
+| `CatalogAi__Model` | vacío | Modelo con visión y salida JSON del proveedor elegido (por ejemplo, `gpt-4o-mini` en OpenAI o un modelo Flash en Gemini); recibe la foto del producto. |
+| `CatalogAi__ApiKey` | sin valor | Clave del proveedor elegido, solo mediante el gestor de secretos del entorno. |
 
 La configuración de ranking inválida impide el arranque. En `Production` la API no
 arranca sin conexión, `FrontendOrigin` (solo origen, sin barra final) y
@@ -312,17 +313,38 @@ una vez por ventana `OwnerActivity__DedupMinutes` y alimenta el ranking con tope
 
 ### Asistencia IA
 
-En el editor de producto, **Ayuda para redactar** envía a OpenAI, con consentimiento, una
+En el editor de producto, **Ayuda para redactar** envía al proveedor configurado, con consentimiento, una
 foto opcional del producto y los datos mínimos que el responsable escribe, y devuelve
 nombre, descripción y categoría editables; no guarda ni publica. La API valida la foto
 (JPEG, PNG o WebP, hasta 5 MB y 20 megapíxeles), la reencoda como JPEG de 1024 px como
-máximo sin metadatos y la envía como `input_image` con `detail: "low"`; no la almacena.
+máximo sin metadatos y la envía en línea dentro de la solicitud; no la almacena.
 Tras guardar el producto, el editor ofrece **Usar la foto del borrador**, que la sube
 por el flujo normal de fotos. Está implementada y desactivada por defecto: requiere
 `CatalogAi__Enabled=true`, `CatalogAi__Model` y `CatalogAi__ApiKey`; sin ellos informa
-que la carga es manual. Endpoint fijo `https://api.openai.com/v1/responses` con
-`store:false`; límites por instancia: seis POST por minuto, dos generaciones simultáneas,
-12 s y 1000 tokens de salida, sin reintentos.
+que la carga es manual. Límites por instancia: seis POST por minuto, dos generaciones
+simultáneas, 12 s y 128 KiB de respuesta, sin reintentos.
+
+El proveedor se elige con `CatalogAi__Provider`, sin tocar la lógica de negocio:
+
+- **Strategy.** `ICatalogDraftProvider` (BLL) es el puerto; cada proveedor es una estrategia
+  en `Marketplace.Integrations`. La pantalla nombra en el consentimiento al proveedor que
+  informa la API.
+- **Template Method.** `CatalogDraftProviderBase` fija el flujo común: cupo, tiempo máximo,
+  tope de respuesta y validación del borrador. Cada estrategia define solo cómo arma la
+  solicitud y dónde lee el texto.
+- **Factory.** `CatalogDraftProviderFactory` crea la estrategia según la configuración y
+  rechaza al arrancar un proveedor desconocido.
+
+| Proveedor | Endpoint fijo | Detalles |
+|---|---|---|
+| `OpenAI` (por defecto) | `https://api.openai.com/v1/responses` | `store:false`, esquema estricto, foto como `input_image` con `detail: "low"`, 1000 tokens de salida. |
+| `Gemini` | `https://generativelanguage.googleapis.com/v1beta/models/{modelo}:generateContent` | Clave en el encabezado `x-goog-api-key`, `responseJsonSchema`, foto como `inlineData`, 4096 tokens de salida. |
+
+La capa gratuita de Gemini no requiere tarjeta, pero Google puede usar ese contenido para
+mejorar sus productos; conviene usarla solo con datos de demostración.
+
+Para agregar otro proveedor: una clase que herede de `CatalogDraftProviderBase`, un caso en
+la fábrica y sus pruebas.
 [Contrato](../openspec/specs/catalog-draft-assistance/spec.md).
 
 ## Despliegue

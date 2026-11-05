@@ -13,6 +13,8 @@ export default function CatalogAssistance({ business, onApply }: { business: str
 }
 function DraftAssistant({ business, onApply }: { business: string; onApply: ApplyDraft }) {
   const [enabled, setEnabled] = useState<boolean | null>(null), [error, setError] = useState("");
+  // The consent text names whichever provider the API is configured with.
+  const [provider, setProvider] = useState("el proveedor de IA");
   const [facts, setFacts] = useState(""), [consent, setConsent] = useState(false), [pending, setPending] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null), [photo, setPhoto] = useState<File | null>(null);
   // The photo stays in the browser; the API only forwards it to the provider and never stores it.
@@ -28,7 +30,9 @@ function DraftAssistant({ business, onApply }: { business: string; onApply: Appl
     const controller = new AbortController();
     void catalogApi(`/businesses/${business}/catalog-assistance`, "GET", undefined, controller.signal).then(async response => {
       if (!response.ok) throw new Error(await catalogError(response));
-      const data = await response.json(); if (!controller.signal.aborted) setEnabled(data.enabled === true);
+      const data = await response.json(); if (controller.signal.aborted) return;
+      if (typeof data.provider === "string" && data.provider.trim()) setProvider(data.provider.trim());
+      setEnabled(data.enabled === true);
     }).catch(() => { if (!controller.signal.aborted) setEnabled(false); });
     return () => { controller.abort(); current.current?.abort(); };
   }, [business]);
@@ -50,10 +54,10 @@ function DraftAssistant({ business, onApply }: { business: string; onApply: Appl
   }
   return <div className="catalog-form"><h3>Borrador con asistencia de IA</h3>
     {enabled === null ? <p role="status">Consultando disponibilidad…</p> : !enabled ? <p>La asistencia no está configurada o no está habilitada para este negocio. Podés continuar con la carga manual.</p> : <>
-      <p>Subí una foto del producto y escribí sus datos mínimos comprobados. Se enviarán la foto y el texto a OpenAI para sugerir nombre, descripción y categoría. No incluyas datos personales ni información de clientes. La foto no se guarda, salvo que después decidas usarla en el producto.</p>
+      <p>Subí una foto del producto y escribí sus datos mínimos comprobados. Se enviarán la foto y el texto a {provider} para sugerir nombre, descripción y categoría. No incluyas datos personales ni información de clientes. La foto no se guarda, salvo que después decidas usarla en el producto.</p>
       <label>Foto para el borrador (opcional)<input type="file" accept={photoTypes.join(",")} disabled={pending} onChange={e => selectPhoto(e.target)} /></label>
       <label>Datos mínimos del producto<textarea maxLength={1500} disabled={pending} value={facts} onChange={e => setFacts(e.target.value)} placeholder="Por ejemplo: café en granos, paquete de 250 g, tueste medio." /></label>
-      <label className="order-contact-check"><input type="checkbox" checked={consent} disabled={pending} onChange={e => setConsent(e.target.checked)} />Acepto enviar la foto y los datos a OpenAI para preparar un borrador</label>
+      <label className="order-contact-check"><input type="checkbox" checked={consent} disabled={pending} onChange={e => setConsent(e.target.checked)} />Acepto enviar la foto y los datos a {provider} para preparar un borrador</label>
       <button type="button" className="button button-outline" disabled={!consent || pending || facts.trim().length < 3} onClick={() => void generate()}>{pending ? "Preparando borrador…" : "Generar borrador"}</button>
       {error && <p role="alert">{error}</p>}
       {draft && <div><p>Revisá los hechos y corregí la propuesta. Usarla reemplaza los tres textos del formulario; todavía tendrás que guardar el producto.</p>
