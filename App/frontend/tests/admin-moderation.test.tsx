@@ -89,6 +89,25 @@ it("suspender un negocio exige motivo y refresca el estado", async () => {
   expect(calls(fetcher)).toContainEqual([`/api/marketplace/admin/moderation/businesses/${id}/suspend`, "POST", JSON.stringify({ reason: "Datos falsos" })]);
 });
 
+it("las pestañas de estado filtran la lista de moderación sin pedir datos nuevos", async () => {
+  const fetcher = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json([
+    { id, email: "ana@example.test", displayName: "Ana", isSuspended: false, businessCount: 1 },
+    { id: "a2", email: "bruno@example.test", displayName: "Bruno", isSuspended: true, businessCount: 0 },
+  ]));
+  render(<AdminModeration />);
+  expect(await screen.findByText("ana@example.test")).toBeInTheDocument();
+  const filters = screen.getByRole("navigation", { name: "Filtrar por estado" });
+  expect(within(filters).getByRole("button", { name: /^Todas/ })).toHaveAttribute("aria-current", "true");
+  expect(screen.getByText("bruno@example.test")).toBeInTheDocument();
+  fireEvent.click(within(filters).getByRole("button", { name: /^Suspendidas/ }));
+  expect(screen.queryByText("ana@example.test")).not.toBeInTheDocument();
+  expect(screen.getByText("bruno@example.test")).toBeInTheDocument();
+  fireEvent.click(within(filters).getByRole("button", { name: /^Activas/ }));
+  expect(screen.getByText("ana@example.test")).toBeInTheDocument();
+  expect(screen.queryByText("bruno@example.test")).not.toBeInTheDocument();
+  expect(fetcher).toHaveBeenCalledTimes(1);
+});
+
 it("muestra el error de moderación de la API", async () => {
   vi.spyOn(globalThis, "fetch")
     .mockResolvedValueOnce(Response.json([{ id, email: "ana@example.test", displayName: "Ana", isSuspended: false, businessCount: 0 }]))
@@ -124,6 +143,8 @@ it("el formulario del negocio oculta rubros deshabilitados salvo el actual", asy
     return new Response(null, { status: 404 });
   });
   render(<OwnerOnboarding />);
+  // The dashboard opens on the summary of the existing business; the rule applies to the new-business form.
+  fireEvent.click(await screen.findByRole("button", { name: "Nuevo negocio" }));
   const select = await screen.findByLabelText("Rubro");
   await waitFor(() => expect(within(select).queryByRole("option", { name: "Gastronomía" })).not.toBeInTheDocument());
   expect(within(select).getByRole("option", { name: "Almacenes" })).toBeInTheDocument();

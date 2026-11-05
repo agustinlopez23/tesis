@@ -8,10 +8,12 @@ import { useSaleOperation } from "./use-sale-operation";
 import CampaignEditor from "./campaign-editor";
 import { money } from "./order-api";
 import { useBusinessRefresh } from "./business-refresh";
+import { EmptyState } from "./ui";
 
-export default function CampaignPanel({ business, admin = false }: { business?: string; admin?: boolean }) {
-  const [open, setOpen] = useState(admin);
-  return <section className="catalog-panel"><div className="catalog-heading"><h2>Campañas publicitarias</h2>{!admin && <button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar campañas" : "Ver campañas"}</button>}</div>
+// Admin mode is always open; the owner dashboard passes `defaultOpen` when the Campañas section is reached.
+export default function CampaignPanel({ business, admin = false, defaultOpen = false }: { business?: string; admin?: boolean; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(admin || defaultOpen);
+  return <section className="panel"><div className="panel-heading"><div>{!admin && <p className="eyebrow">Difusión</p>}<h2>Campañas publicitarias</h2></div>{!admin && <div className="panel-actions"><button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar campañas" : "Ver campañas"}</button></div>}</div>
     {open && <CampaignList key={business ?? "admin"} business={business} admin={admin} />}</section>;
 }
 function CampaignList({ business, admin }: { business?: string; admin: boolean }) {
@@ -33,7 +35,7 @@ function CampaignList({ business, admin }: { business?: string; admin: boolean }
   return <><p>La difusión requiere revisión y confirmación manual de pago. No modifica el orden orgánico ni garantiza vistas o ventas. Hasta tres campañas contratadas por zona en fechas superpuestas.</p>
     <div className="catalog-toolbar">{!admin && <button className="button button-outline" onClick={() => setEditing(editing ? null : "new")}>{editing ? "Cerrar edición de campaña" : "Preparar campaña"}</button>}<button className="text-link" disabled={loading} onClick={refresh}>Actualizar campañas</button></div>
     {error && <p role="alert">{error}</p>}{editing && <CampaignEditor key={editing === "new" ? "new" : editing.id} business={business!} campaign={editing === "new" ? undefined : editing} onSaved={saved} />}
-    {loading ? <p role="status">Cargando campañas…</p> : !error && <>{!items.length && <p>No hay campañas registradas.</p>}{items.map(c => <article className="campaign-record" key={c.id}>
+    {loading ? <p role="status">Cargando campañas…</p> : !error && <>{!items.length && <EmptyState compact icon="megaphone" title="No hay campañas registradas.">{admin ? "Las campañas enviadas a revisión van a aparecer acá." : "Preparar una campaña destaca un producto en la zona que elijas."}</EmptyState>}{items.map(c => <article className="campaign-record" key={c.id}>
       <h3>{c.title}</h3><p>{c.businessName} · {campaignState(c.deliveryState)} · {c.zoneId}</p><p>{new Date(c.startsAt).toLocaleString("es-AR")} — {new Date(c.endsAt).toLocaleString("es-AR")}</p>
       {c.hasImage && <Image src={`/api/marketplace/public/campaigns/${c.id}/image`} alt={c.title} width={320} height={200} unoptimized />}
       <p>{c.description}</p><p>Condiciones: {c.conditions}</p>

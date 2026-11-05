@@ -6,14 +6,15 @@ import { money } from "./order-api";
 import SaleEditor from "./sale-editor";
 import { useSaleOperation } from "./use-sale-operation";
 import { businessChanged, useBusinessRefresh } from "./business-refresh";
+import { EmptyState } from "./ui";
 
 type Sale = { id: string; orderId: string | null; orderReference: string | null; createdAt: string; voidedAt: string | null; voidReason: string | null;
   lines: { productId: string; name: string; quantity: number; unitPrice: number; currency: string; origin: string; returnedQuantity: number }[];
   totals: Record<string, Record<string, number>> };
 const originLabel = (origin: string) => ({ requested: "Solicitado", conversation: "Acordado en conversación", direct: "Presencial" }[origin] ?? origin);
-export default function BusinessSales({ business }: { business: string }) {
-  const [open, setOpen] = useState(false);
-  return <section className="catalog-panel"><div className="catalog-heading"><h2>Ventas reportadas</h2><button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar ventas" : "Ver ventas"}</button></div>{open && <SalesList key={business} business={business} />}</section>;
+export default function BusinessSales({ business, defaultOpen = false }: { business: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return <section className="panel"><div className="panel-heading"><div><p className="eyebrow">Lo que vendiste</p><h2>Ventas reportadas</h2></div><div className="panel-actions"><button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar ventas" : "Ver ventas"}</button></div></div>{open && <SalesList key={business} business={business} />}</section>;
 }
 function SalesList({ business }: { business: string }) {
   const [items, setItems] = useState<Sale[]>([]), [page, setPage] = useState(1), [more, setMore] = useState(false);
@@ -34,7 +35,7 @@ function SalesList({ business }: { business: string }) {
     <div className="catalog-toolbar"><button className="button button-outline" onClick={() => setCreating(!creating)}>{creating ? "Cerrar venta presencial" : "Nueva venta presencial"}</button><button className="text-link" disabled={loading} onClick={refresh}>Actualizar ventas</button></div>
     {error && <p role="alert">{error}</p>}{notice && <p role="status">{notice}</p>}
     {creating && <SaleEditor business={business} onSaved={() => { setCreating(false); setNotice("Venta registrada."); refresh(); }} />}
-    {loading ? <p role="status">Cargando ventas…</p> : !error && <>{!items.length && <p>Todavía no hay ventas registradas.</p>}{items.map(sale => <article className="sale-record" key={sale.id}>
+    {loading ? <p role="status">Cargando ventas…</p> : !error && <>{!items.length && <EmptyState compact icon="chart" title="Todavía no hay ventas registradas.">Registrá una venta desde una solicitud o cargá una venta presencial.</EmptyState>}{items.map(sale => <article className="sale-record" key={sale.id}>
       <h3>{sale.orderReference ?? "Venta presencial"}</h3><p>{new Date(sale.createdAt).toLocaleString("es-AR")} · {sale.voidedAt ? "Anulada" : "Registrada"}</p>
       <ul>{sale.lines.map(line => <li key={line.productId}>{line.quantity} × {line.name} · {money(line.unitPrice, line.currency)} c/u · {originLabel(line.origin)}{sale.voidedAt ? ` · Devueltas: ${line.returnedQuantity}` : ""}</li>)}</ul>
       {Object.entries(sale.totals).map(([origin, totals]) => <div key={origin}><strong>{originLabel(origin)}</strong>{Object.entries(totals).map(([currency, total]) => <p key={currency}>Importe {sale.voidedAt ? "original anulado" : "registrado"}: {money(total, currency)}</p>)}</div>)}

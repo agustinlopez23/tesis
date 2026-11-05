@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { Icon } from "./ui";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { EmptyState, Icon } from "./ui";
 import type { Photo } from "./business-profile";
 
-export default function BusinessPhotos({ id }: { id: string }) {
-  const [open, setOpen] = useState(false);
+type PhotosProps = { id: string; defaultOpen?: boolean; onCountChange?: (count: number) => void };
+// `defaultOpen` opens and loads the manager when the dashboard reaches the Fotos section; `onCountChange` feeds the setup guide.
+export default function BusinessPhotos({ id, defaultOpen = false, onCountChange }: PhotosProps) {
+  const [open, setOpen] = useState(defaultOpen);
   const [photos, setPhotos] = useState<Photo[] | null>(null);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -26,7 +28,7 @@ export default function BusinessPhotos({ id }: { id: string }) {
   const freeSlot = [1, 2, 3, 4, 5].find((slot) => !photos?.some((photo) => photo.slot === slot));
   const slot = editing ?? freeSlot;
 
-  async function load() {
+  const load = useCallback(async () => {
     setPending(true); setError("");
     try {
       const response = await fetch(path, { cache: "no-store", signal: AbortSignal.timeout(15000) });
@@ -34,7 +36,13 @@ export default function BusinessPhotos({ id }: { id: string }) {
       setPhotos(await response.json());
     } catch (failure) { setError(failure instanceof Error && failure.message.startsWith("Tu sesión") ? failure.message : "No pudimos cargar las fotos."); }
     finally { setPending(false); }
-  }
+  }, [path]);
+  useEffect(() => {
+    if (!defaultOpen) return;
+    const timer = setTimeout(() => void load(), 0);
+    return () => clearTimeout(timer);
+  }, [defaultOpen, load]);
+  useEffect(() => { if (photos) onCountChange?.(photos.length); }, [photos, onCountChange]);
   function resetFile() {
     previewUrls.current.forEach((url) => URL.revokeObjectURL(url));
     previewUrls.current.clear(); setPreview(""); setFile(null); setRevision((value) => value + 1);
@@ -83,16 +91,16 @@ export default function BusinessPhotos({ id }: { id: string }) {
     finally { setPending(false); }
   }
 
-  return <section className="photo-manager" aria-labelledby={"photos-title-" + id}>
-    <div className="photo-manager-heading"><div><p className="eyebrow">La identidad de tu negocio</p><h2 id={"photos-title-" + id}>Mostrá lo que te hace especial.</h2><p>Sumá hasta 5 fotos de tu local y tu propuesta.</p></div>
-      <button type="button" className="button button-outline" aria-expanded={open} onClick={() => {
+  return <section className="panel" aria-labelledby={"photos-title-" + id}>
+    <div className="panel-heading"><div><p className="eyebrow">La identidad de tu negocio</p><h2 id={"photos-title-" + id}>Mostrá lo que te hace especial.</h2><p>Sumá hasta 5 fotos de tu local y tu propuesta.</p></div>
+      <div className="panel-actions"><button type="button" className="button button-outline" aria-expanded={open} onClick={() => {
         setOpen(!open); if (!open && photos === null) void load();
-      }}>{open ? "Cerrar fotos" : "Administrar fotos"}<Icon name={open ? "close" : "plus"} /></button></div>
+      }}>{open ? "Cerrar fotos" : "Administrar fotos"}<Icon name={open ? "close" : "plus"} /></button></div></div>
     {open && <div className="photo-manager-content">
       {error && <p role="alert" className="error">{error}</p>}
       {message && <p role="status" className="photo-message"><Icon name="check" />{message}</p>}
       {photos === null ? pending ? <p role="status">Cargando fotos…</p> : <button className="button button-outline" onClick={load}>Reintentar fotos</button> : <>
-        {photos.length === 0 ? <p className="photos-empty">Todavía no agregaste fotos.</p> : <div className="owner-photo-grid">{photos.map((photo, index) => <article key={photo.slot}>
+        {photos.length === 0 ? <EmptyState compact icon="image" title="Todavía no agregaste fotos.">La primera foto que subas será la portada de tu perfil.</EmptyState> :<div className="owner-photo-grid">{photos.map((photo, index) => <article key={photo.slot}>
           <div className="owner-photo"><Image src={path + "/" + photo.slot + "?v=" + revision} alt={photo.caption || "Foto " + photo.slot} fill unoptimized /><span>{index === 0 ? "Portada" : "Foto " + photo.slot}</span></div>
           <p>{photo.caption || "Sin descripción"}</p><div className="photo-actions">
             <button type="button" disabled={pending} onClick={() => { setEditing(photo.slot); setCaption(photo.caption); resetFile(); setError(""); setMessage(""); }} aria-label={"Reemplazar foto " + photo.slot}>Reemplazar</button>

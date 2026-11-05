@@ -6,12 +6,14 @@ import { Order, orderStatus } from "./order-api";
 import OrderReceipt from "./order-receipt";
 import SaleEditor from "./sale-editor";
 import { businessChanged, useBusinessRefresh } from "./business-refresh";
+import { EmptyState } from "./ui";
 
 type Summary = Pick<Order, "id" | "reference" | "customerName" | "createdAt" | "status" | "contactReceivedAt">;
-export default function BusinessOrders({ id }: { id: string }) {
-  const [open, setOpen] = useState(false);
-  return <section className="catalog-panel"><div className="catalog-heading"><div><p className="eyebrow">Del catálogo a la conversación</p><h2>Solicitudes de productos</h2></div>
-    <button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar solicitudes" : "Ver solicitudes"}</button></div>
+// `defaultOpen` lets the dashboard open the panel when its section is reached; it stays closed when rendered alone.
+export default function BusinessOrders({ id, defaultOpen = false }: { id: string; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return <section className="panel"><div className="panel-heading"><div><p className="eyebrow">Del catálogo a la conversación</p><h2>Solicitudes de productos</h2></div>
+    <div className="panel-actions"><button className="button button-outline" aria-expanded={open} onClick={() => setOpen(!open)}>{open ? "Cerrar solicitudes" : "Ver solicitudes"}</button></div></div>
     {open && <OrderList key={id} business={id} />}
   </section>;
 }
@@ -50,7 +52,7 @@ function OrderList({ business }: { business: string }) {
     {error && <p role="alert" className="error">{error}</p>}
     <button className="text-link" disabled={loading} onClick={refresh}>Actualizar solicitudes</button>
     {loading ? <p role="status">Cargando solicitudes…</p> : !error && <>
-      {!items.length && <p>No hay solicitudes para estos filtros.</p>}
+      {!items.length && <EmptyState compact icon="cart" title="No hay solicitudes para estos filtros.">Cuando alguien arme un pedido desde tu catálogo, va a aparecer acá.</EmptyState>}
       <div className="catalog-owner-list">{items.map(item => <article key={item.id}><div><strong>{item.reference} · {item.customerName}</strong><p>{orderStatus(item.status)} · {new Date(item.createdAt).toLocaleString("es-AR")}</p></div><button className="text-link" aria-label={`Abrir ${item.reference}`} onClick={() => setSelected(item.id)}>Abrir solicitud</button></article>)}</div>
       <nav className="catalog-toolbar" aria-label="Páginas de solicitudes"><button className="button button-outline" disabled={page === 1} onClick={() => { setLoading(true); setPage(page - 1); }}>Anterior</button><span>Página {page}</span><button className="button button-outline" disabled={!more} onClick={() => { setLoading(true); setPage(page + 1); }}>Siguiente</button></nav>
     </>}
