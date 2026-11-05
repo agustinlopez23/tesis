@@ -14,7 +14,7 @@
   :root {
     /* Brand palette: one warm accent on an ink-green base; WhatsApp green is reserved for WhatsApp actions. */
     --paper: #faf9f6; --ink: #273d32; --muted: #596253; --line: #e3e4db; --line-strong: #c9cfc2; --accent: #b34830; --accent-hover: #963820; --accent-soft: #f6e6df; --cream: #f0eee5; --green: #254e3d;
-    --surface: #ffffff; --surface-2: #f3f3ec; --whatsapp: #1f8f4e; --whatsapp-hover: #187a41;
+    --surface: #ffffff; --surface-2: #f3f3ec; --whatsapp: #16753f; --whatsapp-hover: #115f33;
     /* Semantic tones for alerts and badges. */
     --success-bg: #e8f1e3; --success-ink: #2f5a2e; --warning-bg: #f7eed6; --warning-ink: #7a5a16; --danger-bg: #fcefeb; --danger-ink: #8d3022; --info-bg: #e9edf3; --info-ink: #324a63; --neutral-bg: #ecece6; --neutral-ink: #4e564b;
     /* Scales: 4-based spacing, four radii, two shadow levels, a six-step type scale. */
@@ -107,7 +107,8 @@
   .toast .icon { color: #9fd3b0; }
   .toast .icon-button { color: #fff; min-width: 36px; min-height: 36px; margin: -6px -8px -6px 0; }
   .toast .icon-button:hover { background: #ffffff22; }
-  @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } }
+  /* Slide only: fading opacity would render the text below contrast minimums while it enters. */
+  @keyframes toast-in { from { transform: translate(-50%, 12px); } }
   .skeleton-line, .skeleton-block { display: block; background: #e8eae2; border-radius: var(--radius-s); animation: breathe 1.5s ease-in-out infinite alternate; }
   .skeleton-line { height: 12px; width: 70%; }
   .skeleton-line.short { width: 40%; }
@@ -283,6 +284,8 @@
   .site-header { position: sticky; top: 0; z-index: 30; border-bottom: 1px solid var(--line); background: #faf9f6f2; backdrop-filter: blur(8px); }
   .nav-inner { display: flex; align-items: center; gap: 32px; height: var(--header-height); }
   .nav-link .icon { display: none; }
+  /* The header button switches between a dark pill and a bottom-bar item; animating that swap shows white text on a light background. */
+  .nav-inner nav > .button { transition: none; }
   .brand { display: inline-flex; align-items: center; font-size: 34px; letter-spacing: -2px; font-weight: 750; line-height: 1; }
   .brand-symbol { display: flex; margin-right: 10px; background: var(--accent); color: #fff9f0; padding: 8px; border-radius: 10px 10px 10px 2px; }
   .brand-symbol .icon { width: 24px; height: 24px; }
@@ -541,12 +544,17 @@
     .brand-symbol { margin-right: 7px; padding: 6px; border-radius: 8px 8px 8px 2px; }
     .brand-symbol .icon { width: 21px; height: 21px; }
     .nav-inner nav { position: fixed; z-index: 40; left: 0; right: 0; bottom: 0; margin: 0; gap: 0; height: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom)); padding-bottom: env(safe-area-inset-bottom); background: var(--surface); border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(20, 33, 22, .06); }
-    .nav-inner nav > a, .nav-inner nav > .button { flex: 1; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: var(--bottom-nav-height); padding: 6px 4px; border: 0; border-radius: 0; background: transparent; color: var(--muted); font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .nav-inner nav > a, .nav-inner nav > .button { flex: 1 1 0; min-width: 0; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; min-height: var(--bottom-nav-height); padding: 6px 4px; border: 0; border-radius: 0; background: transparent; color: var(--muted); font-size: 11px; font-weight: 600; white-space: nowrap; }
     .nav-inner nav > a .icon, .nav-inner nav > .button .icon { display: block; width: 22px; height: 22px; }
     .nav-inner nav > a .arrow-icon, .nav-inner nav > .button .arrow-icon { display: none; }
     .nav-link.active, .nav-inner nav > [aria-current="page"] { color: var(--accent); }
     .nav-link.active:after { display: none; }
     .toast { bottom: calc(var(--bottom-nav-height) + var(--space-3) + env(safe-area-inset-bottom)); }
+    /* Panel titles and their actions stack on phones; long action labels wrap instead of widening the page. */
+    .panel-heading, .page-header, .catalog-heading { flex-wrap: wrap; }
+    .panel-heading > div:first-child { min-width: 0; flex: 1 1 100%; }
+    .panel-actions { flex-shrink: 1; min-width: 0; max-width: 100%; }
+    .panel-actions .button { white-space: normal; text-align: center; }
     .discovery-hero { grid-template-columns: 1fr; gap: 25px; padding-top: 26px; padding-bottom: 32px; }
     .hero-copy { padding-block: 0; }
     .hero-copy .eyebrow { font-size: 10px; }

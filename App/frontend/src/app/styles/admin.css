@@ -61,7 +61,7 @@
 
   @media (max-width: 800px) {
     .admin-shell { padding-top: var(--space-5); padding-bottom: var(--space-7); }
-    .admin-layout { grid-template-columns: 1fr; gap: var(--space-4); }
+    .admin-layout { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
     .admin-sidebar { position: static; margin-inline: -16px; padding-inline: 16px; overflow-x: auto; scrollbar-width: none; }
     .admin-sidebar .section-nav { flex-direction: row; overflow-x: auto; }
     .audit-list thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
