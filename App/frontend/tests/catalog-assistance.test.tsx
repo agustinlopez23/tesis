@@ -82,3 +82,11 @@ it("una demora del proveedor informa y habilita la carga manual", async () => {
   expect(await screen.findByRole("alert")).toHaveTextContent("continuar con la carga manual");
   expect(screen.getByRole("button", { name: "Generar borrador" })).toBeEnabled();
 });
+it("el consentimiento nombra al proveedor configurado en la API", async () => {
+  vi.spyOn(globalThis, "fetch").mockImplementation(async () => Response.json({ enabled: true, provider: "Google Gemini" }));
+  render(<CatalogAssistance business="b1" onApply={vi.fn()} />);
+  fireEvent.click(screen.getByRole("button", { name: "Ayuda para redactar" }));
+  expect(await screen.findByRole("checkbox", { name: "Acepto enviar la foto y los datos a Google Gemini para preparar un borrador" })).not.toBeChecked();
+  expect(screen.getByText(/Se enviarán la foto y el texto a Google Gemini/)).toBeInTheDocument();
+  expect(screen.queryByText(/OpenAI/)).not.toBeInTheDocument();
+});
