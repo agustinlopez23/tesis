@@ -68,6 +68,22 @@ it("retira de la selección un producto que dejó de estar disponible al actuali
   expect(screen.queryByLabelText("Cantidad de Café")).not.toBeInTheDocument();
   expect(screen.getByRole("button", { name: "Confirmar solicitud" })).toBeDisabled();
 });
+it("el selector de cantidad suma, resta y quita desde la solicitud", async () => {
+  sessionStorage.clear();
+  vi.spyOn(globalThis, "fetch").mockImplementation(async () => Response.json({ items: [product], page: 1, hasNextPage: false }));
+  render(<PublicCatalog id="b1" />);
+  fireEvent.click(await screen.findByRole("button", { name: "Agregar Café" }));
+  const quantity = screen.getByLabelText("Cantidad de Café") as HTMLInputElement;
+  expect(quantity.value).toBe("1");
+  expect(screen.getByRole("button", { name: "Restar Café" })).toBeDisabled();
+  fireEvent.click(screen.getByRole("button", { name: "Sumar Café" }));
+  expect(quantity.value).toBe("2");
+  expect(screen.getByText(/Total de referencia/)).toHaveTextContent("2.501");
+  fireEvent.click(screen.getByRole("button", { name: "Restar Café" }));
+  expect(quantity.value).toBe("1");
+  fireEvent.click(screen.getByRole("button", { name: "Quitar Café" }));
+  expect(screen.queryByLabelText("Cantidad de Café")).not.toBeInTheDocument();
+});
 it("muestra el resumen guardado y no incluye la clave privada en WhatsApp", async () => {
   sessionStorage.clear();
   vi.spyOn(globalThis, "fetch").mockImplementation(async (_url, init) => init?.method === "POST"
