@@ -3,8 +3,7 @@
 Se separaron compensación, novedad y rotación con los mismos datos y pesos del
 piloto. [Reporte completo](report.md), [configuración](configuration.json),
 [resumen por semilla](summary.json) y [SHA-256](sha256.json).
-El [protocolo previo](../../../openspec/changes/archive/2026-09-21-business-ranking-ablations/design.md)
-fija las cinco variantes. Es exploración sintética posterior al piloto, no
+El protocolo previo fija las cinco variantes. Es exploración sintética posterior al piloto, no
 validación del experimento final ni elección de una política pública.
 
 ## Resultado global

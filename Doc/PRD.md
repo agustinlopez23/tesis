@@ -325,7 +325,7 @@ Preservar origen disponible: revista, búsqueda, anuncio o acceso directo, adem�
 6. Ranking completo, actividad definida y evaluación experimental.
 7. Publicidad, reportes y revisión integral del MVP.
 
-Cada entrega se descompone en propuestas y especificaciones OpenSpec con criterios observables antes de implementar. Al 2026-09-19 están implementados el scaffold, el onboarding, la guía pública con búsqueda/rubro, selección de zona o ubicación, radio y distancias, y perfiles públicos con galería de hasta cinco fotos administradas por el responsable. La guía ordena por distancia cuando hay centro y por nombre cuando no lo hay. Se agregó medición de apariciones visibles, visitas y clics, con deduplicación, exclusión del dueño conectado, contexto protegido, retención de 30 días y panel privado. Ranking equitativo y las demás capacidades continúan pendientes. La evidencia distingue pruebas previas a la implementación de ampliaciones posteriores. Ver [estado técnico](../openspec/project.md).
+Cada entrega se descompone en propuestas y especificaciones con criterios observables antes de implementar. Al 2026-09-19 están implementados el scaffold, el onboarding, la guía pública con búsqueda/rubro, selección de zona o ubicación, radio y distancias, y perfiles públicos con galería de hasta cinco fotos administradas por el responsable. La guía ordena por distancia cuando hay centro y por nombre cuando no lo hay. Se agregó medición de apariciones visibles, visitas y clics, con deduplicación, exclusión del dueño conectado, contexto protegido, retención de 30 días y panel privado. Ranking equitativo y las demás capacidades continúan pendientes. La evidencia distingue pruebas previas a la implementación de ampliaciones posteriores.
 
 Al cierre del piloto del 2026-09-19 se agregó un motor de ranking de negocios y
 un laboratorio reproducible offline. Las tres semillas comparan cuatro variantes
@@ -364,7 +364,7 @@ y evaluación final. No se activó el ranking público.
 
 - Decisiones de producto acordadas con el usuario en la conversación del 2026-09-07.
 - Documento académico local en `Doc/Seminario1 entrega`, sección «Diseño del algoritmo de ranking orgánico» y sección de asistencia de IA. El original permanece excluido de Git.
-- [ADR de arquitectura](architecture/ADR-001-layered-architecture.md) y [estado técnico](../openspec/project.md).
+- [ADR de arquitectura](architecture/ADR-001-layered-architecture.md).
 - [Kyte: recibir pedidos por WhatsApp](https://docs.kyteapp.com/en/articles/9441046-receive-your-orders-on-whatsapp): referencia para pedido estructurado y resumen por mensajería.
 - [Kyte: gestión de ventas por WhatsApp](https://www.kyteapp.com/selling/whatsapp-sales): referencia de catálogo, ventas e inventario.
 - [Pedix: directorio de comercios](https://tiendas.pedix.app/): antecedente de descubrimiento local y múltiples rubros. La variedad de rubros por sí sola no constituye el diferencial de la tesis.

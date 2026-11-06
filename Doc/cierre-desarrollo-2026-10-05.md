@@ -61,5 +61,3 @@ El prototipo no cobra suscripciones/campañas, no valida pagos bancarios ni acre
 compras en WhatsApp. La administración registra verificaciones externas. Hosting
 y publicación siguen sin contratar/configurar.
 
-Evidencia: [campañas](../openspec/changes/archive/2026-10-05-sponsored-campaigns/verify-report.md)
-y [asistencia](../openspec/changes/archive/2026-10-05-catalog-draft-assistance/verify-report.md).

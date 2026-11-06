@@ -230,7 +230,6 @@ excluido, hora local). El prototipo no procesa cobros.
 API: `GET /businesses/{id}/plan`, `GET /businesses/{id}/products`,
 `PUT /businesses/{id}/products/{uuid}` (`version: 0` para crear; 409 ante conflicto),
 foto en `.../{uuid}/photo`; públicas en `GET /public/businesses/{id}/products`.
-[Contrato](../openspec/specs/business-catalog/spec.md).
 
 **Fotos del negocio**: hasta cinco por negocio (**Administrar fotos**); entrada JPEG,
 PNG o WebP de hasta 5 MB y 20 MP; salida JPEG sin metadatos de hasta 1600 px y 1 MB,
@@ -242,7 +241,7 @@ En `/negocios/{id}`, el visitante arma una solicitud que se guarda antes de abri
 WhatsApp, con mensaje de contexto y totales separados por moneda. El enlace privado
 `/pedido/{id}` vale 30 días, se muestra oculto por defecto y no viaja en el mensaje.
 El responsable la atiende en **Ver solicitudes** (atención, contacto recibido o
-cancelación, auditados). [Contrato](../openspec/specs/product-orders/spec.md).
+cancelación, auditados).
 
 ### Ventas e inventario
 
@@ -251,7 +250,6 @@ motivo y saldo. **Registrar venta de esta solicitud** descuenta todas las unidad
 rechaza todo por conflicto, informando el saldo disponible. **Ventas reportadas**
 permite ventas presenciales (con plan vigente) y anulaciones con motivo y unidades
 devueltas. **Resultados comerciales** resume 7/30 días por moneda y origen.
-[Contrato](../openspec/specs/sales-inventory/spec.md).
 
 ### Campañas y promociones
 
@@ -260,7 +258,6 @@ con plan gratuito), de hasta 30 días y tres reservas superpuestas por zona.
 `/administracion/campanas` aprueba o rechaza con motivo, registra un pago ya verificado,
 pausa y reanuda. Se muestran como «Patrocinado», separadas del orden orgánico; las
 promociones tienen página propia en `/promociones/{id}`.
-[Contrato](../openspec/specs/sponsored-campaigns/spec.md).
 
 ### Moderación y auditoría
 
@@ -309,7 +306,7 @@ sesión, negocio, tipo y superficie, y excluye al dueño conectado; no guarda IP
 user-agent ni coordenadas. Los eventos se purgan a los 30 días.
 Además, cada actualización del responsable (perfil, catálogo o promociones) se registra
 una vez por ventana `OwnerActivity__DedupMinutes` y alimenta el ranking con tope
-`OwnerActivity__RankingCap`. [Contrato](../openspec/specs/business-activity/spec.md).
+`OwnerActivity__RankingCap`.
 
 ### Asistencia IA
 
@@ -345,7 +342,6 @@ mejorar sus productos; conviene usarla solo con datos de demostración.
 
 Para agregar otro proveedor: una clase que herede de `CatalogDraftProviderBase`, un caso en
 la fábrica y sus pruebas.
-[Contrato](../openspec/specs/catalog-draft-assistance/spec.md).
 
 ## Despliegue
 

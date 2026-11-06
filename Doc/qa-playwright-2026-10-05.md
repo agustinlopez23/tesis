@@ -50,10 +50,7 @@ como fallas de la aplicación ni como pruebas aprobadas sin repetir la comprobac
 
 Desde `App/frontend`: `npm test`, `npm run lint`, `npm run build`.
 Resultado final: 26 archivos / 123 pruebas aprobadas; lint y build salen con 0.
-Las regresiones se agregaron con fallo previo; detalle por unidad en
-[paneles](../openspec/changes/archive/2026-10-05-playwright-commerce-flow/paneles.md),
-[selección](../openspec/changes/archive/2026-10-05-playwright-commerce-flow/seleccion.md)
-y [sesión](../openspec/changes/archive/2026-10-05-playwright-commerce-flow/sesion.md).
+Las regresiones se agregaron con fallo previo.
 
 Con API Release y PostGIS preparados según [App/README](../App/README.md), desde la
 raíz ejecutar `node App/tools/verify-catalog.mjs --campaigns --serve`. El harness
