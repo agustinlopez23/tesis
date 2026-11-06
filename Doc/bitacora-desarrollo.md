@@ -197,8 +197,7 @@ Las rutas privadas requieren propietario; las mutaciones también validan origen
 No se cachean imágenes: despublicar bloquea nuevas lecturas públicas.
 
 La demo local usa una imagen ilustrativa rotulada como tal; no representa una
-foto verificada del negocio ficticio. Evidencia:
-`../openspec/changes/archive/2026-09-18-public-business-profile/verify-report.md`.
+foto verificada del negocio ficticio.
 
 ## 19/09/2026 — Actividad del negocio
 
@@ -225,7 +224,7 @@ contactos. El contexto incluye primera posición observada, versión del orden y
 origen disponible. No identifica personas únicas ni prueba ausencia de bots.
 No se usan servicios analíticos externos. Configurar claves de Data Protection
 compartidas si se despliegan varias instancias y definir retención de logs/backups.
-Contrato: `../openspec/specs/business-activity/spec.md`. Fuentes y decisiones:
+Fuentes y decisiones:
 `../Doc/analytics-research-2026-09-19.md`.
 
 ## 22/09/2026 — Piloto reproducible de ranking
@@ -366,7 +365,7 @@ Los saldos incluyen negocios que ya no son elegibles. Concurrencia por proceso:
 Los permisos se liberan al completar, fallar o cancelar la solicitud, incluida
 la serialización de la respuesta. La configuración inválida impide el arranque.
 Verificación local: 1.000 candidatos, 17 listas y solicitudes simultáneas a
-4 POST/16 GET; [evidencia y límites de la medición](../openspec/changes/archive/2026-10-04-ranking-capacity/verify-report.md).
+4 POST/16 GET.
 Desactivar PreviewEnabled cierra creación y permite terminar listas de 30 minutos.
 `Ranking__WithdrawPages=true` retira inmediatamente creación y lectura con 410
 (creación ya desactivada mantiene 404). Antes de producción faltan evaluación,
@@ -426,7 +425,6 @@ revisión visual; `.tools/catalog/session.json` contiene cuentas temporales y un
 `stopFile` para terminar antes. No ejecutar otra compilación del backend mientras
 esté sirviendo: Windows bloquea DLL cargadas.
 
-[Contrato, límites y rollback](../openspec/specs/business-catalog/spec.md).
 Down se bloquea cuando existen productos, vigencias o administradores asignados;
 revertir código conserva el esquema aditivo para evitar pérdida de datos.
 
@@ -464,9 +462,7 @@ node App/tools/verify-catalog.mjs --orders
 Usa puertos 3200/5280 y una base temporal que elimina al finalizar. `--serve`
 mantiene la sesión hasta 20 minutos para navegador; `.tools/orders/session.json`
 indica `stopFile` para terminar antes. Artefactos locales ignorados pueden contener
-credenciales de esa sesión temporal. Contrato y límites en
-[`product-orders/spec.md`](../openspec/specs/product-orders/spec.md); evidencia en
-[`verify-report.md`](../openspec/changes/archive/2026-10-05-product-orders/verify-report.md).
+credenciales de esa sesión temporal.
 
 ## 05/10/2026 — Ventas, inventario y evidencia
 
@@ -497,7 +493,6 @@ Migración `20261005114423_AddSalesInventory`; downgrade poblado bloqueado.
 Reproducción integrada: `node App/tools/verify-catalog.mjs --sales`, con builds
 Release/production previos y PostGIS activo. `--serve` habilita navegador temporal;
 sesión y stopFile en `.tools/sales/session.json`, puertos 3200/5280. Limpieza al salir.
-Contrato en [`sales-inventory/spec.md`](../openspec/specs/sales-inventory/spec.md).
 
 Resultados comerciales, dentro de editar negocio, muestra 7/30 días calendario
 de Córdoba. La conversión sigue solicitudes creadas en ese período hasta ahora;
@@ -515,10 +510,6 @@ La suite API limita a dos las clases xUnit simultáneas para reducir carga al cr
 y migrar bases PostGIS aisladas. Las pruebas de ventas/ranking siguen lanzando sus
 operaciones concurrentes internas. Evitar ejecutarla junto con builds intensivos.
 
-El scaffold archivado está en
-`../openspec/changes/archive/2026-09-08-scaffold-backend-frontend/`; el onboarding
-y su evidencia están en
-`../openspec/changes/archive/2026-09-08-business-owner-onboarding/`.
 No se publica ni se contrata hosting desde este prototipo.
 
 ## 05/10/2026 — Campañas patrocinadas
@@ -536,7 +527,7 @@ verificado mediante referencia, pausar/reanudar y registrar resolución comercia
 No cobra. El titular puede pausar y consultar resultados. Vencimiento de plan,
 stock cero o suspensión ocultan sin prórroga automática; conservan historial.
 Eventos duran 30 días; solicitudes/ventas conservan vínculo, importes por moneda
-y origen. Ver [contrato](../openspec/specs/sponsored-campaigns/spec.md).
+y origen.
 
 Aplicar `20261005121814_AddSponsoredCampaigns` antes de ejecutar esta versión.
 Down bloquea datos/atribuciones existentes. Prueba aislada tras build:
@@ -568,7 +559,7 @@ no equivalen a presupuesto mensual ni garantizan calidad factual.
 
 GET/POST `/businesses/{id}/catalog-assistance`, privado, no-store, JSON 8 KiB;
 POST `{facts, consent:true}` devuelve `{name,description,category}` o error con
-carga manual disponible. [Contrato](../openspec/specs/catalog-draft-assistance/spec.md).
+carga manual disponible.
 Integración comprobada con transporte simulado; falta verificar credenciales,
 modelo y calidad real antes de habilitarla para comerciantes.
 

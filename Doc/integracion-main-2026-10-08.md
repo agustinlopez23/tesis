@@ -36,6 +36,6 @@ reemplazar los tres pasos de auditoría por `npm audit --audit-level=low`; elimi
 audit-policy.mjs, audit-policy.test.mjs y el script audit:ci. No desactivar Secrets,
 Backend o Frontend ni alterar las protecciones de main.
 
-Rollback del parche: revertir package.json, package-lock.json y versión en
-openspec/config.yaml; reintroduce avisos corregidos. La demo conserva su runtime
+Rollback del parche: revertir package.json, package-lock.json y versión del
+proyecto; reintroduce avisos corregidos. La demo conserva su runtime
 anterior y no se despliega ni se modifica la base con esta integración.

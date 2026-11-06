@@ -141,7 +141,6 @@ y documentado paso a paso en [Doc/despliegue.md](Doc/despliegue.md).
 - [Bitácora de desarrollo](Doc/bitacora-desarrollo.md)
 - [PRD: producto, alcance y ranking](Doc/PRD.md)
 - [Modelo UML y diagramas ER de diseño](Doc/model/README.md) y [modelo de datos implementado](Doc/model/implementacion/README.md)
-- [Especificaciones y estado](openspec/project.md)
 - [Investigación y rediseño de interfaz](Doc/ux-research-2026-09-18.md)
 - [Investigación y decisiones de medición](Doc/analytics-research-2026-09-19.md)
 - [Seguridad del repositorio](SECURITY.md)

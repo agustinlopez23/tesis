@@ -154,7 +154,6 @@ el límite de filas materializadas no acota ese trabajo de base ni la retención
 Configuración y rangos en `App/README.md`; valores inválidos impiden el arranque.
 Carga local verificada con 1.000 negocios, 17 listas (16 abandonadas tras página 1),
 4 creaciones/16 lecturas simultáneas, paginación completa y replay sin nuevos aportes.
-Ver [evidencia](../openspec/changes/archive/2026-10-04-ranking-capacity/verify-report.md).
 No hay limitación distribuida; antes de activar, dimensionar latencia y memoria en
 el despliegue real. Snapshot y tokens no sustituyen controles de abuso; asignación
 modelada puede manipularse creando nuevas consultas.
@@ -191,7 +190,6 @@ en ranking_version varchar(64), solo con source=directory/posición válida.
 Se conservan name-v1/distance-v1, deduplicación y exclusión del dueño. No se mezcla
 actividad observada con exposición modelada. Down se rechaza si quedan eventos
 con hash: esperar retención/purga, nunca truncar ni eliminar atribución para bajar.
-Evidencia: `../openspec/changes/archive/2026-10-04-ranking-preview-ui/verify-report.md`.
 
 Pruebas requeridas, con PostgreSQL/PostGIS temporal cuando corresponda:
 
