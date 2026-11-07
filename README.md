@@ -9,6 +9,8 @@ WhatsApp, ventas, promociones y métricas.
 Backend ASP.NET Core (.NET 10) en capas, frontend Next.js con TypeScript y
 PostgreSQL con PostGIS.
 
+**Video demostrativo:** [recorrido por el prototipo en YouTube](https://www.youtube.com/watch?v=rGrq6nDurhs&t=97s)
+
 ## Capacidades por rol
 
 | Rol | Qué puede hacer |
